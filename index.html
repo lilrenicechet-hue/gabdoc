@@ -388,7 +388,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .sec-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   @media (max-width: 520px) { .sec-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .sec-btn { height: 46px; border-radius: 12px; border: 1.5px solid color-mix(in srgb, var(--c) 30%, var(--line)); background: color-mix(in srgb, var(--c) 5%, var(--card)); color: color-mix(in srgb, var(--c) 85%, var(--ink)); font-weight: 900; font-size: 14px; letter-spacing: .06em; display: inline-flex; align-items: center; justify-content: center; gap: 0; transition: background .15s, color .15s, transform .15s, box-shadow .15s; }
-  .sec-btn svg, .sec-btn i { width: 0; opacity: 0; transition: width .15s, opacity .15s, margin .15s; }
+  .sec-btn { position: relative; overflow: hidden; }
+  /* O ✓ escondido não pode receber cliques (com largura 0 o ícone SVG ocupava uma área invisível enorme) */
+  .sec-btn svg, .sec-btn i { width: 0; opacity: 0; pointer-events: none; transition: width .15s, opacity .15s, margin .15s; }
+  .sec-btn:not(.ativo) svg, .sec-btn:not(.ativo) i { visibility: hidden; }
+  .sec-btn svg *, .ev-op svg *, .novo-side svg *, .nav-btn svg * { pointer-events: none; }
   .sec-btn:hover { transform: translateY(-1px); }
   .sec-btn.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
   .sec-btn.ativo svg, .sec-btn.ativo i { width: 12px; opacity: 1; margin-right: 6px; }
