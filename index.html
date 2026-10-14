@@ -103,6 +103,29 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nav-btn .ico { width: 20px; text-align: center; flex-shrink: 0; }
   .nav-btn:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
   .nav-badge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 800; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+  /* Menu lateral recolhido (só ícones) */
+  .sb-recolher { position: absolute; top: 28px; right: -13px; z-index: 60; width: 26px; height: 26px; border-radius: 999px; align-items: center; justify-content: center; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; font-size: 11px; box-shadow: 0 4px 12px -4px rgba(0,0,0,.6); transition: background .15s, color .15s, transform .3s; }
+  .sb-recolher:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .sb-dica { position: fixed; z-index: 130; pointer-events: none; background: #0f172a; color: #fff; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; box-shadow: 0 8px 20px -8px rgba(0,0,0,.6); border: 1px solid #334155; white-space: nowrap; transform: translateY(-50%); }
+  @media (min-width: 768px) {
+    html.sb-mini #sidebar { width: 76px; }
+    html.sb-mini .sb-recolher svg, html.sb-mini .sb-recolher i { transform: rotate(180deg); }
+    html.sb-mini #sidebar nav { padding-left: 10px; padding-right: 10px; }
+    html.sb-mini #sidebar .nav-btn { justify-content: center; padding: 10px 0; gap: 0; position: relative; }
+    html.sb-mini #sidebar .nav-btn > span:not(.nav-badge) { display: none; }
+    html.sb-mini #sidebar .nav-btn .ico { width: 18px; height: 18px; font-size: 16px; }
+    html.sb-mini #sidebar .nav-badge { position: absolute; top: 1px; right: 3px; min-width: 17px; height: 17px; padding: 0 4px; font-size: 9px; margin: 0; border: 2px solid #0f172a; }
+    html.sb-mini #sidebar .nav-titulo { font-size: 0; height: 1px; background: #334155; margin: 0 8px 10px; }
+    html.sb-mini #sidebar nav > div + div { margin-top: 14px; }
+    html.sb-mini .sb-logo-txt, html.sb-mini #sb-sino, html.sb-mini .sb-user-txt { display: none; }
+    html.sb-mini .sb-novos { grid-template-columns: 1fr; }
+    html.sb-mini .novo-side { align-items: center; padding: 3px; }
+    html.sb-mini .novo-side svg, html.sb-mini .novo-side i { width: 30px; height: 30px; }
+    html.sb-mini .novo-side span { display: none; }
+    html.sb-mini .sb-rodape { flex-direction: column; gap: 8px; padding: 12px 6px; }
+    html.sb-mini .sb-bts { flex-direction: column; }
+    html.sb-mini .gs-lote { left: calc(50% + 38px); max-width: calc(100vw - 128px); }
+  }
   .nav-titulo { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: .14em; margin: 0 0 8px 8px; }
 
   /* Cabeçalho de seção (faixa escura) */
@@ -282,9 +305,14 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .gs-lote { position: fixed; z-index: 70; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100% - 32px); display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: center; padding: 10px 12px; border-radius: 14px; background: var(--card); border: 1px solid color-mix(in srgb, #1a73e8 45%, var(--line)); color: var(--ink); font-size: 13px; box-shadow: 0 18px 40px -12px rgba(15,23,42,.45), 0 0 0 4px color-mix(in srgb, #1a73e8 12%, transparent); animation: loteIn .25s ease both; }
   @keyframes loteIn { from { transform: translate(-50%, 10px); } to { transform: translate(-50%, 0); } }
   @media (min-width: 768px) { .gs-lote { left: calc(50% + 144px); max-width: calc(100vw - 340px); } }
+  .gs-lote { transition: left .3s; }
   table.gs tbody tr.gs-pend td.gs-num { box-shadow: inset 3px 0 0 #f59e0b; color: #d97706; }
+  /* Eventos */
+  .ev-op { cursor: pointer; padding: 5px 11px; font-size: 12px; }
+  .ev-op.ativo { background: var(--c); color: #fff; border-color: var(--c); }
+  .ev-tag { --c: #c026d3; display: inline-flex; margin-left: 6px; padding: 0 6px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); vertical-align: 1px; }
   /* Mini painel de gravação em segundo plano */
-  .grav { position: fixed; z-index: 115; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 300px; max-width: calc(100vw - 32px); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 44px -14px rgba(15,23,42,.45); overflow: hidden; animation: gravIn .22s ease both; font-size: 12.5px; }
+  .grav { position: fixed; z-index: 105; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 300px; max-width: calc(100vw - 32px); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 44px -14px rgba(15,23,42,.45); overflow: hidden; animation: gravIn .22s ease both; font-size: 12.5px; }
   .grav[hidden] { display: none !important; }
   body:has(.gs-lote:not([hidden])) .grav { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
   @media (max-width: 767px) { .grav { left: 16px; right: 16px; width: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); } }
@@ -470,13 +498,14 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   <div id="mobile-overlay" onclick="menuMobile(false)" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 hidden md:hidden"></div>
 
   <!-- Barra lateral -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 -translate-x-full md:relative md:translate-x-0 w-72 text-white flex flex-col transition-transform duration-300 z-50 flex-shrink-0 border-r border-slate-700 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)] h-full bg-education-pattern">
+  <aside id="sidebar" class="fixed inset-y-0 left-0 -translate-x-full md:relative md:translate-x-0 w-72 text-white flex flex-col transition-[transform,width] duration-300 z-50 flex-shrink-0 border-r border-slate-700 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)] h-full bg-education-pattern">
     <button onclick="menuMobile(false)" class="absolute top-5 right-4 text-gray-400 hover:text-white md:hidden p-2 z-50" aria-label="Fechar menu"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <button type="button" id="sb-recolher" onclick="alternarSidebar()" class="sb-recolher hidden md:flex" title="Recolher menu (mostrar só os ícones)" aria-label="Recolher menu lateral" aria-expanded="true"><i class="fa-solid fa-angles-left"></i></button>
     <div class="h-20 flex items-center justify-center border-b border-gray-800 px-4">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-file-signature text-sm text-white"></i></div>
-        <h1 class="text-2xl font-black tracking-tight whitespace-nowrap">GAB<span class="text-blue-500">Doc</span></h1>
-        <button onclick="irPara('urgentes')" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Urgências e prazos vencidos" aria-label="Ver urgências">
+        <h1 class="sb-logo-txt text-2xl font-black tracking-tight whitespace-nowrap">GAB<span class="text-blue-500">Doc</span></h1>
+        <button id="sb-sino" onclick="irPara('urgentes')" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Urgências e prazos vencidos" aria-label="Ver urgências">
           <i class="fa-solid fa-bell"></i>
           <span id="sino-count" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-black items-center justify-center border-2 border-slate-900">0</span>
         </button>
@@ -493,9 +522,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         </div>
         <div>
           <h4 class="nav-titulo">Assinaturas</h4>
-          <div class="grid grid-cols-2 gap-2 mb-3" data-requer="gravar">
-            <button class="novo-side" style="--c:#3b82f6" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-file-signature"></i><span>Nova<br>assinatura</span></button>
-            <button class="novo-side" style="--c:#14b8a6" onclick="novoRegistro('processo')"><i class="fa-solid fa-folder-open"></i><span>Novo<br>processo</span></button>
+          <div class="sb-novos grid grid-cols-2 gap-2 mb-3" data-requer="gravar">
+            <button class="novo-side" style="--c:#3b82f6" title="Nova solicitação de assinatura" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-file-signature"></i><span>Nova<br>assinatura</span></button>
+            <button class="novo-side" style="--c:#14b8a6" title="Novo processo" onclick="novoRegistro('processo')"><i class="fa-solid fa-folder-open"></i><span>Novo<br>processo</span></button>
           </div>
           <div class="space-y-1">
             <button class="nav-btn" data-tab="mesa"><i class="ico fa-solid fa-table-cells"></i><span>Gestão de Processos</span><span id="bdg-mesa" class="nav-badge bg-indigo-500 hidden"></span></button>
@@ -504,6 +533,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn" data-tab="casacivil"><i class="ico fa-solid fa-landmark text-violet-400"></i><span class="text-violet-300 font-semibold">Casa Civil</span><span id="bdg-cc" class="nav-badge bg-violet-600 hidden"></span></button>
             <button class="nav-btn" data-tab="correicao"><i class="ico fa-solid fa-clipboard-check text-amber-400"></i><span class="text-amber-200 font-semibold">Processos de Correição</span><span id="bdg-cor" class="nav-badge bg-amber-600 hidden"></span></button>
           </div>
+        </div>
+        <div>
+          <h4 class="nav-titulo">Documentos e eventos</h4>
+          <div class="space-y-1" id="nav-docs"></div>
         </div>
         <div>
           <h4 class="nav-titulo">Assessoria</h4>
@@ -524,16 +557,16 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         </div>
       </nav>
     </div>
-    <div class="p-4 border-t border-gray-800 bg-gray-900/80 flex items-center justify-between text-xs">
-      <div class="flex items-center gap-3 min-w-0">
+    <div class="sb-rodape p-4 border-t border-gray-800 bg-gray-900/80 flex items-center justify-between text-xs">
+      <div class="sb-user flex items-center gap-3 min-w-0">
         <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold flex-shrink-0" id="user-avatar">?</div>
-        <div class="min-w-0">
+        <div class="sb-user-txt min-w-0">
           <p class="text-sm font-bold text-white leading-none mb-1 truncate w-32" id="user-name">Usuário</p>
           <p class="text-[10px] text-gray-400 uppercase tracking-wider font-bold" id="user-role">Assessoria</p>
           <p id="sync-status" class="text-[9px] font-bold mt-1 truncate w-36 text-gray-400">● Conectando…</p>
         </div>
       </div>
-      <div class="flex items-center flex-shrink-0">
+      <div class="sb-bts flex items-center flex-shrink-0">
         <button type="button" id="btn-tema" onclick="alternarTema()" class="text-gray-400 hover:text-amber-300 p-2 rounded-lg hover:bg-gray-800" title="Alternar tema" aria-label="Alternar tema claro/escuro"><i id="ico-tema" class="fa-solid fa-moon"></i></button>
         <button onclick="abrirTrocaSenha(false)" id="btn-senha" title="Alterar minha senha" aria-label="Alterar minha senha" class="hidden text-gray-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-800"><i class="fa-solid fa-key"></i></button>
         <button onclick="sair()" title="Sair" aria-label="Sair" class="text-gray-400 hover:text-red-400 p-2 rounded-lg hover:bg-gray-800"><i class="fa-solid fa-power-off"></i></button>
@@ -573,6 +606,19 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     </section>
 
     <!-- MESA DA SECRETÁRIA -->
+    <section id="tab-docs" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2" id="docs-titulo"></h2>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block" id="docs-desc"></p>
+          </div>
+          <div class="text-xs text-blue-100/80" id="docs-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="docs-corpo"></div></div>
+    </section>
+
     <section id="tab-mesa" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -751,6 +797,20 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cor-corpo"></div></div>
     </section>
 
+    <!-- EVENTOS -->
+    <section id="tab-eventos" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#2e0a33">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-calendar-check text-fuchsia-300"></i> Eventos da Secretaria de Educação</h2>
+            <p class="text-fuchsia-100/70 text-xs mt-0.5 hidden sm:block">Organização dos eventos da SEDUC-MT: datas, local, secretaria responsável, público, participação da Secretária e situação.</p>
+          </div>
+          <div class="flex items-center gap-3"><span class="text-xs text-fuchsia-100/80" id="ev-resumo"></span><button onclick="abrirFormEvento()" data-requer="gravar" class="btn text-white" style="background:#c026d3"><i class="fa-solid fa-plus"></i>Novo evento</button></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="ev-corpo"></div></div>
+    </section>
+
     <!-- MOVIMENTAÇÕES -->
     <section id="tab-movimentacoes" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern">
@@ -886,7 +946,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], eventos: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 const NO_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
 
 /* ----- API do Apps Script ----- */
@@ -974,6 +1034,10 @@ async function iniciarStore() {
       Store.correicao = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('eventos').onSnapshot(snap => {
+      Store.eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('agenda').onSnapshot(snap => {
       Store.agenda = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -984,6 +1048,7 @@ async function iniciarStore() {
     Store.sol = ex.sol.map((s, i) => ({ id: 'ex' + i, ...s }));
     Store.agenda = ex.agenda.map((a, i) => ({ id: 'ag' + i, ...a }));
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
+    Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -1049,6 +1114,7 @@ function aplicarCarga(r) {
     Store.sol = r.solicitacoes || [];
     Store.agenda = r.agenda || [];
     Store.correicao = r.correicao || [];
+    Store.eventos = r.eventos || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
   if (r.dataVersion) Store.versao = r.dataVersion;
@@ -1327,6 +1393,31 @@ async function salvarCorreicao(id, dados, rotulo) {
     nuvem: () => Store.db.collection('correicao').doc(ref).set(semId(dados)) });
   return true;
 }
+async function salvarEvento(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'ev' + Date.now();
+    trocarNaLista(Store.eventos, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  const antigo = novo ? null : Store.eventos.find(x => x.id === id);
+  if (novo) id = novoIdLocal('E');
+  trocarNaLista(Store.eventos, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'eventos', idLocal: novo ? id : null, icone: 'fa-calendar-check',
+    rotulo: rotulo || (novo ? 'Novo evento' : antigo && antigo.situacao !== dados.situacao ? 'Situação → ' + (dados.situacao || '—') : 'Evento atualizado'),
+    detalhe: [dados.titulo, dados.dataInicio ? fmt(dados.dataInicio) : ''].filter(Boolean).join(' · '),
+    action: 'salvar_evento', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('eventos').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirEventoId(id) {
+  const e = Store.eventos.find(x => x.id === id);
+  Store.eventos = Store.eventos.filter(x => x.id !== id); aoMudarDados();
+  toast('Evento excluído.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de evento', detalhe: e ? e.titulo : '',
+    action: 'excluir_evento', payload: { id }, nuvem: () => Store.db.collection('eventos').doc(id).delete() });
+}
 async function excluirCorreicaoId(id) {
   const c = Store.correicao.find(x => x.id === id);
   Store.correicao = Store.correicao.filter(x => x.id !== id); aoMudarDados();
@@ -1343,7 +1434,8 @@ async function carregarExemplos(btn) {
     await Promise.all([
       ...ex.sol.map(s => Store.db.collection('solicitacoes').add({ ...s, atualizadoEm: new Date().toISOString() })),
       ...ex.agenda.map(a => Store.db.collection('agenda').add(a)),
-      ...ex.correicao.map(c => Store.db.collection('correicao').add({ ...c, criadoEm: new Date().toISOString() }))]);
+      ...ex.correicao.map(c => Store.db.collection('correicao').add({ ...c, criadoEm: new Date().toISOString() })),
+      ...ex.eventos.map(e => Store.db.collection('eventos').add({ ...e, criadoEm: new Date().toISOString() }))]);
     toast('Exemplos carregados. Use "Remover exemplos" em Relatórios quando quiser limpar.');
   } catch (e) { toast('Não foi possível carregar os exemplos: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1355,7 +1447,8 @@ async function removerExemplos(btn) {
     await Promise.all([
       ...Store.sol.filter(x => x.exemplo).map(s => Store.db.collection('solicitacoes').doc(s.id).delete()),
       ...Store.agenda.filter(x => x.exemplo).map(a => Store.db.collection('agenda').doc(a.id).delete()),
-      ...Store.correicao.filter(x => x.exemplo).map(c => Store.db.collection('correicao').doc(c.id).delete())]);
+      ...Store.correicao.filter(x => x.exemplo).map(c => Store.db.collection('correicao').doc(c.id).delete()),
+      ...Store.eventos.filter(x => x.exemplo).map(e => Store.db.collection('eventos').doc(e.id).delete())]);
     toast('Exemplos removidos.');
   } catch (e) { toast('Não foi possível remover tudo: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1450,15 +1543,26 @@ function gerarExemplos() {
     { exemplo: true, processo: 'SEDUC-PRO-2026/10233', documento: '[Exemplo] Ofício de notificação', objeto: 'Pedido de informações à unidade escolar sobre frequência de servidores', situacao: 'Em análise', observacao: '' },
     { exemplo: true, processo: 'SEDUC-PRO-2026/07450', documento: '[Exemplo] Despacho de arquivamento', objeto: 'Denúncia anônima sem elementos mínimos de autoria', situacao: 'Concluído', observacao: 'Arquivado após parecer' }
   ];
-  return { sol, agenda, correicao };
+  const E = (titulo, ini, fim, hora, municipio, local, organizador, publico, participacao, situacao) => ({ exemplo: true, titulo: '[Exemplo] ' + titulo, dataInicio: h(ini), dataFim: h(fim), hora, municipio, local, organizador, publico, participacao, situacao, responsavel: 'Assessoria', observacao: '' });
+  const eventos = [
+    E('Fórum Estadual de Educação de Mato Grosso', 6, 8, '08:00', 'Cuiabá', 'Centro de Eventos do Pantanal', 'GS, SAGE', '1.200 educadores', 'Presença confirmada', 'Confirmado'),
+    E('Inauguração da Escola Estadual Jardim Primaveras', 12, 12, '10:00', 'Sinop', 'Bairro Jardim Primaveras', 'SAIP', 'Comunidade escolar e autoridades', 'Presença confirmada', 'Em preparação'),
+    E('Jogos Escolares de Mato Grosso · etapa estadual', 20, 24, '07:30', 'Primavera do Leste', 'Ginásio municipal', 'SAGE, SAEX', '3.000 estudantes-atletas', 'A confirmar', 'Em preparação'),
+    E('Formação de diretores escolares', 3, 3, '14:00', 'Rondonópolis', 'Auditório da DRE', 'SAGP', '180 diretores', 'Representada', 'Confirmado'),
+    E('Solenidade Professor Destaque', 35, 35, '19:00', 'Cuiabá', 'Teatro da UFMT', 'GS', 'Professores premiados', 'A confirmar', 'Planejamento'),
+    E('Encontro estadual de coordenadores pedagógicos', -10, -9, '08:00', 'Várzea Grande', 'Centro de convenções', 'SAGE', '450 coordenadores', 'Presença confirmada', 'Realizado')
+  ];
+  return { sol, agenda, correicao, eventos };
 }
 
 /* ========================= Navegação ========================= */
 let abaAtual = 'painel';
 function irPara(tab) {
+  if (String(tab).startsWith('doc:')) { const t = tab.slice(4); if (!SECOES_DOC.some(x => x.tipo === t)) tab = 'mesa'; else docTipo = t; }
+  else if (!$('tab-' + tab)) tab = 'painel';
   abaAtual = tab;
   document.querySelectorAll('.tab').forEach(s => { s.classList.add('hidden'); s.classList.remove('flex'); });
-  const sec = $('tab-' + tab); sec.classList.remove('hidden'); sec.classList.add('flex');
+  const sec = $('tab-' + (tab.startsWith('doc:') ? 'docs' : tab)); sec.classList.remove('hidden'); sec.classList.add('flex');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('ativo', b.dataset.tab === tab));
   ls.set('gabdoc_aba', tab);
   menuMobile(false);
@@ -1469,7 +1573,48 @@ function menuMobile(abrir) {
   if (abrir) { sb.classList.remove('-translate-x-full'); ov.classList.remove('hidden'); }
   else { sb.classList.add('-translate-x-full'); ov.classList.add('hidden'); }
 }
+/* ----- seções por tipo de documento (menu lateral) ----- */
+const SECOES_DOC = [
+  { tipo: 'portaria',  rot: 'Portarias',             desc: 'Todas as portarias em formato de planilha: elaboração, assinatura e publicação.' },
+  { tipo: 'capturado', rot: 'Documentos capturados', desc: 'Documentos recebidos de fora e capturados no sistema para análise e assinatura.' },
+  { tipo: 'oficio',    rot: 'Ofícios',               desc: 'Ofícios recebidos e expedidos pelo Gabinete.' },
+  { tipo: 'despacho',  rot: 'Despachos',             desc: 'Despachos da Secretária em processos e solicitações.' },
+  { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' },
+  { tipo: 'circular',  rot: 'Circulares',            desc: 'Circulares destinadas às unidades e diretorias regionais.' }
+];
+let docTipo = 'portaria';
+$('nav-docs').innerHTML = SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('') +
+  `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
 document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => irPara(b.dataset.tab)));
+
+/* ----- menu lateral recolhível (só ícones) ----- */
+function aplicarSidebar(mini) {
+  document.documentElement.classList.toggle('sb-mini', mini);
+  const b = $('sb-recolher');
+  b.title = mini ? 'Expandir menu' : 'Recolher menu (mostrar só os ícones)';
+  b.setAttribute('aria-label', mini ? 'Expandir menu lateral' : 'Recolher menu lateral');
+  b.setAttribute('aria-expanded', String(!mini));
+}
+function alternarSidebar() {
+  const mini = !document.documentElement.classList.contains('sb-mini');
+  aplicarSidebar(mini); ls.set('gabdoc_sb_mini', mini ? '1' : '0');
+  esconderDicaSb();
+  setTimeout(() => { renderAba(); window.dispatchEvent(new Event('resize')); }, 320);
+}
+aplicarSidebar(ls.get('gabdoc_sb_mini') === '1');
+// Dica com o nome da seção quando o menu está recolhido
+function esconderDicaSb() { const d = $('sb-dica'); if (d) d.remove(); }
+$('sidebar').addEventListener('mouseover', e => {
+  const b = e.target.closest('.nav-btn, .novo-side, .sb-bts button, #sb-recolher');
+  if (!b || !document.documentElement.classList.contains('sb-mini') || innerWidth < 768) { esconderDicaSb(); return; }
+  const txt = b.id === 'sb-recolher' ? 'Expandir menu' : (b.getAttribute('title') || b.textContent).replace(/\s+/g, ' ').trim();
+  let d = $('sb-dica'); if (!d) { d = document.createElement('div'); d.id = 'sb-dica'; d.className = 'sb-dica'; document.body.appendChild(d); }
+  const badge = b.querySelector('.nav-badge:not(.hidden)');
+  d.textContent = badge ? txt.replace(new RegExp('\\s*' + badge.textContent + '$'), '') + ' · ' + badge.textContent : txt;
+  const r = b.getBoundingClientRect(); d.style.left = (r.right + 12) + 'px'; d.style.top = (r.top + r.height / 2) + 'px';
+});
+$('sidebar').addEventListener('mouseleave', esconderDicaSb);
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'b' && !e.target.closest('input, textarea, select, [contenteditable]')) { e.preventDefault(); alternarSidebar(); } });
 
 function entrar() {
   const t = $('login-screen'); t.classList.add('opacity-0');
@@ -1482,7 +1627,7 @@ async function sair() {
   ss.del('gabdoc_entrou');
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
-    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -1523,7 +1668,8 @@ function aoMudarDados() {
   marcarLinhasPendentes();
 }
 function renderAba() {
-  const r = { correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
+  const r = { eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -1540,6 +1686,8 @@ function atualizarBadges() {
   set('bdg-fila', pendentes().length);
   set('bdg-urg', urgentesAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
+  SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
+  set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
   set('bdg-cor', Store.correicao.filter(c => !/^(conclu|arquiv)/i.test(Utils_norm(c.situacao))).length);
   const sino = $('sino-count'), n = urgentesAtivos().length;
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
@@ -2860,6 +3008,42 @@ function renderMesa() {
   });
 }
 
+/* ----- Seções por tipo (Portarias, Ofícios, Despachos…) ----- */
+function renderDocs() {
+  const d = SECOES_DOC.find(x => x.tipo === docTipo) || SECOES_DOC[0], t = TIPOS[d.tipo];
+  const cont = $('docs-corpo');
+  const todos = Store.sol.filter(s => s.tipo === d.tipo);
+  const pend = todos.filter(s => !FEITO(s));
+  $('docs-titulo').innerHTML = `<i class="fa-solid ${t.ico}" style="color:${t.cor}"></i> ${d.rot}`;
+  $('docs-desc').textContent = d.desc;
+  $('docs-resumo').textContent = `${todos.length} registro(s) · ${pend.length} em tramitação · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  preencherListaResp();
+  const id = 'doc_' + d.tipo;
+  const kpi = (chave, rot, ico, cor, n) => `<button type="button" onclick="chipGrade('${id}','${chave}')" class="dv-kpi" style="--c:${cor}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${n}</span></button>`;
+  const novo = `abrirForm(null,{tipo:'${d.tipo}'})`;
+  renderGrade(cont, {
+    id, linhas: todos, fonte: () => Store.sol,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi('pend', 'Em tramitação', 'fa-arrows-spin', t.cor, pend.length)}
+      ${kpi('mesa', 'Na mesa', 'fa-pen-nib', '#4f46e5', pend.filter(s => s.status === 'aguardando').length)}
+      ${kpi('venc', 'Vencidos', 'fa-clock', '#ea580c', todos.filter(s => situacao(s) === 'vencido').length)}
+      ${kpi('feito', 'Assinados', 'fa-signature', '#16a34a', todos.filter(FEITO).length)}</div>`,
+    colunas: colunasSolBase().filter(c => c.key !== 'tipo'),
+    compactas: ['numero', 'assunto', 'origem', 'status'],
+    ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
+    classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
+    chips: [['', 'Todos', () => true, t.cor], ['pend', 'Em tramitação', s => !FEITO(s), t.cor], ['mesa', 'Na mesa', s => s.status === 'aguardando', '#4f46e5'],
+            ['urg', 'Urgentes', s => s.urgente && !FEITO(s), '#dc2626'], ['venc', 'Vencidos', s => situacao(s) === 'vencido', '#ea580c'], ['feito', 'Assinados', s => FEITO(s), '#16a34a']],
+    aoEditarCampos: editarSolCampos,
+    acoes: s => botoesAcoesSol(id, s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
+    tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
+    novaLinha: () => abrirForm(null, { tipo: d.tipo }), textoNovaLinha: `Novo registro em ${d.rot} (abre o formulário)`,
+    textoVazio: `Nenhum registro em ${d.rot}.`,
+    botaoNovo: `<button class="btn btn-pri !h-9" style="background:${t.cor};border-color:${t.cor}" onclick="${novo}"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
+}
+
 /* ----- Casa Civil (somente as da Casa Civil) ----- */
 const PROX_ETAPA = { preparo: 'enviado', enviado: 'analise_cc', analise_cc: 'concluido', pendencia: 'analise_cc' };
 function renderCC() {
@@ -2963,6 +3147,178 @@ function renderCorreicao() {
     textoVazio: 'Nenhum processo de correição registrado.',
     botaoNovo: `<button class="btn !h-9 bg-amber-500 hover:bg-amber-400 text-white" onclick="abrirFormCorreicao()"><i class="fa-solid fa-plus"></i>Novo</button>`
   });
+}
+
+/* ========================= Eventos da SEDUC-MT ========================= */
+const SITUACOES_EV = {
+  'Planejamento':  { cor: '#2563eb', ico: 'fa-lightbulb' },
+  'Em preparação': { cor: '#d97706', ico: 'fa-screwdriver-wrench' },
+  'Confirmado':    { cor: '#0d9488', ico: 'fa-circle-check' },
+  'Realizado':     { cor: '#16a34a', ico: 'fa-flag-checkered' },
+  'Adiado':        { cor: '#ea580c', ico: 'fa-clock-rotate-left' },
+  'Cancelado':     { cor: '#64748b', ico: 'fa-ban' }
+};
+const PARTICIPACAO_EV = {
+  'Presença confirmada': '#16a34a', 'A confirmar': '#d97706', 'Representada': '#7c3aed', 'Não participará': '#64748b'
+};
+const PROX_SIT_EV = { 'Planejamento': ['Em preparação', 'Preparar', 'fa-screwdriver-wrench'], 'Em preparação': ['Confirmado', 'Confirmar', 'fa-circle-check'], 'Confirmado': ['Realizado', 'Realizado', 'fa-flag-checkered'], 'Adiado': ['Confirmado', 'Remarcar', 'fa-calendar-check'] };
+const evFim = e => e.dataFim || e.dataInicio || '';
+const evEncerrado = e => /^(realiz|cancel)/.test(Utils_norm(e.situacao));
+const evProximo = (e, dias = 30) => !evEncerrado(e) && evFim(e) >= hojeISO() && (e.dataInicio || '') <= somaDias(dias);
+function evPeriodo(e) {
+  if (!e.dataInicio) return '—';
+  const f = d => fmt(d).slice(0, 5);
+  return e.dataFim && e.dataFim !== e.dataInicio ? `${f(e.dataInicio)} a ${fmt(e.dataFim)}` : fmt(e.dataInicio);
+}
+function evQuando(e) {
+  if (!e.dataInicio || evEncerrado(e)) return '';
+  const hoje = hojeISO();
+  if (e.dataInicio <= hoje && evFim(e) >= hoje) return '<span class="ev-tag" style="--c:#c026d3">acontecendo</span>';
+  const d = Math.round((new Date(e.dataInicio + 'T12:00') - new Date(hoje + 'T12:00')) / 864e5);
+  if (d < 0) return '<span class="ev-tag" style="--c:#ea580c">já passou</span>';
+  if (d === 0) return '<span class="ev-tag" style="--c:#c026d3">hoje</span>';
+  if (d <= 7) return `<span class="ev-tag" style="--c:#c026d3">em ${d} dia${d > 1 ? 's' : ''}</span>`;
+  return '';
+}
+const pillEv = sit => { const x = SITUACOES_EV[sit] || { cor: '#64748b', ico: 'fa-circle' }; return sit ? `<span class="gs-pill" style="--c:${x.cor}"><i class="fa-solid ${x.ico} text-[9px]"></i>${esc(sit)}</span>` : ''; };
+const siglasEv = txt => String(txt || '').split(/\s*[,;]\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x.toUpperCase()) ? `<span class="gs-sigla" style="--c:${COR_SEC[x.toUpperCase()]}">${x.toUpperCase()}</span>` : `<span class="text-ink2">${esc(x)}</span>`).join(' ');
+
+function renderEventos() {
+  const cont = $('ev-corpo');
+  const todos = Store.eventos || [];
+  const prox = todos.filter(e => evProximo(e));
+  $('ev-resumo').textContent = todos.length ? `${prox.length} nos próximos 30 dias · ${todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length} realizado(s)` : '';
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  preencherListaResp();
+  const mes = hojeISO().slice(0, 7);
+  const kpi = (chave, rot, ico, cor, n, sub) => `<button type="button" onclick="chipGrade('eventos','${chave}')" class="dv-kpi" style="--c:${cor}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${n}</span><span class="sub">${sub}</span></button>`;
+  const sitLote = s => ({ rot: s, ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', campos: () => ({ situacao: s }) });
+  renderGrade(cont, {
+    id: 'eventos', linhas: todos, fonte: () => Store.eventos,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi('prox', 'Próximos 30 dias', 'fa-calendar-day', '#c026d3', prox.length, `${prox.filter(e => e.participacao === 'Presença confirmada').length} com a Secretária`)}
+      ${kpi('prep', 'Em planejamento', 'fa-screwdriver-wrench', '#d97706', todos.filter(e => /^(planej|em prep)/.test(Utils_norm(e.situacao))).length, 'planejamento ou preparação')}
+      ${kpi('conf', 'Confirmados', 'fa-circle-check', '#0d9488', todos.filter(e => e.situacao === 'Confirmado').length, 'prontos para acontecer')}
+      ${kpi('real', 'Realizados', 'fa-flag-checkered', '#16a34a', todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length, `${todos.filter(e => /^(cancel|adiad)/.test(Utils_norm(e.situacao))).length} adiado(s) ou cancelado(s)`)}</div>`,
+    colunas: [
+      { key: 'titulo', rot: 'Evento', w: 300, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', render: e => `${esc(e.titulo)} ${evQuando(e)}`, validar: v => !String(v).trim() ? 'O nome do evento não pode ficar vazio.' : '' },
+      { key: 'dataInicio', rot: 'Início', w: 112, tipo: 'data', editavel: true, obrigatorio: true },
+      { key: 'dataFim', rot: 'Término', w: 112, tipo: 'data', editavel: true },
+      { key: 'hora', rot: 'Horário', w: 85, tipo: 'texto', editavel: true },
+      { key: 'municipio', rot: 'Município', w: 150, tipo: 'texto', editavel: true, lista: 'lista-mun', validar: validarMunicipio },
+      { key: 'local', rot: 'Local', w: 210, tipo: 'texto', editavel: true },
+      { key: 'organizador', rot: 'Secretaria responsável', w: 165, wCompacta: 140, tipo: 'texto', editavel: true, render: e => siglasEv(e.organizador) },
+      { key: 'publico', rot: 'Público / participantes', w: 190, tipo: 'texto', editavel: true },
+      { key: 'participacao', rot: 'Participação da Secretária', w: 190, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, k])), render: e => e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(e.participacao)}</span>` : '' },
+      { key: 'situacao', rot: 'Situação', w: 150, tipo: 'select', editavel: true, opcoes: () => Object.keys(SITUACOES_EV).map(k => [k, k]), render: e => pillEv(e.situacao) },
+      { key: 'responsavel', rot: 'Responsável na Assessoria', w: 180, tipo: 'texto', editavel: true, lista: 'lista-resp' },
+      { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true }
+    ],
+    compactas: ['titulo', 'dataInicio', 'municipio', 'participacao', 'situacao'],
+    larguraAcoes: 172,
+    ordemPadrao: (a, b) => (evEncerrado(a) - evEncerrado(b)) || (evFim(a) < hojeISO()) - (evFim(b) < hojeISO()) || String(a.dataInicio || '9').localeCompare(String(b.dataInicio || '9')),
+    classeLinha: e => evEncerrado(e) ? 'gs-feito' : '',
+    chips: [['', 'Todos', () => true, '#c026d3'], ['prox', 'Próximos 30 dias', e => evProximo(e), '#c026d3'], ['mes', 'Este mês', e => (e.dataInicio || '').slice(0, 7) === mes || (evFim(e).slice(0, 7) === mes), '#7c3aed'],
+            ['prep', 'Em planejamento', e => /^(planej|em prep)/.test(Utils_norm(e.situacao)), '#d97706'], ['conf', 'Confirmados', e => e.situacao === 'Confirmado', '#0d9488'],
+            ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada', '#16a34a'],
+            ['real', 'Realizados', e => /^realiz/.test(Utils_norm(e.situacao)), '#16a34a'], ['canc', 'Adiados/cancelados', e => /^(cancel|adiad)/.test(Utils_norm(e.situacao)), '#64748b']],
+    aoEditarCampos: editarEvCampos,
+    acoes: e => {
+      const p = PROX_SIT_EV[e.situacao || 'Planejamento'];
+      const btn = p && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${SITUACOES_EV[p[0]].cor}" onclick="editarEvCampos(Store.eventos.find(x=>x.id==='${e.id}'),{situacao:'${p[0]}'})"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(e.situacao || '')}</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormEvento('${e.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('eventos','${e.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    tituloLinha: e => e.titulo + ' · ' + evPeriodo(e),
+    menuAcoes: e => Object.keys(SITUACOES_EV).filter(s => s !== e.situacao).map(s => ({ rot: 'Situação: ' + s, ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', fn: () => editarEvCampos(e, { situacao: s }) }))
+      .concat([{ sep: true },
+               { rot: 'Secretária confirmou presença', ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', fn: () => editarEvCampos(e, { participacao: 'Presença confirmada' }) },
+               { rot: 'Incluir na Agenda da Secretária', ico: 'fa-calendar-plus', cor: '#0d9488', perm: 'agenda', fn: () => eventoParaAgenda(e) },
+               { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirFormEvento(e.id) },
+               { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: () => excluirEventoId(e.id) }]),
+    acoesLote: Object.keys(SITUACOES_EV).map(sitLote).concat([{ rot: 'Presença confirmada', ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', campos: () => ({ participacao: 'Presença confirmada' }) }]),
+    novaLinha: () => abrirFormEvento(), textoNovaLinha: 'Novo evento (abre o formulário)',
+    textoVazio: 'Nenhum evento cadastrado. Use "Novo evento" para organizar o primeiro.',
+    botaoNovo: `<button class="btn !h-9 text-white" style="background:#c026d3" onclick="abrirFormEvento()"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
+}
+function editarEvCampos(x, campos) {
+  const d = { ...x }; delete d.id;
+  Object.entries(campos).forEach(([k, v]) => { if (k === 'organizador') v = String(v).split(/\s*[,;]\s*/).filter(Boolean).map(s => SECRETARIAS.includes(s.toUpperCase()) ? s.toUpperCase() : s).join(', '); d[k] = v; });
+  if (d.dataFim && d.dataInicio && d.dataFim < d.dataInicio) { toast('A data de término não pode ser antes do início.', 'fa-triangle-exclamation'); return Promise.resolve(false); }
+  d.atualizadoEm = new Date().toISOString();
+  const rot = campos.situacao ? 'Situação → ' + campos.situacao : campos.participacao ? 'Participação → ' + campos.participacao : null;
+  return salvarEvento(x.id, d, rot);
+}
+function eventoParaAgenda(e) {
+  if (Store.agenda.some(a => a.titulo === e.titulo && a.data === e.dataInicio)) { toast('Este evento já está na Agenda.', 'fa-circle-info'); return; }
+  salvarAgenda(null, { titulo: e.titulo, data: e.dataInicio, hora: /^\d{1,2}:\d{2}$/.test(e.hora || '') ? e.hora : '', tipo: 'evento', local: e.local || '', municipio: e.municipio || '', obs: [e.publico, e.observacao].filter(Boolean).join(' · ') });
+  toast('Evento incluído na Agenda da Secretária.', 'fa-calendar-check');
+}
+function abrirFormEvento(id) {
+  if (!pode('gravar')) { toast('Seu perfil não cadastra eventos.', 'fa-lock'); return; }
+  const x = id ? Store.eventos.find(e => e.id === id) : { situacao: 'Planejamento', participacao: 'A confirmar' };
+  if (!x) return;
+  const secSel = String(x.organizador || '').split(/\s*,\s*/).map(s => s.toUpperCase());
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const bloco = (n, cor, tit, html) => `<section class="space-y-3"><div class="flex items-center gap-2.5">${num(n, cor)}<h4 class="text-[14px] font-bold">${tit}</h4></div><div class="space-y-3 pl-0 sm:pl-[38px]">${html}</div></section>`;
+  const rot = (t, html) => `<label class="block"><span class="rotulo !text-[12.5px]">${t}</span>${html}</label>`;
+  const opc = (grupo, lista, atual) => `<div class="flex flex-wrap gap-1.5">${lista.map(([k, cor]) => `<button type="button" class="chip ev-op ev-${grupo} ${k === atual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('.ev-${grupo}').forEach(b=>b.classList.toggle('ativo',b===this))">${esc(k)}</button>`).join('')}</div>`;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#3b0a3f;background-image:radial-gradient(600px 200px at 0% 0%, rgba(192,38,211,.4), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#c026d3"><i class="fa-solid fa-calendar-check"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-fuchsia-300">${id ? 'Editar' : 'Novo'}</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Evento da Secretaria de Educação</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-6" id="form-ev" onsubmit="event.preventDefault();salvarFormEvento('${id || ''}')">
+      ${bloco(1, '#c026d3', 'O evento', `
+        ${rot('Nome do evento *', `<input class="campo campo-g w-full" id="e-titulo" required value="${esc(x.titulo || '')}" placeholder="Ex.: Fórum Estadual de Educação">`)}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          ${rot('Início *', `<input type="date" class="campo w-full" id="e-ini" required value="${esc(x.dataInicio || '')}">`)}
+          ${rot('Término', `<input type="date" class="campo w-full" id="e-fim" value="${esc(x.dataFim || '')}">`)}
+          ${rot('Horário', `<input class="campo w-full" id="e-hora" value="${esc(x.hora || '')}" placeholder="08:00">`)}
+        </div>`)}
+      ${bloco(2, '#2563eb', 'Onde e quem organiza', `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${rot('Município', `<input class="campo w-full" id="e-mun" list="lista-mun" value="${esc(x.municipio || '')}" placeholder="Município de MT">`)}
+          ${rot('Local', `<input class="campo w-full" id="e-local" value="${esc(x.local || '')}" placeholder="Ex.: Centro de Eventos do Pantanal">`)}
+        </div>
+        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${SECRETARIAS.map(sg => `<button type="button" class="sec-btn sel-evsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${rot('Público / participantes', `<input class="campo w-full" id="e-publico" value="${esc(x.publico || '')}" placeholder="Ex.: 1.200 educadores">`)}
+          ${rot('Responsável na Assessoria', `<input class="campo w-full" id="e-resp" list="lista-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha o evento">`)}
+        </div>`)}
+      ${bloco(3, '#16a34a', 'Situação e participação', `
+        <div><span class="rotulo !text-[12.5px]">Situação</span>${opc('sit', Object.entries(SITUACOES_EV).map(([k, v]) => [k, v.cor]), x.situacao || 'Planejamento')}</div>
+        <div><span class="rotulo !text-[12.5px]">Participação da Secretária</span>${opc('part', Object.entries(PARTICIPACAO_EV), x.participacao || '')}</div>
+        ${rot('Observação', `<textarea class="campo w-full" rows="2" id="e-obs" placeholder="Pauta, necessidades de cerimonial, transporte…">${esc(x.observacao || '')}</textarea>`)}
+        ${!id && pode('agenda') ? `<label class="flex items-center gap-2 text-[13px] font-medium"><input type="checkbox" id="e-agenda" class="w-4 h-4"> Incluir também na Agenda da Secretária</label>` : ''}`)}
+      <p id="e-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('excluir') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirEventoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ev" id="btn-ev-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div></div>`, 'evento');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  setTimeout(() => $('e-titulo').focus(), 50);
+}
+async function salvarFormEvento(id) {
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const aviso = t => { const el = $('e-aviso'); el.textContent = t; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest' }); };
+  if (!v('e-titulo')) return aviso('Informe o nome do evento.');
+  if (!v('e-ini')) return aviso('Informe a data de início.');
+  if (v('e-fim') && v('e-fim') < v('e-ini')) return aviso('A data de término não pode ser antes do início.');
+  if (v('e-mun') && validarMunicipio(v('e-mun'))) return aviso(validarMunicipio(v('e-mun')));
+  const ativo = g => (document.querySelector('.ev-' + g + '.ativo') || {}).dataset?.v || '';
+  const antigo = id ? Store.eventos.find(e => e.id === id) : null;
+  const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString() }),
+    titulo: v('e-titulo'), dataInicio: v('e-ini'), dataFim: v('e-fim'), hora: v('e-hora'), municipio: v('e-mun'), local: v('e-local'),
+    organizador: chipsMarcados('evsec').join(', '), publico: v('e-publico'), responsavel: v('e-resp'),
+    situacao: ativo('sit') || 'Planejamento', participacao: ativo('part'), observacao: v('e-obs'), atualizadoEm: new Date().toISOString() };
+  const naAgenda = !id && $('e-agenda') && $('e-agenda').checked;
+  await salvarEvento(id || null, dados);
+  fecharModal();
+  if (naAgenda) eventoParaAgenda(dados);
+  toast(gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', 'fa-calendar-check');
+  if (abaAtual !== 'eventos') irPara('eventos');
 }
 
 /* ========================= Permissões na tela ========================= */
@@ -3168,7 +3524,7 @@ async function admManut(tipo, btn, flag) {
     } else if (tipo === 'exemplos') {
       const r = await API.post('admin_exemplos', { acao: flag ? 'remover' : 'gerar' }, 180000);
       const e = r.exemplos;
-      R.exemplos = `<span class="chip" style="--c:${flag ? '#64748b' : '#16a34a'}">${flag ? 'Removidos' : 'Criados'}: ${e.solicitacoes} solicitações · ${e.movimentacoes} movimentações · ${e.correicao} correições · ${e.agenda} compromissos</span>`;
+      R.exemplos = `<span class="chip" style="--c:${flag ? '#64748b' : '#16a34a'}">${flag ? 'Removidos' : 'Criados'}: ${e.solicitacoes} solicitações · ${e.movimentacoes} movimentações · ${e.correicao} correições · ${e.agenda} compromissos${e.eventos != null ? ` · ${e.eventos} eventos` : ""}</span>`;
       await sincronizar(true);
     } else if (tipo === 'painel') {
       await API.post('admin_atualizar_painel', {}, 120000); R.painel = 'Painel da planilha atualizado.';
