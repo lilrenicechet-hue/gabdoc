@@ -328,6 +328,41 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pers-barra[data-sujo] { border-color: #f59e0b; box-shadow: 0 0 0 3px color-mix(in srgb, #f59e0b 18%, transparent); }
   .pers-aviso { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #b45309; align-self: center; }
   .pers-barra[data-sujo] .pers-aviso { display: inline-flex; }
+  .sec-previa { border: 1.5px dashed var(--line); border-radius: 14px; padding: 12px 14px; background: color-mix(in srgb, var(--card2) 60%, var(--card)); }
+  .sec-chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 13px; font-weight: 800; color: var(--ink); box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+  .sec-chip svg, .sec-chip i { color: var(--c); }
+  .sec-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); transition: border-color .15s, opacity .15s; }
+  .sec-linha:hover { border-color: color-mix(in srgb, var(--brand) 35%, var(--line)); }
+  .sec-linha.inativa { opacity: .6; }
+  .sec-ordem { display: flex; flex-direction: column; gap: 2px; }
+  .sec-ordem button { width: 22px; height: 18px; display: grid; place-items: center; color: var(--ink3); font-size: 10px; border-radius: 5px; }
+  .sec-ordem button:hover:not(:disabled) { background: var(--card2); color: var(--ink); }
+  .sec-ordem button:disabled { opacity: .3; cursor: default; }
+  .sec-cor { position: relative; width: 36px; height: 36px; border-radius: 10px; background: var(--c); border: 2px solid color-mix(in srgb, var(--c) 55%, #fff); box-shadow: 0 0 0 1px var(--line); cursor: pointer; flex-shrink: 0; }
+  .sec-cor input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .sec-icone { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--card)); flex-shrink: 0; transition: transform .15s; }
+  .sec-icone:hover { transform: scale(1.06); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 40%, transparent); }
+  .sec-campo > span { display: block; font-size: 11.5px; font-weight: 700; color: var(--ink2); margin-bottom: 3px; }
+  .sec-campo .campo { height: 38px; }
+  .sec-uso { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #1d4ed8; background: color-mix(in srgb, #2563eb 10%, var(--card)); white-space: nowrap; align-self: center; margin-top: 16px; }
+  .sec-uso b { font-weight: 800; }
+  .sec-uso svg, .sec-uso i { font-size: 11px; opacity: .8; }
+  .sec-uso:hover:not(:disabled) { background: color-mix(in srgb, #2563eb 18%, var(--card)); }
+  .sec-uso:disabled { color: var(--ink3); background: var(--card2); cursor: default; }
+  .sec-uso:disabled svg, .sec-uso:disabled i { display: none; }
+  .sec-linha .pers-switch { margin-top: 16px; }
+  .sec-lixo { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: var(--ink3); margin-top: 16px; }
+  .sec-lixo:hover:not(:disabled) { color: #dc2626; background: color-mix(in srgb, #dc2626 10%, var(--card)); }
+  .sec-lixo:disabled { opacity: .35; cursor: not-allowed; }
+  .pers-icones { width: 280px; }
+  .pers-icones .grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 6px; }
+  #pers-icones.menu-acoes .grid button { width: auto; padding: 0; justify-content: center; gap: 0; font-size: 15px; }
+  .pers-icones .grid button { height: 38px; border-radius: 9px; display: grid; place-items: center; color: var(--ink2); }
+  .pers-icones .grid button:hover { background: var(--card2); color: var(--c); }
+  .pers-icones .grid button.on { background: color-mix(in srgb, var(--c) 16%, var(--card)); color: var(--c); box-shadow: inset 0 0 0 1.5px var(--c); }
+  :root[data-theme="dark"] .sec-uso:not(:disabled) { color: #93c5fd; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sec-uso:not(:disabled) { color: #93c5fd; } }
+  @media (max-width: 640px) { .sec-uso, .sec-linha .pers-switch, .sec-lixo { margin-top: 0; } }
   .pers-cor { width: 34px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; }
   .pers-sec td { vertical-align: middle; }
   .pers-switch { position: relative; display: inline-block; width: 38px; height: 22px; cursor: pointer; }
@@ -436,12 +471,14 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .sec-btn { height: 46px; border-radius: 12px; border: 1.5px solid color-mix(in srgb, var(--c) 30%, var(--line)); background: color-mix(in srgb, var(--c) 5%, var(--card)); color: color-mix(in srgb, var(--c) 85%, var(--ink)); font-weight: 900; font-size: 14px; letter-spacing: .06em; display: inline-flex; align-items: center; justify-content: center; gap: 0; transition: background .15s, color .15s, transform .15s, box-shadow .15s; }
   .sec-btn { position: relative; overflow: hidden; }
   /* O ✓ escondido não pode receber cliques (com largura 0 o ícone SVG ocupava uma área invisível enorme) */
-  .sec-btn svg, .sec-btn i { width: 0; opacity: 0; pointer-events: none; transition: width .15s, opacity .15s, margin .15s; }
-  .sec-btn:not(.ativo) svg, .sec-btn:not(.ativo) i { visibility: hidden; }
+  .sec-btn svg, .sec-btn i { pointer-events: none; }
+  .sec-btn .sec-chk { width: 0; opacity: 0; transition: width .15s, opacity .15s, margin .15s; }
+  .sec-btn:not(.ativo) .sec-chk { visibility: hidden; }
+  .sec-btn .sec-ico { width: 14px; margin-right: 7px; opacity: .9; }
   .sec-btn svg *, .ev-op svg *, .novo-side svg *, .nav-btn svg * { pointer-events: none; }
   .sec-btn:hover { transform: translateY(-1px); }
   .sec-btn.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
-  .sec-btn.ativo svg, .sec-btn.ativo i { width: 12px; opacity: 1; margin-right: 6px; }
+  .sec-btn.ativo .sec-chk { width: 11px; opacity: 1; margin-right: 5px; }
   .atalho { height: 30px; padding: 0 11px; border-radius: 99px; border: 1px solid color-mix(in srgb, #d97706 30%, var(--line)); background: color-mix(in srgb, #d97706 7%, var(--card)); color: color-mix(in srgb, #d97706 80%, var(--ink)); font-size: 12px; font-weight: 700; }
   .atalho:hover { background: color-mix(in srgb, #d97706 16%, var(--card)); }
   .switch-card { position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); cursor: pointer; transition: border-color .15s, background .15s; }
@@ -960,7 +997,7 @@ const TIPOS_AGENDA = {
   outro:     { rot: 'Outro',      cor: '#64748b' }
 };
 const UNIDADES = ['Gabinete da Secretária', 'Secretaria Adjunta de Gestão Educacional', 'Secretaria Adjunta de Gestão de Pessoas', 'Secretaria Adjunta de Administração Sistêmica', 'Secretaria Adjunta de Infraestrutura e Patrimônio', 'Secretaria Adjunta Executiva', 'Assessoria Jurídica', 'Unidade de Controle Interno', 'Coordenadoria de Transporte Escolar', 'Coordenadoria de Alimentação Escolar', 'Diretoria Regional de Educação', 'Casa Civil', 'Prefeitura Municipal', 'Assembleia Legislativa', 'Ministério Público', 'Tribunal de Contas do Estado'];
-const SECRETARIAS = ['SAGE', 'SAAS', 'SAIP', 'SAEX', 'GS', 'SAGR', 'SAGP', 'SARC'];
+const SECRETARIAS = ['GS', 'SAEX', 'SAGE', 'SAGP', 'SAIP', 'SAGR', 'SARC', 'SAAS'];
 const FEITO = s => s.status === 'assinado' || s.status === 'expedido';
 const CC_ATIVO = s => s.casaCivil && s.ccEtapa !== 'concluido';
 
@@ -2207,7 +2244,15 @@ function fecharModal() { modalAberto = null; $('modal-raiz').innerHTML = ''; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalAberto && modalAberto.tipo !== 'senha-obrigatoria') fecharModal(); });
 const copia = s => { const o = JSON.parse(JSON.stringify(s)); delete o.id; return o; };
 
-const COR_SEC = { SAGE: '#2563eb', SAAS: '#0891b2', SAIP: '#d97706', SAEX: '#7c3aed', GS: '#e11d48', SAGR: '#16a34a', SAGP: '#db2777', SARC: '#4f46e5' };
+const COR_SEC = { GS: '#334155', SAEX: '#2563eb', SAGE: '#7c3aed', SAGP: '#059669', SAIP: '#db2777', SAGR: '#d97706', SARC: '#0891b2', SAAS: '#4f46e5' };
+/** Ícone de cada secretaria (editável em Administração › Personalização). */
+const ICO_SEC_PADRAO = { GS: 'fa-landmark', SAEX: 'fa-sitemap', SAGE: 'fa-graduation-cap', SAGP: 'fa-users-gear', SAIP: 'fa-network-wired', SAGR: 'fa-building-shield', SARC: 'fa-file-signature', SAAS: 'fa-hands-holding-child' };
+const ICO_SEC = { ...ICO_SEC_PADRAO };
+const icoSec = sg => ICO_SEC[sg] || 'fa-building-columns';
+/** Botão de secretaria dos formulários: ícone + sigla (✓ quando marcado). */
+function botaoSec(sg, ativo, grupo) {
+  return `<button type="button" title="${esc(NOME_SEC[sg] || sg)}" class="sec-btn sel-${grupo} ${ativo ? 'ativo' : ''}" style="--c:${COR_SEC[sg] || '#64748b'}" data-v="${sg}" aria-pressed="${ativo}" onclick="alternarChip(this)"><i class="fa-solid fa-check sec-chk"></i><i class="fa-solid ${icoSec(sg)} sec-ico"></i>${sg}</button>`;
+}
 function abrirForm(id, pre = {}) {
   if (!pode('gravar')) { toast('Seu perfil (' + Store.sessao.perfil + ') não cadastra nem edita solicitações.', 'fa-lock'); return; }
   const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: somaDias(5), urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
@@ -2264,7 +2309,7 @@ function abrirForm(id, pre = {}) {
 
       ${passo(2, '#0d9488', 'De onde vem e quem pediu', 'Toque nas secretarias envolvidas: pode marcar várias.', `
         <div class="sec-grade" id="s-secretarias">
-          ${botoesSiglas(secSel).map(sg => `<button type="button" title="${esc(NOME_SEC[sg] || sg)}" class="sec-btn sel-sec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}
+          ${botoesSiglas(secSel).map(sg => botaoSec(sg, secSel.includes(sg), 'sec')).join('')}
         </div>
         <input class="campo w-full" id="s-origem-outra" value="${esc(outraOrigem)}" placeholder="Outra unidade de origem (opcional)" aria-label="Outra unidade de origem">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -3366,7 +3411,7 @@ function abrirFormEvento(id) {
           ${rot('Município', `<input class="campo w-full" id="e-mun" list="lista-mun" value="${esc(x.municipio || '')}" placeholder="Município de MT">`)}
           ${rot('Local', `<input class="campo w-full" id="e-local" value="${esc(x.local || '')}" placeholder="Ex.: Centro de Eventos do Pantanal">`)}
         </div>
-        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => `<button type="button" title="${esc(NOME_SEC[sg] || sg)}" class="sec-btn sel-evsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
+        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => botaoSec(sg, secSel.includes(sg), 'evsec')).join('')}</div></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           ${rot('Público / participantes', `<input class="campo w-full" id="e-publico" value="${esc(x.publico || '')}" placeholder="Ex.: 1.200 educadores">`)}
           ${rot('Responsável na Assessoria', `<input class="campo w-full" id="e-resp" list="lista-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha o evento">`)}
@@ -3541,7 +3586,7 @@ function abrirFormComunicado(id) {
         ${rot('Texto do comunicado', `<textarea class="campo w-full !h-auto py-2" rows="6" id="m-conteudo" placeholder="Escreva a informação completa: o que é, quem deve fazer, até quando.">${esc(x.conteudo || '')}</textarea>`)}
         ${rot('Referência / link', `<input class="campo w-full" id="m-ref" value="${esc(x.referencia || '')}" placeholder="Nº SIGADOC, publicação no Diário Oficial ou link">`)}`)}
       ${bloco(3, '#16a34a', 'Publicação', `
-        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => `<button type="button" class="sec-btn sel-comsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" title="${esc(NOME_SEC[sg] || sg)}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
+        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => botaoSec(sg, secSel.includes(sg), 'comsec')).join('')}</div></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           ${rot('Publicado em', `<input type="date" class="campo w-full" id="m-pub" value="${esc(x.publicadoEm || hojeISO())}">`)}
           ${rot('Válido até', `<input type="date" class="campo w-full" id="m-val" value="${esc(x.validoAte || '')}">`)}
@@ -3607,7 +3652,7 @@ function faixaComunicadosPainel() {
 const slugRot = s => Utils_norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 const Pers = { rotulos: {}, secretarias: null, unidades: null, atualizadoEm: '', atualizadoPor: '' };
 const NOMES_SEC_PADRAO = { SAGE: 'Secretaria Adjunta de Gestão Educacional', SAAS: 'Secretaria Adjunta de Administração Sistêmica', SAIP: 'Secretaria Adjunta de Infraestrutura e Patrimônio', SAEX: 'Secretaria Adjunta Executiva', GS: 'Gabinete da Secretária', SAGP: 'Secretaria Adjunta de Gestão de Pessoas' };
-const PADRAO_SECRETARIAS = SECRETARIAS.map(s => ({ sigla: s, nome: NOMES_SEC_PADRAO[s] || '', cor: COR_SEC[s], ativa: true }));
+const PADRAO_SECRETARIAS = SECRETARIAS.map(s => ({ sigla: s, nome: NOMES_SEC_PADRAO[s] || '', cor: COR_SEC[s], icone: ICO_SEC_PADRAO[s], ativa: true }));
 const NOME_SEC = {};
 const PADRAO_FIXO = {
   status: Object.fromEntries(Object.entries(STATUS).map(([k, v]) => [k, v.rot])),
@@ -3668,9 +3713,9 @@ function aplicarPersonalizacao(p) {
   Object.keys(ETAPAS_CC).forEach(k => { ETAPAS_CC[k].rot = L('cc.' + k); });
   // secretarias adjuntas
   const lista = Array.isArray(p.secretarias) && p.secretarias.length ? p.secretarias : PADRAO_SECRETARIAS;
-  Pers.secretarias = lista.map(s => ({ sigla: String(s.sigla || '').toUpperCase(), nome: s.nome || '', cor: s.cor || '#64748b', ativa: s.ativa !== false })).filter(s => s.sigla);
+  Pers.secretarias = lista.map(s => { const sg = String(s.sigla || '').toUpperCase(); return { sigla: sg, nome: s.nome || '', cor: s.cor || '#64748b', icone: s.icone || ICO_SEC_PADRAO[sg] || 'fa-building-columns', ativa: s.ativa !== false }; }).filter(s => s.sigla);
   SECRETARIAS.length = 0;
-  Pers.secretarias.forEach(s => { COR_SEC[s.sigla] = s.cor; NOME_SEC[s.sigla] = s.nome; if (s.ativa) SECRETARIAS.push(s.sigla); });
+  Pers.secretarias.forEach(s => { COR_SEC[s.sigla] = s.cor; NOME_SEC[s.sigla] = s.nome; ICO_SEC[s.sigla] = s.icone; if (s.ativa) SECRETARIAS.push(s.sigla); });
   if (Array.isArray(p.unidades) && p.unidades.length) { Pers.unidades = p.unidades; const dl = $('lista-unid'); if (dl) dl.innerHTML = p.unidades.map(n => `<option value="${esc(n)}">`).join(''); }
   // nomes no menu (seções por tipo)
   SECOES_DOC.forEach(d => { const b = document.querySelector(`.nav-btn[data-tab="doc:${d.tipo}"] span:not(.nav-badge)`); if (b) b.textContent = nomeSecaoDoc(d); });
@@ -3793,7 +3838,7 @@ const persEd = { dados: null, grupo: 'filtros', sujo: false, salvando: false };
 function persIniciar(p) {
   persEd.dados = { secretarias: JSON.parse(JSON.stringify(p.secretarias && p.secretarias.length ? p.secretarias : PADRAO_SECRETARIAS)),
                    rotulos: { ...(p.rotulos || {}) }, unidades: (p.unidades || UNIDADES).slice() };
-  persEd.dados.secretarias.forEach(s => { if (!s.nome && NOME_SEC[s.sigla]) s.nome = NOME_SEC[s.sigla]; });
+  persEd.dados.secretarias.forEach(s => { if (!s.nome && NOME_SEC[s.sigla]) s.nome = NOME_SEC[s.sigla]; if (!s.icone) s.icone = icoSec(s.sigla); });
   persEd.sujo = false;
 }
 function persMarcar() { persEd.sujo = true; const b = $('pers-barra'); if (b) b.dataset.sujo = '1'; }
@@ -3804,16 +3849,72 @@ function persSec(i, campo, valor) {
   const s = persEd.dados.secretarias[i]; if (!s) return;
   s[campo] = campo === 'sigla' ? String(valor).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10) : valor;
   persMarcar();
-  if (campo === 'sigla' || campo === 'cor' || campo === 'ativa') { const p = $('pers-prev-' + i); if (p) { p.style.setProperty('--c', s.cor); p.textContent = s.sigla || '?'; p.classList.toggle('opacity-40', !s.ativa); } }
+  if (campo === 'cor') ['pers-cor-' + i, 'pers-ico-' + i].forEach(id => { const el = $(id); if (el) el.style.setProperty('--c', s.cor); });
+  const pv = $('pers-previa'); if (pv) pv.innerHTML = persPrevia();
   if (campo === 'sigla') { const inp = document.querySelector(`[data-sec-sigla="${i}"]`); if (inp && inp.value !== s.sigla) inp.value = s.sigla; }
 }
-function persSecNova() { persEd.dados.secretarias.push({ sigla: '', nome: '', cor: ['#0ea5e9', '#84cc16', '#f43f5e', '#a855f7', '#14b8a6', '#f59e0b'][persEd.dados.secretarias.length % 6], ativa: true }); persMarcar(); renderAdmin(); setTimeout(() => { const l = document.querySelectorAll('[data-sec-sigla]'); l[l.length - 1]?.focus(); }, 30); }
+function persSecNova() { persEd.dados.secretarias.push({ sigla: '', nome: '', cor: ['#0ea5e9', '#84cc16', '#f43f5e', '#a855f7', '#14b8a6', '#f59e0b'][persEd.dados.secretarias.length % 6], icone: 'fa-building-columns', ativa: true }); persMarcar(); renderAdmin(); setTimeout(() => { const l = document.querySelectorAll('[data-sec-sigla]'); l[l.length - 1]?.focus(); }, 30); }
 function persSecMover(i, d) { const L2 = persEd.dados.secretarias, j = i + d; if (j < 0 || j >= L2.length) return; [L2[i], L2[j]] = [L2[j], L2[i]]; persMarcar(); renderAdmin(); }
-function persSecRemover(i, btn) {
+function persSecRemover(i) { if (usosSigla(persEd.dados.secretarias[i].sigla)) return; persEd.dados.secretarias.splice(i, 1); persMarcar(); renderAdmin(); }
+const SIGLA_SPLIT = /\s*[,;]\s*/;
+/** Registros que usam a sigla: solicitações (origem), eventos (organizador) e comunicados (secretaria). */
+function registrosSigla(sg) {
+  const tem = v => String(v || '').toUpperCase().split(SIGLA_SPLIT).includes(sg);
+  return { sol: Store.sol.filter(x => tem(x.origem)), ev: (Store.eventos || []).filter(x => tem(x.organizador)), com: (Store.comunicados || []).filter(x => tem(x.secretaria)) };
+}
+function usosSigla(sg) { if (!sg) return 0; const r = registrosSigla(sg); return r.sol.length + r.ev.length + r.com.length; }
+function persPrevia() {
+  const ativas = persEd.dados.secretarias.filter(s => s.ativa && s.sigla);
+  return `<p class="text-[11.5px] font-semibold text-ink3 mb-2">Como aparece no cadastro</p><div class="flex flex-wrap gap-2">${ativas.map(s => `<span class="sec-chip" style="--c:${esc(s.cor)}" title="${esc(s.nome || s.sigla)}"><i class="fa-solid ${esc(s.icone || icoSec(s.sigla))}"></i>${esc(s.sigla)}</span>`).join('') || '<span class="text-[12px] text-ink3">Nenhuma secretaria ativa.</span>'}</div>`;
+}
+function persSecPadrao(btn) {
+  if (!btn.dataset.conf) { btn.dataset.conf = '1'; btn.lastChild.textContent = 'Confirmar: restaurar'; setTimeout(() => { if (btn.isConnected) { delete btn.dataset.conf; btn.lastChild.textContent = 'Restaurar padrão'; } }, 4000); return; }
+  persEd.dados.secretarias = JSON.parse(JSON.stringify(PADRAO_SECRETARIAS)); persMarcar(); renderAdmin();
+  toast('Secretarias voltaram ao padrão. Clique em "Salvar personalização" para aplicar.', 'fa-rotate-left');
+}
+const ICONES_SEC = ['fa-landmark', 'fa-sitemap', 'fa-graduation-cap', 'fa-users-gear', 'fa-network-wired', 'fa-building-shield', 'fa-file-signature', 'fa-hands-holding-child',
+  'fa-building-columns', 'fa-school', 'fa-book-open-reader', 'fa-chalkboard-user', 'fa-user-tie', 'fa-people-group', 'fa-scale-balanced', 'fa-coins', 'fa-calculator', 'fa-truck',
+  'fa-bus', 'fa-utensils', 'fa-laptop-code', 'fa-shield-halved', 'fa-briefcase', 'fa-clipboard-list', 'fa-handshake', 'fa-bullhorn', 'fa-map-location-dot', 'fa-hammer',
+  'fa-helmet-safety', 'fa-heart-pulse', 'fa-leaf', 'fa-globe', 'fa-gavel', 'fa-chart-line', 'fa-envelope-open-text', 'fa-star'];
+function persIcones(i, btn) {
+  fecharIcones();
   const s = persEd.dados.secretarias[i];
-  const usos = Store.sol.filter(x => String(x.origem || '').split(/\s*,\s*/).includes(s.sigla)).length;
-  if (usos && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.title = `${usos} registro(s) usam ${s.sigla}. Clique de novo para remover (os registros mantêm a sigla como texto). Dica: desmarque "Ativa" para só esconder.`; btn.classList.add('!bg-red-600', '!text-white'); toast(btn.title, 'fa-triangle-exclamation'); return; }
-  persEd.dados.secretarias.splice(i, 1); persMarcar(); renderAdmin();
+  const m = document.createElement('div'); m.id = 'pers-icones'; m.className = 'menu-acoes pers-icones';
+  m.innerHTML = `<p class="menu-tit">Ícone de ${esc(s.sigla || 'secretaria')}</p><div class="grid grid-cols-6 gap-1 p-1">${ICONES_SEC.map(ic => `<button type="button" class="${ic === (s.icone || icoSec(s.sigla)) ? 'on' : ''}" style="--c:${esc(s.cor)}" title="${ic.replace('fa-', '')}" onclick="persIcone(${i},'${ic}')"><i class="fa-solid ${ic}"></i></button>`).join('')}</div>`;
+  document.body.appendChild(m);
+  const r = btn.getBoundingClientRect(), h = m.offsetHeight;
+  m.style.top = (r.bottom + 6 + h > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+  m.style.left = Math.max(8, Math.min(innerWidth - m.offsetWidth - 8, r.left)) + 'px';
+}
+function fecharIcones() { const m = $('pers-icones'); if (m) m.remove(); }
+function persIcone(i, ic) { persEd.dados.secretarias[i].icone = ic; fecharIcones(); persMarcar(); renderAdmin(); }
+document.addEventListener('mousedown', e => { if ($('pers-icones') && !e.target.closest('#pers-icones, .sec-icone')) fecharIcones(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharIcones(); });
+/** Transfere os registros de uma sigla para outra (ex.: quando uma secretaria é extinta ou renomeada). */
+function persTransferir(i) {
+  const de = persEd.dados.secretarias[i].sigla, r = registrosSigla(de), n = r.sol.length + r.ev.length + r.com.length;
+  if (!n) return;
+  const destinos = persEd.dados.secretarias.filter(s => s.sigla && s.sigla !== de);
+  abrirModal(`<div class="modal-topo"><div><h3 class="text-[17px] font-bold flex items-center gap-2"><i class="fa-solid fa-right-left text-blue-500"></i>Transferir registros de ${esc(de)}</h3>
+      <p class="text-[12.5px] text-ink3 mt-1">${r.sol.length} solicitação(ões) ou processo(s) · ${r.ev.length} evento(s) · ${r.com.length} comunicado(s)</p></div>
+      <button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button></div>
+    <div class="modal-corpo space-y-3"><p class="text-[13px] text-ink2">Escolha para qual secretaria esses registros passam. A sigla <b>${esc(de)}</b> é trocada em todos eles; o histórico de cada solicitação registra a mudança.</p>
+      <div class="sec-grade">${destinos.map(s => `<button type="button" class="sec-btn sel-transf" style="--c:${esc(s.cor)}" data-v="${esc(s.sigla)}" onclick="document.querySelectorAll('.sel-transf').forEach(b=>b.classList.toggle('ativo',b===this))"><i class="fa-solid fa-check sec-chk"></i><i class="fa-solid ${esc(s.icone || icoSec(s.sigla))} sec-ico"></i>${esc(s.sigla)}</button>`).join('')}</div>
+      <p class="text-[11.5px] text-ink3"><i class="fa-solid fa-circle-info mr-1"></i>A gravação segue em segundo plano. Depois, se quiser, desative ou remova ${esc(de)}.</p></div>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri" onclick="persConfirmarTransf('${esc(de)}')"><i class="fa-solid fa-right-left"></i>Transferir ${n} registro(s)</button></div>`, 'transferir');
+}
+function persConfirmarTransf(de) {
+  const alvo = (document.querySelector('.sel-transf.ativo') || {}).dataset?.v;
+  if (!alvo) return toast('Escolha a secretaria de destino.', 'fa-triangle-exclamation');
+  const troca = v => { const partes = String(v || '').split(SIGLA_SPLIT).filter(Boolean).map(x => x.toUpperCase() === de ? alvo : x); return [...new Set(partes)].join(', '); };
+  const r = registrosSigla(de);
+  emLote(() => {
+    r.sol.forEach(x => editarSolCampos(x, { origem: troca(x.origem) }));
+    r.ev.forEach(x => editarEvCampos(x, { organizador: troca(x.organizador) }));
+    r.com.forEach(x => editarComCampos(x, { secretaria: troca(x.secretaria) }));
+  });
+  fecharModal(); renderAdmin();
+  toast(`${r.sol.length + r.ev.length + r.com.length} registro(s) passando de ${de} para ${alvo} · salvando em segundo plano.`, 'fa-right-left');
 }
 function persDescartar() { persEd.dados = null; admEstado.pers = null; renderAdmin(); }
 async function persSalvar() {
@@ -3840,7 +3941,6 @@ function renderPersonalizacao(c) {
   if (!persEd.dados) persIniciar(admEstado.pers);
   const d = persEd.dados, grupos = gruposRotulos(), g = grupos.find(x => x.id === persEd.grupo) || grupos[0];
   const contaMud = gr => gr.itens.filter(([k]) => d.rotulos[k]).length;
-  const usos = sg => Store.sol.filter(x => String(x.origem || '').split(/\s*,\s*/).includes(sg)).length + (Store.eventos || []).filter(x => String(x.organizador || '').toUpperCase().split(/\s*,\s*/).includes(sg)).length;
   c.innerHTML = `
     <div class="pers-barra" id="pers-barra" ${persEd.sujo ? 'data-sujo="1"' : ''}>
       <div class="min-w-0"><p class="font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-fuchsia-500"></i>Personalização do sistema</p>
@@ -3851,22 +3951,25 @@ function renderPersonalizacao(c) {
     </div>
 
     <div class="dv-card">
-      <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#2563eb"><i class="fa-solid fa-sitemap"></i></span>Secretarias adjuntas</h3><p>Os botões de secretaria dos formulários, as siglas coloridas das planilhas e o filtro por secretaria seguem esta lista.</p></div>
-        <button class="btn btn-sec !h-9" onclick="persSecNova()"><i class="fa-solid fa-plus"></i>Nova secretaria</button></div>
-      <div class="overflow-x-auto scrollbar-thin"><table class="tabela pers-sec"><thead><tr><th class="w-10"></th><th>Cor</th><th>Sigla</th><th>Nome completo</th><th class="n">Em uso</th><th>Ativa</th><th></th></tr></thead><tbody>
-        ${d.secretarias.map((s, i) => `<tr>
-          <td><span class="gs-sigla ${s.ativa ? '' : 'opacity-40'}" id="pers-prev-${i}" style="--c:${esc(s.cor)}">${esc(s.sigla || '?')}</span></td>
-          <td><input type="color" class="pers-cor" value="${esc(s.cor)}" oninput="persSec(${i},'cor',this.value)" aria-label="Cor de ${esc(s.sigla)}"></td>
-          <td><input class="campo w-28 font-bold uppercase" data-sec-sigla="${i}" value="${esc(s.sigla)}" maxlength="10" placeholder="SIGLA" oninput="persSec(${i},'sigla',this.value)" aria-label="Sigla"></td>
-          <td><input class="campo w-full min-w-[240px]" value="${esc(s.nome || '')}" placeholder="Ex.: Secretaria Adjunta de Gestão Educacional" oninput="persSec(${i},'nome',this.value)" aria-label="Nome da secretaria"></td>
-          <td class="n text-[12px] text-ink3">${s.sigla ? usos(s.sigla) : '—'}</td>
-          <td><label class="pers-switch"><input type="checkbox" ${s.ativa ? 'checked' : ''} onchange="persSec(${i},'ativa',this.checked)"><span></span></label></td>
-          <td><div class="flex gap-1 justify-end">
-            <button class="gs-ico" title="Subir" onclick="persSecMover(${i},-1)" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
-            <button class="gs-ico" title="Descer" onclick="persSecMover(${i},1)" ${i === d.secretarias.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
-            <button class="gs-ico" title="Remover" onclick="persSecRemover(${i}, this)"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('')}
-      </tbody></table></div>
-      <p class="text-[11.5px] text-ink3 mt-2"><i class="fa-solid fa-circle-info mr-1"></i>Desativar esconde a secretaria dos formulários sem mexer nos registros antigos. Ao renomear uma sigla, os registros antigos continuam com a sigla anterior.</p>
+      <div class="min-w-0 mb-3"><h3 class="text-[17px] font-extrabold">Secretarias adjuntas</h3>
+        <p class="text-[12.5px] text-ink3 mt-0.5 leading-relaxed">Aparecem no cadastro de processos, nos eventos, nos comunicados, nos filtros e nas planilhas.<br>Desativar esconde das escolhas sem apagar o histórico.</p></div>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-pri !h-10" onclick="persSecNova()"><i class="fa-solid fa-plus"></i>Nova secretaria</button>
+        <button class="btn btn-sec !h-10" onclick="persSecPadrao(this)"><i class="fa-solid fa-rotate-left"></i>Restaurar padrão</button>
+      </div>
+      <div class="sec-previa" id="pers-previa">${persPrevia()}</div>
+      <div class="space-y-2 mt-3">
+        ${d.secretarias.map((s, i) => { const n = s.sigla ? usosSigla(s.sigla) : 0; return `<div class="sec-linha ${s.ativa ? '' : 'inativa'}">
+          <div class="sec-ordem"><button type="button" title="Subir" onclick="persSecMover(${i},-1)" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-up"></i></button><button type="button" title="Descer" onclick="persSecMover(${i},1)" ${i === d.secretarias.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-down"></i></button></div>
+          <label class="sec-cor" style="--c:${esc(s.cor)}" id="pers-cor-${i}" title="Escolher a cor"><input type="color" value="${esc(s.cor)}" oninput="persSec(${i},'cor',this.value)" aria-label="Cor de ${esc(s.sigla)}"></label>
+          <button type="button" class="sec-icone" style="--c:${esc(s.cor)}" id="pers-ico-${i}" title="Escolher o ícone" onclick="persIcones(${i}, this)"><i class="fa-solid ${esc(s.icone || icoSec(s.sigla))}"></i></button>
+          <label class="sec-campo w-28 sm:w-32 flex-shrink-0"><span>Sigla</span><input class="campo w-full" data-sec-sigla="${i}" value="${esc(s.sigla)}" maxlength="10" placeholder="SIGLA" oninput="persSec(${i},'sigla',this.value)"></label>
+          <label class="sec-campo flex-1 min-w-[160px]"><span>Nome completo</span><input class="campo w-full" value="${esc(s.nome || '')}" placeholder="Nome por extenso (opcional)" oninput="persSec(${i},'nome',this.value)"></label>
+          <button type="button" class="sec-uso" ${n ? '' : 'disabled'} title="${n ? 'Transferir estes registros para outra secretaria' : 'Nenhum registro usa esta sigla'}" onclick="persTransferir(${i})"><b>${n}</b> em uso<i class="fa-solid fa-right-left"></i></button>
+          <label class="pers-switch" title="${s.ativa ? 'Ativa' : 'Inativa'}"><input type="checkbox" ${s.ativa ? 'checked' : ''} onchange="persSec(${i},'ativa',this.checked);this.closest('.sec-linha').classList.toggle('inativa',!this.checked)" aria-label="Ativa"><span></span></label>
+          <button type="button" class="sec-lixo" ${n ? 'disabled' : ''} title="${n ? `Em uso por ${n} registro(s): transfira os registros ou desative` : 'Remover'}" onclick="persSecRemover(${i})"><i class="fa-solid fa-trash"></i></button>
+        </div>`; }).join('')}
+      </div>
     </div>
 
     <div class="dv-card">
