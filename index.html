@@ -205,6 +205,132 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .modal-corpo { padding: 16px 20px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
   .modal-topo, .modal-rodape, .form-hero { flex-shrink: 0; }
   .modal-rodape { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  /* Botões de criação com ícone */
+  .btn-novo { background: color-mix(in srgb, var(--c) 18%, transparent); color: #fff; border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); padding-left: 6px; }
+  .btn-novo:hover { background: color-mix(in srgb, var(--c) 32%, transparent); }
+  .novo-ico { width: 24px; height: 24px; border-radius: 7px; background: var(--c); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; }
+  .novo-side { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px; border-radius: 12px; text-align: left; font-size: 11.5px; font-weight: 700; line-height: 1.15; color: #e2e8f0; background: color-mix(in srgb, var(--c) 14%, transparent); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); transition: background .15s, transform .15s; }
+  .novo-side:hover { background: color-mix(in srgb, var(--c) 26%, transparent); transform: translateY(-1px); }
+  .novo-side svg, .novo-side i { width: 28px; height: 28px; padding: 7px; border-radius: 8px; background: var(--c); color: #fff; box-sizing: border-box; }
+  .hero-icos { display: flex; gap: 6px; flex-shrink: 0; }
+  .hero-icos span { width: 42px; height: 42px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; background: var(--c); box-shadow: 0 8px 20px -8px var(--c); opacity: .35; transition: opacity .2s; }
+  .hero-icos span.on { opacity: 1; }
+  /* Planilha estilo Google Sheets */
+  .gs-barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px; flex-shrink: 0; }
+  .gs-caixa { flex: 1 1 auto; min-height: 260px; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px 12px 0 0; outline: none; position: relative; }
+  .gs-caixa:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent); }
+  table.gs { border-collapse: separate; border-spacing: 0; table-layout: fixed; font-size: 12.5px; color: var(--ink); }
+  table.gs th, table.gs td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 0 8px; height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+  table.gs thead th { position: sticky; z-index: 3; background: var(--card2); font-weight: 700; }
+  table.gs thead tr.gs-letras th { top: 0; height: 22px; font-size: 10.5px; color: var(--ink3); text-align: center; font-weight: 600; }
+  table.gs thead tr.gs-letras th.gs-col-sel { background: color-mix(in srgb, var(--brand) 22%, var(--card2)); color: var(--ink); }
+  table.gs thead tr:nth-child(2) th { top: 22px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink2); cursor: pointer; user-select: none; }
+  table.gs thead tr.gs-filtros th { top: 54px; padding: 3px 4px; background: var(--card); }
+  table.gs th.gs-cab > span { display: inline-block; max-width: calc(100% - 26px); vertical-align: middle; }
+  table.gs th.gs-cab svg, table.gs th.gs-cab i { margin-left: 4px; vertical-align: middle; }
+  table.gs th.gs-cab:hover { background: color-mix(in srgb, var(--brand) 10%, var(--card2)); }
+  table.gs th.ordenado { color: var(--brand); }
+  .gs-filtro { width: 100%; height: 26px; border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; font-size: 12px; background: var(--card); color: var(--ink); }
+  table.gs .gs-num, table.gs .gs-canto { position: sticky; left: 0; z-index: 2; background: var(--card2); text-align: center; color: var(--ink3); font-size: 11px; padding: 0 2px; }
+  table.gs thead .gs-canto, table.gs thead .gs-num { z-index: 4; }
+  table.gs td.gs-num { position: sticky; }
+  table.gs td.gs-num .gs-abrir { display: none; color: var(--brand); width: 100%; height: 100%; }
+  table.gs tr:hover td.gs-num span { display: none; }
+  table.gs tr:hover td.gs-num .gs-abrir { display: inline-block; }
+  table.gs tbody tr:hover td { background: color-mix(in srgb, var(--brand) 4%, var(--card)); }
+  table.gs tbody tr.gs-linha-sel td.gs-num { background: color-mix(in srgb, var(--brand) 22%, var(--card2)); color: var(--ink); font-weight: 700; }
+  table.gs td.gs-cel { cursor: cell; background: var(--card); }
+  table.gs td.gs-cel.ed:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand) 35%, transparent); }
+  table.gs td.gs-sel { box-shadow: inset 0 0 0 2px #1a73e8 !important; background: color-mix(in srgb, #1a73e8 6%, var(--card)) !important; }
+  table.gs td.gs-editando { padding: 0; box-shadow: inset 0 0 0 2px #1a73e8; overflow: visible; }
+  .gs-editor { width: 100%; height: 31px; border: 0; padding: 0 8px; font: inherit; color: var(--ink); background: var(--card); outline: none; }
+  table.gs td.gs-check { text-align: center; }
+  table.gs td.gs-check input { width: 16px; height: 16px; accent-color: #1a73e8; cursor: pointer; vertical-align: middle; }
+  table.gs tr.gs-urg td.gs-cel { background: color-mix(in srgb, var(--urg) 6%, var(--card)); }
+  table.gs tr.gs-urg td.gs-num { box-shadow: inset 3px 0 0 var(--urg); }
+  table.gs tr.gs-feito td.gs-cel { color: var(--ink3); }
+  table.gs .gs-forte { font-weight: 700; }
+  table.gs tr.gs-nova td { height: 34px; background: var(--card); }
+  table.gs tr.gs-nova button { color: var(--brand); font-weight: 700; font-size: 12.5px; }
+  table.gs td.gs-vazio { color: var(--ink3); font-style: italic; height: 60px; }
+  .gs-pill { --c: var(--ink3); display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 14%, var(--card)); }
+  .gs-status { display: flex; gap: 16px; align-items: center; font-size: 11.5px; color: var(--ink3); background: var(--card2); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 12px 12px; padding: 5px 12px; flex-shrink: 0; min-width: 0; }
+  .gs-status span:nth-child(2) { flex: 1; min-width: 0; color: var(--ink2); font-weight: 600; }
+  table.gs td.gs-faixa { background: color-mix(in srgb, #1a73e8 12%, var(--card)) !important; }
+  table.gs tbody tr.gs-linha-sel td.gs-num { cursor: pointer; }
+  table.gs td.gs-num { cursor: pointer; }
+  table.gs td.gs-num:hover { background: color-mix(in srgb, var(--brand) 14%, var(--card2)); }
+  table.gs thead tr.gs-letras th { cursor: pointer; }
+  table.gs thead tr.gs-letras th:hover { background: color-mix(in srgb, var(--brand) 14%, var(--card2)); }
+  table.gs .gs-acoes { position: sticky; right: 0; z-index: 2; background: var(--card); border-left: 1px solid var(--line); box-shadow: -8px 0 10px -8px rgba(15,23,42,.35); padding: 0 6px; overflow: visible; }
+  table.gs thead .gs-acoes { z-index: 4; background: var(--card2); }
+  table.gs thead .gs-acoes-cab { color: var(--ink); text-transform: uppercase; letter-spacing: .04em; font-size: 11px; cursor: default; }
+  table.gs tbody tr:hover td.gs-acoes { background: color-mix(in srgb, var(--brand) 4%, var(--card)); }
+  table.gs tr.gs-urg td.gs-acoes { background: color-mix(in srgb, var(--urg) 6%, var(--card)); }
+  .gs-acoes-in { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+  .gs-acao { height: 24px; padding: 0 8px; border-radius: 7px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; color: #fff; background: var(--c); margin-right: auto; white-space: nowrap; transition: filter .15s; }
+  .gs-acao:hover { filter: brightness(1.1); }
+  .gs-acao-fim { margin-right: auto; font-size: 11.5px; font-weight: 700; color: var(--ok); display: inline-flex; align-items: center; gap: 5px; }
+  .gs-ico { width: 26px; height: 24px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; color: var(--ink3); border: 1px solid var(--line); background: var(--card); }
+  .gs-ico:hover { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); }
+  .gs-ico.on-urg { color: #fff; background: var(--urg); border-color: var(--urg); }
+  .gs-sigla { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; padding: 1px 6px; border-radius: 5px; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 14%, var(--card)); }
+  .gs-caixinha { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--ink3); display: inline-flex; align-items: center; justify-content: center; color: transparent; font-size: 9px; vertical-align: middle; }
+  .gs-caixinha.on { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+  table.gs td.gs-editando { position: relative; }
+  .gs-dica { position: absolute; left: 0; top: 100%; z-index: 5; font-size: 10.5px; font-weight: 700; color: #fff; background: #1a73e8; padding: 2px 6px; border-radius: 0 0 6px 6px; white-space: nowrap; }
+  .gs-lote { position: fixed; z-index: 70; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100% - 32px); display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: center; padding: 10px 12px; border-radius: 14px; background: var(--card); border: 1px solid color-mix(in srgb, #1a73e8 45%, var(--line)); color: var(--ink); font-size: 13px; box-shadow: 0 18px 40px -12px rgba(15,23,42,.45), 0 0 0 4px color-mix(in srgb, #1a73e8 12%, transparent); animation: loteIn .25s ease both; }
+  @keyframes loteIn { from { transform: translate(-50%, 10px); } to { transform: translate(-50%, 0); } }
+  @media (min-width: 768px) { .gs-lote { left: calc(50% + 144px); max-width: calc(100vw - 340px); } }
+  table.gs tbody tr.gs-pend td.gs-num { box-shadow: inset 3px 0 0 #f59e0b; color: #d97706; }
+  /* Mini painel de gravação em segundo plano */
+  .grav { position: fixed; z-index: 115; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 300px; max-width: calc(100vw - 32px); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 44px -14px rgba(15,23,42,.45); overflow: hidden; animation: gravIn .22s ease both; font-size: 12.5px; }
+  .grav[hidden] { display: none !important; }
+  body:has(.gs-lote:not([hidden])) .grav { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
+  @media (max-width: 767px) { .grav { left: 16px; right: 16px; width: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); } }
+  @keyframes gravIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+  .grav-topo { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 13px; }
+  .grav-ico { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; font-size: 12px; background: color-mix(in srgb, #2563eb 14%, var(--card)); color: #2563eb; }
+  .grav[data-estado="ok"] .grav-ico { background: color-mix(in srgb, #16a34a 15%, var(--card)); color: #16a34a; }
+  .grav[data-estado="erro"] .grav-ico { background: color-mix(in srgb, #dc2626 15%, var(--card)); color: #dc2626; }
+  .grav[data-estado="erro"] { border-color: color-mix(in srgb, #dc2626 45%, var(--line)); }
+  .grav-tit { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grav-seta { color: var(--ink3); font-size: 11px; }
+  .grav-lista { border-top: 1px solid var(--line); max-height: 260px; overflow-y: auto; }
+  .grav-item { display: flex; gap: 9px; padding: 8px 12px; align-items: flex-start; }
+  .grav-item + .grav-item { border-top: 1px dashed var(--line); }
+  .grav-st { width: 16px; flex-shrink: 0; display: grid; place-items: center; padding-top: 2px; color: var(--ink3); }
+  .grav-item[data-estado="ok"] .grav-st { color: #16a34a; }
+  .grav-item[data-estado="erro"] .grav-st { color: #dc2626; }
+  .grav-item[data-estado="ok"] .grav-rot { color: var(--ink2); }
+  .grav-rot { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grav-rot i, .grav-rot svg { color: var(--ink3); margin-right: 6px; font-size: 11px; }
+  .grav-det { color: var(--ink3); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grav-erro { color: #dc2626; font-size: 11.5px; margin-top: 2px; }
+  .grav-bts { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .grav-bts button { font-size: 11.5px; font-weight: 700; padding: 4px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--card2); color: var(--ink); display: inline-flex; gap: 5px; align-items: center; }
+  .grav-bts button:first-child { background: #2563eb; border-color: #2563eb; color: #fff; }
+  .grav-rodape { padding: 0 12px 10px; margin-top: 0; }
+  .grav-mais, .grav-dica { padding: 0 12px 9px; color: var(--ink3); font-size: 11.5px; }
+  .grav-dica { padding-top: 7px; border-top: 1px solid var(--line); }
+  .grav-spin { width: 13px; height: 13px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; display: inline-block; animation: gravGira .7s linear infinite; }
+  .grav-spin.pequeno { width: 11px; height: 11px; color: #2563eb; }
+  @keyframes gravGira { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .grav, .grav-spin { animation-duration: 2s; } .grav { animation: none; } }
+  .gs-compacto table.gs th, .gs-compacto table.gs td { height: 38px; }
+  .gs-compacto table.gs td.gs-cel { font-size: 13px; }
+  .menu-acoes { position: fixed; z-index: 130; min-width: 250px; max-width: 320px; max-height: 70vh; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 20px 40px -12px rgba(15,23,42,.45); padding: 6px; }
+  .menu-acoes .menu-tit { font-size: 11px; font-weight: 700; color: var(--ink3); padding: 6px 8px 8px; border-bottom: 1px solid var(--line); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .menu-acoes button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--ink); text-align: left; }
+  .menu-acoes button:hover { background: var(--card2); }
+  .menu-acoes button.perigo { color: var(--urg); }
+  .menu-acoes .mi { width: 24px; height: 24px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); flex-shrink: 0; }
+  .menu-acoes hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+  /* Processos de Correição */
+  .tab-cor th { position: sticky; top: 0; background: var(--card); z-index: 1; }
+  .tab-cor td { vertical-align: top; }
+  .tab-cor tr:hover td { background: var(--card2); }
+  .cor-num { font-weight: 800; color: var(--ink); white-space: nowrap; }
   /* Formulário em 3 passos */
   .modal.modal-largo { max-width: 880px; overflow: hidden; }
   .form-hero { background: #0f172a; background-image: radial-gradient(600px 200px at 0% 0%, rgba(59,130,246,.35), transparent 70%), radial-gradient(500px 200px at 100% 100%, rgba(20,184,166,.22), transparent 70%); padding: 18px 20px 14px; flex-shrink: 0; }
@@ -367,11 +493,16 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         </div>
         <div>
           <h4 class="nav-titulo">Assinaturas</h4>
+          <div class="grid grid-cols-2 gap-2 mb-3" data-requer="gravar">
+            <button class="novo-side" style="--c:#3b82f6" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-file-signature"></i><span>Nova<br>assinatura</span></button>
+            <button class="novo-side" style="--c:#14b8a6" onclick="novoRegistro('processo')"><i class="fa-solid fa-folder-open"></i><span>Novo<br>processo</span></button>
+          </div>
           <div class="space-y-1">
-            <button class="nav-btn" data-tab="mesa"><i class="ico fa-solid fa-pen-nib"></i><span>Mesa da Secretária</span><span id="bdg-mesa" class="nav-badge bg-indigo-500 hidden"></span></button>
+            <button class="nav-btn" data-tab="mesa"><i class="ico fa-solid fa-table-cells"></i><span>Gestão de Processos</span><span id="bdg-mesa" class="nav-badge bg-indigo-500 hidden"></span></button>
             <button class="nav-btn" data-tab="fila"><i class="ico fa-solid fa-folder-open"></i><span>Solicitações</span><span id="bdg-fila" class="nav-badge bg-slate-600 hidden"></span></button>
             <button class="nav-btn" data-tab="urgentes"><i class="ico fa-solid fa-triangle-exclamation text-red-500"></i><span class="text-red-400 font-bold">Urgentes</span><span id="bdg-urg" class="nav-badge bg-red-600 hidden"></span></button>
             <button class="nav-btn" data-tab="casacivil"><i class="ico fa-solid fa-landmark text-violet-400"></i><span class="text-violet-300 font-semibold">Casa Civil</span><span id="bdg-cc" class="nav-badge bg-violet-600 hidden"></span></button>
+            <button class="nav-btn" data-tab="correicao"><i class="ico fa-solid fa-clipboard-check text-amber-400"></i><span class="text-amber-200 font-semibold">Processos de Correição</span><span id="bdg-cor" class="nav-badge bg-amber-600 hidden"></span></button>
           </div>
         </div>
         <div>
@@ -416,7 +547,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         <button onclick="menuMobile(true)" class="text-gray-300 hover:text-white p-1" aria-label="Abrir menu"><i class="fa-solid fa-bars text-xl"></i></button>
         <h1 class="text-xl font-black tracking-tight text-white">GAB<span class="text-blue-500">Doc</span></h1>
       </div>
-      <button onclick="abrirForm()" data-requer="gravar" class="btn btn-pri !h-9" aria-label="Nova solicitação"><i class="fa-solid fa-plus"></i></button>
+      <div class="flex gap-1.5" data-requer="gravar">
+        <button onclick="novoRegistro('assinatura')" class="btn btn-novo !h-9 !px-2.5" style="--c:#3b82f6" aria-label="Nova solicitação de assinatura"><span class="novo-ico"><i class="fa-solid fa-file-signature"></i></span></button>
+        <button onclick="novoRegistro('processo')" class="btn btn-novo !h-9 !px-2.5" style="--c:#14b8a6" aria-label="Novo processo"><span class="novo-ico"><i class="fa-solid fa-folder-open"></i></span></button>
+      </div>
     </header>
 
     <div id="aviso-demo" class="hidden text-[12px] font-semibold px-4 py-2 bg-amber-100 text-amber-900 border-b border-amber-200 flex-shrink-0"></div>
@@ -429,7 +563,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie opacity-80"></i> Painel do Gabinete</h2>
             <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block" id="painel-data"></p>
           </div>
-          <button onclick="abrirForm()" data-requer="gravar" class="btn btn-faixa hidden md:inline-flex"><i class="fa-solid fa-plus"></i>Nova solicitação</button>
+          <div class="hidden md:flex gap-2" data-requer="gravar">
+            <button onclick="novoRegistro('assinatura')" class="btn btn-novo" style="--c:#3b82f6" title="Nova solicitação de assinatura"><span class="novo-ico"><i class="fa-solid fa-file-signature"></i></span>Solicitação de assinatura</button>
+            <button onclick="novoRegistro('processo')" class="btn btn-novo" style="--c:#14b8a6" title="Novo processo"><span class="novo-ico"><i class="fa-solid fa-folder-open"></i></span>Processo</button>
+          </div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 overflow-y-auto scrollbar-thin space-y-4 pb-2" id="painel-corpo"></div></div>
@@ -440,13 +577,13 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="faixa bg-education-pattern">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
-            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-pen-nib text-indigo-300"></i> Mesa da Secretária</h2>
-            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Documentos prontos para assinatura, na ordem de despacho: urgentes primeiro, depois pelo prazo.</p>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-table-cells text-indigo-300"></i> Gestão de Processos</h2>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Todos os documentos e processos do Gabinete em formato de planilha (a Correição fica na seção própria).</p>
           </div>
           <div class="text-xs text-blue-100/80" id="mesa-resumo"></div>
         </div>
       </div>
-      <div class="corpo"><div class="flex-1 overflow-y-auto scrollbar-thin space-y-3 pb-2" id="mesa-corpo"></div></div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="mesa-corpo"></div></div>
     </section>
 
     <!-- SOLICITAÇÕES -->
@@ -461,7 +598,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <div class="dv-seg !bg-white/10" id="fila-vista">
               <button data-v="lista" class="!text-white">Lista</button><button data-v="quadro" class="!text-white">Quadro</button>
             </div>
-            <button onclick="abrirForm()" data-requer="gravar" class="btn btn-faixa hidden md:inline-flex"><i class="fa-solid fa-plus"></i>Nova</button>
+            <div class="hidden md:flex gap-2" data-requer="gravar">
+            <button onclick="novoRegistro('assinatura')" class="btn btn-novo" style="--c:#3b82f6" title="Nova solicitação de assinatura"><span class="novo-ico"><i class="fa-solid fa-file-signature"></i></span>Solicitação de assinatura</button>
+            <button onclick="novoRegistro('processo')" class="btn btn-novo" style="--c:#14b8a6" title="Novo processo"><span class="novo-ico"><i class="fa-solid fa-folder-open"></i></span>Processo</button>
+          </div>
           </div>
         </div>
       </div>
@@ -513,12 +653,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-landmark text-violet-300"></i> Demandas da Casa Civil</h2>
-            <p class="text-violet-100/70 text-xs mt-0.5 hidden sm:block">Minutas, ofícios e respostas que tramitam com a Casa Civil, por etapa. Toque num cartão para mudar a etapa.</p>
+            <p class="text-violet-100/70 text-xs mt-0.5 hidden sm:block">Somente as demandas da Casa Civil, em formato de planilha. Mude a etapa direto na célula.</p>
           </div>
           <div class="text-xs text-violet-100/80" id="cc-resumo"></div>
         </div>
       </div>
-      <div class="corpo"><div class="flex-1 overflow-y-auto scrollbar-thin space-y-4 pb-2" id="cc-corpo"></div></div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cc-corpo"></div></div>
     </section>
 
     <!-- MAPA -->
@@ -595,6 +735,20 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         </div>
       </div>
       <div class="corpo"><div class="flex-1 overflow-y-auto scrollbar-thin space-y-4 pb-2" id="rel-corpo"></div></div>
+    </section>
+
+    <!-- PROCESSOS DE CORREIÇÃO -->
+    <section id="tab-correicao" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#3a2306">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-clipboard-check text-amber-300"></i> Processos de Correição</h2>
+            <p class="text-amber-100/70 text-xs mt-0.5 hidden sm:block">Processo/Referência, documento de assinatura, objeto, situação/ação e observação de cada processo de correição.</p>
+          </div>
+          <button onclick="abrirFormCorreicao()" data-requer="gravar" class="btn bg-amber-500 hover:bg-amber-400 text-white"><i class="fa-solid fa-plus"></i>Novo processo de correição</button>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cor-corpo"></div></div>
     </section>
 
     <!-- MOVIMENTAÇÕES -->
@@ -732,7 +886,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', sol: [], agenda: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 const NO_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
 
 /* ----- API do Apps Script ----- */
@@ -816,6 +970,10 @@ async function iniciarStore() {
       Store.sol = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       Store.pronto = true; aoMudarDados();
     }, err => { statusSync('erro', err && err.message); });
+    db.collection('correicao').onSnapshot(snap => {
+      Store.correicao = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('agenda').onSnapshot(snap => {
       Store.agenda = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -825,6 +983,7 @@ async function iniciarStore() {
     const ex = gerarExemplos();
     Store.sol = ex.sol.map((s, i) => ({ id: 'ex' + i, ...s }));
     Store.agenda = ex.agenda.map((a, i) => ({ id: 'ag' + i, ...a }));
+    Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -884,20 +1043,30 @@ function sessaoExpirada(msg) {
   carregarUsuariosPublicos();
 }
 let sincronizando = false;
+/** Aplica uma carga completa vinda do servidor (carregar ou resposta de lote). */
+function aplicarCarga(r) {
+  if (!r.semMudanca) {
+    Store.sol = r.solicitacoes || [];
+    Store.agenda = r.agenda || [];
+    Store.correicao = r.correicao || [];
+    if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
+  }
+  if (r.dataVersion) Store.versao = r.dataVersion;
+  Store.pronto = true;
+  statusSync();
+  if (!r.semMudanca) aoMudarDados();
+}
 async function sincronizar(completo) {
   if (Store.modo !== 'planilha' || !Store.sessao || sincronizando) return;
+  // Com gravações na fila, a carga do servidor apagaria as alterações ainda não salvas:
+  // a sincronização fica para quando a fila esvaziar.
+  if (Grav.ocupada()) { Grav.syncDepois = true; return; }
   sincronizando = true;
+  const seq = Grav.seq;
   try {
     const r = await API.post('carregar', completo ? {} : { versaoLocal: Store.versao });
-    if (!r.semMudanca) {
-      Store.sol = r.solicitacoes || [];
-      Store.agenda = r.agenda || [];
-      if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
-    }
-    Store.versao = r.dataVersion;
-    Store.pronto = true;
-    statusSync();
-    if (!r.semMudanca) aoMudarDados();
+    if (Grav.ocupada() || Grav.seq !== seq) { Grav.syncDepois = true; return; }
+    aplicarCarga(r);
   } catch (e) {
     if (e.codigo !== 401) statusSync('erro', completo ? e.message : '');
   } finally { sincronizando = false; }
@@ -906,7 +1075,7 @@ let pollTimer = null;
 function iniciarPolling() {
   clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    if (document.hidden || !Store.sessao || sincronizando) return;
+    if (document.hidden || !Store.sessao || sincronizando || Grav.ocupada()) return;
     try {
       const r = await API.post('versao', {}, 20000);
       if (r.dataVersion !== Store.versao) await sincronizar(false);
@@ -919,14 +1088,160 @@ function iniciarPolling() {
 function statusSync(estado, msg) {
   const el = $('sync-status');
   const cls = c => 'text-[9px] font-bold mt-1 truncate w-36 ' + c;
+  if (!el) return;
+  if (!estado && typeof Grav !== 'undefined' && Grav.ocupada()) { el.textContent = '● Salvando alterações…'; el.className = cls('text-amber-400'); return; }
   if (estado === 'erro') { el.textContent = '● Falha ao sincronizar'; el.className = cls('text-red-400'); if (msg) toast('Não foi possível sincronizar: ' + msg, 'fa-triangle-exclamation'); return; }
   if (Store.modo === 'planilha') { el.textContent = Store.sessao ? '● Conectado à planilha' : '● Aguardando login'; el.className = cls(Store.sessao ? 'text-emerald-400' : 'text-gray-400'); }
   else if (Store.modo === 'nuvem') { el.textContent = '● Sincronizado com a equipe'; el.className = cls('text-emerald-400'); }
   else if (Store.modo === 'demo') { el.textContent = '● Demonstração (não salva)'; el.className = cls('text-amber-400'); }
 }
 
+/* ========================= Fila de gravação (salva em segundo plano) ========================= */
+// Toda alteração aparece na tela na hora (atualização otimista) e entra nesta fila.
+// A fila envia as gravações em lote para a planilha (rota lote_salvar: uma viagem, uma trava)
+// enquanto a pessoa continua trabalhando. Um mini painel no canto mostra o que está sendo salvo.
+// Se algo falhar, o painel oferece "Tentar de novo" ou "Descartar" (volta ao que está na planilha).
+const Grav = {
+  itens: [], seq: 0, rodando: false, syncDepois: false, semLote: false, timer: null, minimizado: null,
+  ativos() { return this.itens.filter(t => t.estado === 'pendente' || t.estado === 'enviando'); },
+  ocupada() { return this.itens.some(t => t.estado === 'pendente' || t.estado === 'enviando'); },
+  pendente(id) { return this.itens.some(t => t.ref === id && (t.estado === 'pendente' || t.estado === 'enviando')); }
+};
+const MAX_LOTE = 50;
+function novoIdLocal(prefixo) { return prefixo + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+/** Coloca uma gravação na fila. t: { ref, colecao, idLocal, rotulo, detalhe, icone, action, payload, nuvem(), aoOk(res) } */
+function enfileirar(t) {
+  t.uid = ++Grav.seq; t.estado = 'pendente';
+  Grav.itens.push(t);
+  renderGrav();
+  clearTimeout(Grav.timer);
+  // Espera um instante para juntar o que foi feito de uma vez (lote, colagem, várias células)
+  Grav.timer = setTimeout(processarGrav, 120);
+  return t;
+}
+async function processarGrav() {
+  if (Grav.rodando) return;
+  Grav.rodando = true;
+  try {
+    for (;;) {
+      const lote = Grav.itens.filter(t => t.estado === 'pendente').slice(0, MAX_LOTE);
+      if (!lote.length) break;
+      lote.forEach(t => { t.estado = 'enviando'; t.erro = ''; });
+      renderGrav();
+      if (Store.modo === 'planilha') await enviarLotePlanilha(lote);
+      else await enviarLoteNuvem(lote);
+      renderGrav();
+    }
+  } finally { Grav.rodando = false; }
+  if (Grav.syncDepois && !Grav.ocupada()) { Grav.syncDepois = false; sincronizar(false); }
+  renderGrav();
+}
+async function enviarLotePlanilha(lote) {
+  if (!Grav.semLote) {
+    try {
+      const r = await API.post('lote_salvar', { itens: lote.map(t => ({ action: t.action, payload: t.payload })), dados: true }, 240000);
+      (r.resultados || []).forEach((res, i) => res.ok ? concluirGrav(lote[i], res) : falharGrav(lote[i], res.erro));
+      // A resposta já traz a planilha atualizada: aplica se nada novo entrou na fila enquanto isso
+      if (r.dados && !Grav.ocupada()) { Grav.syncDepois = false; aplicarCarga(r.dados); }
+      else Grav.syncDepois = true;
+      return;
+    } catch (e) {
+      if (e.codigo === 404 && /não existe nesta versão/i.test(e.message)) Grav.semLote = true; // Codigo.gs anterior: envia uma a uma
+      else { lote.forEach(t => falharGrav(t, e.message)); return; }
+    }
+  }
+  for (const t of lote) {
+    try {
+      const p = { ...t.payload };
+      if (p.criarComId && t.action !== 'salvar_solicitacao') p.id = '';
+      concluirGrav(t, await API.post(t.action, p, 60000));
+    } catch (e) { falharGrav(t, e.message); }
+  }
+  Grav.syncDepois = true;
+}
+async function enviarLoteNuvem(lote) {
+  for (const t of lote) {
+    try { await t.nuvem(); concluirGrav(t, {}); }
+    catch (e) { falharGrav(t, e && e.code === 'not_granted' ? 'Sua conta só pode visualizar. Peça acesso de edição a quem compartilhou o GABDoc.' : (e && e.message) || 'erro'); }
+  }
+}
+function concluirGrav(t, res) {
+  t.estado = 'ok';
+  if (res && res.id && t.idLocal && res.id !== t.idLocal) trocarIdLocal(t.colecao, t.idLocal, res.id);
+  if (t.aoOk) { try { t.aoOk(res || {}); } catch (e) { /* atualização visual apenas */ } }
+  setTimeout(() => { Grav.itens = Grav.itens.filter(x => x !== t); renderGrav(); }, 2600);
+}
+function falharGrav(t, msg) { t.estado = 'erro'; t.erro = msg || 'Não foi possível salvar.'; Grav.minimizado = false; }
+/** Backend antigo devolve outro id para registros novos: troca na tela e na fila. */
+function trocarIdLocal(colecao, de, para) {
+  const x = (Store[colecao] || []).find(r => r.id === de); if (x) x.id = para;
+  Grav.itens.forEach(t => { if (t.ref === de) { t.ref = para; if (t.payload && t.payload.id === de) { t.payload.id = para; t.payload.criarComId = false; } } });
+  if (modalAberto && modalAberto.id === de) modalAberto.id = para;
+}
+function repetirGrav(uid) {
+  Grav.itens.forEach(t => { if (t.estado === 'erro' && (uid == null || t.uid === uid)) { t.estado = 'pendente'; t.erro = ''; } });
+  renderGrav(); clearTimeout(Grav.timer); Grav.timer = setTimeout(processarGrav, 50);
+}
+function descartarGrav(uid) {
+  Grav.itens = Grav.itens.filter(t => !(t.estado === 'erro' && (uid == null || t.uid === uid)));
+  renderGrav();
+  toast('Alteração descartada. Voltando ao que está salvo…', 'fa-rotate-left');
+  if (Store.modo === 'planilha') { Grav.syncDepois = false; if (Grav.ocupada()) Grav.syncDepois = true; else sincronizar(true); }
+}
+/** No celular o painel começa recolhido (só o título), a não ser que haja erro. */
+function gravRecolhido() { return Grav.minimizado ?? (innerWidth < 768 && !Grav.itens.some(t => t.estado === 'erro')); }
+function alternarGrav() { Grav.minimizado = !gravRecolhido(); renderGrav(); }
+/** Mini painel no canto: o que está sendo salvo agora. */
+function renderGrav() {
+  let el = $('grav');
+  if (!el) { el = document.createElement('div'); el.id = 'grav'; el.className = 'grav'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite'); document.body.appendChild(el); }
+  marcarLinhasPendentes();
+  statusSync();
+  const itens = Grav.itens;
+  if (!itens.length) { el.hidden = true; el.innerHTML = ''; return; }
+  const ativos = itens.filter(t => t.estado === 'pendente' || t.estado === 'enviando').length;
+  const erros = itens.filter(t => t.estado === 'erro');
+  const estado = erros.length ? 'erro' : ativos ? 'salvando' : 'ok';
+  const plural = (n, s, p) => n + ' ' + (n === 1 ? s : p);
+  const titulo = erros.length ? plural(erros.length, 'alteração não foi salva', 'alterações não foram salvas')
+    : ativos ? 'Salvando ' + plural(ativos, 'alteração', 'alterações') + '…' : 'Tudo salvo';
+  const icoTopo = estado === 'erro' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : estado === 'salvando' ? '<span class="grav-spin"></span>' : '<i class="fa-solid fa-check"></i>';
+  const ordem = { erro: 0, enviando: 1, pendente: 2, ok: 3 };
+  const lista = itens.slice().sort((a, b) => ordem[a.estado] - ordem[b.estado] || b.uid - a.uid);
+  const mostrar = lista.slice(0, 5), resto = lista.length - mostrar.length;
+  const icoItem = t => t.estado === 'ok' ? '<i class="fa-solid fa-circle-check"></i>' : t.estado === 'erro' ? '<i class="fa-solid fa-circle-xmark"></i>'
+    : t.estado === 'enviando' ? '<span class="grav-spin pequeno"></span>' : '<i class="fa-regular fa-clock"></i>';
+  el.hidden = false;
+  el.dataset.estado = estado;
+  el.innerHTML = `
+    <button type="button" class="grav-topo" onclick="alternarGrav()" aria-expanded="${!gravRecolhido()}">
+      <span class="grav-ico">${icoTopo}</span>
+      <span class="grav-tit">${titulo}</span>
+      <i class="fa-solid fa-chevron-${gravRecolhido() ? 'up' : 'down'} grav-seta"></i>
+    </button>
+    ${gravRecolhido() ? '' : `<ul class="grav-lista">${mostrar.map(t => `
+      <li class="grav-item" data-estado="${t.estado}">
+        <span class="grav-st">${icoItem(t)}</span>
+        <div class="min-w-0 flex-1">
+          <p class="grav-rot"><i class="fa-solid ${t.icone || 'fa-pen'}"></i>${esc(t.rotulo)}</p>
+          ${t.detalhe ? `<p class="grav-det">${esc(t.detalhe)}</p>` : ''}
+          ${t.estado === 'erro' ? `<p class="grav-erro">${esc(t.erro)}</p><div class="grav-bts"><button type="button" onclick="repetirGrav(${t.uid})"><i class="fa-solid fa-rotate-right"></i>Tentar de novo</button><button type="button" onclick="descartarGrav(${t.uid})">Descartar</button></div>` : ''}
+        </div>
+      </li>`).join('')}</ul>
+      ${resto > 0 ? `<p class="grav-mais">+ ${plural(resto, 'outra', 'outras')}</p>` : ''}
+      ${erros.length > 1 ? `<div class="grav-bts grav-rodape"><button type="button" onclick="repetirGrav()"><i class="fa-solid fa-rotate-right"></i>Tentar todas de novo</button><button type="button" onclick="descartarGrav()">Descartar todas</button></div>` : ''}
+      ${ativos && !erros.length ? '<p class="grav-dica">Pode continuar usando o sistema enquanto salva.</p>' : ''}`}`;
+}
+/** Linhas das planilhas com gravação pendente ganham uma marca discreta no número da linha. */
+function marcarLinhasPendentes() {
+  const ids = new Set(Grav.ativos().map(t => t.ref));
+  document.querySelectorAll('table.gs tbody tr[data-id]').forEach(tr => tr.classList.toggle('gs-pend', ids.has(tr.dataset.id)));
+}
+window.addEventListener('beforeunload', e => { if (Grav.ocupada()) { e.preventDefault(); e.returnValue = ''; } });
+
 /* ----- gravações (os três modos) ----- */
 function semHistorico(d) { const o = { ...d }; delete o.historico; delete o.id; return o; }
+function semId(d) { const o = { ...d }; delete o.id; return o; }
 function novosMovimentos(id, dados) {
   const antigo = id ? Store.sol.find(x => x.id === id) : null;
   const n = antigo && antigo.historico ? antigo.historico.length : 0;
@@ -937,73 +1252,98 @@ function substituirLocal(s) {
   const i = Store.sol.findIndex(x => x.id === s.id);
   if (i >= 0) Store.sol[i] = s; else Store.sol.push(s);
 }
-async function salvarSol(id, dados) {
+function trocarNaLista(lista, id, obj) { const i = lista.findIndex(x => x.id === id); if (i >= 0) lista[i] = obj; else lista.push(obj); }
+const gravaEmFila = () => Store.modo === 'planilha' || Store.modo === 'nuvem';
+/** Salva uma solicitação. Atualiza a tela na hora e grava em segundo plano; devolve o id imediatamente. */
+async function salvarSol(id, dados, rotulo) {
   dados.atualizadoEm = new Date().toISOString();
-  if (Store.modo === 'planilha') {
-    try {
-      const r = await API.post('salvar_solicitacao', { id: id || '', dados: semHistorico(dados), movimentos: novosMovimentos(id, dados) });
-      substituirLocal(r.solicitacao);
-      aoMudarDados();
-      sincronizar(false);
-      return r.id;
-    } catch (e) { toast(e.message, 'fa-triangle-exclamation'); return null; }
-  }
-  if (Store.modo === 'nuvem') {
-    try {
-      if (id) await Store.db.collection('solicitacoes').doc(id).set(dados);
-      else { const ref = await Store.db.collection('solicitacoes').add(dados); id = ref.id; }
-    } catch (e) { toast(e && e.code === 'not_granted' ? 'Sua conta só pode visualizar. Peça acesso de edição a quem compartilhou o GABDoc.' : 'Não foi possível salvar: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); return null; }
-  } else {
-    if (!id) { id = 'loc' + Date.now(); Store.sol.push({ id, ...dados }); }
-    else { const i = Store.sol.findIndex(x => x.id === id); Store.sol[i] = { id, ...dados }; }
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'loc' + Date.now();
+    trocarNaLista(Store.sol, id, { ...dados, id });
     aoMudarDados();
+    return id;
   }
+  const movimentos = novosMovimentos(id, dados);
+  if (novo) id = novoIdLocal('S');
+  const local = { ...dados, id };
+  if (novo && !local.criadoEm) local.criadoEm = dados.atualizadoEm;
+  trocarNaLista(Store.sol, id, local);
+  aoMudarDados();
+  const ref = id;
+  enfileirar({
+    ref, colecao: 'sol', idLocal: novo ? id : null, icone: novo ? 'fa-file-circle-plus' : 'fa-file-pen',
+    rotulo: rotulo || (novo ? 'Novo registro' : movimentos.map(m => m.acao).join(' · ') || 'Dados atualizados'),
+    detalhe: [dados.numero, dados.assunto].filter(Boolean).join(' · '),
+    action: 'salvar_solicitacao', payload: { id, criarComId: novo, dados: semHistorico(dados), movimentos },
+    nuvem: () => Store.db.collection('solicitacoes').doc(ref).set(semId(dados)),
+    aoOk: res => { if (res.solicitacao && !Grav.pendente(res.solicitacao.id)) { substituirLocal(res.solicitacao); aoMudarDados(); } }
+  });
   return id;
 }
 async function excluirSol(id) {
-  if (Store.modo === 'planilha') {
-    try { await API.post('excluir_solicitacao', { id }); Store.sol = Store.sol.filter(x => x.id !== id); aoMudarDados(); sincronizar(false); }
-    catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
-    return;
-  }
-  if (Store.modo === 'nuvem') { try { await Store.db.collection('solicitacoes').doc(id).delete(); } catch (e) { toast('Não foi possível excluir: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); return; } }
-  else { Store.sol = Store.sol.filter(x => x.id !== id); aoMudarDados(); }
+  const s = Store.sol.find(x => x.id === id);
+  Store.sol = Store.sol.filter(x => x.id !== id); aoMudarDados();
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão', detalhe: s ? [s.numero, s.assunto].filter(Boolean).join(' · ') : '',
+    action: 'excluir_solicitacao', payload: { id }, nuvem: () => Store.db.collection('solicitacoes').doc(id).delete() });
 }
 async function salvarAgenda(id, dados) {
-  if (Store.modo === 'planilha') {
-    try {
-      const r = await API.post('salvar_agenda', { id: id || '', dados });
-      const i = Store.agenda.findIndex(x => x.id === r.id);
-      if (i >= 0) Store.agenda[i] = r.compromisso; else Store.agenda.push(r.compromisso);
-      aoMudarDados(); sincronizar(false);
-      return true;
-    } catch (e) { toast(e.message, 'fa-triangle-exclamation'); return false; }
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'ag' + Date.now();
+    trocarNaLista(Store.agenda, id, { ...dados, id }); aoMudarDados(); return true;
   }
-  if (Store.modo === 'nuvem') {
-    try { if (id) await Store.db.collection('agenda').doc(id).set(dados); else await Store.db.collection('agenda').add(dados); }
-    catch (e) { toast('Não foi possível salvar: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); return false; }
-  } else {
-    if (!id) Store.agenda.push({ id: 'ag' + Date.now(), ...dados }); else { const i = Store.agenda.findIndex(x => x.id === id); Store.agenda[i] = { id, ...dados }; }
-    aoMudarDados();
-  }
+  if (novo) id = novoIdLocal('A');
+  trocarNaLista(Store.agenda, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'agenda', idLocal: novo ? id : null, icone: 'fa-calendar-day',
+    rotulo: novo ? 'Novo compromisso' : 'Compromisso atualizado', detalhe: [dados.titulo, dados.data ? fmt(dados.data) : ''].filter(Boolean).join(' · '),
+    action: 'salvar_agenda', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('agenda').doc(ref).set(semId(dados)) });
   return true;
 }
 async function excluirAgenda(id) {
-  if (Store.modo === 'planilha') {
-    try { await API.post('excluir_agenda', { id }); Store.agenda = Store.agenda.filter(x => x.id !== id); aoMudarDados(); sincronizar(false); }
-    catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
-    return;
+  const a = Store.agenda.find(x => x.id === id);
+  Store.agenda = Store.agenda.filter(x => x.id !== id); aoMudarDados();
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de compromisso', detalhe: a ? a.titulo : '',
+    action: 'excluir_agenda', payload: { id }, nuvem: () => Store.db.collection('agenda').doc(id).delete() });
+}
+async function salvarCorreicao(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'co' + Date.now();
+    trocarNaLista(Store.correicao, id, { ...dados, id }); aoMudarDados(); return true;
   }
-  if (Store.modo === 'nuvem') { try { await Store.db.collection('agenda').doc(id).delete(); } catch (e) { toast('Não foi possível excluir.', 'fa-triangle-exclamation'); } }
-  else { Store.agenda = Store.agenda.filter(x => x.id !== id); aoMudarDados(); }
+  const antigo = novo ? null : Store.correicao.find(x => x.id === id);
+  if (novo) id = novoIdLocal('C');
+  trocarNaLista(Store.correicao, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'correicao', idLocal: novo ? id : null, icone: 'fa-scale-balanced',
+    rotulo: rotulo || (novo ? 'Novo processo de correição' : antigo && antigo.situacao !== dados.situacao ? 'Situação → ' + (dados.situacao || '—') : 'Correição atualizada'),
+    detalhe: [dados.processo, dados.objeto].filter(Boolean).join(' · '),
+    action: 'salvar_correicao', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('correicao').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirCorreicaoId(id) {
+  const c = Store.correicao.find(x => x.id === id);
+  Store.correicao = Store.correicao.filter(x => x.id !== id); aoMudarDados();
+  toast('Processo de correição excluído.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de correição', detalhe: c ? c.processo : '',
+    action: 'excluir_correicao', payload: { id }, nuvem: () => Store.db.collection('correicao').doc(id).delete() });
 }
 async function carregarExemplos(btn) {
   if (Store.modo !== 'nuvem') return;
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Carregando…'; }
   const ex = gerarExemplos();
   try {
-    for (const s of ex.sol) await Store.db.collection('solicitacoes').add({ ...s, atualizadoEm: new Date().toISOString() });
-    for (const a of ex.agenda) await Store.db.collection('agenda').add(a);
+    await Promise.all([
+      ...ex.sol.map(s => Store.db.collection('solicitacoes').add({ ...s, atualizadoEm: new Date().toISOString() })),
+      ...ex.agenda.map(a => Store.db.collection('agenda').add(a)),
+      ...ex.correicao.map(c => Store.db.collection('correicao').add({ ...c, criadoEm: new Date().toISOString() }))]);
     toast('Exemplos carregados. Use "Remover exemplos" em Relatórios quando quiser limpar.');
   } catch (e) { toast('Não foi possível carregar os exemplos: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1012,8 +1352,10 @@ async function removerExemplos(btn) {
   if (btn && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = '<i class="fa-solid fa-trash"></i>Confirmar remoção'; return; }
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Removendo…'; }
   try {
-    for (const s of Store.sol.filter(x => x.exemplo)) await Store.db.collection('solicitacoes').doc(s.id).delete();
-    for (const a of Store.agenda.filter(x => x.exemplo)) await Store.db.collection('agenda').doc(a.id).delete();
+    await Promise.all([
+      ...Store.sol.filter(x => x.exemplo).map(s => Store.db.collection('solicitacoes').doc(s.id).delete()),
+      ...Store.agenda.filter(x => x.exemplo).map(a => Store.db.collection('agenda').doc(a.id).delete()),
+      ...Store.correicao.filter(x => x.exemplo).map(c => Store.db.collection('correicao').doc(c.id).delete())]);
     toast('Exemplos removidos.');
   } catch (e) { toast('Não foi possível remover tudo: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1102,7 +1444,13 @@ function gerarExemplos() {
     A('Fórum Estadual de Educação', h(12), '08:30', 'evento', 'Centro de eventos', 'Várzea Grande'),
     A('Entrega de ônibus escolares', h(-3), '09:00', 'visita', 'Praça central', 'Barra do Garças')
   ];
-  return { sol, agenda };
+  const correicao = [
+    { exemplo: true, processo: 'SEDUC-PRO-2026/09812', documento: '[Exemplo] Despacho de instauração', objeto: 'Apuração de irregularidade na prestação de contas de escola estadual', situacao: 'Aguardando assinatura', observacao: 'Minuta revisada pela Assessoria Jurídica' },
+    { exemplo: true, processo: 'SEDUC-PRO-2026/08877', documento: '[Exemplo] Portaria de designação de comissão', objeto: 'Correição ordinária na DRE de Rondonópolis', situacao: 'Assinado', observacao: 'Publicar no Diário Oficial' },
+    { exemplo: true, processo: 'SEDUC-PRO-2026/10233', documento: '[Exemplo] Ofício de notificação', objeto: 'Pedido de informações à unidade escolar sobre frequência de servidores', situacao: 'Em análise', observacao: '' },
+    { exemplo: true, processo: 'SEDUC-PRO-2026/07450', documento: '[Exemplo] Despacho de arquivamento', objeto: 'Denúncia anônima sem elementos mínimos de autoria', situacao: 'Concluído', observacao: 'Arquivado após parecer' }
+  ];
+  return { sol, agenda, correicao };
 }
 
 /* ========================= Navegação ========================= */
@@ -1129,10 +1477,12 @@ function entrar() {
   setTimeout(() => t.classList.add('hidden'), 450);
 }
 async function sair() {
+  if (Grav.ocupada()) { Grav.minimizado = false; renderGrav(); toast('Aguarde um instante: ainda há alterações sendo salvas.', 'fa-hourglass-half'); return; }
+  Grav.itens = []; renderGrav();
   ss.del('gabdoc_entrou');
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
-    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -1160,15 +1510,20 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', aoMudarTem
 new MutationObserver(aoMudarTema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 /* ========================= Renderização ========================= */
+let renderAdiado = 0, renderPerdido = false;
+/** Enquanto várias linhas são alteradas de uma vez, a tela é redesenhada uma vez só no final. */
+function emLote(fn) { renderAdiado++; try { return fn(); } finally { if (--renderAdiado === 0 && renderPerdido) { renderPerdido = false; aoMudarDados(); } } }
 function aoMudarDados() {
+  if (renderAdiado) { renderPerdido = true; return; }
   atualizarBadges();
   resolverNomes(Store.sol.flatMap(s => (s.historico || []).map(h => h.por))).then(() => { if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe(); });
   renderAba();
   if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe();
   statusSync();
+  marcarLinhasPendentes();
 }
 function renderAba() {
-  const r = { painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -1185,6 +1540,7 @@ function atualizarBadges() {
   set('bdg-fila', pendentes().length);
   set('bdg-urg', urgentesAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
+  set('bdg-cor', Store.correicao.filter(c => !/^(conclu|arquiv)/i.test(Utils_norm(c.situacao))).length);
   const sino = $('sino-count'), n = urgentesAtivos().length;
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
 }
@@ -1245,7 +1601,7 @@ function renderPainel() {
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div class="dv-card xl:col-span-2">
-        <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#4f46e5"><i class="fa-solid fa-pen-nib"></i></span>Mesa da Secretária agora</h3><p>Na ordem em que devem ser despachados</p></div><button class="btn btn-sec !h-8" onclick="irPara('mesa')">Abrir mesa</button></div>
+        <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#4f46e5"><i class="fa-solid fa-pen-nib"></i></span>Mesa da Secretária agora</h3><p>Na ordem em que devem ser despachados</p></div><button class="btn btn-sec !h-8" onclick="abrirGestao('mesa')">Abrir na planilha</button></div>
         <div class="space-y-2">${mesa.slice(0, 5).map(linhaSol).join('') || '<p class="text-[13px] text-ink3 py-4 text-center">Nenhum documento aguardando assinatura.</p>'}</div>
       </div>
       <div class="dv-card">
@@ -1283,36 +1639,6 @@ function desenharGraficosPainel(pend) {
     { label: 'Recebidos', data: conta('recebidoEm'), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,.12)', fill: true, tension: .35, pointRadius: 3 },
     { label: 'Assinados', data: conta('assinadoEm'), borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,.0)', tension: .35, pointRadius: 3 }
   ] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10 } } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cor('--line') } }, x: { grid: { display: false } } } } });
-}
-
-/* ----- Mesa ----- */
-function renderMesa() {
-  const c = $('mesa-corpo'), m = naMesa();
-  $('mesa-resumo').textContent = m.length ? `${m.length} documento${m.length > 1 ? 's' : ''} · ${m.filter(s => s.urgente).length} urgente${m.filter(s => s.urgente).length === 1 ? '' : 's'}` : '';
-  if (!Store.sol.length) { c.innerHTML = estadoInicial(); return; }
-  if (!m.length) { c.innerHTML = vazio('fa-mug-hot', 'A mesa está livre', 'Nenhum documento aguardando assinatura. Quando a assessoria concluir a análise de uma solicitação, use "Levar à mesa da Secretária" no detalhe.'); return; }
-  const grupos = Object.keys(TIPOS).map(k => [k, m.filter(s => s.tipo === k)]).filter(g => g[1].length);
-  c.innerHTML = `
-    <div class="dv-card !p-3 flex flex-wrap gap-2 items-center"><span class="text-[12.5px] font-semibold text-ink2 mr-1">Na mesa por tipo:</span>${grupos.map(([k, l]) => `<span class="chip" style="--c:${TIPOS[k].cor}"><i class="fa-solid ${TIPOS[k].ico} text-[9px]"></i>${TIPOS[k].curto} · ${l.length}</span>`).join('')}</div>
-    ${m.map((s, i) => `<div class="dv-card !p-0 overflow-hidden ${s.urgente ? 'ring-2 ring-red-500/60' : ''}">
-      <div class="flex flex-col md:flex-row">
-        <div class="md:w-14 flex md:flex-col items-center justify-center gap-2 px-4 py-2 md:py-0 text-ink3 font-black text-lg tabular-nums" style="background:var(--card2)">${i + 1}</div>
-        <div class="flex-1 min-w-0 p-4 space-y-2">
-          <div class="flex flex-wrap items-center gap-1.5">${s.urgente ? '<span class="selo-urg pulso"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}<span class="text-[11.5px] font-semibold text-ink3">${esc(s.numero || '')}</span></div>
-          <p class="text-[15px] font-bold text-ink">${esc(s.assunto)}</p>
-          <p class="text-[12.5px] text-ink3">${esc(s.origem || '')}${s.interessado ? ' → ' + esc(s.interessado) : ''}${s.municipio ? ' · ' + esc(s.municipio) : ''}</p>
-          ${s.urgente && s.motivoUrgencia ? `<p class="text-[12.5px] font-semibold" style="color:var(--urg)"><i class="fa-solid fa-circle-exclamation mr-1"></i>${esc(s.motivoUrgencia)}</p>` : ''}
-          ${s.observacoes ? `<p class="text-[12.5px] text-ink2"><i class="fa-regular fa-comment mr-1"></i>${esc(s.observacoes)}</p>` : ''}
-        </div>
-        <div class="p-4 md:w-60 flex md:flex-col gap-2 justify-between md:justify-center border-t md:border-t-0 md:border-l border-line">
-          <span class="prazo ${situacao(s)}">${textoPrazo(s)}</span>
-          <div class="flex gap-2 flex-wrap">
-            <button class="btn btn-pri !h-9" onclick="acaoRapida('${s.id}','assinar')"><i class="fa-solid fa-signature"></i>Assinado</button>
-            <button class="btn btn-sec !h-9" onclick="abrirDetalhe('${s.id}')" aria-label="Detalhes"><i class="fa-solid fa-ellipsis"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>`).join('')}`;
 }
 
 /* ----- Solicitações (lista e quadro) ----- */
@@ -1409,32 +1735,6 @@ function renderUrgentes() {
       <div class="dv-kpi" style="--c:var(--warn)"><span class="rot"><i class="fa-solid fa-hourglass-half"></i>Vencem hoje ou amanhã</span><span class="val">${pendentes().filter(s => s.prazo && diasAte(s.prazo) >= 0 && diasAte(s.prazo) <= 1).length}</span><span class="sub">entre todas as pendentes</span></div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">${lista.map(cartao).join('')}</div>`;
-}
-
-/* ----- Casa Civil ----- */
-function renderCC() {
-  const c = $('cc-corpo');
-  const todos = Store.sol.filter(s => s.casaCivil);
-  $('cc-resumo').textContent = todos.length ? `${todos.filter(CC_ATIVO).length} em andamento · ${todos.filter(s => s.ccEtapa === 'concluido').length} concluídas` : '';
-  if (!Store.sol.length) { c.innerHTML = estadoInicial(); return; }
-  if (!todos.length) { c.innerHTML = vazio('fa-landmark', 'Nenhuma demanda da Casa Civil', 'Ao registrar ou editar uma solicitação, marque "Demanda da Casa Civil" para que ela entre nesta trilha especial.'); return; }
-  c.innerHTML = `
-    <div class="dv-card !p-3 text-[12.5px] text-ink2 flex flex-wrap gap-x-5 gap-y-1"><span><b class="text-ink">Fluxo:</b> preparo no Gabinete → assinatura da Secretária → envio à Casa Civil → análise → conclusão/publicação.</span><span>Diligências voltam para a coluna laranja.</span></div>
-    <div class="quadro scrollbar-thin">${Object.entries(ETAPAS_CC).map(([k, e]) => { const itens = todos.filter(s => (s.ccEtapa || 'preparo') === k).sort(ordemDespacho); return `<div class="coluna"><h4><i class="fa-solid ${e.ico}" style="color:${e.cor}"></i>${e.rot}<span class="ml-auto text-ink3 tabular-nums">${itens.length}</span></h4>${itens.map(s => `<div class="cartao-k ${s.urgente && !FEITO(s) ? 'urg' : ''}">
-      <button type="button" class="text-left flex flex-col gap-1.5" onclick="abrirDetalhe('${s.id}')">
-        <span class="flex flex-wrap gap-1">${s.urgente && !FEITO(s) ? '<span class="selo-urg">Urgente</span>' : ''}${chipTipo(s.tipo)}${chipStatus(s.status)}</span>
-        <span class="text-[13px] font-semibold text-ink leading-snug">${esc(s.assunto)}</span>
-        <span class="text-[11px] text-ink3">${esc(s.numero || '')}${s.ccNumero ? ' · CC ' + esc(s.ccNumero) : ''}</span>
-        <span class="prazo ${situacao(s)} !text-[11.5px]">${textoPrazo(s)}</span>
-      </button>
-      <select class="campo !h-8 !text-[12px] w-full" aria-label="Mudar etapa na Casa Civil" onchange="mudarEtapaCC('${s.id}', this.value)">${Object.entries(ETAPAS_CC).map(([kk, ee]) => `<option value="${kk}" ${kk === (s.ccEtapa || 'preparo') ? 'selected' : ''}>${ee.rot}</option>`).join('')}</select>
-    </div>`).join('') || '<p class="text-[12px] text-ink3 px-1">Vazio</p>'}</div>`; }).join('')}</div>`;
-}
-async function mudarEtapaCC(id, etapa) {
-  const s = Store.sol.find(x => x.id === id); if (!s || s.ccEtapa === etapa) return;
-  const dados = copia(s); dados.ccEtapa = etapa;
-  dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: 'Casa Civil: ' + ETAPAS_CC[etapa].rot, obs: '', por: meuId() });
-  if (await salvarSol(id, dados)) toast('Etapa atualizada: ' + ETAPAS_CC[etapa].rot);
 }
 
 /* ----- Mapa ----- */
@@ -1702,7 +2002,11 @@ function abrirForm(id, pre = {}) {
   abrirModal(`
     <div class="form-hero">
       <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0">
+        <div class="hero-icos" aria-hidden="true">
+          <span id="hero-ico-ass" class="${nat.includes('assinatura') ? 'on' : ''}" style="--c:#2563eb"><i class="fa-solid fa-file-signature"></i></span>
+          <span id="hero-ico-pro" class="${nat.includes('Processo') ? 'on' : ''}" style="--c:#0d9488"><i class="fa-solid fa-folder-open"></i></span>
+        </div>
+        <div class="min-w-0 flex-1">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-300">${id ? 'Editar registro' : 'Novo registro'}</p>
           <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${id ? esc(s.assunto) : 'Solicitação de assinatura ou processo'}</h3>
           <p class="text-[12.5px] text-blue-100/70 mt-1">${id ? 'Recebido em ' + fmt(s.recebidoEm) : 'Três passos. A data de recebimento entra sozinha: hoje, ' + fmt(hojeISO()) + '.'}</p>
@@ -1801,9 +2105,16 @@ function atualizarPassos() {
         : `<span style="color:${d <= 3 ? 'var(--warn)' : 'var(--ok)'}"><i class="fa-regular fa-calendar-check mr-1"></i>Vence em ${d} dia(s) · ${['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'][new Date(p + 'T12:00:00').getDay()]}, ${fmt(p)}</span>`;
     }
   }
+  const nats = chipsMarcados('nat');
+  $('hero-ico-ass')?.classList.toggle('on', nats.includes('Solicitação de assinatura'));
+  $('hero-ico-pro')?.classList.toggle('on', nats.includes('Processo'));
   const feitos = Object.values(ok).filter(Boolean).length;
   const r = $('form-resumo');
   if (r) r.innerHTML = feitos === 3 ? '<span style="color:var(--ok)"><i class="fa-solid fa-circle-check mr-1"></i>Tudo pronto para registrar</span>' : `${feitos} de 3 passos completos`;
+}
+function novoRegistro(qual) {
+  menuMobile(false);
+  abrirForm(null, { natureza: qual === 'processo' ? 'Processo' : 'Solicitação de assinatura', tipo: qual === 'processo' ? 'despacho' : 'oficio' });
 }
 function alternarChip(btn) {
   const ativo = !btn.classList.contains('ativo');
@@ -1958,6 +2269,700 @@ async function salvarFormAgenda(id) {
   const antigo = id ? Store.agenda.find(x => x.id === id) : null;
   const dados = { ...(antigo ? copia(antigo) : {}), titulo: v('a-titulo'), data: v('a-data'), hora: v('a-hora'), tipo: v('a-tipo'), municipio: v('a-mun'), local: v('a-local'), obs: v('a-obs') };
   if (await salvarAgenda(id || null, dados)) { fecharModal(); agEstado.dia = dados.data; agEstado.mes = dados.data.slice(0, 7); toast('Compromisso salvo.'); if (abaAtual !== 'agenda') irPara('agenda'); }
+}
+
+/* ========================= Processos de Correição ========================= */
+function abrirFormCorreicao(id) {
+  if (!pode('gravar')) { toast('Seu perfil não cadastra processos de correição.', 'fa-lock'); return; }
+  const x = id ? Store.correicao.find(c => c.id === id) : {};
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#3a2306;background-image:radial-gradient(600px 200px at 0% 0%, rgba(245,158,11,.35), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#d97706"><i class="fa-solid fa-clipboard-check"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-300">${id ? 'Editar' : 'Novo'}</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Processo de Correição</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-4" id="form-cor" onsubmit="event.preventDefault();salvarFormCorreicao('${id || ''}')">
+      ${campo(1, '#b45309', 'Processo/Referência *', `<input class="campo campo-g w-full" id="c-processo" required value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
+      ${campo(2, '#2563eb', 'Documento de assinatura', `<input class="campo w-full" id="c-documento" value="${esc(x.documento || '')}" placeholder="Ex.: Portaria de designação de comissão">`)}
+      ${campo(3, '#0d9488', 'Objeto', `<textarea class="campo w-full" rows="2" id="c-objeto" placeholder="Do que trata o processo">${esc(x.objeto || '')}</textarea>`)}
+      ${campo(4, '#d97706', 'Situação/Ação', `<input class="campo w-full" id="c-situacao" list="lista-sit-cor" value="${esc(x.situacao || '')}" placeholder="Escolha ou escreva">
+        <div class="flex flex-wrap gap-1.5 mt-2">${SITUACOES_COR.map(s => { const [cor] = corSituacao(s); return `<button type="button" class="chip" style="--c:${cor};cursor:pointer" onclick="$('c-situacao').value=${js(s)}">${esc(s)}</button>`; }).join('')}</div>`)}
+      ${campo(5, '#64748b', 'Observação', `<textarea class="campo w-full" rows="2" id="c-observacao">${esc(x.observacao || '')}</textarea>`)}
+      <p id="c-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <datalist id="lista-sit-cor">${SITUACOES_COR.map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-cor" id="btn-cor-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'correicao');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  setTimeout(() => $('c-processo').focus(), 50);
+}
+async function salvarFormCorreicao(id) {
+  const v = k => $(k).value.trim();
+  const aviso = t => { const el = $('c-aviso'); el.textContent = t; el.classList.remove('hidden'); };
+  if (!v('c-processo')) return aviso('Informe o Processo/Referência.');
+  if (!v('c-documento') && !v('c-objeto')) return aviso('Informe o documento de assinatura ou o objeto.');
+  const antigo = id ? Store.correicao.find(c => c.id === id) : null;
+  const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString() }),
+    processo: v('c-processo'), documento: v('c-documento'), objeto: v('c-objeto'), situacao: v('c-situacao'), observacao: v('c-observacao'), atualizadoEm: new Date().toISOString() };
+  const btn = $('btn-cor-salvar'); btn.disabled = true;
+  if (await salvarCorreicao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Processo de correição registrado · salvando em segundo plano.' : 'Processo de correição salvo.'); if (abaAtual !== 'correicao') irPara('correicao'); }
+  else btn.disabled = false;
+}
+function excluirCorreicaoBtn(id, btn) {
+  if (!btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = 'Confirmar'; setTimeout(() => { if (btn.isConnected) { delete btn.dataset.conf; btn.innerHTML = '<i class="fa-solid fa-trash text-[11px]"></i>'; } }, 4000); return; }
+  excluirCorreicaoId(id);
+}
+
+/* ========================= Planilhas (estilo Google Sheets) ========================= */
+// Usado por Gestão de Processos, Casa Civil e Processos de Correição.
+//  • Clique seleciona; Shift+clique, arrastar ou Shift+setas selecionam várias células.
+//  • Clique no número da linha seleciona a linha; na letra da coluna, a coluna; no canto, tudo (Ctrl+A).
+//  • Duplo clique, Enter ou digitar edita. Com várias linhas selecionadas, o valor vale para todas
+//    as células selecionadas daquela coluna. Delete limpa. Ctrl+C copia e Ctrl+V cola (como no Sheets).
+//  • Coluna "Ações" fixa à direita e barra de ações em lote quando há várias linhas selecionadas.
+//  • Modo compacto opcional (nº, assunto, tipo, secretaria adjunta, situação e ações).
+const Grades = {};
+let gradeEditando = null, gradeRenderPendente = false, gradeArrastando = null;
+const TRANSICOES_APP = {
+  recebido: ['analise', 'aguardando', 'ajuste', 'expedido'], analise: ['aguardando', 'ajuste', 'recebido', 'expedido'],
+  ajuste: ['analise', 'aguardando', 'recebido'], aguardando: ['assinado', 'ajuste', 'analise'],
+  assinado: ['expedido', 'analise', 'aguardando'], expedido: ['analise', 'assinado']
+};
+function letraCol(n) { let s = ''; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+function estadoGrade(id, padrao) {
+  if (!Grades[id]) {
+    let compacto = false; try { compacto = localStorage.getItem('gabdoc_compacto_' + id) === '1'; } catch (e) {}
+    Grades[id] = Object.assign({ busca: '', ordem: null, dir: 1, filtros: {}, mostrarFiltros: false, ativa: null, faixa: null, chip: '', compacto }, padrao || {});
+  }
+  return Grades[id];
+}
+function valorBruto(col, row) { return col.valor ? col.valor(row) : row[col.key]; }
+function textoCelula(col, row) {
+  const v = valorBruto(col, row);
+  if (col.tipo === 'check') return v ? 'Sim' : 'Não';
+  if (col.tipo === 'data') return v ? fmt(v) : '';
+  if (col.tipo === 'select') { const o = (col.opcoes(row) || []).find(x => x[0] === v); return o ? o[1] : (v || ''); }
+  return v == null ? '' : String(v);
+}
+function chaveOrdem(col, row) {
+  const v = valorBruto(col, row);
+  if (col.tipo === 'check') return v ? '1' : '0';
+  if (col.tipo === 'data') return v || '9999';
+  return Utils_norm(textoCelula(col, row));
+}
+function linhasDaGrade(cfg, st) {
+  const q = Utils_norm(st.busca.trim());
+  let L = cfg.linhas.filter(r => (!cfg.chips || !st.chip || cfg.chips.find(c => c[0] === st.chip)[2](r)) &&
+    (!q || cfg.colunas.some(c => Utils_norm(textoCelula(c, r)).includes(q))) &&
+    Object.entries(st.filtros).every(([k, f]) => { if (!f) return true; const c = cfg.colunas.find(x => x.key === k); return !c || Utils_norm(textoCelula(c, r)).includes(Utils_norm(f)); }));
+  if (st.ordem) { const c = cfg.colunas.find(x => x.key === st.ordem); if (c) L = L.slice().sort((a, b) => chaveOrdem(c, a).localeCompare(chaveOrdem(c, b), 'pt-BR', { numeric: true }) * st.dir); }
+  else if (cfg.ordemPadrao) L = L.slice().sort(cfg.ordemPadrao);
+  return L;
+}
+function colunasVisiveis(cfg, st) {
+  if (!st.compacto || !cfg.compactas) return cfg.colunas;
+  return cfg.compactas.map(k => cfg.colunas.find(c => c.key === k)).filter(Boolean).map(c => c.wCompacta ? { ...c, w: c.wCompacta } : c);
+}
+
+function renderGrade(cont, cfg) {
+  if (gradeEditando && gradeEditando.grade === cfg.id) { gradeRenderPendente = true; return; }
+  fecharMenuAcoes();
+  const st = estadoGrade(cfg.id, cfg.estadoInicial);
+  const g = Grades[cfg.id];
+  g.cfg = cfg;
+  const cols = colunasVisiveis(cfg, st);
+  g.cols = cols;
+  const L = linhasDaGrade(cfg, st);
+  g.visiveis = L;
+  const podeEditar = pode('gravar');
+  const larguraAcoes = cfg.acoes ? (cfg.larguraAcoes || 178) : 0;
+  // No modo compacto a coluna principal (assunto/objeto) ocupa o espaço que sobrar, para caber na tela
+  const flexivel = st.compacto ? cols.find(c => c.flex) : null;
+  const largura = 46 + cols.reduce((a, c) => a + (c === flexivel ? 200 : (c.w || 140)), 0) + larguraAcoes;
+  const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${c.w || 140}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
+  const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="Ordenar por ${esc(c.rot)}">
+      <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}</th>`).join('');
+  const filtros = st.mostrarFiltros ? `<tr class="gs-filtros"><th class="gs-num"><i class="fa-solid fa-filter text-[10px]"></i></th>${cols.map(c => `<th><input class="gs-filtro" data-k="${c.key}" value="${esc(st.filtros[c.key] || '')}" placeholder="Filtrar…" oninput="filtrarGrade('${cfg.id}', this)" aria-label="Filtrar ${esc(c.rot)}"></th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>` : '';
+  const corpo = L.map((r, ri) => `<tr data-ri="${ri}" data-id="${esc(r.id)}" class="${cfg.classeLinha ? cfg.classeLinha(r) : ''}${Grav.pendente(r.id) ? ' gs-pend' : ''}">
+      <td class="gs-num" data-ri="${ri}" title="Selecionar a linha ${ri + 1}">${ri + 1}</td>
+      ${cols.map((c, ci) => { const ed = c.editavel && podeEditar;
+        const conteudo = c.tipo === 'check' ? `<span class="gs-caixinha ${valorBruto(c, r) ? 'on' : ''}"><i class="fa-solid fa-check"></i></span>` : (c.render ? c.render(r) : esc(textoCelula(c, r)));
+        return `<td class="gs-cel ${ed ? 'ed' : ''} ${c.tipo === 'check' ? 'gs-check' : ''} ${c.classe || ''}" data-ri="${ri}" data-ci="${ci}">${conteudo}</td>`; }).join('')}
+      ${cfg.acoes ? `<td class="gs-acoes">${cfg.acoes(r, ri)}</td>` : ''}
+    </tr>`).join('');
+  const nCols = cols.length + (cfg.acoes ? 1 : 0);
+  const novaLinha = cfg.novaLinha && podeEditar ? `<tr class="gs-nova"><td class="gs-num"><i class="fa-solid fa-plus text-[10px]"></i></td><td colspan="${nCols}"><button type="button" onclick="Grades['${cfg.id}'].cfg.novaLinha()">${esc(cfg.textoNovaLinha || 'Adicionar linha')}</button></td></tr>` : '';
+  const vazioLinha = !L.length ? `<tr><td class="gs-num"></td><td colspan="${nCols}" class="gs-vazio">${cfg.linhas.length ? 'Nenhuma linha com esses filtros.' : esc(cfg.textoVazio || 'Nenhum registro ainda.')}</td></tr>` : '';
+  cont.innerHTML = `
+    ${cfg.topo || ''}
+    <div class="gs-barra">
+      <div class="relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i>
+        <input class="campo w-full !pl-8 !h-9" id="gs-busca-${cfg.id}" value="${esc(st.busca)}" placeholder="Buscar em todas as colunas" oninput="buscarGrade('${cfg.id}', this)" aria-label="Buscar"></div>
+      ${cfg.chips ? `<div class="flex flex-wrap gap-1.5">${cfg.chips.map(([k, rot, , cor]) => `<button type="button" class="chip-f !h-8 ${st.chip === k ? 'ativo' : ''}" style="--c:${cor || 'var(--brand)'}" onclick="chipGrade('${cfg.id}','${k}')">${rot}<b>${k ? cfg.linhas.filter(cfg.chips.find(c => c[0] === k)[2]).length : cfg.linhas.length}</b></button>`).join('')}</div>` : ''}
+      <div class="flex flex-wrap gap-1.5 ml-auto">
+        ${cfg.compactas ? `<div class="dv-seg" role="group" aria-label="Modo de visualização"><button type="button" class="${st.compacto ? '' : 'ativo'}" onclick="modoGrade('${cfg.id}', false)" title="Todas as colunas"><i class="fa-solid fa-table-cells mr-1"></i>Completo</button><button type="button" class="${st.compacto ? 'ativo' : ''}" onclick="modoGrade('${cfg.id}', true)" title="Só o essencial"><i class="fa-solid fa-table-list mr-1"></i>Compacto</button></div>` : ''}
+        <button type="button" class="btn btn-sec !h-9 ${st.mostrarFiltros ? '!border-blue-500' : ''}" onclick="alternarFiltrosGrade('${cfg.id}')"><i class="fa-solid fa-filter"></i>Filtros</button>
+        <button type="button" class="btn btn-sec !h-9" onclick="exportarGrade('${cfg.id}')"><i class="fa-solid fa-file-csv"></i>CSV</button>
+        ${cfg.botaoNovo && podeEditar ? cfg.botaoNovo : ''}
+      </div>
+    </div>
+    <div class="gs-lote" id="gs-lote-${cfg.id}" hidden></div>
+    <div class="gs-caixa scrollbar-thin ${st.compacto ? 'gs-compacto' : ''}" id="gs-${cfg.id}" tabindex="0" onkeydown="teclaGrade(event,'${cfg.id}')">
+      <table class="gs" style="${flexivel ? `width:100%;min-width:${largura}px` : `width:max(100%, ${largura}px)`}"><colgroup>${colgroup}</colgroup>
+        <thead><tr class="gs-letras"><th class="gs-canto" title="Selecionar tudo" onclick="selecionarTudo('${cfg.id}')"></th>${cols.map((c, i) => `<th data-ci="${i}" onclick="selecionarColuna('${cfg.id}', ${i}, event)">${letraCol(i)}</th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>
+          <tr><th class="gs-num gs-cab-num">#</th>${cab}${cfg.acoes ? '<th class="gs-acoes gs-acoes-cab"><i class="fa-solid fa-bolt mr-1"></i>Ações</th>' : ''}</tr>${filtros}</thead>
+        <tbody>${corpo}${vazioLinha}${novaLinha}</tbody>
+      </table>
+    </div>
+    <div class="gs-status"><span>${L.length} de ${cfg.linhas.length} linha(s)</span><span id="gs-info-${cfg.id}" class="truncate"></span>${podeEditar ? '<span class="hidden lg:inline">Shift/arrastar seleciona várias · Enter edita · Ctrl+C / Ctrl+V</span>' : '<span>Somente leitura para o seu perfil</span>'}</div>`;
+  const caixa = $('gs-' + cfg.id);
+  caixa.addEventListener('mousedown', e => {
+    if (e.button !== 0 || e.target.closest('.gs-acoes, .gs-filtro, .gs-editor, thead')) return;
+    const td = e.target.closest('td.gs-cel'), num = e.target.closest('td.gs-num');
+    if (td) {
+      const ri = +td.dataset.ri, ci = +td.dataset.ci;
+      if (e.shiftKey && g.ativa) estenderFaixa(cfg.id, ri, ci); else selecionarCelula(cfg.id, ri, ci, true);
+      gradeArrastando = { id: cfg.id };
+      e.preventDefault(); caixa.focus({ preventScroll: true });
+    } else if (num && num.dataset.ri !== undefined) {
+      const ri = +num.dataset.ri;
+      if (e.shiftKey && g.faixa) { const a = g.visiveis.findIndex(r => r.id === g.ativa.id); definirFaixa(cfg.id, Math.min(a, ri), 0, Math.max(a, ri), g.cols.length - 1); }
+      else { selecionarCelula(cfg.id, ri, 0, true); definirFaixa(cfg.id, ri, 0, ri, g.cols.length - 1); }
+      gradeArrastando = { id: cfg.id, linhas: true };
+      e.preventDefault(); caixa.focus({ preventScroll: true });
+    }
+  });
+  caixa.addEventListener('mouseover', e => {
+    if (!gradeArrastando || gradeArrastando.id !== cfg.id) return;
+    const td = e.target.closest('td.gs-cel, td.gs-num'); if (!td || td.dataset.ri === undefined) return;
+    if (gradeArrastando.linhas) { const a = g.visiveis.findIndex(r => r.id === g.ativa.id); const ri = +td.dataset.ri; definirFaixa(cfg.id, Math.min(a, ri), 0, Math.max(a, ri), g.cols.length - 1); }
+    else if (td.dataset.ci !== undefined) estenderFaixa(cfg.id, +td.dataset.ri, +td.dataset.ci);
+  });
+  caixa.addEventListener('dblclick', e => { const td = e.target.closest('td.gs-cel'); if (td) editarCelula(cfg.id, +td.dataset.ri, +td.dataset.ci); });
+  caixa.addEventListener('click', e => { const td = e.target.closest('td.gs-check.ed'); if (td && !e.shiftKey && !temFaixaMultipla(cfg.id)) alternarChecks(cfg.id); });
+  // restaura a seleção depois de redesenhar
+  if (g.ativa) {
+    const ri = L.findIndex(r => r.id === g.ativa.id);
+    if (ri >= 0) { aplicarSelecao(cfg.id); } else { g.ativa = null; g.faixa = null; }
+  }
+  atualizarLote(cfg.id);
+}
+document.addEventListener('mouseup', () => { gradeArrastando = null; });
+
+/* ----- seleção ----- */
+function indicesFaixa(id) {
+  const g = Grades[id]; if (!g || !g.faixa) return null;
+  const pos = g.faixa.ids.map(x => g.visiveis.findIndex(r => r.id === x)).filter(i => i >= 0);
+  if (!pos.length) return null;
+  return { r1: Math.min(...pos), r2: Math.max(...pos), c1: g.faixa.c1, c2: g.faixa.c2 };
+}
+function temFaixaMultipla(id) { const f = indicesFaixa(id); return !!f && (f.r2 > f.r1 || f.c2 > f.c1); }
+function linhasSelecionadas(id) { const g = Grades[id], f = indicesFaixa(id); return f ? g.visiveis.slice(f.r1, f.r2 + 1) : (g.ativa ? g.visiveis.filter(r => r.id === g.ativa.id) : []); }
+function definirFaixa(id, r1, c1, r2, c2) {
+  const g = Grades[id];
+  g.faixa = { ids: g.visiveis.slice(Math.min(r1, r2), Math.max(r1, r2) + 1).map(r => r.id), c1: Math.min(c1, c2), c2: Math.max(c1, c2) };
+  aplicarSelecao(id);
+}
+function selecionarCelula(id, ri, ci, semFoco) {
+  const g = Grades[id], L = g.visiveis;
+  if (!L || !L.length) return;
+  ri = Math.max(0, Math.min(L.length - 1, ri)); ci = Math.max(0, Math.min(g.cols.length - 1, ci));
+  g.ativa = { id: L[ri].id, ci };
+  g.faixa = { ids: [L[ri].id], c1: ci, c2: ci };
+  aplicarSelecao(id);
+  if (!semFoco) { const caixa = $('gs-' + id); caixa?.focus({ preventScroll: true }); caixa?.querySelector(`td.gs-cel[data-ri="${ri}"][data-ci="${ci}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+}
+function estenderFaixa(id, ri, ci, rolar) {
+  const g = Grades[id]; if (!g.ativa) return selecionarCelula(id, ri, ci);
+  const a = g.visiveis.findIndex(r => r.id === g.ativa.id);
+  ri = Math.max(0, Math.min(g.visiveis.length - 1, ri)); ci = Math.max(0, Math.min(g.cols.length - 1, ci));
+  definirFaixa(id, a, g.ativa.ci, ri, ci);
+  g.fimFaixa = { ri, ci };
+  if (rolar) $('gs-' + id)?.querySelector(`td.gs-cel[data-ri="${ri}"][data-ci="${ci}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+function selecionarTudo(id) { const g = Grades[id]; if (!g.visiveis.length) return; if (!g.ativa) selecionarCelula(id, 0, 0, true); definirFaixa(id, 0, 0, g.visiveis.length - 1, g.cols.length - 1); $('gs-' + id)?.focus({ preventScroll: true }); }
+function selecionarColuna(id, ci, e) {
+  const g = Grades[id]; if (!g.visiveis.length) return;
+  if (e && e.shiftKey && g.ativa) { definirFaixa(id, 0, g.ativa.ci, g.visiveis.length - 1, ci); }
+  else { g.ativa = { id: g.visiveis[0].id, ci }; definirFaixa(id, 0, ci, g.visiveis.length - 1, ci); }
+  $('gs-' + id)?.focus({ preventScroll: true });
+}
+function aplicarSelecao(id) {
+  const g = Grades[id], caixa = $('gs-' + id); if (!caixa) return;
+  caixa.querySelectorAll('.gs-sel, .gs-faixa').forEach(x => x.classList.remove('gs-sel', 'gs-faixa'));
+  caixa.querySelectorAll('.gs-linha-sel').forEach(x => x.classList.remove('gs-linha-sel'));
+  caixa.querySelectorAll('th.gs-col-sel').forEach(x => x.classList.remove('gs-col-sel'));
+  const f = indicesFaixa(id);
+  if (f) {
+    for (let r = f.r1; r <= f.r2; r++) {
+      const tr = caixa.querySelector(`tbody tr[data-ri="${r}"]`); if (!tr) continue;
+      tr.classList.add('gs-linha-sel');
+      for (let c = f.c1; c <= f.c2; c++) tr.querySelector(`td.gs-cel[data-ci="${c}"]`)?.classList.add('gs-faixa');
+    }
+    for (let c = f.c1; c <= f.c2; c++) caixa.querySelector(`thead tr.gs-letras th[data-ci="${c}"]`)?.classList.add('gs-col-sel');
+  }
+  if (g.ativa) {
+    const ri = g.visiveis.findIndex(r => r.id === g.ativa.id);
+    caixa.querySelector(`td.gs-cel[data-ri="${ri}"][data-ci="${g.ativa.ci}"]`)?.classList.add('gs-sel');
+  }
+  const info = $('gs-info-' + id);
+  if (info) {
+    if (f && (f.r2 > f.r1 || f.c2 > f.c1)) info.textContent = `${letraCol(f.c1)}${f.r1 + 1}:${letraCol(f.c2)}${f.r2 + 1} · Contagem: ${(f.r2 - f.r1 + 1) * (f.c2 - f.c1 + 1)} células em ${f.r2 - f.r1 + 1} linha(s)`;
+    else if (g.ativa) { const ri = g.visiveis.findIndex(r => r.id === g.ativa.id); const c = g.cols[g.ativa.ci]; info.textContent = ri >= 0 ? `${letraCol(g.ativa.ci)}${ri + 1} · ${c.rot}: ${textoCelula(c, g.visiveis[ri])}` : ''; }
+    else info.textContent = '';
+  }
+  atualizarLote(id);
+}
+
+/* ----- teclado, cópia e colagem ----- */
+function teclaGrade(e, id) {
+  const g = Grades[id]; if (!g || gradeEditando) return;
+  if (e.target.closest && e.target.closest('.gs-acoes, .gs-filtro')) return;
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && (e.key === 'a' || e.key === 'A')) { e.preventDefault(); selecionarTudo(id); return; }
+  if (mod && (e.key === 'c' || e.key === 'C')) { e.preventDefault(); copiarFaixa(id); return; }
+  if (!g.ativa) { if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) { e.preventDefault(); selecionarCelula(id, 0, 0); } return; }
+  const ri = g.visiveis.findIndex(r => r.id === g.ativa.id), ci = g.ativa.ci;
+  const mov = { ArrowDown: [1, 0], ArrowUp: [-1, 0], ArrowRight: [0, 1], ArrowLeft: [0, -1] }[e.key];
+  if (mov) {
+    e.preventDefault();
+    if (e.shiftKey) { const fim = g.fimFaixa && temFaixaMultipla(id) ? g.fimFaixa : { ri, ci }; estenderFaixa(id, fim.ri + mov[0], fim.ci + mov[1], true); }
+    else selecionarCelula(id, ri + mov[0], ci + mov[1]);
+    return;
+  }
+  if (e.key === 'Tab') { e.preventDefault(); selecionarCelula(id, ri, ci + (e.shiftKey ? -1 : 1)); return; }
+  if (e.key === 'Escape') { selecionarCelula(id, ri, ci); return; }
+  if (e.key === 'Enter' || e.key === 'F2') { e.preventDefault(); editarCelula(id, ri, ci); return; }
+  const col = g.cols[ci];
+  if (e.key === ' ' && col.tipo === 'check') { e.preventDefault(); alternarChecks(id); return; }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && pode('gravar')) { e.preventDefault(); limparFaixa(id); return; }
+  if (e.key.length === 1 && !mod && !e.altKey && col.editavel && col.tipo === 'texto') { e.preventDefault(); editarCelula(id, ri, ci, e.key); }
+}
+async function copiarFaixa(id) {
+  const g = Grades[id]; const f = indicesFaixa(id); if (!f) return;
+  const tsv = g.visiveis.slice(f.r1, f.r2 + 1).map(r => g.cols.slice(f.c1, f.c2 + 1).map(c => textoCelula(c, r).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
+  try { await navigator.clipboard.writeText(tsv); }
+  catch (e) { const ta = document.createElement('textarea'); ta.value = tsv; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (x) {} ta.remove(); }
+  const n = (f.r2 - f.r1 + 1) * (f.c2 - f.c1 + 1);
+  toast(`${n} célula(s) copiada(s).`, 'fa-copy');
+}
+document.addEventListener('paste', e => {
+  const caixa = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.gs-caixa') : null;
+  if (!caixa || gradeEditando) return;
+  const id = caixa.id.replace(/^gs-/, ''), g = Grades[id];
+  if (!g || !g.ativa || !pode('gravar')) return;
+  const texto = (e.clipboardData || window.clipboardData).getData('text');
+  if (!texto) return;
+  e.preventDefault();
+  let blocos = texto.replace(/\r/g, '').replace(/\n$/, '').split('\n').map(l => l.split('\t'));
+  const f = indicesFaixa(id);
+  // um único valor colado numa faixa: preenche a faixa inteira (como no Sheets)
+  if (blocos.length === 1 && blocos[0].length === 1 && f && (f.r2 > f.r1 || f.c2 > f.c1)) blocos = Array.from({ length: f.r2 - f.r1 + 1 }, () => Array(f.c2 - f.c1 + 1).fill(blocos[0][0]));
+  const r0 = f ? f.r1 : g.visiveis.findIndex(r => r.id === g.ativa.id), c0 = f ? f.c1 : g.ativa.ci;
+  const mudancas = [];
+  blocos.forEach((linha, dr) => {
+    const row = g.visiveis[r0 + dr]; if (!row) return;
+    const campos = {};
+    linha.forEach((valor, dc) => { const col = g.cols[c0 + dc]; if (!col) return; const v = converterColado(col, row, valor); if (v !== undefined) campos[col.key] = v; });
+    if (Object.keys(campos).length) mudancas.push([row, campos]);
+  });
+  aplicarMudancas(id, mudancas, 'colagem');
+});
+function converterColado(col, row, valor) {
+  if (!col.editavel) return undefined;
+  valor = String(valor).trim();
+  if (col.tipo === 'check') return /^(sim|s|x|1|true|verdadeiro)$/i.test(valor);
+  if (col.tipo === 'data') { const m = valor.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`; return /^\d{4}-\d{2}-\d{2}$/.test(valor) ? valor : undefined; }
+  if (col.tipo === 'select') { const op = (col.opcoes(row) || []).find(o => Utils_norm(o[0]) === Utils_norm(valor) || Utils_norm(o[1]) === Utils_norm(valor)); return op ? op[0] : undefined; }
+  if (col.validar && col.validar(valor, row)) return undefined;
+  return valor;
+}
+function limparFaixa(id) {
+  const g = Grades[id], f = indicesFaixa(id); if (!f) return;
+  const cols = g.cols.slice(f.c1, f.c2 + 1).filter(c => c.editavel && c.tipo === 'texto' && !c.obrigatorio);
+  if (!cols.length) { toast('Nada a limpar: as colunas selecionadas não aceitam ficar vazias.', 'fa-circle-info'); return; }
+  aplicarMudancas(id, g.visiveis.slice(f.r1, f.r2 + 1).map(r => [r, Object.fromEntries(cols.map(c => [c.key, '']))]), 'limpeza');
+}
+function alternarChecks(id) {
+  const g = Grades[id]; if (!pode('gravar')) return;
+  const col = g.cols[g.ativa.ci]; if (col.tipo !== 'check' || !col.editavel) return;
+  const ativa = g.visiveis.find(r => r.id === g.ativa.id);
+  const novo = !valorBruto(col, ativa);
+  aplicarMudancas(id, linhasSelecionadas(id).map(r => [r, { [col.key]: novo }]), 'marcação');
+}
+
+/* ----- edição ----- */
+function editarCelula(id, ri, ci, inicial) {
+  const g = Grades[id], cfg = g.cfg, col = g.cols[ci], row = g.visiveis[ri];
+  if (!row) return;
+  if (!col.editavel || !pode('gravar')) { if (!col.editavel) toast('Esta coluna é calculada pelo sistema.', 'fa-lock'); return; }
+  if (col.tipo === 'check') { alternarChecks(id); return; }
+  const td = $('gs-' + id).querySelector(`td.gs-cel[data-ri="${ri}"][data-ci="${ci}"]`); if (!td) return;
+  const f = indicesFaixa(id);
+  const alvo = f && f.r2 > f.r1 && ci >= f.c1 && ci <= f.c2 && ri >= f.r1 && ri <= f.r2 ? g.visiveis.slice(f.r1, f.r2 + 1) : [row];
+  if (!f || ri < f.r1 || ri > f.r2) selecionarCelula(id, ri, ci, true);
+  const atual = valorBruto(col, row);
+  gradeEditando = { grade: id, ri, ci };
+  let html;
+  if (col.tipo === 'select') html = `<select class="gs-editor">${(col.opcoes(row) || []).map(([v, r]) => `<option value="${esc(v)}" ${v === atual ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select>`;
+  else if (col.tipo === 'data') html = `<input type="date" class="gs-editor" value="${esc(atual || '')}">`;
+  else html = `<input type="text" class="gs-editor" ${col.lista ? `list="${col.lista}"` : ''} value="${esc(inicial !== undefined ? inicial : (atual || ''))}">`;
+  td.classList.add('gs-editando');
+  td.innerHTML = html + (alvo.length > 1 ? `<span class="gs-dica">Vale para ${alvo.length} linhas</span>` : '');
+  const ed = td.querySelector('.gs-editor');
+  ed.focus();
+  if (ed.setSelectionRange && ed.type === 'text') { const n = ed.value.length; ed.setSelectionRange(n, n); }
+  let feito = false;
+  const fim = (salvar, proxima) => {
+    if (feito) return; feito = true;
+    const valor = ed.value;
+    gradeEditando = null;
+    const mudou = alvo.length > 1 ? alvo.some(r => String(valorBruto(col, r) || '') !== String(valor)) : String(valor) !== String(atual || '');
+    if (salvar && mudou) {
+      if (col.validar) { const erro = col.validar(valor, row); if (erro) { toast(erro, 'fa-triangle-exclamation'); renderAba(); return; } }
+      aplicarMudancas(id, alvo.map(r => [r, { [col.key]: valor }]), 'edição');
+    } else { renderAba(); }
+    if (proxima) setTimeout(() => selecionarCelula(id, proxima[0], proxima[1]), 0);
+  };
+  ed.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); fim(true, alvo.length > 1 ? null : [ri + 1, ci]); }
+    else if (e.key === 'Escape') { e.preventDefault(); fim(false); setTimeout(() => $('gs-' + id)?.focus(), 0); }
+    else if (e.key === 'Tab') { e.preventDefault(); fim(true, [ri, ci + (e.shiftKey ? -1 : 1)]); }
+    e.stopPropagation();
+  });
+  ed.addEventListener('blur', () => fim(true));
+  if (col.tipo === 'select') ed.addEventListener('change', () => ed.blur());
+}
+/** Aplica mudanças [[linha, {campo: valor}], ...]: a tela muda na hora e a gravação segue em segundo plano. */
+async function aplicarMudancas(id, mudancas, origem) {
+  const g = Grades[id], cfg = g.cfg;
+  const reais = mudancas.filter(([r, campos]) => Object.entries(campos).some(([k, v]) => { const c = cfg.colunas.find(x => x.key === k); return String(c ? valorBruto(c, r) ?? '' : r[k] ?? '') !== String(v ?? ''); }));
+  if (!reais.length) { renderAba(); return; }
+  let ok = 0, falhas = 0;
+  const fonte = cfg.fonte ? cfg.fonte() : cfg.linhas;
+  const tarefas = emLote(() => reais.map(([r, campos]) => cfg.aoEditarCampos(fonte.find(x => x.id === r.id) || r, campos)));
+  for (const res of await Promise.all(tarefas)) { if (res === false) falhas++; else ok++; }
+  if (gradeRenderPendente) gradeRenderPendente = false;
+  renderAba();
+  const msg = reais.length > 1 ? `${ok} linha(s) alterada(s)${falhas ? ` · ${falhas} não puderam ser alteradas` : ''}` : (falhas ? '' : 'Alterado');
+  if (reais.length > 1) toast(msg + (gravaEmFila() ? ' · salvando em segundo plano.' : '.'), falhas ? 'fa-triangle-exclamation' : 'fa-circle-check');
+  const inf = $('gs-info-' + id); if (inf && msg) inf.textContent = msg + (gravaEmFila() ? ' · salvando…' : '');
+}
+
+/* ----- ações: coluna fixa, menu e lote ----- */
+let menuAtual = null;
+function abrirMenuAcoes(id, rowId, btn) {
+  const g = Grades[id], row = g.cfg.linhas.find(r => r.id === rowId); if (!row) return;
+  if (menuAtual && menuAtual.rowId === rowId && menuAtual.id === id) { fecharMenuAcoes(); return; }
+  fecharMenuAcoes();
+  const itens = (g.cfg.menuAcoes(row) || []).filter(x => x.sep || !x.perm || pode(x.perm));
+  menuAtual = { id, rowId, itens };
+  const m = document.createElement('div');
+  m.id = 'menu-acoes'; m.className = 'menu-acoes';
+  m.innerHTML = `<p class="menu-tit">${esc(g.cfg.tituloLinha ? g.cfg.tituloLinha(row) : '')}</p>` + itens.map((x, i) => x.sep ? '<hr>' :
+    `<button type="button" class="${x.perigo ? 'perigo' : ''}" onclick="executarAcaoMenu(${i}, this)"><span class="mi" style="--c:${x.cor || 'var(--ink3)'}"><i class="fa-solid ${x.ico}"></i></span>${esc(x.rot)}</button>`).join('');
+  document.body.appendChild(m);
+  const r = btn.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
+  const top = r.bottom + 6 + h > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6;
+  m.style.top = top + 'px'; m.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + 'px';
+}
+function fecharMenuAcoes() { const m = $('menu-acoes'); if (m) m.remove(); menuAtual = null; }
+async function executarAcaoMenu(i, btn) {
+  if (!menuAtual) return;
+  const item = menuAtual.itens[i];
+  if (item.perigo && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.lastChild.textContent = 'Confirmar: ' + item.rot.toLowerCase(); return; }
+  fecharMenuAcoes();
+  await item.fn();
+}
+document.addEventListener('mousedown', e => { if (menuAtual && !e.target.closest('#menu-acoes, .gs-mais')) fecharMenuAcoes(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuAtual) fecharMenuAcoes(); });
+window.addEventListener('resize', fecharMenuAcoes);
+function atualizarLote(id) {
+  const g = Grades[id], el = $('gs-lote-' + id); if (!el || !g.cfg) return;
+  const f = indicesFaixa(id);
+  const n = f ? f.r2 - f.r1 + 1 : 0;
+  if (n < 2 || !g.cfg.acoesLote) { el.hidden = true; return; }
+  const acoes = g.cfg.acoesLote.filter(a => !a.perm || pode(a.perm));
+  el.hidden = false;
+  el.innerHTML = `<span class="font-bold"><i class="fa-solid fa-layer-group mr-1"></i>${n} linhas selecionadas</span>
+    <div class="flex flex-wrap gap-1.5">${acoes.map((a, i) => `<button type="button" class="btn !h-8 ${a.perigo ? 'btn-perigo' : 'btn-sec'}" onclick="executarLote('${id}', ${i}, this)"><i class="fa-solid ${a.ico}" style="color:${a.perigo ? 'inherit' : a.cor || 'inherit'}"></i>${esc(a.rot)}</button>`).join('')}
+    <button type="button" class="btn btn-sec !h-8" onclick="selecionarCelula('${id}', ${f.r1}, ${g.ativa ? g.ativa.ci : 0})"><i class="fa-solid fa-xmark"></i>Limpar seleção</button></div>`;
+}
+async function executarLote(id, i, btn) {
+  const g = Grades[id], a = g.cfg.acoesLote.filter(x => !x.perm || pode(x.perm))[i];
+  const linhas = linhasSelecionadas(id);
+  if (a.perigo && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.lastChild.textContent = `Confirmar (${linhas.length})`; return; }
+  btn.disabled = true;
+  if (a.campos) { await aplicarMudancas(id, linhas.filter(r => !a.filtro || a.filtro(r)).map(r => [r, a.campos(r)]), 'lote'); return; }
+  let ok = 0;
+  const res = await Promise.all(emLote(() => linhas.map(r => a.fn(r))));
+  res.forEach(x => { if (x !== false) ok++; });
+  renderAba();
+  toast(`${a.rot}: ${ok} de ${linhas.length} linha(s).`);
+}
+
+/* ----- utilidades da planilha ----- */
+function rerenderGrade(id) { const g = Grades[id]; if (g && g.cfg) renderAba(); }
+function modoGrade(id, compacto) { const st = Grades[id]; st.compacto = compacto; try { localStorage.setItem('gabdoc_compacto_' + id, compacto ? '1' : '0'); } catch (e) {} if (st.ativa) st.ativa.ci = 0; st.faixa = null; rerenderGrade(id); }
+function ordenarGrade(id, key) { const st = Grades[id]; if (st.ordem === key) { if (st.dir > 0) st.dir = -1; else { st.ordem = null; st.dir = 1; } } else { st.ordem = key; st.dir = 1; } rerenderGrade(id); }
+function buscarGrade(id, el) { Grades[id].busca = el.value; const pos = el.selectionStart; rerenderGrade(id); const n = $('gs-busca-' + id); if (n) { n.focus(); n.setSelectionRange(pos, pos); } }
+function filtrarGrade(id, el) { Grades[id].filtros[el.dataset.k] = el.value; const k = el.dataset.k, pos = el.selectionStart; rerenderGrade(id); const n = document.querySelector(`#gs-${id} .gs-filtro[data-k="${k}"]`); if (n) { n.focus(); n.setSelectionRange(pos, pos); } }
+function alternarFiltrosGrade(id) { const st = Grades[id]; st.mostrarFiltros = !st.mostrarFiltros; if (!st.mostrarFiltros) st.filtros = {}; rerenderGrade(id); }
+function chipGrade(id, k) { Grades[id].chip = Grades[id].chip === k ? '' : k; Grades[id].faixa = null; rerenderGrade(id); }
+function exportarGrade(id) {
+  const g = Grades[id], cfg = g.cfg;
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = '﻿' + [cfg.colunas.map(c => q(c.rot)).join(';')].concat(g.visiveis.map(r => cfg.colunas.map(c => q(textoCelula(c, r))).join(';'))).join('\r\n');
+  baixarArquivo(`gabdoc-${id}-${hojeISO()}.csv`, csv);
+}
+async function baixarArquivo(nome, conteudo) {
+  let dl = null;
+  try { dl = NO_CLAUDE ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) { try { await dl.save({ filename: nome, data: conteudo }); toast('Arquivo gerado.'); } catch (e) { if (e && e.code !== 'declined') toast('Não foi possível exportar.', 'fa-triangle-exclamation'); } return; }
+  if (NO_CLAUDE) { toast('Exportação indisponível nesta visualização.', 'fa-circle-info'); return; }
+  const url = URL.createObjectURL(new Blob([conteudo], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+  toast('Planilha CSV baixada.');
+}
+
+/* ----- solicitações: edição e ações ----- */
+const ROT_CAMPO = { numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da urgência' };
+const ACAO_STATUS = { analise: 'Análise iniciada', aguardando: 'Encaminhado à mesa da Secretária', ajuste: 'Devolvido para ajuste', assinado: 'Assinado pela Secretária', expedido: 'Expedido', recebido: 'Retornado para recebidos' };
+/** Grava vários campos de uma solicitação com uma única movimentação descritiva. */
+async function editarSolCampos(s, campos) {
+  const d = copia(s);
+  const textos = [], editados = [];
+  Object.entries(campos).forEach(([key, valor]) => {
+    if (key === 'origem') valor = String(valor).split(/\s*[,;]\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x.toUpperCase()) ? x.toUpperCase() : x).join(', ');
+    if (String(s[key] ?? '') === String(valor ?? '') && !(key === 'ccEtapa' && !s.ccEtapa)) return;
+    d[key] = valor;
+    if (key === 'status') {
+      textos.push(ACAO_STATUS[valor] || 'Situação alterada');
+      if (['assinado', 'expedido'].includes(valor)) { if (!d.assinadoEm) d.assinadoEm = hojeISO(); } else d.assinadoEm = '';
+    } else if (key === 'urgente') { textos.push(valor ? 'Marcado como URGENTE' : 'Urgência retirada'); if (!valor) d.motivoUrgencia = ''; }
+    else if (key === 'casaCivil') { textos.push(valor ? 'Incluído na trilha da Casa Civil' : 'Retirado da trilha da Casa Civil'); d.ccEtapa = valor ? (d.ccEtapa || 'preparo') : ''; }
+    else if (key === 'ccEtapa') textos.push('Casa Civil: ' + (ETAPAS_CC[valor] || {}).rot);
+    else editados.push(ROT_CAMPO[key] || key);
+  });
+  if (editados.length) textos.push('Editado na planilha: ' + editados.join(', '));
+  if (!textos.length) return true;
+  d.historico = (d.historico || []).concat(textos.map(acao => ({ em: new Date().toISOString(), acao, obs: '', por: meuId() })));
+  const r = await salvarSol(s.id, d);
+  return r !== null;
+}
+async function editarSolCelula(s, key, valor) { return editarSolCampos(s, { [key]: valor }); }
+function opcoesStatus(s) {
+  const admin = Store.modo !== 'planilha' || (Store.sessao && Store.sessao.admin);
+  const keys = admin ? Object.keys(STATUS) : [s.status].concat(TRANSICOES_APP[s.status] || []);
+  return keys.map(k => [k, STATUS[k].rot]);
+}
+function validarMunicipio(v) { return v && !MT_NOMES.includes(v) ? 'Município não encontrado em Mato Grosso. Escolha da lista.' : ''; }
+const NATUREZAS_OP = [['Solicitação de assinatura', 'Solicitação de assinatura'], ['Processo', 'Processo'], ['Solicitação de assinatura, Processo', 'Assinatura + Processo']];
+function celStatus(s) { const x = STATUS[s.status] || STATUS.recebido; return `<span class="gs-pill" style="--c:${x.cor}">${x.rot}</span>`; }
+function celPrazo(s) { return `<span class="prazo ${situacao(s)} !text-[12px]">${textoPrazo(s)}</span>`; }
+function celSecretarias(s) { return String(s.origem || '').split(/\s*,\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x) ? `<span class="gs-sigla" style="--c:${COR_SEC[x]}">${x}</span>` : `<span class="text-ink2">${esc(x)}</span>`).join(' '); }
+function colunasSolBase() {
+  return [
+    { key: 'numero', rot: 'Nº do processo', w: 235, wCompacta: 205, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+    { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true, obrigatorio: true },
+    { key: 'natureza', rot: 'Natureza', w: 170, tipo: 'select', editavel: true, opcoes: () => NATUREZAS_OP, valor: s => s.natureza || 'Solicitação de assinatura' },
+    { key: 'tipo', rot: 'Tipo', w: 140, wCompacta: 128, tipo: 'select', editavel: true, opcoes: () => Object.entries(TIPOS).map(([k, v]) => [k, v.rot]), render: s => chipTipo(s.tipo) },
+    { key: 'origem', rot: 'Secretaria adjunta', w: 165, wCompacta: 150, tipo: 'texto', editavel: true, render: celSecretarias },
+    { key: 'responsavel', rot: 'Solicitante', w: 170, tipo: 'texto', editavel: true, lista: 'lista-resp' },
+    { key: 'municipio', rot: 'Município', w: 150, tipo: 'texto', editavel: true, lista: 'lista-mun', validar: validarMunicipio },
+    { key: 'recebidoEm', rot: 'Recebido', w: 100, tipo: 'data', editavel: false },
+    { key: 'prazo', rot: 'Prazo', w: 115, tipo: 'data', editavel: true },
+    { key: 'status', rot: 'Situação', w: 185, wCompacta: 178, tipo: 'select', editavel: true, opcoes: opcoesStatus, render: celStatus },
+    { key: 'situacaoPrazo', rot: 'Situação do prazo', w: 165, tipo: 'texto', editavel: false, valor: s => textoPrazo(s), render: celPrazo },
+    { key: 'urgente', rot: 'Urgente', w: 82, tipo: 'check', editavel: true },
+    { key: 'casaCivil', rot: 'Casa Civil', w: 90, tipo: 'check', editavel: true },
+    { key: 'observacoes', rot: 'Observações', w: 260, tipo: 'texto', editavel: true }
+  ];
+}
+function preencherListaResp() {
+  const dl = $('lista-resp');
+  if (dl) dl.innerHTML = [...new Set(Store.sol.map(x => x.responsavel).filter(Boolean))].sort().map(n => `<option value="${esc(n)}">`).join('');
+}
+/** Próximo passo natural de cada situação (botão principal da coluna Ações). */
+const PROXIMO = {
+  recebido: ['analise', 'Analisar', 'fa-magnifying-glass', '#2563eb', 'gravar'],
+  analise: ['aguardando', 'À mesa', 'fa-pen-nib', '#4f46e5', 'gravar'],
+  ajuste: ['analise', 'Reanalisar', 'fa-rotate', '#2563eb', 'gravar'],
+  aguardando: ['assinado', 'Assinar', 'fa-signature', '#16a34a', 'assinar'],
+  assinado: ['expedido', 'Expedir', 'fa-box-archive', '#0f766e', 'gravar']
+};
+function botoesAcoesSol(id, s) {
+  const p = PROXIMO[s.status];
+  const principal = p && pode(p[4]) ? `<button type="button" class="gs-acao" style="--c:${p[3]}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'status','${p[0]}')" title="${esc(STATUS[p[0]].rot)}"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>`
+    : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${FEITO(s) ? 'Concluído' : ''}</span>`;
+  return `<div class="gs-acoes-in">${principal}
+    ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${s.urgente ? 'Retirar urgência' : 'Marcar como urgente'}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-bolt"></i></button>` : ''}
+    <button type="button" class="gs-ico" title="Abrir detalhes e histórico" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button>
+    <button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('${id}','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+}
+function menuAcoesSol(s) {
+  const st = (k, rot, ico, cor, perm) => s.status !== k && (TRANSICOES_APP[s.status] || []).includes(k) ? { rot, ico, cor, perm: perm || 'gravar', fn: () => editarSolCelula(s, 'status', k) } : null;
+  return [
+    st('analise', FEITO(s) ? 'Reabrir para análise' : 'Iniciar análise', 'fa-magnifying-glass', '#2563eb'),
+    st('aguardando', 'Levar à mesa da Secretária', 'fa-pen-nib', '#4f46e5'),
+    st('assinado', 'Registrar assinatura', 'fa-signature', '#16a34a', 'assinar'),
+    st('ajuste', 'Devolver para ajuste', 'fa-rotate-left', '#ea580c', s.status === 'aguardando' ? 'assinar' : 'gravar'),
+    st('expedido', 'Expedir / arquivar', 'fa-box-archive', '#0f766e'),
+    { sep: true },
+    { rot: s.urgente ? 'Retirar urgência' : 'Marcar como URGENTE', ico: 'fa-bolt', cor: '#dc2626', perm: 'gravar', fn: () => editarSolCelula(s, 'urgente', !s.urgente) },
+    { rot: s.casaCivil ? 'Retirar da Casa Civil' : 'Incluir na Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', perm: 'gravar', fn: () => editarSolCelula(s, 'casaCivil', !s.casaCivil) },
+    ...(s.casaCivil ? Object.entries(ETAPAS_CC).filter(([k]) => k !== (s.ccEtapa || 'preparo')).map(([k, e]) => ({ rot: 'Casa Civil: ' + e.rot, ico: e.ico, cor: e.cor, perm: 'gravar', fn: () => editarSolCelula(s, 'ccEtapa', k) })) : []),
+    { sep: true },
+    { rot: 'Abrir detalhes e histórico', ico: 'fa-up-right-from-square', cor: '#64748b', fn: () => abrirDetalhe(s.id) },
+    { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirForm(s.id) },
+    { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: async () => { await excluirSol(s.id); toast('Solicitação excluída.'); } }
+  ].filter(Boolean);
+}
+function acoesLoteSol() {
+  const st = (k, rot, ico, cor, perm) => ({ rot, ico, cor, perm, campos: () => ({ status: k }), filtro: r => r.status !== k && (opcoesStatus(r).some(o => o[0] === k)) });
+  return [
+    st('analise', 'Iniciar análise', 'fa-magnifying-glass', '#2563eb', 'gravar'),
+    st('aguardando', 'Levar à mesa', 'fa-pen-nib', '#4f46e5', 'gravar'),
+    st('assinado', 'Registrar assinatura', 'fa-signature', '#16a34a', 'assinar'),
+    st('ajuste', 'Devolver p/ ajuste', 'fa-rotate-left', '#ea580c', 'assinar'),
+    st('expedido', 'Expedir', 'fa-box-archive', '#0f766e', 'gravar'),
+    { rot: 'Marcar urgente', ico: 'fa-bolt', cor: '#dc2626', perm: 'gravar', campos: () => ({ urgente: true }) },
+    { rot: 'Retirar urgência', ico: 'fa-bolt', cor: '#64748b', perm: 'gravar', campos: () => ({ urgente: false }) },
+    { rot: 'Incluir na Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', perm: 'gravar', campos: () => ({ casaCivil: true }) }
+  ];
+}
+
+/* ----- Gestão de Processos (todas as solicitações e processos, menos a Correição) ----- */
+function abrirGestao(chip) { estadoGrade('gestao').chip = chip || ''; irPara('mesa'); }
+function renderMesa() {
+  const cont = $('mesa-corpo');
+  const pend = Store.sol.filter(s => !FEITO(s));
+  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} em tramitação · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  preencherListaResp();
+  renderGrade(cont, {
+    id: 'gestao', linhas: Store.sol, fonte: () => Store.sol, colunas: colunasSolBase(),
+    compactas: ['numero', 'assunto', 'tipo', 'origem', 'status'],
+    ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
+    classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
+    chips: [['', 'Todos', () => true, '#2563eb'], ['pend', 'Em tramitação', s => !FEITO(s), '#2563eb'], ['mesa', 'Na mesa', s => s.status === 'aguardando', '#4f46e5'],
+            ['urg', 'Urgentes', s => s.urgente && !FEITO(s), '#dc2626'], ['venc', 'Vencidos', s => situacao(s) === 'vencido', '#ea580c'],
+            ['proc', 'Processos', s => String(s.natureza || '').includes('Processo'), '#0d9488'], ['feito', 'Assinados', s => FEITO(s), '#16a34a']],
+    aoEditarCampos: editarSolCampos,
+    acoes: s => botoesAcoesSol('gestao', s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
+    tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
+    novaLinha: () => novoRegistro('assinatura'), textoNovaLinha: 'Nova solicitação de assinatura ou processo (abre o formulário)',
+    textoVazio: 'Nenhuma solicitação ou processo registrado.',
+    botaoNovo: `<button class="btn btn-pri !h-9" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
+}
+
+/* ----- Casa Civil (somente as da Casa Civil) ----- */
+const PROX_ETAPA = { preparo: 'enviado', enviado: 'analise_cc', analise_cc: 'concluido', pendencia: 'analise_cc' };
+function renderCC() {
+  const cont = $('cc-corpo');
+  const todos = Store.sol.filter(s => s.casaCivil);
+  $('cc-resumo').textContent = todos.length ? `${todos.filter(CC_ATIVO).length} em andamento · ${todos.filter(s => s.ccEtapa === 'concluido').length} concluídas` : '';
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const contagem = Object.entries(ETAPAS_CC).map(([k, e]) => `<button type="button" onclick="chipGrade('casacivil','${k}')" class="dv-kpi" style="--c:${e.cor}"><span class="rot"><i class="fa-solid ${e.ico}"></i>${e.rot}</span><span class="val">${todos.filter(s => (s.ccEtapa || 'preparo') === k).length}</span></button>`).join('');
+  const base = colunasSolBase();
+  const pega = k => base.find(c => c.key === k);
+  renderGrade(cont, {
+    id: 'casacivil', linhas: todos, fonte: () => Store.sol,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-5 gap-3">${contagem}</div>`,
+    colunas: [
+      pega('numero'), pega('assunto'),
+      { key: 'ccEtapa', rot: 'Etapa na Casa Civil', w: 210, tipo: 'select', editavel: true, opcoes: () => Object.entries(ETAPAS_CC).map(([k, v]) => [k, v.rot]), valor: s => s.ccEtapa || 'preparo', render: s => { const e = ETAPAS_CC[s.ccEtapa || 'preparo']; return `<span class="gs-pill" style="--c:${e.cor}">${e.rot}</span>`; } },
+      { key: 'ccNumero', rot: 'Nº na Casa Civil', w: 150, tipo: 'texto', editavel: true },
+      pega('status'), pega('prazo'), pega('situacaoPrazo'), pega('tipo'), pega('origem'), pega('urgente'),
+      { key: 'casaCivil', rot: 'Casa Civil', w: 90, tipo: 'check', editavel: true },
+      pega('observacoes')
+    ],
+    compactas: ['numero', 'assunto', 'tipo', 'origem', 'ccEtapa', 'status'],
+    ordemPadrao: (a, b) => (Object.keys(ETAPAS_CC).indexOf(a.ccEtapa || 'preparo') - Object.keys(ETAPAS_CC).indexOf(b.ccEtapa || 'preparo')) || ordemDespacho(a, b),
+    classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (s.ccEtapa === 'concluido' ? 'gs-feito' : ''),
+    chips: [['', 'Todas', () => true, '#7c3aed']].concat(Object.entries(ETAPAS_CC).map(([k, e]) => [k, { preparo: 'Em preparo', enviado: 'Enviado', analise_cc: 'Em análise', pendencia: 'Diligência', concluido: 'Concluído' }[k], s => (s.ccEtapa || 'preparo') === k, e.cor])),
+    aoEditarCampos: editarSolCampos,
+    acoes: s => {
+      const prox = PROX_ETAPA[s.ccEtapa || 'preparo'];
+      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${ETAPAS_CC[prox].cor}" title="${esc(ETAPAS_CC[prox].rot)}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'ccEtapa','${prox}')"><i class="fa-solid ${ETAPAS_CC[prox].ico}"></i>${{ enviado: 'Enviar', analise_cc: 'Em análise', concluido: 'Concluir' }[prox]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>Concluído</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Abrir detalhes" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('casacivil','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    menuAcoes: menuAcoesSol, tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
+    acoesLote: Object.entries(ETAPAS_CC).map(([k, e]) => ({ rot: e.rot, ico: e.ico, cor: e.cor, perm: 'gravar', campos: () => ({ ccEtapa: k }) })).concat([{ rot: 'Registrar assinatura', ico: 'fa-signature', cor: '#16a34a', perm: 'assinar', campos: () => ({ status: 'assinado' }), filtro: r => r.status === 'aguardando' }]),
+    novaLinha: () => abrirForm(null, { casaCivil: true, ccEtapa: 'preparo', natureza: 'Solicitação de assinatura', tipo: 'oficio' }),
+    textoNovaLinha: 'Nova demanda da Casa Civil (abre o formulário)',
+    textoVazio: 'Nenhuma demanda da Casa Civil. Marque "Casa Civil" numa solicitação para ela aparecer aqui.',
+    botaoNovo: `<button class="btn !h-9 bg-violet-600 hover:bg-violet-500 text-white" onclick="abrirForm(null,{casaCivil:true,ccEtapa:'preparo',natureza:'Solicitação de assinatura',tipo:'oficio'})"><i class="fa-solid fa-plus"></i>Nova</button>`
+  });
+}
+async function mudarEtapaCC(id, etapa) {
+  const s = Store.sol.find(x => x.id === id); if (!s || s.ccEtapa === etapa) return;
+  if (await editarSolCelula(s, 'ccEtapa', etapa)) toast('Etapa atualizada: ' + ETAPAS_CC[etapa].rot);
+}
+
+/* ----- Processos de Correição (somente a Correição) ----- */
+const SITUACOES_COR = ['Em análise', 'Aguardando assinatura', 'Assinado', 'Devolvido para ajuste', 'Encaminhado', 'Aguardando manifestação', 'Concluído', 'Arquivado'];
+function corSituacao(txt) {
+  const n = Utils_norm(txt);
+  if (/^(assinad|conclu)/.test(n)) return ['#16a34a', 'fa-circle-check'];
+  if (/^aguard/.test(n)) return ['#d97706', 'fa-hourglass-half'];
+  if (/^devolv/.test(n)) return ['#ea580c', 'fa-rotate-left'];
+  if (/^arquiv/.test(n)) return ['#64748b', 'fa-box-archive'];
+  if (/^encaminh/.test(n)) return ['#7c3aed', 'fa-share'];
+  return ['#2563eb', 'fa-magnifying-glass'];
+}
+function prepararCorreicao() {
+  if (!$('lista-sit-cor-g')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-sit-cor-g">${SITUACOES_COR.map(s => `<option value="${esc(s)}">`).join('')}</datalist>`);
+}
+async function editarCorCampos(x, campos) { const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarCorreicao(x.id, d); }
+function renderCorreicao() {
+  const cont = $('cor-corpo');
+  const todas = Store.correicao || [];
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const conta = rx => todas.filter(x => rx.test(Utils_norm(x.situacao))).length;
+  const kpi = (cor, ico, rot, val, sub) => `<div class="dv-kpi" style="--c:${cor}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></div>`;
+  const sitAcao = (s, rot, ico, cor) => ({ rot, ico, cor, perm: 'gravar', campos: () => ({ situacao: s }) });
+  renderGrade(cont, {
+    id: 'correicao', linhas: todas, fonte: () => Store.correicao,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi('#b45309', 'fa-clipboard-check', 'Processos', todas.length, 'de correição')}
+      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando', conta(/^aguard/), 'assinatura ou manifestação')}
+      ${kpi('#2563eb', 'fa-magnifying-glass', 'Em análise', conta(/^em analise/), 'na assessoria')}
+      ${kpi('#16a34a', 'fa-circle-check', 'Assinados / concluídos', conta(/^(assinad|conclu)/), `${conta(/^arquiv/)} arquivado(s)`)}</div>`,
+    colunas: [
+      { key: 'processo', rot: 'Processo/Referência', w: 240, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O Processo/Referência não pode ficar vazio.' : '' },
+      { key: 'documento', rot: 'Documento de assinatura', w: 270, wCompacta: 230, tipo: 'texto', editavel: true },
+      { key: 'objeto', rot: 'Objeto', w: 360, flex: true, tipo: 'texto', editavel: true },
+      { key: 'situacao', rot: 'Situação/Ação', w: 220, tipo: 'texto', editavel: true, lista: 'lista-sit-cor-g', render: x => { if (!x.situacao) return ''; const [cor, ico] = corSituacao(x.situacao); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.situacao)}</span>`; } },
+      { key: 'observacao', rot: 'Observação', w: 320, tipo: 'texto', editavel: true }
+    ],
+    compactas: ['processo', 'documento', 'objeto', 'situacao'],
+    larguraAcoes: 150,
+    ordemPadrao: (a, b) => String(a.processo || '').localeCompare(String(b.processo || ''), 'pt-BR', { numeric: true }),
+    classeLinha: x => /^(conclu|arquiv)/.test(Utils_norm(x.situacao)) ? 'gs-feito' : '',
+    chips: [['', 'Todos', () => true, '#b45309'], ['aguard', 'Aguardando', x => /^aguard/.test(Utils_norm(x.situacao)), '#d97706'], ['analise', 'Em análise', x => /^em analise/.test(Utils_norm(x.situacao)), '#2563eb'],
+            ['ok', 'Assinados/concluídos', x => /^(assinad|conclu)/.test(Utils_norm(x.situacao)), '#16a34a'], ['arq', 'Arquivados', x => /^arquiv/.test(Utils_norm(x.situacao)), '#64748b']],
+    aoEditarCampos: editarCorCampos,
+    acoes: x => {
+      const n = Utils_norm(x.situacao);
+      const prox = /^aguardando assinatura/.test(n) ? ['Assinado', 'Assinado', 'fa-signature', '#16a34a'] : /^(assinad)/.test(n) ? ['Concluído', 'Concluir', 'fa-circle-check', '#16a34a'] : /^(conclu|arquiv)/.test(n) ? null : ['Aguardando assinatura', 'À assinatura', 'fa-pen-nib', '#d97706'];
+      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${prox[3]}" onclick="editarCorCampos(Store.correicao.find(c=>c.id==='${x.id}'),{situacao:${esc(JSON.stringify(prox[0]))}})"><i class="fa-solid ${prox[2]}"></i>${prox[1]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>Concluído</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormCorreicao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('correicao','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    tituloLinha: x => x.processo,
+    menuAcoes: x => SITUACOES_COR.filter(s => s !== x.situacao).map(s => { const [cor, ico] = corSituacao(s); return { rot: 'Situação: ' + s, ico, cor, perm: 'gravar', fn: () => editarCorCampos(x, { situacao: s }) }; })
+      .concat([{ sep: true }, { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirFormCorreicao(x.id) },
+               { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: () => excluirCorreicaoId(x.id) }]),
+    acoesLote: [sitAcao('Em análise', 'Em análise', 'fa-magnifying-glass', '#2563eb'), sitAcao('Aguardando assinatura', 'Aguardando assinatura', 'fa-hourglass-half', '#d97706'),
+                sitAcao('Assinado', 'Assinado', 'fa-signature', '#16a34a'), sitAcao('Concluído', 'Concluído', 'fa-circle-check', '#16a34a'), sitAcao('Arquivado', 'Arquivado', 'fa-box-archive', '#64748b')],
+    novaLinha: () => abrirFormCorreicao(), textoNovaLinha: 'Novo processo de correição',
+    textoVazio: 'Nenhum processo de correição registrado.',
+    botaoNovo: `<button class="btn !h-9 bg-amber-500 hover:bg-amber-400 text-white" onclick="abrirFormCorreicao()"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
 }
 
 /* ========================= Permissões na tela ========================= */
@@ -2136,6 +3141,8 @@ function renderAdmin() {
       '<input class="campo flex-1 min-w-[200px]" id="adm-email-teste" type="email" placeholder="E-mail de teste (opcional)" aria-label="E-mail de teste"><button class="btn btn-sec" onclick="admManut(\'resumo\', this)">Enviar</button>', 'resumo')}
     ${card('#e11d48', 'fa-right-from-bracket', 'Sessões', 'Encerrar todas obriga a equipe a entrar de novo (a sua sessão continua).',
       '<button class="btn btn-perigo" onclick="admManut(\'sessoes\', this)">Encerrar todas as sessões</button>', 'sessoes')}
+    ${card('#7c3aed', 'fa-flask', 'Dados de teste', 'Cria 50 solicitações variadas (com movimentações), 12 processos de correição e 10 compromissos, todos marcados com TESTE.',
+      '<button class="btn btn-pri" onclick="admManut(\'exemplos\', this, false)"><i class="fa-solid fa-flask"></i>Gerar 50 exemplos</button><button class="btn btn-perigo" onclick="admManut(\'exemplos\', this, true)"><i class="fa-solid fa-broom"></i>Remover exemplos</button>', 'exemplos')}
     ${card('#0f172a', 'fa-heart-pulse', 'Diagnóstico da instalação', 'Testa abas, gravação, cache, gatilhos e fuso horário.',
       '<button class="btn btn-sec" onclick="admManut(\'diagnostico\', this)">Executar diagnóstico</button><button class="btn btn-sec" onclick="admManut(\'estatisticas\', this)">Estatísticas</button>', 'diagnostico')}
   </div>`;
@@ -2143,7 +3150,7 @@ function renderAdmin() {
 function admRecarregar() { admEstado.usuarios = null; admEstado.config = null; admEstado.logs = null; renderAdmin(); }
 async function admManut(tipo, btn, flag) {
   const R = admEstado.resultados;
-  if ((tipo === 'sessoes' || (tipo === 'arquivar' && !flag)) && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = 'Confirmar'; return; }
+  if ((tipo === 'sessoes' || (tipo === 'arquivar' && !flag) || (tipo === 'exemplos' && flag)) && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = 'Confirmar'; return; }
   const original = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Aguarde…';
   try {
     if (tipo === 'integridade') {
@@ -2158,6 +3165,11 @@ async function admManut(tipo, btn, flag) {
       const a = (await API.post('admin_arquivar', { simular: !!flag }, 120000)).arquivamento;
       R.arquivar = flag ? `${a.candidatas} solicitação(ões) expedidas antes de ${fmt(a.limite)} seriam arquivadas.` : `<span class="chip" style="--c:#16a34a">${a.movidas} movida(s) para a aba Arquivo</span>`;
       if (!flag) sincronizar(true);
+    } else if (tipo === 'exemplos') {
+      const r = await API.post('admin_exemplos', { acao: flag ? 'remover' : 'gerar' }, 180000);
+      const e = r.exemplos;
+      R.exemplos = `<span class="chip" style="--c:${flag ? '#64748b' : '#16a34a'}">${flag ? 'Removidos' : 'Criados'}: ${e.solicitacoes} solicitações · ${e.movimentacoes} movimentações · ${e.correicao} correições · ${e.agenda} compromissos</span>`;
+      await sincronizar(true);
     } else if (tipo === 'painel') {
       await API.post('admin_atualizar_painel', {}, 120000); R.painel = 'Painel da planilha atualizado.';
     } else if (tipo === 'resumo') {
@@ -2351,6 +3363,7 @@ function abrirAtalhoInicial() {
 document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-mun">${MT_NOMES.map(n => `<option value="${esc(n)}">`).join('')}</datalist><datalist id="lista-resp"></datalist><datalist id="lista-unid">${UNIDADES.map(n => `<option value="${esc(n)}">`).join('')}</datalist>`);
 prepararFiltros();
 prepararMovimentacoes();
+prepararCorreicao();
 prepararAdmin();
 aoMudarTema();
 if (ss.get('gabdoc_entrou') && !(API.url() && !NO_CLAUDE)) $('login-screen').classList.add('hidden');
