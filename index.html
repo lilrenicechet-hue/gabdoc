@@ -11,12 +11,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script>
 // =====================================================================
-// CONFIGURAÇÃO: cole entre as aspas o link do Web App do Apps Script
-// (termina em /exec). Em branco, cada pessoa pode informar o link em
-// "Configurar conexão com a planilha" na tela de entrada.
+// CONFIGURAÇÃO: link do Web App do Apps Script da planilha (termina em /exec).
 // =====================================================================
 window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph4ZNQYIb9gwZoNombjmQCgStbbE16FtP7GAtpxmNKebL9MFmeD6Oh_dzzAVf3rLg/exec" };
 </script>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="apple-touch-icon" href="data:image/png;base64,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">
 <script>
@@ -85,6 +84,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     --brand: #4f8df5; --urg: #f05252; --cc: #a78bfa; --ok: #34c56a; --warn: #f0a432;
     --map-lo: #1e2b44; --map-hi: #60a5fa; --map-vazio: #182133; --sombra: 0 1px 2px rgba(0,0,0,.3); color-scheme: dark;
   }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body { font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif; background: var(--ground); color: var(--ink); overflow: hidden; -webkit-tap-highlight-color: transparent; }
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -202,8 +202,52 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .modal { background: var(--card); color: var(--ink); width: 100%; max-width: 760px; max-height: 92%; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; box-shadow: 0 30px 60px -20px rgba(0,0,0,.5); padding-bottom: env(safe-area-inset-bottom, 0px); }
   @media (min-width: 640px) { .modal { border-radius: 18px; } }
   .modal-topo { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .modal-corpo { padding: 16px 20px; overflow-y: auto; }
+  .modal-corpo { padding: 16px 20px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+  .modal-topo, .modal-rodape, .form-hero { flex-shrink: 0; }
   .modal-rodape { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  /* Formulário em 3 passos */
+  .modal.modal-largo { max-width: 880px; overflow: hidden; }
+  .form-hero { background: #0f172a; background-image: radial-gradient(600px 200px at 0% 0%, rgba(59,130,246,.35), transparent 70%), radial-gradient(500px 200px at 100% 100%, rgba(20,184,166,.22), transparent 70%); padding: 18px 20px 14px; flex-shrink: 0; }
+  .stepper { display: flex; gap: 6px; margin-top: 14px; list-style: none; padding: 0; }
+  .stepper li { cursor: pointer; flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #94a3b8; padding: 7px 10px; border-radius: 10px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .2s, color .2s; }
+  .stepper li span { width: 20px; height: 20px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; background: rgba(255,255,255,.12); color: #fff; flex-shrink: 0; }
+  .stepper li.feito { color: #fff; background: color-mix(in srgb, var(--c) 30%, transparent); border-color: color-mix(in srgb, var(--c) 60%, transparent); }
+  .stepper li.feito span { background: var(--c); }
+  @media (max-width: 520px) { .stepper li { font-size: 0; gap: 0; justify-content: center; } .stepper li span { font-size: 11px; } }
+  .passo { border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; transition: border-color .2s, box-shadow .2s; }
+  .passo:focus-within { border-color: color-mix(in srgb, var(--c) 55%, var(--line)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 10%, transparent); }
+  .passo-topo { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: color-mix(in srgb, var(--c) 8%, var(--card)); border-bottom: 1px solid color-mix(in srgb, var(--c) 18%, var(--line)); }
+  .passo-num { width: 32px; height: 32px; border-radius: 10px; background: var(--c); color: #fff; font-weight: 900; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 6px 14px -6px var(--c); }
+  .passo-topo h4 { font-size: 14.5px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+  .passo-topo p { font-size: 12px; color: var(--ink3); margin-top: 1px; }
+  .passo-ok { margin-left: auto; color: var(--ok); font-size: 18px; opacity: 0; transform: scale(.6); transition: opacity .2s, transform .2s; }
+  .passo.feito .passo-ok { opacity: 1; transform: none; }
+  .passo-corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .campo-g { height: 42px; font-size: 14px; }
+  .op-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); transition: border-color .15s, background .15s, transform .15s; position: relative; }
+  .op-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--c) 45%, var(--line)); }
+  .op-card .op-ico { width: 40px; height: 40px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); flex-shrink: 0; }
+  .op-card .op-check { margin-left: auto; width: 22px; height: 22px; border-radius: 99px; border: 1.5px solid var(--line); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; flex-shrink: 0; }
+  .op-card.ativo { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--card)); }
+  .op-card.ativo .op-ico { background: var(--c); color: #fff; }
+  .op-card.ativo .op-check { background: var(--c); border-color: var(--c); color: #fff; }
+  .sec-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 520px) { .sec-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sec-btn { height: 46px; border-radius: 12px; border: 1.5px solid color-mix(in srgb, var(--c) 30%, var(--line)); background: color-mix(in srgb, var(--c) 5%, var(--card)); color: color-mix(in srgb, var(--c) 85%, var(--ink)); font-weight: 900; font-size: 14px; letter-spacing: .06em; display: inline-flex; align-items: center; justify-content: center; gap: 0; transition: background .15s, color .15s, transform .15s, box-shadow .15s; }
+  .sec-btn svg, .sec-btn i { width: 0; opacity: 0; transition: width .15s, opacity .15s, margin .15s; }
+  .sec-btn:hover { transform: translateY(-1px); }
+  .sec-btn.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
+  .sec-btn.ativo svg, .sec-btn.ativo i { width: 12px; opacity: 1; margin-right: 6px; }
+  .atalho { height: 30px; padding: 0 11px; border-radius: 99px; border: 1px solid color-mix(in srgb, #d97706 30%, var(--line)); background: color-mix(in srgb, #d97706 7%, var(--card)); color: color-mix(in srgb, #d97706 80%, var(--ink)); font-size: 12px; font-weight: 700; }
+  .atalho:hover { background: color-mix(in srgb, #d97706 16%, var(--card)); }
+  .switch-card { position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); cursor: pointer; transition: border-color .15s, background .15s; }
+  .switch-card input { position: absolute; opacity: 0; pointer-events: none; }
+  .switch { width: 40px; height: 22px; border-radius: 99px; background: var(--line); position: relative; flex-shrink: 0; transition: background .15s; }
+  .switch span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 99px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .15s; }
+  .switch-card:has(input:checked) { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--card)); }
+  .switch-card:has(input:checked) .switch { background: var(--c); }
+  .switch-card:has(input:checked) .switch span { transform: translateX(18px); }
+  .switch-card:has(input:focus-visible), .op-card:focus-visible, .sec-btn:focus-visible, .atalho:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
   .tl { position: relative; padding-left: 22px; }
   .tl::before { content: ''; position: absolute; left: 6px; top: 4px; bottom: 4px; width: 2px; background: var(--line); }
   .tl-item { position: relative; padding-bottom: 12px; }
@@ -430,6 +474,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
                 <input id="f-busca" class="campo w-full !pl-8" placeholder="Buscar por assunto, nº SIGADOC, interessado, município…" aria-label="Buscar">
               </div>
               <select id="f-status" class="campo" aria-label="Status"></select>
+              <select id="f-sec" class="campo" aria-label="Secretaria"></select>
               <select id="f-mun" class="campo w-44" aria-label="Município"></select>
               <select id="f-ordem" class="campo" aria-label="Ordenar">
                 <option value="prazo">Ordenar: prazo</option><option value="recente">Mais recentes</option><option value="antigo">Mais antigos</option>
@@ -637,6 +682,7 @@ const TIPOS_AGENDA = {
   outro:     { rot: 'Outro',      cor: '#64748b' }
 };
 const UNIDADES = ['Gabinete da Secretária', 'Secretaria Adjunta de Gestão Educacional', 'Secretaria Adjunta de Gestão de Pessoas', 'Secretaria Adjunta de Administração Sistêmica', 'Secretaria Adjunta de Infraestrutura e Patrimônio', 'Secretaria Adjunta Executiva', 'Assessoria Jurídica', 'Unidade de Controle Interno', 'Coordenadoria de Transporte Escolar', 'Coordenadoria de Alimentação Escolar', 'Diretoria Regional de Educação', 'Casa Civil', 'Prefeitura Municipal', 'Assembleia Legislativa', 'Ministério Público', 'Tribunal de Contas do Estado'];
+const SECRETARIAS = ['SAGE', 'SAAS', 'SAIP', 'SAEX', 'GS', 'SAGR', 'SAGP', 'SARC'];
 const FEITO = s => s.status === 'assinado' || s.status === 'expedido';
 const CC_ATIVO = s => s.casaCivil && s.ccEtapa !== 'concluido';
 
@@ -1149,7 +1195,7 @@ function linhaSol(s) {
     <span class="faixa-c"></span>
     <span class="conteudo">
       <span class="min-w-0 flex flex-col gap-1">
-        <span class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg pulso"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}<span class="text-[11px] font-semibold text-ink3 tabular-nums">${esc(s.numero || 's/ nº')}</span></span>
+        <span class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg pulso"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${String(s.natureza || '').includes('Processo') ? '<span class="chip" style="--c:#0d9488"><i class="fa-solid fa-folder-open text-[9px]"></i>Processo</span>' : ''}${chipTipo(s.tipo)}<span class="text-[11px] font-semibold text-ink3 tabular-nums">${esc(s.numero || 's/ nº')}</span></span>
         <span class="t">${esc(s.assunto)}</span>
         <span class="m"><span><i class="fa-solid fa-building-columns mr-1"></i>${esc(s.origem || '—')}</span>${s.municipio ? `<span><i class="fa-solid fa-location-dot mr-1"></i>${esc(s.municipio)}</span>` : ''}${s.interessado ? `<span><i class="fa-regular fa-user mr-1"></i>${esc(s.interessado)}</span>` : ''}</span>
       </span>
@@ -1270,9 +1316,11 @@ function renderMesa() {
 }
 
 /* ----- Solicitações (lista e quadro) ----- */
-const filtro = { busca: '', tipo: '', status: '', mun: '', urg: false, cc: false, concl: false, ordem: 'prazo', vista: ls.get('gabdoc_vista') || 'lista' };
+const filtro = { busca: '', tipo: '', status: '', mun: '', sec: '', urg: false, cc: false, concl: false, ordem: 'prazo', vista: ls.get('gabdoc_vista') || 'lista' };
 function prepararFiltros() {
   $('f-status').innerHTML = '<option value="">Todas as situações</option>' + Object.entries(STATUS).map(([k, v]) => `<option value="${k}">${v.rot}</option>`).join('');
+  $('f-sec').innerHTML = '<option value="">Todas as secretarias</option>' + SECRETARIAS.map(s => `<option>${s}</option>`).join('');
+  $('f-sec').addEventListener('change', e => { filtro.sec = e.target.value; renderFila(); });
   $('f-mun').innerHTML = '<option value="">Todos os municípios</option>' + MT_NOMES.map(n => `<option>${esc(n)}</option>`).join('');
   $('mapa-tipo').innerHTML = '<option value="">Todos os tipos</option>' + Object.entries(TIPOS).map(([k, v]) => `<option value="${k}">${v.rot}</option>`).join('');
   $('f-busca').addEventListener('input', e => { filtro.busca = e.target.value; renderFila(); });
@@ -1292,9 +1340,10 @@ function filtrar(ignorarTipo) {
     if (filtro.status && s.status !== filtro.status) return false;
     if (!filtro.status && !filtro.concl && s.status === 'expedido') return false;
     if (filtro.mun && s.municipio !== filtro.mun) return false;
+    if (filtro.sec && !String(s.origem || '').split(/\s*,\s*/).map(x => x.toUpperCase()).includes(filtro.sec)) return false;
     if (filtro.urg && !s.urgente) return false;
     if (filtro.cc && !s.casaCivil) return false;
-    if (q && ![s.assunto, s.numero, s.interessado, s.origem, s.municipio, s.responsavel, s.ccNumero].join(' ').toLowerCase().includes(q)) return false;
+    if (q && ![s.assunto, s.numero, s.interessado, s.origem, s.municipio, s.responsavel, s.ccNumero, s.natureza].join(' ').toLowerCase().includes(q)) return false;
     return true;
   });
 }
@@ -1628,48 +1677,156 @@ function fecharModal() { modalAberto = null; $('modal-raiz').innerHTML = ''; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalAberto && modalAberto.tipo !== 'senha-obrigatoria') fecharModal(); });
 const copia = s => { const o = JSON.parse(JSON.stringify(s)); delete o.id; return o; };
 
+const COR_SEC = { SAGE: '#2563eb', SAAS: '#0891b2', SAIP: '#d97706', SAEX: '#7c3aed', GS: '#e11d48', SAGR: '#16a34a', SAGP: '#db2777', SARC: '#4f46e5' };
 function abrirForm(id, pre = {}) {
   if (!pode('gravar')) { toast('Seu perfil (' + Store.sessao.perfil + ') não cadastra nem edita solicitações.', 'fa-lock'); return; }
-  const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', recebidoEm: hojeISO(), prazo: somaDias(5), urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
+  const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: somaDias(5), urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
   const opt = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v.rot}</option>`).join('');
+  const partesOrigem = String(s.origem || '').split(/\s*,\s*/).filter(Boolean);
+  const secSel = partesOrigem.filter(x => SECRETARIAS.includes(x.toUpperCase())).map(x => x.toUpperCase());
+  const outraOrigem = partesOrigem.filter(x => !SECRETARIAS.includes(x.toUpperCase())).join(', ');
+  const nat = String(s.natureza || 'Solicitação de assinatura');
+  const cardNat = (valor, titulo, sub, ico, cor, ativo) => `
+    <button type="button" class="op-card sel-nat ${ativo ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(valor)}" aria-pressed="${ativo}" onclick="alternarChip(this)">
+      <span class="op-ico"><i class="fa-solid ${ico}"></i></span>
+      <span class="min-w-0"><span class="block font-bold text-[14px] text-ink">${titulo}</span><span class="block text-[12px] text-ink3">${sub}</span></span>
+      <span class="op-check"><i class="fa-solid fa-check"></i></span>
+    </button>`;
+  const passo = (n, cor, titulo, sub, corpo) => `
+    <section class="passo" style="--c:${cor}" data-passo="${n}">
+      <header class="passo-topo"><span class="passo-num">${n}</span><div class="min-w-0"><h4>${titulo}</h4><p>${sub}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
+      <div class="passo-corpo">${corpo}</div>
+    </section>`;
+  const atalhos = [['Hoje', 0], ['Amanhã', 1], ['3 dias', 3], ['5 dias', 5], ['10 dias', 10], ['15 dias', 15]];
+
   abrirModal(`
-    <div class="modal-topo"><div><h3 class="text-[17px] font-bold">${id ? 'Editar solicitação' : 'Nova solicitação de assinatura'}</h3><p class="text-[12.5px] text-ink3">Campos com * são obrigatórios.</p></div><button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button></div>
-    <form class="modal-corpo space-y-4" id="form-sol" onsubmit="event.preventDefault();salvarForm('${id || ''}')">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label><span class="rotulo">Tipo de documento *</span><select class="campo w-full" id="s-tipo">${opt(TIPOS, s.tipo)}</select></label>
-        <label><span class="rotulo">Nº SIGADOC / protocolo</span><input class="campo w-full" id="s-numero" value="${esc(s.numero || '')}" placeholder="SEDUC-OFI-2026/00000"></label>
-        <label class="sm:col-span-2"><span class="rotulo">Assunto *</span><input class="campo w-full" id="s-assunto" required value="${esc(s.assunto || '')}" placeholder="Do que trata o documento"></label>
-        <label><span class="rotulo">Unidade de origem</span><input class="campo w-full" id="s-origem" list="lista-unid" value="${esc(s.origem || '')}"></label>
-        <label><span class="rotulo">Interessado / destinatário</span><input class="campo w-full" id="s-interessado" value="${esc(s.interessado || '')}"></label>
-        <label><span class="rotulo">Município</span><input class="campo w-full" id="s-municipio" list="lista-mun" value="${esc(s.municipio || '')}" placeholder="Município de MT"></label>
-        <label><span class="rotulo">Responsável na assessoria</span><input class="campo w-full" id="s-resp" value="${esc(s.responsavel || '')}"></label>
-        <label><span class="rotulo">Recebido em</span><input type="date" class="campo w-full" id="s-rec" value="${esc(s.recebidoEm || '')}"></label>
-        <label><span class="rotulo">Prazo para assinatura</span><input type="date" class="campo w-full" id="s-prazo" value="${esc(s.prazo || '')}"></label>
-        <label><span class="rotulo">Situação</span><select class="campo w-full" id="s-status">${opt(STATUS, s.status)}</select></label>
+    <div class="form-hero">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-300">${id ? 'Editar registro' : 'Novo registro'}</p>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${id ? esc(s.assunto) : 'Solicitação de assinatura ou processo'}</h3>
+          <p class="text-[12.5px] text-blue-100/70 mt-1">${id ? 'Recebido em ' + fmt(s.recebidoEm) : 'Três passos. A data de recebimento entra sozinha: hoje, ' + fmt(hojeISO()) + '.'}</p>
+        </div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <div class="rounded-xl p-3 space-y-2" style="background:color-mix(in srgb, var(--urg) 7%, var(--card));border:1px solid color-mix(in srgb, var(--urg) 25%, var(--line))">
-        <label class="flex items-center gap-2 font-bold text-[13px]" style="color:var(--urg)"><input type="checkbox" id="s-urg" class="w-4 h-4 accent-red-600" ${s.urgente ? 'checked' : ''} onchange="$('s-motivo-box').hidden=!this.checked"><i class="fa-solid fa-bolt"></i>Demanda URGENTE</label>
-        <div id="s-motivo-box" ${s.urgente ? '' : 'hidden'}><input class="campo w-full" id="s-motivo" value="${esc(s.motivoUrgencia || '')}" placeholder="Motivo da urgência (aparece na mesa da Secretária)"></div>
-      </div>
-      <div class="rounded-xl p-3 space-y-2" style="background:color-mix(in srgb, var(--cc) 7%, var(--card));border:1px solid color-mix(in srgb, var(--cc) 25%, var(--line))">
-        <label class="flex items-center gap-2 font-bold text-[13px]" style="color:var(--cc)"><input type="checkbox" id="s-cc" class="w-4 h-4 accent-violet-600" ${s.casaCivil ? 'checked' : ''} onchange="$('s-cc-box').hidden=!this.checked"><i class="fa-solid fa-landmark"></i>Demanda da Casa Civil</label>
+      <ol class="stepper" id="stepper">
+        <li data-p="1" style="--c:#3b82f6" role="button" tabindex="0" onclick="irPasso(1)" onkeydown="if(event.key==='Enter')irPasso(1)"><span>1</span>O que é</li>
+        <li data-p="2" style="--c:#14b8a6" role="button" tabindex="0" onclick="irPasso(2)" onkeydown="if(event.key==='Enter')irPasso(2)"><span>2</span>Quem pediu</li>
+        <li data-p="3" style="--c:#f59e0b" role="button" tabindex="0" onclick="irPasso(3)" onkeydown="if(event.key==='Enter')irPasso(3)"><span>3</span>Prazo e prioridade</li>
+      </ol>
+    </div>
+    <form class="modal-corpo space-y-4" id="form-sol" oninput="atualizarPassos()" onclick="setTimeout(atualizarPassos)" onsubmit="event.preventDefault();salvarForm('${id || ''}')">
+
+      ${passo(1, '#2563eb', 'O que está chegando', 'Marque um ou os dois e descreva o documento.', `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="s-natureza">
+          ${cardNat('Solicitação de assinatura', 'Solicitação de assinatura', 'Documento para a Secretária assinar', 'fa-file-signature', '#2563eb', nat.includes('assinatura'))}
+          ${cardNat('Processo', 'Processo', 'Processo para análise e despacho', 'fa-folder-open', '#0d9488', nat.includes('Processo'))}
+        </div>
+        <label class="block"><span class="rotulo">Assunto *</span><input class="campo campo-g w-full" id="s-assunto" required value="${esc(s.assunto || '')}" placeholder="Ex.: Ofício à Prefeitura sobre transporte escolar"></label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label><span class="rotulo">Tipo de documento</span><select class="campo w-full" id="s-tipo">${opt(TIPOS, s.tipo)}</select></label>
+          <label><span class="rotulo">Nº SIGADOC / processo</span><input class="campo w-full" id="s-numero" value="${esc(s.numero || '')}" placeholder="SEDUC-PRO-2026/00000"></label>
+        </div>`)}
+
+      ${passo(2, '#0d9488', 'De onde vem e quem pediu', 'Toque nas secretarias envolvidas: pode marcar várias.', `
+        <div class="sec-grade" id="s-secretarias">
+          ${SECRETARIAS.map(sg => `<button type="button" class="sec-btn sel-sec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}
+        </div>
+        <input class="campo w-full" id="s-origem-outra" value="${esc(outraOrigem)}" placeholder="Outra unidade de origem (opcional)" aria-label="Outra unidade de origem">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label class="sm:col-span-2"><span class="rotulo">Responsável que solicitou a assinatura *</span>
+            <div class="relative"><i class="fa-solid fa-user-pen absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo campo-g w-full !pl-8" id="s-resp" required value="${esc(s.responsavel || '')}" placeholder="Nome de quem pediu" list="lista-resp"></div></label>
+          <label><span class="rotulo">Interessado / destinatário</span><input class="campo w-full" id="s-interessado" value="${esc(s.interessado || '')}"></label>
+          <label><span class="rotulo">Município</span><input class="campo w-full" id="s-municipio" list="lista-mun" value="${esc(s.municipio || '')}" placeholder="Município de MT"></label>
+        </div>`)}
+
+      ${passo(3, '#d97706', 'Prazo e prioridade', 'Escolha um atalho ou a data exata.', `
+        <div class="flex flex-wrap items-end gap-3">
+          <label><span class="rotulo">Prazo *</span><input type="date" class="campo campo-g" id="s-prazo" required value="${esc(s.prazo || '')}"></label>
+          <div class="flex flex-wrap gap-1.5 pb-0.5">${atalhos.map(([r, d]) => `<button type="button" class="atalho" onclick="$('s-prazo').value=somaDias(${d});atualizarPassos()">${r}</button>`).join('')}</div>
+        </div>
+        <p id="prazo-info" class="text-[12.5px] font-semibold"></p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label class="switch-card" style="--c:var(--urg)">
+            <input type="checkbox" id="s-urg" ${s.urgente ? 'checked' : ''} onchange="$('s-motivo-box').hidden=!this.checked">
+            <span class="switch"><span></span></span>
+            <span class="min-w-0"><span class="block font-bold text-[13.5px]" style="color:var(--urg)"><i class="fa-solid fa-bolt mr-1"></i>URGENTE</span><span class="block text-[11.5px] text-ink3">Vai para o topo da mesa e da trilha de urgentes</span></span>
+          </label>
+          <label class="switch-card" style="--c:var(--cc)">
+            <input type="checkbox" id="s-cc" ${s.casaCivil ? 'checked' : ''} onchange="$('s-cc-box').hidden=!this.checked">
+            <span class="switch"><span></span></span>
+            <span class="min-w-0"><span class="block font-bold text-[13.5px]" style="color:var(--cc)"><i class="fa-solid fa-landmark mr-1"></i>Casa Civil</span><span class="block text-[11.5px] text-ink3">Entra na trilha especial da Casa Civil</span></span>
+          </label>
+        </div>
+        <div id="s-motivo-box" ${s.urgente ? '' : 'hidden'}><input class="campo w-full" id="s-motivo" value="${esc(s.motivoUrgencia || '')}" placeholder="Motivo da urgência (aparece na mesa da Secretária)" style="border-color:color-mix(in srgb, var(--urg) 45%, var(--line))"></div>
         <div id="s-cc-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3" ${s.casaCivil ? '' : 'hidden'}>
-          <label><span class="rotulo">Etapa</span><select class="campo w-full" id="s-ccetapa">${opt(ETAPAS_CC, s.ccEtapa || 'preparo')}</select></label>
+          <label><span class="rotulo">Etapa na Casa Civil</span><select class="campo w-full" id="s-ccetapa">${opt(ETAPAS_CC, s.ccEtapa || 'preparo')}</select></label>
           <label><span class="rotulo">Nº do processo na Casa Civil</span><input class="campo w-full" id="s-ccnum" value="${esc(s.ccNumero || '')}"></label>
         </div>
-      </div>
-      <label class="block"><span class="rotulo">Observações</span><textarea class="campo w-full" rows="3" id="s-obs">${esc(s.observacoes || '')}</textarea></label>
+        ${id ? `<label class="block"><span class="rotulo">Situação</span><select class="campo w-full sm:w-1/2" id="s-status">${opt(STATUS, s.status)}</select></label>` : ''}
+        <label class="block"><span class="rotulo">Observações</span><textarea class="campo w-full" rows="2" id="s-obs" placeholder="Opcional">${esc(s.observacoes || '')}</textarea></label>`)}
+
+      <p id="s-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
-    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri" type="submit" form="form-sol" id="btn-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar solicitação'}</button></div>`, 'form');
+    <div class="modal-rodape !justify-between items-center">
+      <span class="text-[12px] text-ink3" id="form-resumo"></span>
+      <div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-sol" id="btn-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar'}</button></div>
+    </div>`, 'form');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  const dl = $('lista-resp');
+  if (dl) dl.innerHTML = [...new Set(Store.sol.map(x => x.responsavel).filter(Boolean))].sort().map(n => `<option value="${esc(n)}">`).join('');
+  atualizarPassos();
 }
+function irPasso(n) { const el = document.querySelector(`.passo[data-passo="${n}"]`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+/* Marca cada passo como concluído quando os campos obrigatórios estão preenchidos */
+function atualizarPassos() {
+  if (!$('form-sol')) return;
+  const val = id => ($(id) ? $(id).value.trim() : '');
+  const ok = {
+    1: chipsMarcados('nat').length > 0 && !!val('s-assunto'),
+    2: (chipsMarcados('sec').length > 0 || !!val('s-origem-outra')) && !!val('s-resp'),
+    3: !!val('s-prazo')
+  };
+  Object.keys(ok).forEach(n => {
+    document.querySelector(`.passo[data-passo="${n}"]`)?.classList.toggle('feito', ok[n]);
+    document.querySelector(`#stepper li[data-p="${n}"]`)?.classList.toggle('feito', ok[n]);
+  });
+  const p = val('s-prazo'), info = $('prazo-info');
+  if (info) {
+    if (!p) { info.textContent = ''; }
+    else {
+      const d = diasAte(p);
+      info.innerHTML = d < 0 ? `<span style="color:var(--urg)"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Prazo já vencido há ${-d} dia(s)</span>`
+        : d === 0 ? `<span style="color:var(--warn)"><i class="fa-solid fa-hourglass-end mr-1"></i>Vence hoje</span>`
+        : `<span style="color:${d <= 3 ? 'var(--warn)' : 'var(--ok)'}"><i class="fa-regular fa-calendar-check mr-1"></i>Vence em ${d} dia(s) · ${['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'][new Date(p + 'T12:00:00').getDay()]}, ${fmt(p)}</span>`;
+    }
+  }
+  const feitos = Object.values(ok).filter(Boolean).length;
+  const r = $('form-resumo');
+  if (r) r.innerHTML = feitos === 3 ? '<span style="color:var(--ok)"><i class="fa-solid fa-circle-check mr-1"></i>Tudo pronto para registrar</span>' : `${feitos} de 3 passos completos`;
+}
+function alternarChip(btn) {
+  const ativo = !btn.classList.contains('ativo');
+  btn.classList.toggle('ativo', ativo);
+  btn.setAttribute('aria-pressed', ativo);
+}
+function chipsMarcados(grupo) { return [...document.querySelectorAll('.sel-' + grupo + '.ativo')].map(b => b.dataset.v); }
 async function salvarForm(id) {
-  const v = k => $(k).value.trim();
-  if (!v('s-assunto')) { $('s-assunto').focus(); return; }
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const aviso = m => { const el = $('s-aviso'); el.textContent = m; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest' }); };
+  const naturezas = chipsMarcados('nat'), secretarias = chipsMarcados('sec');
+  if (!naturezas.length) return aviso('Marque se é solicitação de assinatura, processo ou os dois.');
+  if (!secretarias.length && !v('s-origem-outra')) return aviso('Marque pelo menos uma secretaria (ou informe outra unidade).');
+  if (!v('s-resp')) { $('s-resp').focus(); return aviso('Informe quem solicitou a assinatura.'); }
+  if (!v('s-prazo')) { $('s-prazo').focus(); return aviso('Informe o prazo.'); }
+  if (!v('s-assunto')) { $('s-assunto').focus(); return aviso('Informe o assunto.'); }
   const antigo = id ? Store.sol.find(x => x.id === id) : null;
   const dados = antigo ? copia(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId(), historico: [{ em: new Date().toISOString(), acao: 'Solicitação registrada', por: meuId() }] };
   Object.assign(dados, {
-    tipo: v('s-tipo'), numero: v('s-numero'), assunto: v('s-assunto'), origem: v('s-origem'), interessado: v('s-interessado'),
-    municipio: v('s-municipio'), responsavel: v('s-resp'), recebidoEm: v('s-rec'), prazo: v('s-prazo'), status: v('s-status'),
+    tipo: v('s-tipo'), natureza: naturezas.join(', '), numero: v('s-numero'), assunto: v('s-assunto'),
+    origem: secretarias.concat(v('s-origem-outra') ? [v('s-origem-outra')] : []).join(', '), interessado: v('s-interessado'),
+    municipio: v('s-municipio'), responsavel: v('s-resp'), recebidoEm: antigo ? (antigo.recebidoEm || hojeISO()) : hojeISO(), prazo: v('s-prazo'),
+    status: antigo ? (v('s-status') || antigo.status) : 'recebido',
     urgente: $('s-urg').checked, motivoUrgencia: $('s-urg').checked ? v('s-motivo') : '',
     casaCivil: $('s-cc').checked, ccEtapa: $('s-cc').checked ? v('s-ccetapa') : '', ccNumero: $('s-cc').checked ? v('s-ccnum') : '',
     observacoes: v('s-obs')
@@ -1731,13 +1888,14 @@ function renderDetalhe() {
       ${s.urgente && s.motivoUrgencia ? `<p class="text-[13px] rounded-lg px-3 py-2" style="background:color-mix(in srgb, var(--urg) 9%, var(--card));color:var(--ink)"><b style="color:var(--urg)">Motivo da urgência:</b> ${esc(s.motivoUrgencia)}</p>` : ''}
       <dl class="info-grade">
         <div><dt>Tipo</dt><dd>${t.rot}</dd></div>
-        <div><dt>Origem</dt><dd>${esc(s.origem || '—')}</dd></div>
+        <div><dt>Secretarias / origem</dt><dd>${esc(s.origem || '—')}</dd></div>
         <div><dt>Interessado</dt><dd>${esc(s.interessado || '—')}</dd></div>
         <div><dt>Município</dt><dd>${esc(s.municipio || '—')}</dd></div>
         <div><dt>Recebido em</dt><dd>${fmt(s.recebidoEm)}</dd></div>
         <div><dt>Prazo</dt><dd>${fmt(s.prazo)}</dd></div>
         <div><dt>Assinado em</dt><dd>${s.assinadoEm ? fmt(s.assinadoEm) : '—'}</dd></div>
-        <div><dt>Responsável</dt><dd>${esc(s.responsavel || '—')}</dd></div>
+        <div><dt>Solicitado por</dt><dd>${esc(s.responsavel || '—')}</dd></div>
+        <div><dt>Natureza</dt><dd>${esc(s.natureza || 'Solicitação de assinatura')}</dd></div>
         ${s.casaCivil ? `<div><dt>Casa Civil</dt><dd>${(ETAPAS_CC[s.ccEtapa] || ETAPAS_CC.preparo).rot}${s.ccNumero ? '<br><span class="text-ink3 font-medium">' + esc(s.ccNumero) + '</span>' : ''}</dd></div>` : ''}
       </dl>
       ${s.observacoes ? `<div><p class="rotulo">Observações</p><p class="text-[13px] text-ink2 whitespace-pre-wrap">${esc(s.observacoes)}</p></div>` : ''}
@@ -2190,7 +2348,7 @@ function abrirAtalhoInicial() {
 }
 
 /* ========================= Início ========================= */
-document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-mun">${MT_NOMES.map(n => `<option value="${esc(n)}">`).join('')}</datalist><datalist id="lista-unid">${UNIDADES.map(n => `<option value="${esc(n)}">`).join('')}</datalist>`);
+document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-mun">${MT_NOMES.map(n => `<option value="${esc(n)}">`).join('')}</datalist><datalist id="lista-resp"></datalist><datalist id="lista-unid">${UNIDADES.map(n => `<option value="${esc(n)}">`).join('')}</datalist>`);
 prepararFiltros();
 prepararMovimentacoes();
 prepararAdmin();
