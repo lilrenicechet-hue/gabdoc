@@ -297,6 +297,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .gs-ico { width: 26px; height: 24px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; color: var(--ink3); border: 1px solid var(--line); background: var(--card); }
   .gs-ico:hover { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); }
   .gs-ico.on-urg { color: #fff; background: var(--urg); border-color: var(--urg); }
+  .gs-ico.on-pin { color: #fff; background: #0284c7; border-color: #0284c7; }
   .gs-sigla { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; padding: 1px 6px; border-radius: 5px; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 14%, var(--card)); }
   .gs-caixinha { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--ink3); display: inline-flex; align-items: center; justify-content: center; color: transparent; font-size: 9px; vertical-align: middle; }
   .gs-caixinha.on { background: #1a73e8; border-color: #1a73e8; color: #fff; }
@@ -307,6 +308,51 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   @media (min-width: 768px) { .gs-lote { left: calc(50% + 144px); max-width: calc(100vw - 340px); } }
   .gs-lote { transition: left .3s; }
   table.gs tbody tr.gs-pend td.gs-num { box-shadow: inset 3px 0 0 #f59e0b; color: #d97706; }
+  /* Comunicados */
+  .com-card { position: relative; text-align: left; display: flex; flex-direction: column; gap: 6px; padding: 11px 12px 10px 15px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sombra); overflow: hidden; transition: transform .15s, border-color .15s, box-shadow .15s; min-width: 0; }
+  .com-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c); }
+  .com-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--c) 45%, var(--line)); box-shadow: 0 14px 28px -18px color-mix(in srgb, var(--c) 70%, transparent); }
+  .com-tit { font-weight: 800; font-size: 14px; line-height: 1.3; color: var(--ink); }
+  .com-txt { font-size: 12.5px; color: var(--ink2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .com-rod { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 11.5px; color: var(--ink3); margin-top: auto; flex-wrap: wrap; }
+  .com-pin { width: 22px; height: 22px; border-radius: 7px; display: inline-grid; place-items: center; background: color-mix(in srgb, #0284c7 15%, var(--card)); color: #0284c7; font-size: 10px; }
+  .com-leitura { font-size: 14px; line-height: 1.65; color: var(--ink); white-space: pre-wrap; background: var(--card2); border-radius: 12px; padding: 14px 16px; }
+  .com-linha { display: flex; gap: 10px; align-items: center; text-align: left; padding: 9px 11px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); background: color-mix(in srgb, var(--c) 6%, var(--card)); min-width: 0; }
+  .com-linha > svg, .com-linha > i { color: var(--c); flex-shrink: 0; }
+  .com-linha b { display: block; font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .com-linha small { display: block; font-size: 11.5px; color: var(--ink3); }
+  .com-linha:hover { border-color: var(--c); }
+  .com-faixa { border-left: 4px solid #0284c7; }
+  /* Personalização (Administração) */
+  .pers-barra { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sombra); }
+  .pers-barra[data-sujo] { border-color: #f59e0b; box-shadow: 0 0 0 3px color-mix(in srgb, #f59e0b 18%, transparent); }
+  .pers-aviso { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #b45309; align-self: center; }
+  .pers-barra[data-sujo] .pers-aviso { display: inline-flex; }
+  .pers-cor { width: 34px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; }
+  .pers-sec td { vertical-align: middle; }
+  .pers-switch { position: relative; display: inline-block; width: 38px; height: 22px; cursor: pointer; }
+  .pers-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .pers-switch span { position: absolute; inset: 0; border-radius: 99px; background: var(--line); transition: background .15s; }
+  .pers-switch span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .15s; }
+  .pers-switch input:checked + span { background: #16a34a; }
+  .pers-switch input:checked + span::after { transform: translateX(16px); }
+  .pers-switch input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .pers-grupos { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pers-grupos button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--line); color: var(--ink2); background: var(--card); }
+  .pers-grupos button svg, .pers-grupos button i { color: var(--c); }
+  .pers-grupos button.ativo { background: var(--c); border-color: var(--c); color: #fff; }
+  .pers-grupos button.ativo svg, .pers-grupos button.ativo i { color: #fff; }
+  .pers-grupos b { min-width: 18px; height: 18px; border-radius: 99px; font-size: 10.5px; display: inline-grid; place-items: center; background: #f59e0b; color: #fff; padding: 0 5px; }
+  .pers-rotulos { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  @media (min-width: 1100px) { .pers-rotulos { grid-template-columns: 1fr 1fr; column-gap: 20px; } }
+  .pers-rot { display: grid; grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1.15fr) 30px; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 10px; }
+  .pers-rot:hover { background: var(--card2); }
+  .pers-rot.mudado { background: color-mix(in srgb, #f59e0b 9%, var(--card)); }
+  .pers-pad { min-width: 0; font-size: 13px; color: var(--ink2); }
+  .pers-pad > span { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pers-pad small { display: block; font-size: 11px; color: var(--ink3); }
+  .pers-rot.mudado .pers-pad > span { text-decoration: line-through; color: var(--ink3); }
+  @media (max-width: 640px) { .pers-rot { grid-template-columns: 1fr 30px; } .pers-rot > svg, .pers-rot > i { display: none; } .pers-pad { grid-column: 1 / -1; } }
   /* Eventos */
   .ev-op { cursor: pointer; padding: 5px 11px; font-size: 12px; }
   .ev-op.ativo { background: var(--c); color: #fff; border-color: var(--c); }
@@ -801,6 +847,20 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cor-corpo"></div></div>
     </section>
 
+    <!-- COMUNICADOS IMPORTANTES -->
+    <section id="tab-comunicados" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#06263a">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bullhorn text-sky-300"></i> Comunicados importantes</h2>
+            <p class="text-sky-100/70 text-xs mt-0.5 hidden sm:block">Mural com as informações importantes da SEDUC-MT: avisos, orientações, normativas, prazos e calendário escolar.</p>
+          </div>
+          <div class="flex items-center gap-3"><span class="text-xs text-sky-100/80" id="com-resumo"></span><button onclick="abrirFormComunicado()" data-requer="gravar" class="btn text-white" style="background:#0284c7"><i class="fa-solid fa-plus"></i>Novo comunicado</button></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="com-corpo"></div></div>
+    </section>
+
     <!-- EVENTOS -->
     <section id="tab-eventos" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern" style="background-color:#2e0a33">
@@ -850,7 +910,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <p class="text-rose-100/70 text-xs mt-0.5 hidden sm:block">Equipe e senhas, configurações, auditoria e manutenção da planilha.</p>
           </div>
           <div class="dv-seg !bg-white/10" id="adm-abas">
-            <button data-a="usuarios" class="!text-white">Usuários</button><button data-a="config" class="!text-white">Configurações</button><button data-a="auditoria" class="!text-white">Auditoria</button><button data-a="manutencao" class="!text-white">Manutenção</button>
+            <button data-a="usuarios" class="!text-white">Usuários</button><button data-a="personalizacao" class="!text-white"><i class="fa-solid fa-wand-magic-sparkles mr-1 text-[11px]"></i>Personalização</button><button data-a="config" class="!text-white">Configurações</button><button data-a="auditoria" class="!text-white">Auditoria</button><button data-a="manutencao" class="!text-white">Manutenção</button>
           </div>
         </div>
       </div>
@@ -950,7 +1010,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], eventos: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 const NO_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
 
 /* ----- API do Apps Script ----- */
@@ -1038,6 +1098,10 @@ async function iniciarStore() {
       Store.correicao = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('comunicados').onSnapshot(snap => {
+      Store.comunicados = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('eventos').onSnapshot(snap => {
       Store.eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -1053,6 +1117,7 @@ async function iniciarStore() {
     Store.agenda = ex.agenda.map((a, i) => ({ id: 'ag' + i, ...a }));
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
+    Store.comunicados = ex.comunicados.map((e, i) => ({ id: 'cm' + i, ...e }));
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -1119,8 +1184,10 @@ function aplicarCarga(r) {
     Store.agenda = r.agenda || [];
     Store.correicao = r.correicao || [];
     Store.eventos = r.eventos || [];
+    Store.comunicados = r.comunicados || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
+  if (r.personalizacao) aplicarPersonalizacao(r.personalizacao);
   if (r.dataVersion) Store.versao = r.dataVersion;
   Store.pronto = true;
   statusSync();
@@ -1439,7 +1506,8 @@ async function carregarExemplos(btn) {
       ...ex.sol.map(s => Store.db.collection('solicitacoes').add({ ...s, atualizadoEm: new Date().toISOString() })),
       ...ex.agenda.map(a => Store.db.collection('agenda').add(a)),
       ...ex.correicao.map(c => Store.db.collection('correicao').add({ ...c, criadoEm: new Date().toISOString() })),
-      ...ex.eventos.map(e => Store.db.collection('eventos').add({ ...e, criadoEm: new Date().toISOString() }))]);
+      ...ex.eventos.map(e => Store.db.collection('eventos').add({ ...e, criadoEm: new Date().toISOString() })),
+      ...ex.comunicados.map(e => Store.db.collection('comunicados').add({ ...e, criadoEm: new Date().toISOString() }))]);
     toast('Exemplos carregados. Use "Remover exemplos" em Relatórios quando quiser limpar.');
   } catch (e) { toast('Não foi possível carregar os exemplos: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1452,7 +1520,8 @@ async function removerExemplos(btn) {
       ...Store.sol.filter(x => x.exemplo).map(s => Store.db.collection('solicitacoes').doc(s.id).delete()),
       ...Store.agenda.filter(x => x.exemplo).map(a => Store.db.collection('agenda').doc(a.id).delete()),
       ...Store.correicao.filter(x => x.exemplo).map(c => Store.db.collection('correicao').doc(c.id).delete()),
-      ...Store.eventos.filter(x => x.exemplo).map(e => Store.db.collection('eventos').doc(e.id).delete())]);
+      ...Store.eventos.filter(x => x.exemplo).map(e => Store.db.collection('eventos').doc(e.id).delete()),
+      ...Store.comunicados.filter(x => x.exemplo).map(e => Store.db.collection('comunicados').doc(e.id).delete())]);
     toast('Exemplos removidos.');
   } catch (e) { toast('Não foi possível remover tudo: ' + (e && e.message || 'erro'), 'fa-triangle-exclamation'); }
 }
@@ -1556,7 +1625,15 @@ function gerarExemplos() {
     E('Solenidade Professor Destaque', 35, 35, '19:00', 'Cuiabá', 'Teatro da UFMT', 'GS', 'Professores premiados', 'A confirmar', 'Planejamento'),
     E('Encontro estadual de coordenadores pedagógicos', -10, -9, '08:00', 'Várzea Grande', 'Centro de convenções', 'SAGE', '450 coordenadores', 'Presença confirmada', 'Realizado')
   ];
-  return { sol, agenda, correicao, eventos };
+  const M = (titulo, categoria, prioridade, conteudo, secretaria, pub, val, fixado) => ({ exemplo: true, titulo: '[Exemplo] ' + titulo, categoria, prioridade, conteudo, secretaria, publicadoEm: h(pub), validoAte: val === null ? '' : h(val), fixado, referencia: '', arquivado: false, criadoPor: 'Assessoria' });
+  const comunicados = [
+    M('Prazo final para atualização do Censo Escolar', 'Prazo', 'Urgente', 'Todas as unidades escolares devem concluir a atualização das matrículas no sistema do Censo Escolar até a data indicada. Dúvidas com a coordenação de estatística da SAGE.', 'SAGE', 0, 10, true),
+    M('Calendário escolar 2027 aprovado', 'Calendário escolar', 'Importante', 'O calendário escolar da rede estadual para 2027 foi aprovado. Início das aulas, recessos e semanas pedagógicas estão no documento de referência.', 'SAGE, GS', -3, 60, true),
+    M('Orientação sobre uso de veículos oficiais', 'Orientação', 'Normal', 'Reforçamos as regras de uso, guarda e abastecimento dos veículos oficiais. Toda viagem deve ter ordem de tráfego assinada.', 'SAAS', -6, 30, false),
+    M('Nova portaria de lotação de professores', 'Normativa', 'Importante', 'Publicada a portaria que define os critérios de lotação e atribuição de aulas para o próximo ano letivo.', 'SAGP', -2, 45, false),
+    M('Manutenção programada nos sistemas', 'Aviso', 'Normal', 'Os sistemas corporativos ficarão indisponíveis no sábado, das 8h às 14h, para manutenção da rede.', 'SAEX', -12, -5, false)
+  ];
+  return { sol, agenda, correicao, eventos, comunicados };
 }
 
 /* ========================= Navegação ========================= */
@@ -1583,11 +1660,11 @@ const SECOES_DOC = [
   { tipo: 'capturado', rot: 'Documentos capturados', desc: 'Documentos recebidos de fora e capturados no sistema para análise e assinatura.' },
   { tipo: 'oficio',    rot: 'Ofícios',               desc: 'Ofícios recebidos e expedidos pelo Gabinete.' },
   { tipo: 'despacho',  rot: 'Despachos',             desc: 'Despachos da Secretária em processos e solicitações.' },
-  { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' },
-  { tipo: 'circular',  rot: 'Circulares',            desc: 'Circulares destinadas às unidades e diretorias regionais.' }
+  { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' }
 ];
 let docTipo = 'portaria';
 $('nav-docs').innerHTML = SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('') +
+  `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
 document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => irPara(b.dataset.tab)));
 
@@ -1631,7 +1708,7 @@ async function sair() {
   ss.del('gabdoc_entrou');
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
-    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -1673,7 +1750,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, urgentes: renderUrgentes, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, modelos: renderModelos, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -1692,6 +1769,7 @@ function atualizarBadges() {
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
   SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
   set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
+  set('bdg-com', comDestaques().length);
   set('bdg-cor', Store.correicao.filter(c => !/^(conclu|arquiv)/i.test(Utils_norm(c.situacao))).length);
   const sino = $('sino-count'), n = urgentesAtivos().length;
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
@@ -1742,14 +1820,14 @@ function renderPainel() {
   const agHoje = Store.agenda.filter(a => a.data >= hojeISO()).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora)).slice(0, 4);
 
   const kpi = (aba, c, ico, rot, val, sub) => `<button type="button" onclick="irPara('${aba}')" class="dv-kpi" style="--c:${c}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
-  c.innerHTML = `
+  c.innerHTML = `${faixaComunicadosPainel()}
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-      ${kpi('mesa', '#4f46e5', 'fa-pen-nib', 'Na mesa', mesa.length, 'aguardando assinatura')}
-      ${kpi('fila', '#2563eb', 'fa-layer-group', 'Em tramitação', pend.length, `${pend.filter(s => s.status === 'recebido').length} recém-chegados`)}
-      ${kpi('urgentes', 'var(--urg)', 'fa-bolt', 'Urgentes', urg.filter(s => s.urgente).length, 'marcados como URGENTE')}
+      ${kpi('mesa', '#4f46e5', 'fa-pen-nib', L('filtro.mesa'), mesa.length, 'aguardando assinatura')}
+      ${kpi('fila', '#2563eb', 'fa-layer-group', L('filtro.pend'), pend.length, `${pend.filter(s => s.status === 'recebido').length} recém-chegados`)}
+      ${kpi('urgentes', 'var(--urg)', 'fa-bolt', L('filtro.urg'), urg.filter(s => s.urgente).length, 'marcados como URGENTE')}
       ${kpi('urgentes', '#ea580c', 'fa-triangle-exclamation', 'Prazo vencido', venc.length, venc.length ? 'precisam de atenção' : 'nenhum atraso')}
       ${kpi('casacivil', 'var(--cc)', 'fa-landmark', 'Casa Civil', cc.length, `${cc.filter(s => s.ccEtapa === 'pendencia').length} com diligência`)}
-      ${kpi('relatorios', 'var(--ok)', 'fa-signature', 'Assinados no mês', assinMes.length, tMedio == null ? 'sem histórico' : `média de ${tMedio.toFixed(1).replace('.', ',')} dias até assinar`)}
+      ${kpi('relatorios', 'var(--ok)', 'fa-signature', L('filtro.feito') + ' no mês', assinMes.length, tMedio == null ? 'sem histórico' : `média de ${tMedio.toFixed(1).replace('.', ',')} dias até assinar`)}
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div class="dv-card xl:col-span-2">
@@ -1789,7 +1867,7 @@ function desenharGraficosPainel(pend) {
   const conta = (campo) => semanas.map(w => Store.sol.filter(s => s[campo] && s[campo] >= w.ini && s[campo] <= w.fim).length);
   graficos.sem = new Chart($('g-semanas'), { type: 'line', data: { labels: semanas.map(w => w.rot), datasets: [
     { label: 'Recebidos', data: conta('recebidoEm'), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,.12)', fill: true, tension: .35, pointRadius: 3 },
-    { label: 'Assinados', data: conta('assinadoEm'), borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,.0)', tension: .35, pointRadius: 3 }
+    { label: L('filtro.feito'), data: conta('assinadoEm'), borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,.0)', tension: .35, pointRadius: 3 }
   ] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10 } } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cor('--line') } }, x: { grid: { display: false } } } } });
 }
 
@@ -1828,7 +1906,7 @@ function filtrar(ignorarTipo) {
 function renderFila() {
   document.querySelectorAll('#fila-vista button').forEach(b => { b.classList.toggle('ativo', b.dataset.v === filtro.vista); b.classList.toggle('!text-white', b.dataset.v !== filtro.vista); });
   const base = filtrar(true);
-  const chips = [['', 'Todos', 'fa-layer-group', 'var(--brand)', base.length]].concat(Object.entries(TIPOS).map(([k, v]) => [k, v.curto, v.ico, v.cor, base.filter(s => s.tipo === k).length]));
+  const chips = [['', L('filtro.todos'), 'fa-layer-group', 'var(--brand)', base.length]].concat(Object.entries(TIPOS).map(([k, v]) => [k, v.curto, v.ico, v.cor, base.filter(s => s.tipo === k).length]));
   $('f-tipos').innerHTML = chips.map(([k, r, i, c, n]) => `<button type="button" class="chip-f ${filtro.tipo === k ? 'ativo' : ''}" style="--c:${c}" onclick="filtro.tipo='${k}';renderFila()"><i class="fa-solid ${i} text-[11px]"></i>${r}<b>${n}</b></button>`).join('');
   let lista = filtrar(false);
   if (filtro.ordem === 'prazo') lista.sort((a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b));
@@ -2135,8 +2213,8 @@ function abrirForm(id, pre = {}) {
   const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: somaDias(5), urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
   const opt = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v.rot}</option>`).join('');
   const partesOrigem = String(s.origem || '').split(/\s*,\s*/).filter(Boolean);
-  const secSel = partesOrigem.filter(x => SECRETARIAS.includes(x.toUpperCase())).map(x => x.toUpperCase());
-  const outraOrigem = partesOrigem.filter(x => !SECRETARIAS.includes(x.toUpperCase())).join(', ');
+  const secSel = partesOrigem.filter(ehSigla).map(x => x.toUpperCase());
+  const outraOrigem = partesOrigem.filter(x => !ehSigla(x)).join(', ');
   const nat = String(s.natureza || 'Solicitação de assinatura');
   const cardNat = (valor, titulo, sub, ico, cor, ativo) => `
     <button type="button" class="op-card sel-nat ${ativo ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(valor)}" aria-pressed="${ativo}" onclick="alternarChip(this)">
@@ -2186,7 +2264,7 @@ function abrirForm(id, pre = {}) {
 
       ${passo(2, '#0d9488', 'De onde vem e quem pediu', 'Toque nas secretarias envolvidas: pode marcar várias.', `
         <div class="sec-grade" id="s-secretarias">
-          ${SECRETARIAS.map(sg => `<button type="button" class="sec-btn sel-sec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}
+          ${botoesSiglas(secSel).map(sg => `<button type="button" title="${esc(NOME_SEC[sg] || sg)}" class="sec-btn sel-sec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}
         </div>
         <input class="campo w-full" id="s-origem-outra" value="${esc(outraOrigem)}" placeholder="Outra unidade de origem (opcional)" aria-label="Outra unidade de origem">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2441,12 +2519,12 @@ function abrirFormCorreicao(id) {
       ${campo(1, '#b45309', 'Processo/Referência *', `<input class="campo campo-g w-full" id="c-processo" required value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
       ${campo(2, '#2563eb', 'Documento de assinatura', `<input class="campo w-full" id="c-documento" value="${esc(x.documento || '')}" placeholder="Ex.: Portaria de designação de comissão">`)}
       ${campo(3, '#0d9488', 'Objeto', `<textarea class="campo w-full" rows="2" id="c-objeto" placeholder="Do que trata o processo">${esc(x.objeto || '')}</textarea>`)}
-      ${campo(4, '#d97706', 'Situação/Ação', `<input class="campo w-full" id="c-situacao" list="lista-sit-cor" value="${esc(x.situacao || '')}" placeholder="Escolha ou escreva">
-        <div class="flex flex-wrap gap-1.5 mt-2">${SITUACOES_COR.map(s => { const [cor] = corSituacao(s); return `<button type="button" class="chip" style="--c:${cor};cursor:pointer" onclick="$('c-situacao').value=${js(s)}">${esc(s)}</button>`; }).join('')}</div>`)}
+      ${campo(4, '#d97706', 'Situação/Ação', `<input class="campo w-full" id="c-situacao" list="lista-sit-cor" value="${esc(rotCor(x.situacao || ''))}" placeholder="Escolha ou escreva">
+        <div class="flex flex-wrap gap-1.5 mt-2">${SITUACOES_COR.map(s => { const [cor] = corSituacao(s); return `<button type="button" class="chip" style="--c:${cor};cursor:pointer" onclick="$('c-situacao').value=${js(rotCor(s))}">${esc(rotCor(s))}</button>`; }).join('')}</div>`)}
       ${campo(5, '#64748b', 'Observação', `<textarea class="campo w-full" rows="2" id="c-observacao">${esc(x.observacao || '')}</textarea>`)}
       <p id="c-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
     </form>
-    <datalist id="lista-sit-cor">${SITUACOES_COR.map(s => `<option value="${esc(s)}">`).join('')}</datalist>
+    <datalist id="lista-sit-cor">${SITUACOES_COR.map(s => `<option value="${esc(rotCor(s))}">`).join('')}</datalist>
     <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-cor" id="btn-cor-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'correicao');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   setTimeout(() => $('c-processo').focus(), 50);
@@ -2458,7 +2536,7 @@ async function salvarFormCorreicao(id) {
   if (!v('c-documento') && !v('c-objeto')) return aviso('Informe o documento de assinatura ou o objeto.');
   const antigo = id ? Store.correicao.find(c => c.id === id) : null;
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString() }),
-    processo: v('c-processo'), documento: v('c-documento'), objeto: v('c-objeto'), situacao: v('c-situacao'), observacao: v('c-observacao'), atualizadoEm: new Date().toISOString() };
+    processo: v('c-processo'), documento: v('c-documento'), objeto: v('c-objeto'), situacao: canonCor(v('c-situacao')), observacao: v('c-observacao'), atualizadoEm: new Date().toISOString() };
   const btn = $('btn-cor-salvar'); btn.disabled = true;
   if (await salvarCorreicao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Processo de correição registrado · salvando em segundo plano.' : 'Processo de correição salvo.'); if (abaAtual !== 'correicao') irPara('correicao'); }
   else btn.disabled = false;
@@ -2888,7 +2966,7 @@ async function editarSolCampos(s, campos) {
   const d = copia(s);
   const textos = [], editados = [];
   Object.entries(campos).forEach(([key, valor]) => {
-    if (key === 'origem') valor = String(valor).split(/\s*[,;]\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x.toUpperCase()) ? x.toUpperCase() : x).join(', ');
+    if (key === 'origem') valor = String(valor).split(/\s*[,;]\s*/).filter(Boolean).map(x => ehSigla(x) ? x.toUpperCase() : x).join(', ');
     if (String(s[key] ?? '') === String(valor ?? '') && !(key === 'ccEtapa' && !s.ccEtapa)) return;
     d[key] = valor;
     if (key === 'status') {
@@ -2915,7 +2993,7 @@ function validarMunicipio(v) { return v && !MT_NOMES.includes(v) ? 'Município n
 const NATUREZAS_OP = [['Solicitação de assinatura', 'Solicitação de assinatura'], ['Processo', 'Processo'], ['Solicitação de assinatura, Processo', 'Assinatura + Processo']];
 function celStatus(s) { const x = STATUS[s.status] || STATUS.recebido; return `<span class="gs-pill" style="--c:${x.cor}">${x.rot}</span>`; }
 function celPrazo(s) { return `<span class="prazo ${situacao(s)} !text-[12px]">${textoPrazo(s)}</span>`; }
-function celSecretarias(s) { return String(s.origem || '').split(/\s*,\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x) ? `<span class="gs-sigla" style="--c:${COR_SEC[x]}">${x}</span>` : `<span class="text-ink2">${esc(x)}</span>`).join(' '); }
+function celSecretarias(s) { return String(s.origem || '').split(/\s*,\s*/).filter(Boolean).map(pilulaSigla).join(' '); }
 function colunasSolBase() {
   return [
     { key: 'numero', rot: 'Nº do processo', w: 235, wCompacta: 205, tipo: 'texto', editavel: true, classe: 'gs-forte' },
@@ -2949,7 +3027,7 @@ const PROXIMO = {
 function botoesAcoesSol(id, s) {
   const p = PROXIMO[s.status];
   const principal = p && pode(p[4]) ? `<button type="button" class="gs-acao" style="--c:${p[3]}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'status','${p[0]}')" title="${esc(STATUS[p[0]].rot)}"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>`
-    : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${FEITO(s) ? 'Concluído' : ''}</span>`;
+    : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${FEITO(s) ? esc(L('filtro.fim')) : ''}</span>`;
   return `<div class="gs-acoes-in">${principal}
     ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${s.urgente ? 'Retirar urgência' : 'Marcar como urgente'}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-bolt"></i></button>` : ''}
     <button type="button" class="gs-ico" title="Abrir detalhes e histórico" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button>
@@ -2992,7 +3070,7 @@ function abrirGestao(chip) { estadoGrade('gestao').chip = chip || ''; irPara('me
 function renderMesa() {
   const cont = $('mesa-corpo');
   const pend = Store.sol.filter(s => !FEITO(s));
-  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} em tramitação · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
   renderGrade(cont, {
@@ -3000,9 +3078,9 @@ function renderMesa() {
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'status'],
     ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
-    chips: [['', 'Todos', () => true, '#2563eb'], ['pend', 'Em tramitação', s => !FEITO(s), '#2563eb'], ['mesa', 'Na mesa', s => s.status === 'aguardando', '#4f46e5'],
-            ['urg', 'Urgentes', s => s.urgente && !FEITO(s), '#dc2626'], ['venc', 'Vencidos', s => situacao(s) === 'vencido', '#ea580c'],
-            ['proc', 'Processos', s => String(s.natureza || '').includes('Processo'), '#0d9488'], ['feito', 'Assinados', s => FEITO(s), '#16a34a']],
+    chips: [['', L('filtro.todos'), () => true, '#2563eb'], ['pend', L('filtro.pend'), s => !FEITO(s), '#2563eb'], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
+            ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'],
+            ['proc', L('filtro.proc'), s => String(s.natureza || '').includes('Processo'), '#0d9488'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
     aoEditarCampos: editarSolCampos,
     acoes: s => botoesAcoesSol('gestao', s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
     tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
@@ -3018,9 +3096,9 @@ function renderDocs() {
   const cont = $('docs-corpo');
   const todos = Store.sol.filter(s => s.tipo === d.tipo);
   const pend = todos.filter(s => !FEITO(s));
-  $('docs-titulo').innerHTML = `<i class="fa-solid ${t.ico}" style="color:${t.cor}"></i> ${d.rot}`;
+  $('docs-titulo').innerHTML = `<i class="fa-solid ${t.ico}" style="color:${t.cor}"></i> ${esc(nomeSecaoDoc(d))}`;
   $('docs-desc').textContent = d.desc;
-  $('docs-resumo').textContent = `${todos.length} registro(s) · ${pend.length} em tramitação · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  $('docs-resumo').textContent = `${todos.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
   const id = 'doc_' + d.tipo;
@@ -3029,16 +3107,16 @@ function renderDocs() {
   renderGrade(cont, {
     id, linhas: todos, fonte: () => Store.sol,
     topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      ${kpi('pend', 'Em tramitação', 'fa-arrows-spin', t.cor, pend.length)}
-      ${kpi('mesa', 'Na mesa', 'fa-pen-nib', '#4f46e5', pend.filter(s => s.status === 'aguardando').length)}
-      ${kpi('venc', 'Vencidos', 'fa-clock', '#ea580c', todos.filter(s => situacao(s) === 'vencido').length)}
-      ${kpi('feito', 'Assinados', 'fa-signature', '#16a34a', todos.filter(FEITO).length)}</div>`,
+      ${kpi('pend', L('filtro.pend'), 'fa-arrows-spin', t.cor, pend.length)}
+      ${kpi('mesa', L('filtro.mesa'), 'fa-pen-nib', '#4f46e5', pend.filter(s => s.status === 'aguardando').length)}
+      ${kpi('venc', L('filtro.venc'), 'fa-clock', '#ea580c', todos.filter(s => situacao(s) === 'vencido').length)}
+      ${kpi('feito', L('filtro.feito'), 'fa-signature', '#16a34a', todos.filter(FEITO).length)}</div>`,
     colunas: colunasSolBase().filter(c => c.key !== 'tipo'),
     compactas: ['numero', 'assunto', 'origem', 'status'],
     ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
-    chips: [['', 'Todos', () => true, t.cor], ['pend', 'Em tramitação', s => !FEITO(s), t.cor], ['mesa', 'Na mesa', s => s.status === 'aguardando', '#4f46e5'],
-            ['urg', 'Urgentes', s => s.urgente && !FEITO(s), '#dc2626'], ['venc', 'Vencidos', s => situacao(s) === 'vencido', '#ea580c'], ['feito', 'Assinados', s => FEITO(s), '#16a34a']],
+    chips: [['', L('filtro.todos'), () => true, t.cor], ['pend', L('filtro.pend'), s => !FEITO(s), t.cor], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
+            ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
     aoEditarCampos: editarSolCampos,
     acoes: s => botoesAcoesSol(id, s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
     tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
@@ -3072,11 +3150,11 @@ function renderCC() {
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'ccEtapa', 'status'],
     ordemPadrao: (a, b) => (Object.keys(ETAPAS_CC).indexOf(a.ccEtapa || 'preparo') - Object.keys(ETAPAS_CC).indexOf(b.ccEtapa || 'preparo')) || ordemDespacho(a, b),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (s.ccEtapa === 'concluido' ? 'gs-feito' : ''),
-    chips: [['', 'Todas', () => true, '#7c3aed']].concat(Object.entries(ETAPAS_CC).map(([k, e]) => [k, { preparo: 'Em preparo', enviado: 'Enviado', analise_cc: 'Em análise', pendencia: 'Diligência', concluido: 'Concluído' }[k], s => (s.ccEtapa || 'preparo') === k, e.cor])),
+    chips: [['', L('filtro.todos'), () => true, '#7c3aed']].concat(Object.entries(ETAPAS_CC).map(([k, e]) => [k, L('ccchip.' + k), s => (s.ccEtapa || 'preparo') === k, e.cor])),
     aoEditarCampos: editarSolCampos,
     acoes: s => {
       const prox = PROX_ETAPA[s.ccEtapa || 'preparo'];
-      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${ETAPAS_CC[prox].cor}" title="${esc(ETAPAS_CC[prox].rot)}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'ccEtapa','${prox}')"><i class="fa-solid ${ETAPAS_CC[prox].ico}"></i>${{ enviado: 'Enviar', analise_cc: 'Em análise', concluido: 'Concluir' }[prox]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>Concluído</span>`;
+      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${ETAPAS_CC[prox].cor}" title="${esc(ETAPAS_CC[prox].rot)}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'ccEtapa','${prox}')"><i class="fa-solid ${ETAPAS_CC[prox].ico}"></i>${esc(L('ccacao.' + prox, { enviado: 'Enviar', analise_cc: 'Em análise', concluido: 'Concluir' }[prox]))}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Abrir detalhes" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('casacivil','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
     menuAcoes: menuAcoesSol, tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
@@ -3104,9 +3182,9 @@ function corSituacao(txt) {
   return ['#2563eb', 'fa-magnifying-glass'];
 }
 function prepararCorreicao() {
-  if (!$('lista-sit-cor-g')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-sit-cor-g">${SITUACOES_COR.map(s => `<option value="${esc(s)}">`).join('')}</datalist>`);
+  if (!$('lista-sit-cor-g')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-sit-cor-g">${SITUACOES_COR.map(s => `<option value="${esc(rotCor(s))}">`).join('')}</datalist>`);
 }
-async function editarCorCampos(x, campos) { const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarCorreicao(x.id, d); }
+async function editarCorCampos(x, campos) { const d = { ...x }; delete d.id; Object.assign(d, campos); if ('situacao' in campos) d.situacao = canonCor(campos.situacao); d.atualizadoEm = new Date().toISOString(); return salvarCorreicao(x.id, d); }
 function renderCorreicao() {
   const cont = $('cor-corpo');
   const todas = Store.correicao || [];
@@ -3118,35 +3196,35 @@ function renderCorreicao() {
     id: 'correicao', linhas: todas, fonte: () => Store.correicao,
     topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi('#b45309', 'fa-clipboard-check', 'Processos', todas.length, 'de correição')}
-      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando', conta(/^aguard/), 'assinatura ou manifestação')}
-      ${kpi('#2563eb', 'fa-magnifying-glass', 'Em análise', conta(/^em analise/), 'na assessoria')}
-      ${kpi('#16a34a', 'fa-circle-check', 'Assinados / concluídos', conta(/^(assinad|conclu)/), `${conta(/^arquiv/)} arquivado(s)`)}</div>`,
+      ${kpi('#d97706', 'fa-hourglass-half', L('corfiltro.aguard'), conta(/^aguard/), 'assinatura ou manifestação')}
+      ${kpi('#2563eb', 'fa-magnifying-glass', L('corfiltro.analise'), conta(/^em analise/), 'na assessoria')}
+      ${kpi('#16a34a', 'fa-circle-check', L('filtro.feito'), conta(/^(assinad|conclu)/), `${conta(/^arquiv/)} ${esc(L('corfiltro.arq').toLowerCase())}`)}</div>`,
     colunas: [
       { key: 'processo', rot: 'Processo/Referência', w: 240, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O Processo/Referência não pode ficar vazio.' : '' },
       { key: 'documento', rot: 'Documento de assinatura', w: 270, wCompacta: 230, tipo: 'texto', editavel: true },
       { key: 'objeto', rot: 'Objeto', w: 360, flex: true, tipo: 'texto', editavel: true },
-      { key: 'situacao', rot: 'Situação/Ação', w: 220, tipo: 'texto', editavel: true, lista: 'lista-sit-cor-g', render: x => { if (!x.situacao) return ''; const [cor, ico] = corSituacao(x.situacao); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.situacao)}</span>`; } },
+      { key: 'situacao', rot: 'Situação/Ação', w: 220, tipo: 'texto', editavel: true, lista: 'lista-sit-cor-g', valor: x => rotCor(x.situacao), render: x => { if (!x.situacao) return ''; const [cor, ico] = corSituacao(x.situacao); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(rotCor(x.situacao))}</span>`; } },
       { key: 'observacao', rot: 'Observação', w: 320, tipo: 'texto', editavel: true }
     ],
     compactas: ['processo', 'documento', 'objeto', 'situacao'],
     larguraAcoes: 150,
     ordemPadrao: (a, b) => String(a.processo || '').localeCompare(String(b.processo || ''), 'pt-BR', { numeric: true }),
     classeLinha: x => /^(conclu|arquiv)/.test(Utils_norm(x.situacao)) ? 'gs-feito' : '',
-    chips: [['', 'Todos', () => true, '#b45309'], ['aguard', 'Aguardando', x => /^aguard/.test(Utils_norm(x.situacao)), '#d97706'], ['analise', 'Em análise', x => /^em analise/.test(Utils_norm(x.situacao)), '#2563eb'],
-            ['ok', 'Assinados/concluídos', x => /^(assinad|conclu)/.test(Utils_norm(x.situacao)), '#16a34a'], ['arq', 'Arquivados', x => /^arquiv/.test(Utils_norm(x.situacao)), '#64748b']],
+    chips: [['', L('filtro.todos'), () => true, '#b45309'], ['aguard', L('corfiltro.aguard'), x => /^aguard/.test(Utils_norm(x.situacao)), '#d97706'], ['analise', L('corfiltro.analise'), x => /^em analise/.test(Utils_norm(x.situacao)), '#2563eb'],
+            ['ok', L('filtro.feito'), x => /^(assinad|conclu)/.test(Utils_norm(x.situacao)), '#16a34a'], ['arq', L('corfiltro.arq'), x => /^arquiv/.test(Utils_norm(x.situacao)), '#64748b']],
     aoEditarCampos: editarCorCampos,
     acoes: x => {
       const n = Utils_norm(x.situacao);
-      const prox = /^aguardando assinatura/.test(n) ? ['Assinado', 'Assinado', 'fa-signature', '#16a34a'] : /^(assinad)/.test(n) ? ['Concluído', 'Concluir', 'fa-circle-check', '#16a34a'] : /^(conclu|arquiv)/.test(n) ? null : ['Aguardando assinatura', 'À assinatura', 'fa-pen-nib', '#d97706'];
-      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${prox[3]}" onclick="editarCorCampos(Store.correicao.find(c=>c.id==='${x.id}'),{situacao:${esc(JSON.stringify(prox[0]))}})"><i class="fa-solid ${prox[2]}"></i>${prox[1]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>Concluído</span>`;
+      const prox = /^aguardando assinatura/.test(n) ? ['Assinado', L('coracao.assinado'), 'fa-signature', '#16a34a'] : /^(assinad)/.test(n) ? ['Concluído', L('coracao.concluir'), 'fa-circle-check', '#16a34a'] : /^(conclu|arquiv)/.test(n) ? null : ['Aguardando assinatura', L('coracao.assinatura'), 'fa-pen-nib', '#d97706'];
+      const btn = prox && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${prox[3]}" onclick="editarCorCampos(Store.correicao.find(c=>c.id==='${x.id}'),{situacao:${esc(JSON.stringify(prox[0]))}})"><i class="fa-solid ${prox[2]}"></i>${prox[1]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormCorreicao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('correicao','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
     tituloLinha: x => x.processo,
-    menuAcoes: x => SITUACOES_COR.filter(s => s !== x.situacao).map(s => { const [cor, ico] = corSituacao(s); return { rot: 'Situação: ' + s, ico, cor, perm: 'gravar', fn: () => editarCorCampos(x, { situacao: s }) }; })
+    menuAcoes: x => SITUACOES_COR.filter(s => s !== x.situacao).map(s => { const [cor, ico] = corSituacao(s); return { rot: 'Situação: ' + rotCor(s), ico, cor, perm: 'gravar', fn: () => editarCorCampos(x, { situacao: s }) }; })
       .concat([{ sep: true }, { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirFormCorreicao(x.id) },
                { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: () => excluirCorreicaoId(x.id) }]),
-    acoesLote: [sitAcao('Em análise', 'Em análise', 'fa-magnifying-glass', '#2563eb'), sitAcao('Aguardando assinatura', 'Aguardando assinatura', 'fa-hourglass-half', '#d97706'),
-                sitAcao('Assinado', 'Assinado', 'fa-signature', '#16a34a'), sitAcao('Concluído', 'Concluído', 'fa-circle-check', '#16a34a'), sitAcao('Arquivado', 'Arquivado', 'fa-box-archive', '#64748b')],
+    acoesLote: [sitAcao('Em análise', rotCor('Em análise'), 'fa-magnifying-glass', '#2563eb'), sitAcao('Aguardando assinatura', rotCor('Aguardando assinatura'), 'fa-hourglass-half', '#d97706'),
+                sitAcao('Assinado', rotCor('Assinado'), 'fa-signature', '#16a34a'), sitAcao('Concluído', rotCor('Concluído'), 'fa-circle-check', '#16a34a'), sitAcao('Arquivado', rotCor('Arquivado'), 'fa-box-archive', '#64748b')],
     novaLinha: () => abrirFormCorreicao(), textoNovaLinha: 'Novo processo de correição',
     textoVazio: 'Nenhum processo de correição registrado.',
     botaoNovo: `<button class="btn !h-9 bg-amber-500 hover:bg-amber-400 text-white" onclick="abrirFormCorreicao()"><i class="fa-solid fa-plus"></i>Novo</button>`
@@ -3184,8 +3262,8 @@ function evQuando(e) {
   if (d <= 7) return `<span class="ev-tag" style="--c:#c026d3">em ${d} dia${d > 1 ? 's' : ''}</span>`;
   return '';
 }
-const pillEv = sit => { const x = SITUACOES_EV[sit] || { cor: '#64748b', ico: 'fa-circle' }; return sit ? `<span class="gs-pill" style="--c:${x.cor}"><i class="fa-solid ${x.ico} text-[9px]"></i>${esc(sit)}</span>` : ''; };
-const siglasEv = txt => String(txt || '').split(/\s*[,;]\s*/).filter(Boolean).map(x => SECRETARIAS.includes(x.toUpperCase()) ? `<span class="gs-sigla" style="--c:${COR_SEC[x.toUpperCase()]}">${x.toUpperCase()}</span>` : `<span class="text-ink2">${esc(x)}</span>`).join(' ');
+const pillEv = sit => { const x = SITUACOES_EV[sit] || { cor: '#64748b', ico: 'fa-circle' }; return sit ? `<span class="gs-pill" style="--c:${x.cor}"><i class="fa-solid ${x.ico} text-[9px]"></i>${esc(rotEv(sit))}</span>` : ''; };
+const siglasEv = txt => String(txt || '').split(/\s*[,;]\s*/).filter(Boolean).map(pilulaSigla).join(' ');
 
 function renderEventos() {
   const cont = $('ev-corpo');
@@ -3196,14 +3274,14 @@ function renderEventos() {
   preencherListaResp();
   const mes = hojeISO().slice(0, 7);
   const kpi = (chave, rot, ico, cor, n, sub) => `<button type="button" onclick="chipGrade('eventos','${chave}')" class="dv-kpi" style="--c:${cor}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${n}</span><span class="sub">${sub}</span></button>`;
-  const sitLote = s => ({ rot: s, ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', campos: () => ({ situacao: s }) });
+  const sitLote = s => ({ rot: rotEv(s), ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', campos: () => ({ situacao: s }) });
   renderGrade(cont, {
     id: 'eventos', linhas: todos, fonte: () => Store.eventos,
     topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi('prox', 'Próximos 30 dias', 'fa-calendar-day', '#c026d3', prox.length, `${prox.filter(e => e.participacao === 'Presença confirmada').length} com a Secretária`)}
       ${kpi('prep', 'Em planejamento', 'fa-screwdriver-wrench', '#d97706', todos.filter(e => /^(planej|em prep)/.test(Utils_norm(e.situacao))).length, 'planejamento ou preparação')}
-      ${kpi('conf', 'Confirmados', 'fa-circle-check', '#0d9488', todos.filter(e => e.situacao === 'Confirmado').length, 'prontos para acontecer')}
-      ${kpi('real', 'Realizados', 'fa-flag-checkered', '#16a34a', todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length, `${todos.filter(e => /^(cancel|adiad)/.test(Utils_norm(e.situacao))).length} adiado(s) ou cancelado(s)`)}</div>`,
+      ${kpi('conf', rotEv('Confirmado'), 'fa-circle-check', '#0d9488', todos.filter(e => e.situacao === 'Confirmado').length, 'prontos para acontecer')}
+      ${kpi('real', rotEv('Realizado'), 'fa-flag-checkered', '#16a34a', todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length, `${todos.filter(e => /^(cancel|adiad)/.test(Utils_norm(e.situacao))).length} adiado(s) ou cancelado(s)`)}</div>`,
     colunas: [
       { key: 'titulo', rot: 'Evento', w: 300, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', render: e => `${esc(e.titulo)} ${evQuando(e)}`, validar: v => !String(v).trim() ? 'O nome do evento não pode ficar vazio.' : '' },
       { key: 'dataInicio', rot: 'Início', w: 112, tipo: 'data', editavel: true, obrigatorio: true },
@@ -3213,8 +3291,8 @@ function renderEventos() {
       { key: 'local', rot: 'Local', w: 210, tipo: 'texto', editavel: true },
       { key: 'organizador', rot: 'Secretaria responsável', w: 165, wCompacta: 140, tipo: 'texto', editavel: true, render: e => siglasEv(e.organizador) },
       { key: 'publico', rot: 'Público / participantes', w: 190, tipo: 'texto', editavel: true },
-      { key: 'participacao', rot: 'Participação da Secretária', w: 190, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, k])), render: e => e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(e.participacao)}</span>` : '' },
-      { key: 'situacao', rot: 'Situação', w: 150, tipo: 'select', editavel: true, opcoes: () => Object.keys(SITUACOES_EV).map(k => [k, k]), render: e => pillEv(e.situacao) },
+      { key: 'participacao', rot: 'Participação da Secretária', w: 190, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, rotPart(k)])), render: e => e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(rotPart(e.participacao))}</span>` : '' },
+      { key: 'situacao', rot: 'Situação', w: 150, tipo: 'select', editavel: true, opcoes: () => Object.keys(SITUACOES_EV).map(k => [k, rotEv(k)]), render: e => pillEv(e.situacao) },
       { key: 'responsavel', rot: 'Responsável na Assessoria', w: 180, tipo: 'texto', editavel: true, lista: 'lista-resp' },
       { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true }
     ],
@@ -3222,24 +3300,24 @@ function renderEventos() {
     larguraAcoes: 172,
     ordemPadrao: (a, b) => (evEncerrado(a) - evEncerrado(b)) || (evFim(a) < hojeISO()) - (evFim(b) < hojeISO()) || String(a.dataInicio || '9').localeCompare(String(b.dataInicio || '9')),
     classeLinha: e => evEncerrado(e) ? 'gs-feito' : '',
-    chips: [['', 'Todos', () => true, '#c026d3'], ['prox', 'Próximos 30 dias', e => evProximo(e), '#c026d3'], ['mes', 'Este mês', e => (e.dataInicio || '').slice(0, 7) === mes || (evFim(e).slice(0, 7) === mes), '#7c3aed'],
-            ['prep', 'Em planejamento', e => /^(planej|em prep)/.test(Utils_norm(e.situacao)), '#d97706'], ['conf', 'Confirmados', e => e.situacao === 'Confirmado', '#0d9488'],
+    chips: [['', L('filtro.todos'), () => true, '#c026d3'], ['prox', 'Próximos 30 dias', e => evProximo(e), '#c026d3'], ['mes', 'Este mês', e => (e.dataInicio || '').slice(0, 7) === mes || (evFim(e).slice(0, 7) === mes), '#7c3aed'],
+            ['prep', 'Em planejamento', e => /^(planej|em prep)/.test(Utils_norm(e.situacao)), '#d97706'], ['conf', rotEv('Confirmado'), e => e.situacao === 'Confirmado', '#0d9488'],
             ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada', '#16a34a'],
-            ['real', 'Realizados', e => /^realiz/.test(Utils_norm(e.situacao)), '#16a34a'], ['canc', 'Adiados/cancelados', e => /^(cancel|adiad)/.test(Utils_norm(e.situacao)), '#64748b']],
+            ['real', rotEv('Realizado'), e => /^realiz/.test(Utils_norm(e.situacao)), '#16a34a'], ['canc', rotEv('Adiado') + ' / ' + rotEv('Cancelado'), e => /^(cancel|adiad)/.test(Utils_norm(e.situacao)), '#64748b']],
     aoEditarCampos: editarEvCampos,
     acoes: e => {
       const p = PROX_SIT_EV[e.situacao || 'Planejamento'];
-      const btn = p && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${SITUACOES_EV[p[0]].cor}" onclick="editarEvCampos(Store.eventos.find(x=>x.id==='${e.id}'),{situacao:'${p[0]}'})"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(e.situacao || '')}</span>`;
+      const btn = p && pode('gravar') ? `<button type="button" class="gs-acao" style="--c:${SITUACOES_EV[p[0]].cor}" onclick="editarEvCampos(Store.eventos.find(x=>x.id==='${e.id}'),{situacao:'${p[0]}'})"><i class="fa-solid ${p[2]}"></i>${esc(L('evacao.' + slugRot(e.situacao || 'Planejamento'), p[1]))}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(rotEv(e.situacao || ''))}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormEvento('${e.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('eventos','${e.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
     tituloLinha: e => e.titulo + ' · ' + evPeriodo(e),
-    menuAcoes: e => Object.keys(SITUACOES_EV).filter(s => s !== e.situacao).map(s => ({ rot: 'Situação: ' + s, ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', fn: () => editarEvCampos(e, { situacao: s }) }))
+    menuAcoes: e => Object.keys(SITUACOES_EV).filter(s => s !== e.situacao).map(s => ({ rot: 'Situação: ' + rotEv(s), ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'gravar', fn: () => editarEvCampos(e, { situacao: s }) }))
       .concat([{ sep: true },
-               { rot: 'Secretária confirmou presença', ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', fn: () => editarEvCampos(e, { participacao: 'Presença confirmada' }) },
+               { rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', fn: () => editarEvCampos(e, { participacao: 'Presença confirmada' }) },
                { rot: 'Incluir na Agenda da Secretária', ico: 'fa-calendar-plus', cor: '#0d9488', perm: 'agenda', fn: () => eventoParaAgenda(e) },
                { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirFormEvento(e.id) },
                { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: () => excluirEventoId(e.id) }]),
-    acoesLote: Object.keys(SITUACOES_EV).map(sitLote).concat([{ rot: 'Presença confirmada', ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', campos: () => ({ participacao: 'Presença confirmada' }) }]),
+    acoesLote: Object.keys(SITUACOES_EV).map(sitLote).concat([{ rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'gravar', campos: () => ({ participacao: 'Presença confirmada' }) }]),
     novaLinha: () => abrirFormEvento(), textoNovaLinha: 'Novo evento (abre o formulário)',
     textoVazio: 'Nenhum evento cadastrado. Use "Novo evento" para organizar o primeiro.',
     botaoNovo: `<button class="btn !h-9 text-white" style="background:#c026d3" onclick="abrirFormEvento()"><i class="fa-solid fa-plus"></i>Novo</button>`
@@ -3247,7 +3325,7 @@ function renderEventos() {
 }
 function editarEvCampos(x, campos) {
   const d = { ...x }; delete d.id;
-  Object.entries(campos).forEach(([k, v]) => { if (k === 'organizador') v = String(v).split(/\s*[,;]\s*/).filter(Boolean).map(s => SECRETARIAS.includes(s.toUpperCase()) ? s.toUpperCase() : s).join(', '); d[k] = v; });
+  Object.entries(campos).forEach(([k, v]) => { if (k === 'organizador') v = String(v).split(/\s*[,;]\s*/).filter(Boolean).map(s => ehSigla(s) ? s.toUpperCase() : s).join(', '); d[k] = v; });
   if (d.dataFim && d.dataInicio && d.dataFim < d.dataInicio) { toast('A data de término não pode ser antes do início.', 'fa-triangle-exclamation'); return Promise.resolve(false); }
   d.atualizadoEm = new Date().toISOString();
   const rot = campos.situacao ? 'Situação → ' + campos.situacao : campos.participacao ? 'Participação → ' + campos.participacao : null;
@@ -3266,7 +3344,7 @@ function abrirFormEvento(id) {
   const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
   const bloco = (n, cor, tit, html) => `<section class="space-y-3"><div class="flex items-center gap-2.5">${num(n, cor)}<h4 class="text-[14px] font-bold">${tit}</h4></div><div class="space-y-3 pl-0 sm:pl-[38px]">${html}</div></section>`;
   const rot = (t, html) => `<label class="block"><span class="rotulo !text-[12.5px]">${t}</span>${html}</label>`;
-  const opc = (grupo, lista, atual) => `<div class="flex flex-wrap gap-1.5">${lista.map(([k, cor]) => `<button type="button" class="chip ev-op ev-${grupo} ${k === atual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('.ev-${grupo}').forEach(b=>b.classList.toggle('ativo',b===this))">${esc(k)}</button>`).join('')}</div>`;
+  const opc = (grupo, lista, atual) => `<div class="flex flex-wrap gap-1.5">${lista.map(([k, cor]) => `<button type="button" class="chip ev-op ev-${grupo} ${k === atual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('.ev-${grupo}').forEach(b=>b.classList.toggle('ativo',b===this))">${esc(grupo === 'sit' ? rotEv(k) : rotPart(k))}</button>`).join('')}</div>`;
   abrirModal(`
     <div class="form-hero" style="background-color:#3b0a3f;background-image:radial-gradient(600px 200px at 0% 0%, rgba(192,38,211,.4), transparent 70%)">
       <div class="flex items-start gap-3">
@@ -3288,7 +3366,7 @@ function abrirFormEvento(id) {
           ${rot('Município', `<input class="campo w-full" id="e-mun" list="lista-mun" value="${esc(x.municipio || '')}" placeholder="Município de MT">`)}
           ${rot('Local', `<input class="campo w-full" id="e-local" value="${esc(x.local || '')}" placeholder="Ex.: Centro de Eventos do Pantanal">`)}
         </div>
-        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${SECRETARIAS.map(sg => `<button type="button" class="sec-btn sel-evsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
+        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => `<button type="button" title="${esc(NOME_SEC[sg] || sg)}" class="sec-btn sel-evsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           ${rot('Público / participantes', `<input class="campo w-full" id="e-publico" value="${esc(x.publico || '')}" placeholder="Ex.: 1.200 educadores">`)}
           ${rot('Responsável na Assessoria', `<input class="campo w-full" id="e-resp" list="lista-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha o evento">`)}
@@ -3324,6 +3402,291 @@ async function salvarFormEvento(id) {
   toast(gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', 'fa-calendar-check');
   if (abaAtual !== 'eventos') irPara('eventos');
 }
+
+/* ========================= Comunicados importantes da SEDUC-MT ========================= */
+const CATEGORIAS_COM = [['Aviso', '#2563eb', 'fa-circle-info'], ['Orientação', '#0d9488', 'fa-compass'], ['Normativa', '#4f46e5', 'fa-scale-balanced'],
+  ['Prazo', '#ea580c', 'fa-hourglass-half'], ['Calendário escolar', '#16a34a', 'fa-calendar-days'], ['Outro', '#64748b', 'fa-folder']];
+const PRIORIDADES_COM = { Normal: { cor: '#64748b', ico: 'fa-minus' }, Importante: { cor: '#d97706', ico: 'fa-star' }, Urgente: { cor: '#dc2626', ico: 'fa-bolt' } };
+const catCom = c => CATEGORIAS_COM.find(x => x[0] === c) || [c || 'Outro', '#64748b', 'fa-folder'];
+const rotCat = c => c ? L('comcat.' + slugRot(c), c) : '';
+const rotPri = p => p ? L('compri.' + slugRot(p), p) : '';
+const comVigente = c => !c.arquivado && (!c.validoAte || c.validoAte >= hojeISO());
+const comSituacao = c => c.arquivado ? ['Arquivado', '#64748b', 'fa-box-archive'] : (!comVigente(c) ? ['Expirado', '#94a3b8', 'fa-clock'] : ['Vigente', '#16a34a', 'fa-circle-check']);
+const PESO_PRI = { Urgente: 0, Importante: 1, Normal: 2 };
+const ordemCom = (a, b) => (comVigente(b) - comVigente(a)) || (!!b.fixado - !!a.fixado) || ((PESO_PRI[a.prioridade] ?? 2) - (PESO_PRI[b.prioridade] ?? 2)) || String(b.publicadoEm || '').localeCompare(String(a.publicadoEm || ''));
+const comDestaques = () => (Store.comunicados || []).filter(c => comVigente(c) && (c.fixado || c.prioridade !== 'Normal')).sort(ordemCom);
+function chipPri(p) { const x = PRIORIDADES_COM[p] || PRIORIDADES_COM.Normal; return `<span class="gs-pill" style="--c:${x.cor}"><i class="fa-solid ${x.ico} text-[9px]"></i>${esc(rotPri(p || 'Normal'))}</span>`; }
+function chipCat(c) { const [, cor, ico] = catCom(c); return `<span class="chip" style="--c:${cor}"><i class="fa-solid ${ico} text-[10px]"></i>${esc(rotCat(c))}</span>`; }
+function cartaoCom(c) {
+  const p = PRIORIDADES_COM[c.prioridade] || PRIORIDADES_COM.Normal;
+  return `<button type="button" class="com-card" style="--c:${p.cor}" onclick="lerComunicado('${c.id}')">
+    <div class="flex items-center gap-1.5 flex-wrap">${c.fixado ? '<span class="com-pin" title="Fixado no topo"><i class="fa-solid fa-thumbtack"></i></span>' : ''}${c.prioridade !== 'Normal' ? chipPri(c.prioridade) : ''}${chipCat(c.categoria)}</div>
+    <p class="com-tit">${esc(c.titulo)}</p>
+    ${c.conteudo ? `<p class="com-txt">${esc(c.conteudo)}</p>` : ''}
+    <div class="com-rod"><span>${String(c.secretaria || '').split(/\s*,\s*/).filter(Boolean).map(pilulaSigla).join(' ')}</span><span>${fmt(c.publicadoEm)}${c.validoAte ? ' · até ' + fmt(c.validoAte).slice(0, 5) : ''}</span></div>
+  </button>`;
+}
+function renderComunicados() {
+  const cont = $('com-corpo');
+  const todos = Store.comunicados || [];
+  const vig = todos.filter(comVigente);
+  $('com-resumo').textContent = todos.length ? `${vig.length} vigente(s) · ${vig.filter(c => c.prioridade === 'Urgente').length} urgente(s)` : '';
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const todosDest = comDestaques(), dest = todosDest.slice(0, 3);
+  renderGrade(cont, {
+    id: 'comunicados', linhas: todos, fonte: () => Store.comunicados,
+    topo: dest.length ? `<div class="dv-card !p-3"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[13px] font-bold flex items-center gap-2"><span class="dv-ico" style="--c:#0284c7"><i class="fa-solid fa-thumbtack"></i></span>Em destaque</p>${todosDest.length > 3 ? `<button class="text-[12px] font-semibold text-sky-600 hover:underline" onclick="chipGrade('comunicados','fix')">+ ${todosDest.length - 3} em destaque</button>` : ''}</div><div class="grid grid-cols-1 md:grid-cols-3 gap-3">${dest.map(cartaoCom).join('')}</div></div>` : '',
+    colunas: [
+      { key: 'titulo', rot: 'Comunicado', w: 320, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', render: c => `${c.fixado ? '<i class="fa-solid fa-thumbtack text-sky-500 mr-1.5 text-[11px]"></i>' : ''}${esc(c.titulo)}`, validar: v => !String(v).trim() ? 'O título não pode ficar vazio.' : '' },
+      { key: 'categoria', rot: 'Categoria', w: 160, tipo: 'select', editavel: true, opcoes: () => CATEGORIAS_COM.map(c => [c[0], rotCat(c[0])]), render: c => chipCat(c.categoria) },
+      { key: 'prioridade', rot: 'Prioridade', w: 125, tipo: 'select', editavel: true, opcoes: () => Object.keys(PRIORIDADES_COM).map(k => [k, rotPri(k)]), render: c => chipPri(c.prioridade) },
+      { key: 'situacaoCom', rot: 'Situação', w: 115, render: c => { const [r, cor, ico] = comSituacao(c); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${r}</span>`; }, valor: c => comSituacao(c)[0] },
+      { key: 'secretaria', rot: 'Secretaria', w: 150, wCompacta: 130, tipo: 'texto', editavel: true, render: c => String(c.secretaria || '').split(/\s*[,;]\s*/).filter(Boolean).map(pilulaSigla).join(' ') },
+      { key: 'publicadoEm', rot: 'Publicado em', w: 118, tipo: 'data', editavel: true },
+      { key: 'validoAte', rot: 'Válido até', w: 112, tipo: 'data', editavel: true },
+      { key: 'fixado', rot: 'Fixado', w: 80, tipo: 'check', editavel: true },
+      { key: 'conteudo', rot: 'Texto do comunicado', w: 340, tipo: 'texto', editavel: true },
+      { key: 'referencia', rot: 'Referência / link', w: 200, tipo: 'texto', editavel: true }
+    ],
+    compactas: ['titulo', 'categoria', 'prioridade', 'situacaoCom', 'validoAte'],
+    larguraAcoes: 150,
+    ordemPadrao: ordemCom,
+    classeLinha: c => (c.prioridade === 'Urgente' && comVigente(c) ? 'gs-urg ' : '') + (!comVigente(c) ? 'gs-feito' : ''),
+    chips: [['', L('filtro.todos'), () => true, '#0284c7'], ['vig', 'Vigentes', comVigente, '#16a34a'], ['fix', 'Fixados', c => c.fixado && comVigente(c), '#0284c7'],
+            ['urg', rotPri('Urgente'), c => c.prioridade === 'Urgente' && comVigente(c), '#dc2626'], ['imp', rotPri('Importante'), c => c.prioridade === 'Importante' && comVigente(c), '#d97706'],
+            ['exp', 'Expirados', c => !c.arquivado && !comVigente(c), '#94a3b8'], ['arq', 'Arquivados', c => c.arquivado, '#64748b']],
+    aoEditarCampos: editarComCampos,
+    acoes: c => `<div class="gs-acoes-in"><button type="button" class="gs-acao" style="--c:#0284c7" onclick="lerComunicado('${c.id}')"><i class="fa-solid fa-book-open"></i>Ler</button>${pode('gravar') ? `<button type="button" class="gs-ico ${c.fixado ? 'on-pin' : ''}" title="${c.fixado ? 'Desafixar' : 'Fixar no topo'}" onclick="editarComCampos(Store.comunicados.find(x=>x.id==='${c.id}'),{fixado:${!c.fixado}})"><i class="fa-solid fa-thumbtack"></i></button>` : ''}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('comunicados','${c.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`,
+    tituloLinha: c => c.titulo,
+    menuAcoes: c => [
+      { rot: 'Ler comunicado', ico: 'fa-book-open', cor: '#0284c7', fn: () => lerComunicado(c.id) },
+      { rot: c.fixado ? 'Desafixar do topo' : 'Fixar no topo', ico: 'fa-thumbtack', cor: '#0284c7', perm: 'gravar', fn: () => editarComCampos(c, { fixado: !c.fixado }) },
+      ...Object.keys(PRIORIDADES_COM).filter(k => k !== c.prioridade).map(k => ({ rot: 'Prioridade: ' + rotPri(k), ico: PRIORIDADES_COM[k].ico, cor: PRIORIDADES_COM[k].cor, perm: 'gravar', fn: () => editarComCampos(c, { prioridade: k }) })),
+      { rot: c.arquivado ? 'Desarquivar' : 'Arquivar', ico: 'fa-box-archive', cor: '#64748b', perm: 'gravar', fn: () => editarComCampos(c, { arquivado: !c.arquivado }) },
+      { sep: true },
+      { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'gravar', fn: () => abrirFormComunicado(c.id) },
+      { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'excluir', perigo: true, fn: () => excluirComunicadoId(c.id) }],
+    acoesLote: [{ rot: 'Fixar', ico: 'fa-thumbtack', cor: '#0284c7', perm: 'gravar', campos: () => ({ fixado: true }) }, { rot: 'Desafixar', ico: 'fa-thumbtack', cor: '#64748b', perm: 'gravar', campos: () => ({ fixado: false }) },
+                ...Object.keys(PRIORIDADES_COM).map(k => ({ rot: rotPri(k), ico: PRIORIDADES_COM[k].ico, cor: PRIORIDADES_COM[k].cor, perm: 'gravar', campos: () => ({ prioridade: k }) })),
+                { rot: 'Arquivar', ico: 'fa-box-archive', cor: '#64748b', perm: 'gravar', campos: () => ({ arquivado: true }) }],
+    novaLinha: () => abrirFormComunicado(), textoNovaLinha: 'Novo comunicado (abre o formulário)',
+    textoVazio: 'Nenhum comunicado publicado. Use "Novo comunicado" para registrar as informações importantes da SEDUC-MT.',
+    botaoNovo: `<button class="btn !h-9 text-white" style="background:#0284c7" onclick="abrirFormComunicado()"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
+}
+function editarComCampos(x, campos) {
+  const d = { ...x }; delete d.id;
+  Object.entries(campos).forEach(([k, v]) => { if (k === 'secretaria') v = String(v).split(/\s*[,;]\s*/).filter(Boolean).map(s => ehSigla(s) ? s.toUpperCase() : s).join(', '); d[k] = v; });
+  if (d.validoAte && d.publicadoEm && d.validoAte < d.publicadoEm) { toast('A validade não pode ser antes da publicação.', 'fa-triangle-exclamation'); return Promise.resolve(false); }
+  d.atualizadoEm = new Date().toISOString();
+  const rot = campos.fixado !== undefined ? (campos.fixado ? 'Fixado no topo' : 'Desafixado') : campos.arquivado !== undefined ? (campos.arquivado ? 'Arquivado' : 'Desarquivado') : campos.prioridade ? 'Prioridade → ' + rotPri(campos.prioridade) : null;
+  return salvarComunicado(x.id, d, rot);
+}
+function lerComunicado(id) {
+  const c = (Store.comunicados || []).find(x => x.id === id); if (!c) return;
+  const [sit, corSit] = comSituacao(c);
+  const ref = String(c.referencia || '');
+  const refHtml = /^https?:\/\//i.test(ref) ? `<a class="text-sky-600 underline break-all" href="${esc(ref)}" target="_blank" rel="noopener">${esc(ref)}</a>` : esc(ref);
+  abrirModal(`
+    <div class="form-hero" style="background-color:#06263a;background-image:radial-gradient(600px 200px at 0% 0%, ${(PRIORIDADES_COM[c.prioridade] || PRIORIDADES_COM.Normal).cor}55, transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#0284c7"><i class="fa-solid fa-bullhorn"></i></span></div>
+        <div class="min-w-0 flex-1"><div class="flex flex-wrap gap-1.5 mb-1.5">${c.fixado ? '<span class="chip" style="--c:#38bdf8"><i class="fa-solid fa-thumbtack text-[10px]"></i>Fixado</span>' : ''}${chipPri(c.prioridade)}${chipCat(c.categoria)}<span class="chip" style="--c:${corSit}">${sit}</span></div>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight">${esc(c.titulo)}</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <div class="modal-corpo space-y-4">
+      <div class="com-leitura">${c.conteudo ? esc(c.conteudo) : '<span class="text-ink3">Sem texto.</span>'}</div>
+      <dl class="info-grade">
+        <div><dt>Secretaria</dt><dd>${String(c.secretaria || '').split(/\s*,\s*/).filter(Boolean).map(pilulaSigla).join(' ') || '—'}</dd></div>
+        <div><dt>Publicado em</dt><dd>${fmt(c.publicadoEm)}</dd></div>
+        <div><dt>Válido até</dt><dd>${c.validoAte ? fmt(c.validoAte) : 'Sem validade'}</dd></div>
+        <div><dt>Publicado por</dt><dd>${esc(c.criadoPor || '—')}</dd></div>
+        ${ref ? `<div class="sm:col-span-2"><dt>Referência</dt><dd>${refHtml}</dd></div>` : ''}
+      </dl>
+    </div>
+    <div class="modal-rodape !justify-between"><button class="btn btn-sec" onclick="copiarComunicado('${c.id}', this)"><i class="fa-solid fa-copy"></i>Copiar texto</button>
+      <div class="flex gap-2">${pode('gravar') ? `<button class="btn btn-sec" onclick="abrirFormComunicado('${c.id}')"><i class="fa-solid fa-pen"></i>Editar</button>` : ''}<button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div></div>`, 'comunicado-ler');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+}
+async function copiarComunicado(id, btn) {
+  const c = Store.comunicados.find(x => x.id === id); if (!c) return;
+  const txt = `${c.titulo}\n\n${c.conteudo || ''}${c.validoAte ? `\n\nVálido até ${fmt(c.validoAte)}.` : ''}${c.referencia ? `\nReferência: ${c.referencia}` : ''}`;
+  try { await navigator.clipboard.writeText(txt); btn.lastChild.textContent = 'Copiado'; } catch (e) { toast('Não foi possível copiar.', 'fa-triangle-exclamation'); }
+}
+function abrirFormComunicado(id) {
+  if (!pode('gravar')) { toast('Seu perfil não publica comunicados.', 'fa-lock'); return; }
+  const x = id ? (Store.comunicados || []).find(c => c.id === id) : { categoria: 'Aviso', prioridade: 'Normal', publicadoEm: hojeISO() };
+  if (!x) return;
+  const secSel = String(x.secretaria || '').split(/\s*,\s*/).map(s => s.toUpperCase());
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const bloco = (n, cor, tit, html) => `<section class="space-y-3"><div class="flex items-center gap-2.5">${num(n, cor)}<h4 class="text-[14px] font-bold">${tit}</h4></div><div class="space-y-3 pl-0 sm:pl-[38px]">${html}</div></section>`;
+  const rot = (t, html) => `<label class="block"><span class="rotulo !text-[12.5px]">${t}</span>${html}</label>`;
+  const opc = (grupo, lista, atual) => `<div class="flex flex-wrap gap-1.5">${lista.map(([k, r, cor, ico]) => `<button type="button" class="chip ev-op com-${grupo} ${k === atual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('.com-${grupo}').forEach(b=>b.classList.toggle('ativo',b===this))"><i class="fa-solid ${ico} text-[10px]"></i>${esc(r)}</button>`).join('')}</div>`;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#06263a;background-image:radial-gradient(600px 200px at 0% 0%, rgba(2,132,199,.45), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#0284c7"><i class="fa-solid fa-bullhorn"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-sky-300">${id ? 'Editar' : 'Novo'}</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Comunicado importante</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-6" id="form-com" onsubmit="event.preventDefault();salvarFormComunicado('${id || ''}')">
+      ${bloco(1, '#0284c7', 'O comunicado', `
+        ${rot('Título *', `<input class="campo campo-g w-full" id="m-titulo" required value="${esc(x.titulo || '')}" placeholder="Ex.: Prazo final para atualização do Censo Escolar">`)}
+        <div><span class="rotulo !text-[12.5px]">Categoria</span>${opc('cat', CATEGORIAS_COM.map(([k, cor, ico]) => [k, rotCat(k), cor, ico]), x.categoria || 'Aviso')}</div>
+        <div><span class="rotulo !text-[12.5px]">Prioridade</span>${opc('pri', Object.entries(PRIORIDADES_COM).map(([k, v]) => [k, rotPri(k), v.cor, v.ico]), x.prioridade || 'Normal')}</div>`)}
+      ${bloco(2, '#0d9488', 'Texto e referência', `
+        ${rot('Texto do comunicado', `<textarea class="campo w-full !h-auto py-2" rows="6" id="m-conteudo" placeholder="Escreva a informação completa: o que é, quem deve fazer, até quando.">${esc(x.conteudo || '')}</textarea>`)}
+        ${rot('Referência / link', `<input class="campo w-full" id="m-ref" value="${esc(x.referencia || '')}" placeholder="Nº SIGADOC, publicação no Diário Oficial ou link">`)}`)}
+      ${bloco(3, '#16a34a', 'Publicação', `
+        <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => `<button type="button" class="sec-btn sel-comsec ${secSel.includes(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg]}" data-v="${sg}" title="${esc(NOME_SEC[sg] || sg)}" aria-pressed="${secSel.includes(sg)}" onclick="alternarChip(this)"><i class="fa-solid fa-check"></i>${sg}</button>`).join('')}</div></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${rot('Publicado em', `<input type="date" class="campo w-full" id="m-pub" value="${esc(x.publicadoEm || hojeISO())}">`)}
+          ${rot('Válido até', `<input type="date" class="campo w-full" id="m-val" value="${esc(x.validoAte || '')}">`)}
+        </div>
+        <label class="flex items-center gap-2 text-[13px] font-medium"><input type="checkbox" id="m-fix" class="w-4 h-4" ${x.fixado ? 'checked' : ''}> Fixar no topo do mural (aparece em destaque para toda a equipe)</label>`)}
+      <p id="m-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('excluir') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirComunicadoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-com"><i class="fa-solid fa-check"></i>Publicar</button></div></div>`, 'comunicado');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  setTimeout(() => $('m-titulo').focus(), 50);
+}
+async function salvarFormComunicado(id) {
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const aviso = t => { const el = $('m-aviso'); el.textContent = t; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest' }); };
+  if (!v('m-titulo')) return aviso('Informe o título do comunicado.');
+  if (v('m-val') && v('m-pub') && v('m-val') < v('m-pub')) return aviso('A validade não pode ser antes da data de publicação.');
+  const ativo = g => (document.querySelector('.com-' + g + '.ativo') || {}).dataset?.v || '';
+  const antigo = id ? Store.comunicados.find(e => e.id === id) : null;
+  const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: (Store.sessao && Store.sessao.usuario) || (Store.eu && (Store.eu.name || Store.eu.nome)) || "" }),
+    titulo: v('m-titulo'), categoria: ativo('cat') || 'Aviso', prioridade: ativo('pri') || 'Normal', conteudo: $('m-conteudo').value.trim(), referencia: v('m-ref'),
+    secretaria: chipsMarcados('comsec').join(', '), publicadoEm: v('m-pub') || hojeISO(), validoAte: v('m-val'), fixado: $('m-fix').checked, arquivado: antigo ? !!antigo.arquivado : false,
+    atualizadoEm: new Date().toISOString() };
+  await salvarComunicado(id || null, dados);
+  fecharModal();
+  toast(gravaEmFila() ? 'Comunicado publicado · salvando em segundo plano.' : 'Comunicado publicado.', 'fa-bullhorn');
+  if (abaAtual !== 'comunicados') irPara('comunicados');
+}
+async function salvarComunicado(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'cm' + Date.now();
+    trocarNaLista(Store.comunicados, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  if (novo) id = novoIdLocal('M');
+  trocarNaLista(Store.comunicados, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'comunicados', idLocal: novo ? id : null, icone: 'fa-bullhorn',
+    rotulo: rotulo || (novo ? 'Novo comunicado' : 'Comunicado atualizado'), detalhe: dados.titulo || '',
+    action: 'salvar_comunicado', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('comunicados').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirComunicadoId(id) {
+  const c = Store.comunicados.find(x => x.id === id);
+  Store.comunicados = Store.comunicados.filter(x => x.id !== id); aoMudarDados();
+  toast('Comunicado excluído.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de comunicado', detalhe: c ? c.titulo : '',
+    action: 'excluir_comunicado', payload: { id }, nuvem: () => Store.db.collection('comunicados').doc(id).delete() });
+}
+/** Faixa de comunicados em destaque no Painel. */
+function faixaComunicadosPainel() {
+  const d = comDestaques().slice(0, 3);
+  if (!d.length) return '';
+  return `<div class="dv-card !p-3 com-faixa"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[13.5px] font-bold flex items-center gap-2"><span class="dv-ico" style="--c:#0284c7"><i class="fa-solid fa-bullhorn"></i></span>Comunicados importantes</p><button class="text-[12px] font-semibold text-sky-600 hover:underline" onclick="irPara('comunicados')">Ver todos</button></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">${d.map(c => { const p = PRIORIDADES_COM[c.prioridade] || PRIORIDADES_COM.Normal; return `<button type="button" class="com-linha" style="--c:${p.cor}" onclick="lerComunicado('${c.id}')"><i class="fa-solid ${c.fixado ? 'fa-thumbtack' : p.ico}"></i><span class="min-w-0"><b>${esc(c.titulo)}</b><small>${esc(rotCat(c.categoria))}${c.validoAte ? ' · até ' + fmt(c.validoAte) : ''}</small></span></button>`; }).join('')}</div></div>`;
+}
+
+/* ========================= Personalização (nomes e secretarias editáveis) ========================= */
+// O Administrador muda, em Administração › Personalização, os nomes das situações, dos botões de
+// ação e dos filtros de todas as seções, além das secretarias adjuntas. Os valores gravados nos
+// registros não mudam (só o nome exibido), então renomear nunca quebra os dados existentes.
+const slugRot = s => Utils_norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+const Pers = { rotulos: {}, secretarias: null, unidades: null, atualizadoEm: '', atualizadoPor: '' };
+const NOMES_SEC_PADRAO = { SAGE: 'Secretaria Adjunta de Gestão Educacional', SAAS: 'Secretaria Adjunta de Administração Sistêmica', SAIP: 'Secretaria Adjunta de Infraestrutura e Patrimônio', SAEX: 'Secretaria Adjunta Executiva', GS: 'Gabinete da Secretária', SAGP: 'Secretaria Adjunta de Gestão de Pessoas' };
+const PADRAO_SECRETARIAS = SECRETARIAS.map(s => ({ sigla: s, nome: NOMES_SEC_PADRAO[s] || '', cor: COR_SEC[s], ativa: true }));
+const NOME_SEC = {};
+const PADRAO_FIXO = {
+  status: Object.fromEntries(Object.entries(STATUS).map(([k, v]) => [k, v.rot])),
+  acao: Object.fromEntries(Object.entries(PROXIMO).map(([k, v]) => [k, v[1]])),
+  tipo: Object.fromEntries(Object.entries(TIPOS).map(([k, v]) => [k, v.rot])),
+  tipoCurto: Object.fromEntries(Object.entries(TIPOS).map(([k, v]) => [k, v.curto])),
+  cc: Object.fromEntries(Object.entries(ETAPAS_CC).map(([k, v]) => [k, v.rot]))
+};
+/** Grupos mostrados no editor (chave, nome padrão). */
+function gruposRotulos() {
+  const st = (pref, lista) => lista.map(s => [pref + '.' + slugRot(s), s]);
+  return [
+    { id: 'filtros', titulo: 'Filtros e contadores', sub: 'Valem para todas as planilhas (Gestão, Portarias, Ofícios, Despachos…), Painel e Casa Civil.', ico: 'fa-filter', cor: '#2563eb', itens: [
+      ['filtro.todos', 'Todos'], ['filtro.pend', 'Em andamento'], ['filtro.mesa', 'Na mesa'], ['filtro.urg', 'Urgentes'], ['filtro.venc', 'Vencidos'],
+      ['filtro.proc', 'Processos'], ['filtro.feito', 'Concluídos'], ['filtro.fim', 'Concluído']] },
+    { id: 'status', titulo: 'Situações das solicitações', sub: 'Aparecem nas planilhas, nos detalhes, no Painel e na planilha do Google.', ico: 'fa-list-check', cor: '#4f46e5',
+      itens: Object.keys(STATUS).map(k => ['status.' + k, PADRAO_FIXO.status[k]]) },
+    { id: 'acoes', titulo: 'Botões de ação das solicitações', sub: 'O botão principal de cada linha, na coluna Ações.', ico: 'fa-bolt', cor: '#16a34a',
+      itens: Object.keys(PROXIMO).map(k => ['acao.' + k, PADRAO_FIXO.acao[k], 'quando está em "' + L('status.' + k) + '"']) },
+    { id: 'tipos', titulo: 'Tipos de documento', sub: 'Também mudam o nome das seções do menu.', ico: 'fa-file-lines', cor: '#0891b2',
+      itens: Object.keys(TIPOS).map(k => ['tipo.' + k, PADRAO_FIXO.tipo[k]]) },
+    { id: 'cc', titulo: 'Casa Civil', sub: 'Etapas, filtros curtos e botões da trilha da Casa Civil.', ico: 'fa-landmark', cor: '#7c3aed', itens: [
+      ...Object.keys(ETAPAS_CC).map(k => ['cc.' + k, PADRAO_FIXO.cc[k]]),
+      ['ccchip.preparo', 'Em preparo'], ['ccchip.enviado', 'Enviado'], ['ccchip.analise_cc', 'Em análise'], ['ccchip.pendencia', 'Diligência'], ['ccchip.concluido', 'Concluído'],
+      ['ccacao.enviado', 'Enviar', 'botão'], ['ccacao.analise_cc', 'Em análise', 'botão'], ['ccacao.concluido', 'Concluir', 'botão']] },
+    { id: 'cor', titulo: 'Processos de Correição', sub: 'Situações sugeridas e botões. O texto livre já digitado continua igual.', ico: 'fa-clipboard-check', cor: '#b45309', itens: [
+      ...st('cor', SITUACOES_COR), ['coracao.assinatura', 'À assinatura', 'botão'], ['coracao.assinado', 'Assinado', 'botão'], ['coracao.concluir', 'Concluir', 'botão'],
+      ['corfiltro.aguard', 'Aguardando', 'filtro'], ['corfiltro.analise', 'Em análise', 'filtro'], ['corfiltro.arq', 'Arquivados', 'filtro']] },
+    { id: 'ev', titulo: 'Eventos', sub: 'Situações, botões e participação da Secretária.', ico: 'fa-calendar-check', cor: '#c026d3', itens: [
+      ...st('ev', Object.keys(SITUACOES_EV)), ...Object.entries(PROX_SIT_EV).map(([k, v]) => ['evacao.' + slugRot(k), v[1], 'botão em "' + k + '"']),
+      ...st('evpart', Object.keys(PARTICIPACAO_EV))] },
+    { id: 'com', titulo: 'Comunicados importantes', sub: 'Categorias e prioridades.', ico: 'fa-bullhorn', cor: '#0284c7', itens: [
+      ...st('comcat', CATEGORIAS_COM.map(c => c[0])), ...st('compri', Object.keys(PRIORIDADES_COM))] }
+  ];
+}
+let _rotPadrao = null;
+function rotPadrao() { if (!_rotPadrao) { _rotPadrao = {}; gruposRotulos().forEach(g => g.itens.forEach(([k, v]) => { if (!(k in _rotPadrao)) _rotPadrao[k] = v; })); } return _rotPadrao; }
+/** Nome exibido: o personalizado ou o padrão. */
+function L(chave, padrao) { return Pers.rotulos[chave] || PADRAO_FIXO_GET(chave) || rotPadrao()[chave] || padrao || chave; }
+function PADRAO_FIXO_GET(chave) { const [g, k] = chave.split('.'); return g === 'status' ? PADRAO_FIXO.status[k] : g === 'acao' ? PADRAO_FIXO.acao[k] : g === 'tipo' ? PADRAO_FIXO.tipo[k] : g === 'cc' ? PADRAO_FIXO.cc[k] : ''; }
+const rotCor = s => s && SITUACOES_COR.includes(s) ? L('cor.' + slugRot(s), s) : (s || '');
+const rotEv = s => s ? L('ev.' + slugRot(s), s) : '';
+const rotPart = s => s ? L('evpart.' + slugRot(s), s) : '';
+/** Texto digitado → situação padrão da Correição (aceita o nome personalizado). */
+function canonCor(txt) {
+  const n = Utils_norm(txt);
+  const c = SITUACOES_COR.find(s => Utils_norm(s) === n || Utils_norm(rotCor(s)) === n);
+  return c || String(txt || '').trim();
+}
+function aplicarPersonalizacao(p) {
+  p = p || {};
+  Pers.rotulos = p.rotulos && typeof p.rotulos === 'object' ? p.rotulos : {};
+  Pers.atualizadoEm = p.atualizadoEm || ''; Pers.atualizadoPor = p.atualizadoPor || '';
+  _rotPadrao = null;
+  Object.keys(STATUS).forEach(k => { STATUS[k].rot = L('status.' + k); });
+  Object.keys(PROXIMO).forEach(k => { PROXIMO[k][1] = L('acao.' + k); });
+  Object.keys(TIPOS).forEach(k => { TIPOS[k].rot = L('tipo.' + k); TIPOS[k].curto = Pers.rotulos['tipo.' + k] || PADRAO_FIXO.tipoCurto[k]; });
+  Object.keys(ETAPAS_CC).forEach(k => { ETAPAS_CC[k].rot = L('cc.' + k); });
+  // secretarias adjuntas
+  const lista = Array.isArray(p.secretarias) && p.secretarias.length ? p.secretarias : PADRAO_SECRETARIAS;
+  Pers.secretarias = lista.map(s => ({ sigla: String(s.sigla || '').toUpperCase(), nome: s.nome || '', cor: s.cor || '#64748b', ativa: s.ativa !== false })).filter(s => s.sigla);
+  SECRETARIAS.length = 0;
+  Pers.secretarias.forEach(s => { COR_SEC[s.sigla] = s.cor; NOME_SEC[s.sigla] = s.nome; if (s.ativa) SECRETARIAS.push(s.sigla); });
+  if (Array.isArray(p.unidades) && p.unidades.length) { Pers.unidades = p.unidades; const dl = $('lista-unid'); if (dl) dl.innerHTML = p.unidades.map(n => `<option value="${esc(n)}">`).join(''); }
+  // nomes no menu (seções por tipo)
+  SECOES_DOC.forEach(d => { const b = document.querySelector(`.nav-btn[data-tab="doc:${d.tipo}"] span:not(.nav-badge)`); if (b) b.textContent = nomeSecaoDoc(d); });
+  if ($('lista-sit-cor-g')) $('lista-sit-cor-g').innerHTML = SITUACOES_COR.map(s => `<option value="${esc(rotCor(s))}">`).join('');
+  const fs = $('f-sec'); if (fs) { const v = fs.value; fs.innerHTML = '<option value="">Todas as secretarias</option>' + SECRETARIAS.map(s => `<option value="${s}">${s}${NOME_SEC[s] ? ' · ' + esc(NOME_SEC[s]) : ''}</option>`).join(''); fs.value = v; }
+}
+/** "Portarias", "Ofícios"… — se o tipo foi renomeado, a seção usa o nome novo. */
+function nomeSecaoDoc(d) { return Pers.rotulos['tipo.' + d.tipo] ? (Pers.rotulos['secao.' + d.tipo] || Pers.rotulos['tipo.' + d.tipo]) : d.rot; }
+/** Sigla colorida (com o nome da secretaria ao passar o mouse). */
+function pilulaSigla(x) {
+  const s = String(x || '').trim(), up = s.toUpperCase();
+  return COR_SEC[up] ? `<span class="gs-sigla" style="--c:${COR_SEC[up]}" title="${esc(NOME_SEC[up] || up)}">${up}</span>` : `<span class="text-ink2">${esc(s)}</span>`;
+}
+const ehSigla = x => !!COR_SEC[String(x || '').trim().toUpperCase()];
+/** Botões de secretaria do formulário: as ativas + alguma inativa que o registro já tenha. */
+const botoesSiglas = sel => SECRETARIAS.concat((sel || []).filter(x => ehSigla(x) && !SECRETARIAS.includes(x)));
 
 /* ========================= Permissões na tela ========================= */
 function aplicarPermissoes() {
@@ -3425,6 +3788,104 @@ async function admCarregar(chave, acao, payload, campo) {
   catch (e) { admEstado[chave] = { erro: e.message }; }
   if (abaAtual === 'admin') renderAdmin();
 }
+/* ----- Administração › Personalização ----- */
+const persEd = { dados: null, grupo: 'filtros', sujo: false, salvando: false };
+function persIniciar(p) {
+  persEd.dados = { secretarias: JSON.parse(JSON.stringify(p.secretarias && p.secretarias.length ? p.secretarias : PADRAO_SECRETARIAS)),
+                   rotulos: { ...(p.rotulos || {}) }, unidades: (p.unidades || UNIDADES).slice() };
+  persEd.dados.secretarias.forEach(s => { if (!s.nome && NOME_SEC[s.sigla]) s.nome = NOME_SEC[s.sigla]; });
+  persEd.sujo = false;
+}
+function persMarcar() { persEd.sujo = true; const b = $('pers-barra'); if (b) b.dataset.sujo = '1'; }
+function persRot(chave, valor) { const pad = rotPadrao()[chave]; if (!valor.trim() || valor.trim() === pad) delete persEd.dados.rotulos[chave]; else persEd.dados.rotulos[chave] = valor.trim(); persMarcar(); const r = document.querySelector(`[data-rot-restaurar="${chave}"]`); if (r) r.hidden = !persEd.dados.rotulos[chave]; }
+function persRestaurar(chave) { delete persEd.dados.rotulos[chave]; persMarcar(); renderAdmin(); }
+function persRestaurarGrupo(id) { const g = gruposRotulos().find(x => x.id === id); g.itens.forEach(([k]) => delete persEd.dados.rotulos[k]); persMarcar(); renderAdmin(); }
+function persSec(i, campo, valor) {
+  const s = persEd.dados.secretarias[i]; if (!s) return;
+  s[campo] = campo === 'sigla' ? String(valor).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10) : valor;
+  persMarcar();
+  if (campo === 'sigla' || campo === 'cor' || campo === 'ativa') { const p = $('pers-prev-' + i); if (p) { p.style.setProperty('--c', s.cor); p.textContent = s.sigla || '?'; p.classList.toggle('opacity-40', !s.ativa); } }
+  if (campo === 'sigla') { const inp = document.querySelector(`[data-sec-sigla="${i}"]`); if (inp && inp.value !== s.sigla) inp.value = s.sigla; }
+}
+function persSecNova() { persEd.dados.secretarias.push({ sigla: '', nome: '', cor: ['#0ea5e9', '#84cc16', '#f43f5e', '#a855f7', '#14b8a6', '#f59e0b'][persEd.dados.secretarias.length % 6], ativa: true }); persMarcar(); renderAdmin(); setTimeout(() => { const l = document.querySelectorAll('[data-sec-sigla]'); l[l.length - 1]?.focus(); }, 30); }
+function persSecMover(i, d) { const L2 = persEd.dados.secretarias, j = i + d; if (j < 0 || j >= L2.length) return; [L2[i], L2[j]] = [L2[j], L2[i]]; persMarcar(); renderAdmin(); }
+function persSecRemover(i, btn) {
+  const s = persEd.dados.secretarias[i];
+  const usos = Store.sol.filter(x => String(x.origem || '').split(/\s*,\s*/).includes(s.sigla)).length;
+  if (usos && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.title = `${usos} registro(s) usam ${s.sigla}. Clique de novo para remover (os registros mantêm a sigla como texto). Dica: desmarque "Ativa" para só esconder.`; btn.classList.add('!bg-red-600', '!text-white'); toast(btn.title, 'fa-triangle-exclamation'); return; }
+  persEd.dados.secretarias.splice(i, 1); persMarcar(); renderAdmin();
+}
+function persDescartar() { persEd.dados = null; admEstado.pers = null; renderAdmin(); }
+async function persSalvar() {
+  const d = persEd.dados;
+  const siglas = d.secretarias.map(s => s.sigla).filter(Boolean);
+  if (d.secretarias.some(s => !s.sigla)) return toast('Preencha a sigla de todas as secretarias (ou remova a linha vazia).', 'fa-triangle-exclamation');
+  if (new Set(siglas).size !== siglas.length) return toast('Há siglas repetidas.', 'fa-triangle-exclamation');
+  if (!d.secretarias.some(s => s.ativa)) return toast('Deixe pelo menos uma secretaria ativa.', 'fa-triangle-exclamation');
+  d.unidades = ($('pers-unid') ? $('pers-unid').value : d.unidades.join('\n')).split('\n').map(x => x.trim()).filter(Boolean);
+  const btn = $('pers-salvar'); persEd.salvando = true; if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Salvando…'; }
+  try {
+    const r = await API.post('admin_salvar_personalizacao', { personalizacao: d }, 120000);
+    aplicarPersonalizacao(r.personalizacao);
+    admEstado.pers = r.personalizacao; persIniciar(r.personalizacao);
+    if (r.dataVersion) Store.versao = r.dataVersion;
+    toast(`Personalização salva${r.celulas ? ` · ${r.celulas} célula(s) da planilha atualizadas` : ''}.`, 'fa-circle-check');
+    atualizarBadges();
+  } catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
+  finally { persEd.salvando = false; renderAdmin(); }
+}
+function renderPersonalizacao(c) {
+  if (!admEstado.pers) { c.innerHTML = vazio('fa-circle-notch fa-spin', 'Carregando…', 'Consultando a planilha.'); admCarregar('pers', 'admin_personalizacao', {}, 'personalizacao'); return; }
+  if (admEstado.pers.erro) { c.innerHTML = vazio('fa-triangle-exclamation', 'Não foi possível carregar', esc(admEstado.pers.erro), '<button class="btn btn-sec" onclick="admEstado.pers=null;renderAdmin()">Tentar de novo</button>'); return; }
+  if (!persEd.dados) persIniciar(admEstado.pers);
+  const d = persEd.dados, grupos = gruposRotulos(), g = grupos.find(x => x.id === persEd.grupo) || grupos[0];
+  const contaMud = gr => gr.itens.filter(([k]) => d.rotulos[k]).length;
+  const usos = sg => Store.sol.filter(x => String(x.origem || '').split(/\s*,\s*/).includes(sg)).length + (Store.eventos || []).filter(x => String(x.organizador || '').toUpperCase().split(/\s*,\s*/).includes(sg)).length;
+  c.innerHTML = `
+    <div class="pers-barra" id="pers-barra" ${persEd.sujo ? 'data-sujo="1"' : ''}>
+      <div class="min-w-0"><p class="font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-fuchsia-500"></i>Personalização do sistema</p>
+        <p class="text-[12px] text-ink3">Vale para toda a equipe e para a planilha do Google. ${admEstado.pers.atualizadoEm ? `Última alteração: ${esc(admEstado.pers.atualizadoPor || '')} em ${fmtHora(admEstado.pers.atualizadoEm)}.` : 'Ainda com os nomes padrão.'}</p></div>
+      <div class="flex gap-2 flex-shrink-0"><span class="pers-aviso"><i class="fa-solid fa-circle text-[7px]"></i>Alterações não salvas</span>
+        <button class="btn btn-sec" onclick="persDescartar()">Descartar</button>
+        <button class="btn btn-pri" id="pers-salvar" onclick="persSalvar()" ${persEd.salvando ? 'disabled' : ''}><i class="fa-solid fa-check"></i>Salvar personalização</button></div>
+    </div>
+
+    <div class="dv-card">
+      <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#2563eb"><i class="fa-solid fa-sitemap"></i></span>Secretarias adjuntas</h3><p>Os botões de secretaria dos formulários, as siglas coloridas das planilhas e o filtro por secretaria seguem esta lista.</p></div>
+        <button class="btn btn-sec !h-9" onclick="persSecNova()"><i class="fa-solid fa-plus"></i>Nova secretaria</button></div>
+      <div class="overflow-x-auto scrollbar-thin"><table class="tabela pers-sec"><thead><tr><th class="w-10"></th><th>Cor</th><th>Sigla</th><th>Nome completo</th><th class="n">Em uso</th><th>Ativa</th><th></th></tr></thead><tbody>
+        ${d.secretarias.map((s, i) => `<tr>
+          <td><span class="gs-sigla ${s.ativa ? '' : 'opacity-40'}" id="pers-prev-${i}" style="--c:${esc(s.cor)}">${esc(s.sigla || '?')}</span></td>
+          <td><input type="color" class="pers-cor" value="${esc(s.cor)}" oninput="persSec(${i},'cor',this.value)" aria-label="Cor de ${esc(s.sigla)}"></td>
+          <td><input class="campo w-28 font-bold uppercase" data-sec-sigla="${i}" value="${esc(s.sigla)}" maxlength="10" placeholder="SIGLA" oninput="persSec(${i},'sigla',this.value)" aria-label="Sigla"></td>
+          <td><input class="campo w-full min-w-[240px]" value="${esc(s.nome || '')}" placeholder="Ex.: Secretaria Adjunta de Gestão Educacional" oninput="persSec(${i},'nome',this.value)" aria-label="Nome da secretaria"></td>
+          <td class="n text-[12px] text-ink3">${s.sigla ? usos(s.sigla) : '—'}</td>
+          <td><label class="pers-switch"><input type="checkbox" ${s.ativa ? 'checked' : ''} onchange="persSec(${i},'ativa',this.checked)"><span></span></label></td>
+          <td><div class="flex gap-1 justify-end">
+            <button class="gs-ico" title="Subir" onclick="persSecMover(${i},-1)" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="gs-ico" title="Descer" onclick="persSecMover(${i},1)" ${i === d.secretarias.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
+            <button class="gs-ico" title="Remover" onclick="persSecRemover(${i}, this)"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('')}
+      </tbody></table></div>
+      <p class="text-[11.5px] text-ink3 mt-2"><i class="fa-solid fa-circle-info mr-1"></i>Desativar esconde a secretaria dos formulários sem mexer nos registros antigos. Ao renomear uma sigla, os registros antigos continuam com a sigla anterior.</p>
+    </div>
+
+    <div class="dv-card">
+      <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#c026d3"><i class="fa-solid fa-tags"></i></span>Nomes das situações, ações e filtros</h3><p>Troque, por exemplo, "Em tramitação" por "Em andamento" ou "Assinados" por "Concluídos". Os dados gravados não mudam, só o nome exibido.</p></div></div>
+      <div class="pers-grupos">${grupos.map(x => `<button type="button" class="${x.id === g.id ? 'ativo' : ''}" style="--c:${x.cor}" onclick="persEd.grupo='${x.id}';renderAdmin()"><i class="fa-solid ${x.ico}"></i>${x.titulo}${contaMud(x) ? `<b>${contaMud(x)}</b>` : ''}</button>`).join('')}</div>
+      <div class="flex items-center justify-between gap-2 mt-4 mb-2"><p class="text-[12.5px] text-ink3">${g.sub}</p>${contaMud(g) ? `<button class="btn btn-sec !h-8 flex-shrink-0" onclick="persRestaurarGrupo('${g.id}')"><i class="fa-solid fa-rotate-left"></i>Voltar ao padrão</button>` : ''}</div>
+      <div class="pers-rotulos">${g.itens.map(([k, pad, dica]) => `<label class="pers-rot ${d.rotulos[k] ? 'mudado' : ''}">
+          <span class="pers-pad"><span>${esc(pad)}</span>${dica ? `<small>${esc(dica)}</small>` : ''}</span>
+          <i class="fa-solid fa-arrow-right text-ink3 text-[11px]"></i>
+          <input class="campo w-full" value="${esc(d.rotulos[k] || '')}" placeholder="${esc(pad)}" maxlength="60" oninput="persRot('${k}', this.value);this.closest('.pers-rot').classList.toggle('mudado', !!this.value.trim() && this.value.trim() !== ${esc(JSON.stringify(pad))})">
+          <button type="button" class="gs-ico" data-rot-restaurar="${k}" ${d.rotulos[k] ? '' : 'hidden'} title="Voltar ao padrão" onclick="event.preventDefault();persRestaurar('${k}')"><i class="fa-solid fa-rotate-left"></i></button>
+        </label>`).join('')}</div>
+    </div>
+
+    <div class="dv-card">
+      <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#0d9488"><i class="fa-solid fa-building-columns"></i></span>Unidades de origem sugeridas</h3><p>Lista que aparece ao digitar a unidade de origem ou o interessado. Uma por linha.</p></div></div>
+      <textarea class="campo w-full !h-auto py-2 font-mono text-[12.5px]" rows="8" id="pers-unid" oninput="persMarcar()">${esc(d.unidades.join('\n'))}</textarea>
+    </div>`;
+}
 function renderAdmin() {
   const c = $('adm-corpo');
   document.querySelectorAll('#adm-abas button').forEach(b => { b.classList.toggle('ativo', b.dataset.a === admEstado.aba); b.classList.toggle('!text-white', b.dataset.a !== admEstado.aba); });
@@ -3457,6 +3918,7 @@ function renderAdmin() {
       </div>`;
     return;
   }
+  if (admEstado.aba === 'personalizacao') { renderPersonalizacao(c); return; }
   if (admEstado.aba === 'config') {
     if (!admEstado.config) { c.innerHTML = carregando; admCarregar('config', 'admin_config', {}, 'config'); return; }
     if (erro(admEstado.config)) { c.innerHTML = erro(admEstado.config); return; }
@@ -3729,6 +4191,7 @@ aoMudarTema();
 if (ss.get('gabdoc_entrou') && !(API.url() && !NO_CLAUDE)) $('login-screen').classList.add('hidden');
 irPara(ls.get('gabdoc_aba') || 'painel');
 configurarPWA();
+aplicarPersonalizacao({});
 iniciarStore().then(abrirAtalhoInicial);
 </script>
 
