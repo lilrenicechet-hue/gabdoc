@@ -327,6 +327,8 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   table.gs tr.gs-urg td.gs-cel { background: color-mix(in srgb, var(--urg) 6%, var(--card)); }
   table.gs tr.gs-urg td.gs-num { box-shadow: inset 3px 0 0 var(--urg); }
   table.gs tr.gs-feito td.gs-cel { color: var(--ink3); }
+  table.gs tr.gs-ini-fim > td { border-top: 2px solid color-mix(in srgb, var(--ok) 60%, var(--line)) !important; }
+  table.gs tr.gs-feito > td.gs-num { color: var(--ok); font-weight: 700; }
   table.gs .gs-forte { font-weight: 700; }
   table.gs tr.gs-nova td { height: 34px; background: var(--card); }
   table.gs tr.gs-nova button { color: var(--brand); font-weight: 700; font-size: 12.5px; }
@@ -2063,6 +2065,10 @@ function renderAba() {
 const pendentes = () => Store.sol.filter(s => !FEITO(s));
 const naMesa = () => Store.sol.filter(s => s.status === 'aguardando').sort(ordemDespacho);
 const urgentesAtivos = () => Store.sol.filter(s => !FEITO(s) && (s.urgente || situacao(s) === 'vencido'));
+/** Ordem das planilhas: prazo mais próximo primeiro (vencidos no topo); sem prazo depois; finalizados no fim, do mais recente ao mais antigo. */
+const porPrazo = (a, b) => String(a.prazo || '9999').localeCompare(String(b.prazo || '9999')) || (!!b.urgente - !!a.urgente) || String(a.recebidoEm || '').localeCompare(String(b.recebidoEm || ''));
+const porFimRecente = campo => (a, b) => String(b[campo] || b.atualizadoEm || '').localeCompare(String(a[campo] || a.atualizadoEm || ''));
+function ordemFinalizados(fim, ativos, finalizados) { return (a, b) => (fim(a) - fim(b)) || (fim(a) ? finalizados(a, b) : ativos(a, b)); }
 function ordemDespacho(a, b) {
   if (!!b.urgente - !!a.urgente) return !!b.urgente - !!a.urgente;
   return (a.prazo || '9999') .localeCompare(b.prazo || '9999');
@@ -3008,6 +3014,8 @@ function linhasDaGrade(cfg, st) {
     Object.entries(st.filtros).every(([k, f]) => { if (!f) return true; const c = cfg.colunas.find(x => x.key === k); return !c || Utils_norm(textoCelula(c, r)).includes(Utils_norm(f)); }));
   if (st.ordem) { const c = cfg.colunas.find(x => x.key === st.ordem); if (c) L = L.slice().sort((a, b) => chaveOrdem(c, a).localeCompare(chaveOrdem(c, b), 'pt-BR', { numeric: true }) * st.dir); }
   else if (cfg.ordemPadrao) L = L.slice().sort(cfg.ordemPadrao);
+  // Finalizados sempre no fim da planilha (a ordenação por coluna vale dentro de cada grupo)
+  if (cfg.finalizado) L = L.filter(r => !cfg.finalizado(r)).concat(L.filter(r => cfg.finalizado(r)));
   return L;
 }
 function colunasVisiveis(cfg, st) {
@@ -3034,7 +3042,8 @@ function renderGrade(cont, cfg) {
   const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="Ordenar por ${esc(c.rot)}">
       <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}</th>`).join('');
   const filtros = st.mostrarFiltros ? `<tr class="gs-filtros"><th class="gs-num"><i class="fa-solid fa-filter text-[10px]"></i></th>${cols.map(c => `<th><input class="gs-filtro" data-k="${c.key}" value="${esc(st.filtros[c.key] || '')}" placeholder="Filtrar…" oninput="filtrarGrade('${cfg.id}', this)" aria-label="Filtrar ${esc(c.rot)}"></th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>` : '';
-  const corpo = L.map((r, ri) => `<tr data-ri="${ri}" data-id="${esc(r.id)}" class="${cfg.classeLinha ? cfg.classeLinha(r) : ''}${Grav.pendente(r.id) ? ' gs-pend' : ''}">
+  const iniFim = cfg.finalizado ? L.findIndex(r => cfg.finalizado(r)) : -1;
+  const corpo = L.map((r, ri) => `<tr data-ri="${ri}" data-id="${esc(r.id)}" class="${ri === iniFim && ri > 0 ? 'gs-ini-fim ' : ''}${cfg.classeLinha ? cfg.classeLinha(r) : ''}${Grav.pendente(r.id) ? ' gs-pend' : ''}">
       <td class="gs-num" data-ri="${ri}" title="Selecionar a linha ${ri + 1}">${ri + 1}</td>
       ${cols.map((c, ci) => { const ed = c.editavel && podeEditar;
         const conteudo = c.tipo === 'check' ? `<span class="gs-caixinha ${valorBruto(c, r) ? 'on' : ''}"><i class="fa-solid fa-check"></i></span>` : (c.render ? c.render(r) : esc(textoCelula(c, r)));
@@ -3494,7 +3503,8 @@ function renderMesa() {
   renderGrade(cont, {
     id: 'gestao', area: 'sol', linhas: Store.sol, fonte: () => Store.sol, colunas: colunasSolBase(),
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'status'],
-    ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
+    finalizado: FEITO,
+    ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
     chips: [['', L('filtro.todos'), () => true, '#2563eb'], ['pend', L('filtro.pend'), s => !FEITO(s), '#2563eb'], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
             ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'],
@@ -3531,7 +3541,8 @@ function renderDocs() {
       ${kpi('feito', L('filtro.feito'), 'fa-signature', '#16a34a', todos.filter(FEITO).length)}</div>`,
     colunas: colunasSolBase().filter(c => c.key !== 'tipo'),
     compactas: ['numero', 'assunto', 'origem', 'status'],
-    ordemPadrao: (a, b) => (FEITO(a) - FEITO(b)) || ordemDespacho(a, b),
+    finalizado: FEITO,
+    ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
     chips: [['', L('filtro.todos'), () => true, t.cor], ['pend', L('filtro.pend'), s => !FEITO(s), t.cor], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
             ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
@@ -3566,7 +3577,8 @@ function renderCC() {
       pega('observacoes')
     ],
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'ccEtapa', 'status'],
-    ordemPadrao: (a, b) => (Object.keys(ETAPAS_CC).indexOf(a.ccEtapa || 'preparo') - Object.keys(ETAPAS_CC).indexOf(b.ccEtapa || 'preparo')) || ordemDespacho(a, b),
+    finalizado: s => s.ccEtapa === 'concluido',
+    ordemPadrao: ordemFinalizados(s => s.ccEtapa === 'concluido', porPrazo, porFimRecente('atualizadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (s.ccEtapa === 'concluido' ? 'gs-feito' : ''),
     chips: [['', L('filtro.todos'), () => true, '#7c3aed']].concat(Object.entries(ETAPAS_CC).map(([k, e]) => [k, L('ccchip.' + k), s => (s.ccEtapa || 'preparo') === k, e.cor])),
     aoEditarCampos: editarSolCampos,
@@ -3626,7 +3638,8 @@ function renderCorreicao() {
     ],
     compactas: ['processo', 'documento', 'objeto', 'situacao'],
     larguraAcoes: 150,
-    ordemPadrao: (a, b) => String(a.processo || '').localeCompare(String(b.processo || ''), 'pt-BR', { numeric: true }),
+    finalizado: x => /^(conclu|arquiv)/.test(Utils_norm(x.situacao)),
+    ordemPadrao: ordemFinalizados(x => /^(conclu|arquiv)/.test(Utils_norm(x.situacao)), (a, b) => String(a.prazo || '9999').localeCompare(String(b.prazo || '9999')) || String(a.processo || '').localeCompare(String(b.processo || ''), 'pt-BR', { numeric: true }), porFimRecente('atualizadoEm')),
     classeLinha: x => /^(conclu|arquiv)/.test(Utils_norm(x.situacao)) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, '#b45309'], ['aguard', L('corfiltro.aguard'), x => /^aguard/.test(Utils_norm(x.situacao)), '#d97706'], ['analise', L('corfiltro.analise'), x => /^em analise/.test(Utils_norm(x.situacao)), '#2563eb'],
             ['ok', L('filtro.feito'), x => /^(assinad|conclu)/.test(Utils_norm(x.situacao)), '#16a34a'], ['arq', L('corfiltro.arq'), x => /^arquiv/.test(Utils_norm(x.situacao)), '#64748b']],
@@ -3716,7 +3729,8 @@ function renderEventos() {
     ],
     compactas: ['titulo', 'dataInicio', 'municipio', 'participacao', 'situacao'],
     larguraAcoes: 172,
-    ordemPadrao: (a, b) => (evEncerrado(a) - evEncerrado(b)) || (evFim(a) < hojeISO()) - (evFim(b) < hojeISO()) || String(a.dataInicio || '9').localeCompare(String(b.dataInicio || '9')),
+    finalizado: e => evEncerrado(e) || (!!evFim(e) && evFim(e) < hojeISO()),
+    ordemPadrao: ordemFinalizados(e => evEncerrado(e) || (!!evFim(e) && evFim(e) < hojeISO()), (a, b) => String(a.dataInicio || '9').localeCompare(String(b.dataInicio || '9')), (a, b) => String(evFim(b)).localeCompare(String(evFim(a)))),
     classeLinha: e => evEncerrado(e) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, '#c026d3'], ['prox', 'Próximos 30 dias', e => evProximo(e), '#c026d3'], ['mes', 'Este mês', e => (e.dataInicio || '').slice(0, 7) === mes || (evFim(e).slice(0, 7) === mes), '#7c3aed'],
             ['prep', 'Em planejamento', e => /^(planej|em prep)/.test(Utils_norm(e.situacao)), '#d97706'], ['conf', rotEv('Confirmado'), e => e.situacao === 'Confirmado', '#0d9488'],
@@ -3868,6 +3882,7 @@ function renderComunicados() {
     ],
     compactas: ['titulo', 'categoria', 'prioridade', 'situacaoCom', 'validoAte'],
     larguraAcoes: 150,
+    finalizado: c => !comVigente(c),
     ordemPadrao: ordemCom,
     classeLinha: c => (c.prioridade === 'Urgente' && comVigente(c) ? 'gs-urg ' : '') + (!comVigente(c) ? 'gs-feito' : ''),
     chips: [['', L('filtro.todos'), () => true, '#0284c7'], ['vig', 'Vigentes', comVigente, '#16a34a'], ['fix', 'Fixados', c => c.fixado && comVigente(c), '#0284c7'],
