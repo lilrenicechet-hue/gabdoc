@@ -1,0 +1,25 @@
+{
+  "name": "GABDoc · Assessoria de Secretária",
+  "short_name": "GABDoc",
+  "description": "Controle de assinaturas, ofícios, despachos, urgências e demandas da Casa Civil do Gabinete da SEDUC-MT.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "pt-BR",
+  "categories": ["productivity", "business"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mesa da Secretária", "url": "./#mesa", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Prazos", "url": "./#prazos", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Nova solicitação", "url": "./#nova", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
