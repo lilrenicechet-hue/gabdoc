@@ -115,7 +115,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     html.sb-mini #sidebar .nav-btn > span:not(.nav-badge) { display: none; }
     html.sb-mini #sidebar .nav-btn .ico { width: 18px; height: 18px; font-size: 16px; }
     html.sb-mini #sidebar .nav-badge { position: absolute; top: 1px; right: 3px; min-width: 17px; height: 17px; padding: 0 4px; font-size: 9px; margin: 0; border: 2px solid #0f172a; }
-    html.sb-mini #sidebar .nav-titulo { font-size: 0; height: 1px; background: #334155; margin: 0 8px 10px; }
+    html.sb-mini #sidebar .nav-titulo { font-size: 0; height: 1px; padding: 0; background: #334155; margin: 0 8px 10px; pointer-events: none; }
+    html.sb-mini #sidebar .nav-titulo > * { display: none; }
+    html.sb-mini #sidebar .nav-grupo.fechado .nav-grupo-corpo { grid-template-rows: 1fr; opacity: 1; }
+    html.sb-mini #sidebar .nav-grupo.fechado .nav-grupo-in { visibility: visible; }
+    html.sb-mini #sidebar .nav-grupo + .nav-grupo { border-top: 0; padding-top: 0; }
     html.sb-mini #sidebar nav > div + div { margin-top: 14px; }
     html.sb-mini .sb-logo-txt, html.sb-mini #sb-sino, html.sb-mini .sb-user-txt { display: none; }
     html.sb-mini .sb-novos { grid-template-columns: 1fr; }
@@ -126,7 +130,22 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     html.sb-mini .sb-bts { flex-direction: column; }
     html.sb-mini .gs-lote { left: calc(50% + 38px); max-width: calc(100vw - 128px); }
   }
-  .nav-titulo { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: .14em; margin: 0 0 8px 8px; }
+  .nav-titulo { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 10.5px; text-transform: uppercase; font-weight: 800; color: #94a3b8; letter-spacing: .12em; padding: 8px 8px 8px 10px; border-radius: 8px; text-align: left; transition: background-color .15s, color .15s; }
+  .nav-titulo:hover { background: rgba(255,255,255,.05); color: #e2e8f0; }
+  .nav-titulo:focus-visible { outline: 2px solid #3b82f6; outline-offset: 1px; }
+  .nav-titulo-ico { width: 14px; font-size: 11px; color: #64748b; transition: color .15s; }
+  .nav-titulo:hover .nav-titulo-ico { color: #93c5fd; }
+  .nav-titulo-txt { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nav-titulo-seta { font-size: 9px; color: #64748b; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+  .nav-grupo.fechado .nav-titulo-seta { transform: rotate(-90deg); }
+  .nav-titulo-bdg { width: 8px; height: 8px; border-radius: 99px; background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.18); flex: none; font-size: 0; }
+  .nav-titulo-bdg.alerta { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.2); }
+  .nav-grupo-corpo { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .28s cubic-bezier(.16,1,.3,1), opacity .2s; }
+  .nav-grupo-in { min-height: 0; overflow: hidden; }
+  .nav-grupo-in > :first-child { margin-top: 4px; }
+  .nav-grupo.fechado .nav-grupo-corpo { grid-template-rows: 0fr; opacity: 0; }
+  .nav-grupo.fechado .nav-grupo-in { visibility: hidden; transition: visibility 0s .28s; }
+  .nav-grupo + .nav-grupo { border-top: 1px solid rgba(51,65,85,.6); padding-top: 10px; }
 
   /* Cabeçalho de seção (faixa escura) */
   .faixa { padding-top: 14px; padding-bottom: 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid #334155; box-shadow: 0 6px 18px -10px rgba(0,0,0,.5); flex-shrink: 0; }
@@ -176,6 +195,27 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .linha { display: grid; grid-template-columns: 4px 1fr; gap: 0; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
   .linha:hover { border-color: color-mix(in srgb, var(--brand) 40%, var(--line)); box-shadow: 0 6px 18px -12px rgba(15,23,42,.35); }
   .linha .faixa-c { background: var(--c, var(--line)); }
+  /* ---------- Prioridade: borda vermelha e "PRIORIDADE" escrito na lateral esquerda ---------- */
+  .prio-txt { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9.5px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #fff; white-space: nowrap; line-height: 1; user-select: none; }
+  .linha.prio { grid-template-columns: 24px 1fr; border: 2px solid var(--urg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--urg) 12%, transparent); }
+  .linha.prio:hover { border-color: var(--urg); }
+  .linha.prio .faixa-c { display: flex; align-items: center; justify-content: center; background: var(--urg); overflow: hidden; }
+  .prio-lado { flex: none; align-self: stretch; width: 24px; margin: -12px 0 -12px -14px; display: flex; align-items: center; justify-content: center; background: var(--urg); border-radius: 11px 0 0 11px; overflow: hidden; }
+  .pz-card.prio, .ag-card.prio, .cartao-k.prio { border: 2px solid var(--urg) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--urg) 12%, transparent); }
+  .pz-card.prio { padding-left: 14px; }
+  .ag-card.prio .prio-lado { margin: -10px 0 -10px -12px; border-radius: 10px 0 0 10px; }
+  .ag-col .ag-card.prio { flex-direction: row; }
+  .ag-col .ag-card.prio > .min-w-0 { min-width: 0; }
+  .cartao-k.prio { flex-direction: row; flex-wrap: wrap; position: relative; padding-left: 34px; }
+  .cartao-k.prio > * { flex-basis: 100%; }
+  .cartao-k.prio .prio-lado { position: absolute; left: 0; top: 0; bottom: 0; margin: 0; width: 22px; border-radius: 8px 0 0 8px; flex-basis: auto; }
+  .cartao-k.prio .prio-txt { font-size: 8.5px; }
+  table.gs tr.gs-urg td { box-shadow: inset 0 2px 0 var(--urg), inset 0 -2px 0 var(--urg); }
+  table.gs tr.gs-urg td.gs-num { box-shadow: inset 0 2px 0 var(--urg), inset 0 -2px 0 var(--urg), inset 4px 0 0 var(--urg); }
+  table.gs tr.gs-urg td:last-child { box-shadow: inset 0 2px 0 var(--urg), inset 0 -2px 0 var(--urg), inset -2px 0 0 var(--urg); }
+  table.gs tr.gs-urg td.gs-num + td.gs-cel { padding-left: 4px; }
+  table.gs tr.gs-urg td.gs-num + td.gs-cel::before { content: 'Prioridade'; display: inline-block; vertical-align: 1px; margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: var(--urg); color: #fff; font-size: 9.5px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; line-height: 15px; }
+
   .linha .conteudo { padding: 11px 14px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 6px 14px; align-items: center; min-width: 0; }
   @media (min-width: 900px) { .linha .conteudo { grid-template-columns: minmax(0,1fr) 170px 120px 150px; } }
   .linha .t { font-size: 13.5px; font-weight: 700; color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
@@ -354,7 +394,6 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   table.gs td.gs-check { text-align: center; }
   table.gs td.gs-check input { width: 16px; height: 16px; accent-color: #1a73e8; cursor: pointer; vertical-align: middle; }
   table.gs tr.gs-urg td.gs-cel { background: color-mix(in srgb, var(--urg) 6%, var(--card)); }
-  table.gs tr.gs-urg td.gs-num { box-shadow: inset 3px 0 0 var(--urg); }
   table.gs tr.gs-feito td.gs-cel { color: var(--ink3); }
   table.gs tr.gs-ini-fim > td { border-top: 2px solid color-mix(in srgb, var(--ok) 60%, var(--line)) !important; }
   table.gs tr.gs-feito > td.gs-num { color: var(--ok); font-weight: 700; }
@@ -904,24 +943,27 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-file-signature text-sm text-white"></i></div>
         <h1 class="sb-logo-txt text-2xl font-black tracking-tight whitespace-nowrap">GAB<span class="text-blue-500">Doc</span></h1>
-        <button id="sb-sino" onclick="irPara('prazos')" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Prazos vencidos e que vencem hoje" aria-label="Ver urgências">
+        <button id="sb-sino" onclick="irPara('prazos')" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Prazos vencidos e que vencem hoje" aria-label="Ver prazos">
           <i class="fa-solid fa-bell"></i>
           <span id="sino-count" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-black items-center justify-center border-2 border-slate-900">0</span>
         </button>
       </div>
     </div>
     <div class="flex-1 overflow-y-auto scrollbar-thin py-6">
-      <nav class="px-4 space-y-6" id="nav">
-        <div>
-          <h4 class="nav-titulo">Visão do Gabinete</h4>
+      <nav class="px-4 space-y-3" id="nav">
+        <div class="nav-grupo" data-g="visao">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('visao')" aria-expanded="true"><i class="fa-solid fa-house nav-titulo-ico"></i><span class="nav-titulo-txt">Visão do Gabinete</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="space-y-1">
             <button class="nav-btn" data-tab="semana"><i class="ico fa-solid fa-calendar-week" style="color:#34d399"></i><span>Minha semana</span><span id="bdg-sem" class="nav-badge bg-emerald-600 hidden"></span></button>
             <button class="nav-btn" data-tab="painel"><i class="ico fa-solid fa-chart-column" style="color:#60a5fa"></i><span>Painel</span></button>
             <button class="nav-btn" data-tab="mapa"><i class="ico fa-solid fa-map-location-dot"></i><span>Mapa de MT</span></button>
           </div>
+          </div></div>
         </div>
-        <div>
-          <h4 class="nav-titulo">Assinaturas</h4>
+        <div class="nav-grupo" data-g="assinaturas">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('assinaturas')" aria-expanded="true"><i class="fa-solid fa-file-signature nav-titulo-ico"></i><span class="nav-titulo-txt">Assinaturas</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="sb-novos grid grid-cols-2 gap-2 mb-3" data-requer="gravar">
             <button class="novo-side" style="--c:#3b82f6" title="Nova solicitação de assinatura" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-file-signature"></i><span>Nova<br>assinatura</span></button>
             <button class="novo-side" style="--c:#14b8a6" title="Novo processo" onclick="novoRegistro('processo')"><i class="fa-solid fa-folder-open"></i><span>Novo<br>processo</span></button>
@@ -933,26 +975,33 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn" data-tab="casacivil"><i class="ico fa-solid fa-landmark text-violet-400"></i><span class="text-violet-300 font-semibold">Casa Civil</span><span id="bdg-cc" class="nav-badge bg-violet-600 hidden"></span></button>
             <button class="nav-btn" data-tab="correicao"><i class="ico fa-solid fa-clipboard-check text-amber-400"></i><span class="text-amber-200 font-semibold">Processos de Correição</span><span id="bdg-cor" class="nav-badge bg-amber-600 hidden"></span></button>
           </div>
+          </div></div>
         </div>
-        <div>
-          <h4 class="nav-titulo">Documentos e eventos</h4>
+        <div class="nav-grupo" data-g="docs">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('docs')" aria-expanded="true"><i class="fa-solid fa-folder-tree nav-titulo-ico"></i><span class="nav-titulo-txt">Documentos e eventos</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="space-y-1" id="nav-docs"></div>
+          </div></div>
         </div>
-        <div>
-          <h4 class="nav-titulo">Assessoria</h4>
+        <div class="nav-grupo" data-g="assessoria">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('assessoria')" aria-expanded="true"><i class="fa-solid fa-briefcase nav-titulo-ico"></i><span class="nav-titulo-txt">Assessoria</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="space-y-1">
             <button class="nav-btn" data-tab="movimentacoes"><i class="ico fa-solid fa-clock-rotate-left"></i><span>Movimentações</span></button>
             <button class="nav-btn" data-tab="agenda"><i class="ico fa-solid fa-calendar-days"></i><span>Agenda e Prazos</span></button>
             <button class="nav-btn" data-tab="relatorios"><i class="ico fa-solid fa-file-lines"></i><span>Relatórios</span></button>
           </div>
+          </div></div>
         </div>
-        <div>
-          <h4 class="nav-titulo">Sistema</h4>
+        <div class="nav-grupo" data-g="sistema">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('sistema')" aria-expanded="true"><i class="fa-solid fa-gear nav-titulo-ico"></i><span class="nav-titulo-txt">Sistema</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="space-y-1">
             <button class="nav-btn hidden" data-tab="admin" id="nav-admin"><i class="ico fa-solid fa-user-shield text-rose-400"></i><span>Administração</span></button>
             <button class="nav-btn" onclick="abrirConexao()" id="nav-conexao"><i class="ico fa-solid fa-cloud"></i><span>Conexão com a planilha</span></button>
             <button class="nav-btn hidden !text-emerald-300" onclick="instalarApp()" id="btn-instalar-app"><i class="ico fa-solid fa-mobile-screen-button"></i><span>Instalar aplicativo</span></button>
           </div>
+          </div></div>
         </div>
       </nav>
     </div>
@@ -1085,7 +1134,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             </div>
             <div class="flex flex-wrap gap-2" id="f-tipos"></div>
             <div class="flex flex-wrap gap-2 items-center text-[12.5px]">
-              <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-urg" class="accent-red-600 w-4 h-4"> Só urgentes</label>
+              <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-urg" class="accent-red-600 w-4 h-4"> Só prioridades</label>
               <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-cc" class="accent-violet-600 w-4 h-4"> Só Casa Civil</label>
               <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-concl" class="w-4 h-4"> Mostrar expedidos/arquivados</label>
               <span class="ml-auto text-ink3" id="f-contagem"></span>
@@ -1140,7 +1189,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
           <div class="dv-card !p-3 flex flex-wrap items-center gap-3">
             <span class="text-[12.5px] font-semibold text-ink2">Mostrar</span>
             <div class="dv-seg" id="mapa-metrica">
-              <button data-m="total">Solicitações</button><button data-m="pendentes">Pendentes</button><button data-m="urgentes">Urgentes</button><button data-m="cc">Casa Civil</button><button data-m="agenda">Agenda</button>
+              <button data-m="total">Solicitações</button><button data-m="pendentes">Pendentes</button><button data-m="urgentes">Prioridades</button><button data-m="cc">Casa Civil</button><button data-m="agenda">Agenda</button>
             </div>
             <select id="mapa-tipo" class="campo ml-auto" aria-label="Tipo de documento"></select>
           </div>
@@ -1244,7 +1293,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <div class="dv-seg" id="mov-periodo"><button data-p="1">Hoje</button><button data-p="7">7 dias</button><button data-p="30">30 dias</button><button data-p="">Tudo</button></div>
             <select id="mov-usuario" class="campo" aria-label="Usuário"></select>
             <select id="mov-tipo" class="campo" aria-label="Tipo de movimentação">
-              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Encaminhamentos à mesa</option><option value="ajuste">Devoluções</option><option value="urgente">Urgência</option><option value="casa">Casa Civil</option>
+              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Encaminhamentos à mesa</option><option value="ajuste">Devoluções</option><option value="urgente">Prioridade</option><option value="casa">Casa Civil</option>
             </select>
             <div class="relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input id="mov-busca" class="campo w-full !pl-8" placeholder="Buscar ação, assunto, nº ou observação" aria-label="Buscar movimentação"></div>
           </div>
@@ -1698,13 +1747,41 @@ function trocarIdLocal(colecao, de, para) {
   Grav.itens.forEach(t => { if (t.ref === de) { t.ref = para; if (t.payload && t.payload.id === de) { t.payload.id = para; t.payload.criarComId = false; } } });
   if (modalAberto && modalAberto.id === de) modalAberto.id = para;
 }
+/**
+ * Tarefa direta no painel "Salvando…" (Administração e outras ações que não passam pelo lote):
+ * t: { rotulo, detalhe, icone, executar: async () => resposta, aoOk(resposta), aoErro(msg), aoDescartar() }
+ * Roda na hora, em segundo plano: a tela continua livre e o resultado aparece no canto.
+ */
+function tarefaGrav(t) {
+  t.uid = ++Grav.seq; t.tarefa = true;
+  Grav.itens.push(t);
+  rodarTarefa(t);
+  return t;
+}
+async function rodarTarefa(t) {
+  t.estado = 'enviando'; t.erro = ''; renderGrav();
+  try {
+    const r = await t.executar();
+    t.estado = 'ok';
+    if (t.aoOk) { try { t.aoOk(r || {}); } catch (e) { console.error(e); } }
+    setTimeout(() => { Grav.itens = Grav.itens.filter(x => x !== t); renderGrav(); }, 2600);
+  } catch (e) {
+    falharGrav(t, (e && e.message) || 'Não foi possível concluir.');
+    if (t.aoErro) { try { t.aoErro(t.erro); } catch (x) { /* ignora */ } }
+  }
+  renderGrav();
+  if (Grav.syncDepois && !Grav.ocupada()) { Grav.syncDepois = false; sincronizar(false); }
+}
 function repetirGrav(uid) {
-  Grav.itens.forEach(t => { if (t.estado === 'erro' && (uid == null || t.uid === uid)) { t.estado = 'pendente'; t.erro = ''; } });
+  Grav.itens.forEach(t => { if (t.estado === 'erro' && (uid == null || t.uid === uid)) { if (t.tarefa) rodarTarefa(t); else { t.estado = 'pendente'; t.erro = ''; } } });
   renderGrav(); clearTimeout(Grav.timer); Grav.timer = setTimeout(processarGrav, 50);
 }
 function descartarGrav(uid) {
-  Grav.itens = Grav.itens.filter(t => !(t.estado === 'erro' && (uid == null || t.uid === uid)));
+  const sai = Grav.itens.filter(t => t.estado === 'erro' && (uid == null || t.uid === uid));
+  Grav.itens = Grav.itens.filter(t => !sai.includes(t));
+  sai.forEach(t => { if (t.tarefa && t.aoDescartar) { try { t.aoDescartar(); } catch (e) { /* ignora */ } } });
   renderGrav();
+  if (sai.length && sai.every(t => t.tarefa)) return;
   toast('Alteração descartada. Voltando ao que está salvo…', 'fa-rotate-left');
   if (Store.modo === 'planilha') { Grav.syncDepois = false; if (Grav.ocupada()) Grav.syncDepois = true; else sincronizar(true); }
 }
@@ -2102,6 +2179,7 @@ function irPara(tab) {
   document.querySelectorAll('.tab').forEach(s => { s.classList.add('hidden'); s.classList.remove('flex'); });
   const sec = $('tab-' + (tab.startsWith('doc:') ? 'docs' : tab)); sec.classList.remove('hidden'); sec.classList.add('flex');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('ativo', b.dataset.tab === tab));
+  abrirGrupoDaAba(tab);
   ls.set('gabdoc_aba', tab);
   menuMobile(false);
   renderAba();
@@ -2111,6 +2189,40 @@ function menuMobile(abrir) {
   const sb = $('sidebar'), ov = $('mobile-overlay');
   if (abrir) { sb.classList.remove('-translate-x-full'); ov.classList.remove('hidden'); }
   else { sb.classList.add('-translate-x-full'); ov.classList.add('hidden'); }
+}
+
+/* ----- Tópicos do menu lateral (abrir/fechar) ----- */
+function gruposFechados() { try { return JSON.parse(ls.get('gabdoc_grupos_fechados') || '[]'); } catch (e) { return []; } }
+function aplicarGrupos() {
+  const f = gruposFechados();
+  document.querySelectorAll('.nav-grupo').forEach(g => {
+    const fechado = f.includes(g.dataset.g);
+    g.classList.toggle('fechado', fechado);
+    g.querySelector('.nav-titulo').setAttribute('aria-expanded', String(!fechado));
+  });
+  somarBadgesGrupos();
+}
+function alternarGrupo(k) {
+  let f = gruposFechados();
+  f = f.includes(k) ? f.filter(x => x !== k) : f.concat(k);
+  ls.set('gabdoc_grupos_fechados', JSON.stringify(f));
+  aplicarGrupos();
+}
+/** Abre o tópico da seção atual (se estiver fechado). */
+function abrirGrupoDaAba(tab) {
+  const b = document.querySelector(`.nav-btn[data-tab="${CSS.escape(tab)}"]`);
+  const g = b && b.closest('.nav-grupo');
+  if (g && g.classList.contains('fechado')) alternarGrupo(g.dataset.g);
+}
+/** Com o tópico fechado, um ponto no título avisa que há pendências lá dentro (vermelho = prazos). */
+function somarBadgesGrupos() {
+  document.querySelectorAll('.nav-grupo').forEach(g => {
+    const itens = [...g.querySelectorAll('.nav-btn')].map(b => [b, b.querySelector('.nav-badge')]).filter(([, x]) => x && !x.classList.contains('hidden') && Number(x.textContent));
+    const el = g.querySelector('.nav-titulo-bdg');
+    el.classList.toggle('hidden', !(itens.length && g.classList.contains('fechado')));
+    el.classList.toggle('alerta', itens.some(([b]) => b.dataset.tab === 'prazos'));
+    el.title = itens.map(([b, x]) => `${b.querySelector('span').textContent}: ${x.textContent}`).join(' · ');
+  });
 }
 /* ----- seções por tipo de documento (menu lateral) ----- */
 const SECOES_DOC = [
@@ -2237,17 +2349,19 @@ function atualizarBadges() {
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
   set('bdg-cor', Store.correicao.filter(c => !/^(conclu|arquiv)/i.test(Utils_norm(c.situacao))).length);
+  somarBadgesGrupos();
   const sino = $('sino-count'), n = prazosAtivos().filter(s => diasAte(s.prazo) <= 0).length;
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
 }
 
 function linhaSol(s) {
   const t = TIPOS[s.tipo] || TIPOS.outro, sit = situacao(s);
-  return `<button type="button" class="linha" style="--c:${s.urgente && !FEITO(s) ? 'var(--urg)' : t.cor}" onclick="abrirDetalhe('${s.id}')">
-    <span class="faixa-c"></span>
+  const prio = s.urgente && !FEITO(s);
+  return `<button type="button" class="linha ${prio ? 'prio' : ''}" style="--c:${prio ? 'var(--urg)' : t.cor}" onclick="abrirDetalhe('${s.id}')">
+    <span class="faixa-c">${prio ? '<span class="prio-txt">Prioridade</span>' : ''}</span>
     <span class="conteudo">
       <span class="min-w-0 flex flex-col gap-1">
-        <span class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg pulso"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${String(s.natureza || '').includes('Processo') ? '<span class="chip" style="--c:#0d9488"><i class="fa-solid fa-folder-open text-[9px]"></i>Processo</span>' : ''}${chipTipo(s.tipo)}<span class="text-[11px] font-semibold text-ink3 tabular-nums">${esc(s.numero || 's/ nº')}</span></span>
+        <span class="flex flex-wrap items-center gap-1.5">${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${String(s.natureza || '').includes('Processo') ? '<span class="chip" style="--c:#0d9488"><i class="fa-solid fa-folder-open text-[9px]"></i>Processo</span>' : ''}${chipTipo(s.tipo)}<span class="text-[11px] font-semibold text-ink3 tabular-nums">${esc(s.numero || 's/ nº')}</span></span>
         <span class="t">${esc(s.assunto)}</span>
         <span class="m"><span><i class="fa-solid fa-building-columns mr-1"></i>${esc(s.origem || '—')}</span>${s.municipio ? `<span><i class="fa-solid fa-location-dot mr-1"></i>${esc(s.municipio)}</span>` : ''}${s.interessado ? `<span><i class="fa-regular fa-user mr-1"></i>${esc(s.interessado)}</span>` : ''}</span>
       </span>
@@ -2324,8 +2438,8 @@ function renderFila() {
   } else el.innerHTML = lista.map(linhaSol).join('');
 }
 function cartaoK(s) {
-  return `<button type="button" class="cartao-k ${s.urgente && !FEITO(s) ? 'urg' : ''}" onclick="abrirDetalhe('${s.id}')">
-    <span class="flex flex-wrap gap-1">${s.urgente && !FEITO(s) ? '<span class="selo-urg">Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc">CC</span>' : ''}${chipTipo(s.tipo)}</span>
+  return `<button type="button" class="cartao-k ${s.urgente && !FEITO(s) ? 'urg prio' : ''}" onclick="abrirDetalhe('${s.id}')">
+    ${s.urgente && !FEITO(s) ? '<span class="prio-lado"><span class="prio-txt">Prioridade</span></span>' : ''}<span class="flex flex-wrap gap-1">${s.casaCivil ? '<span class="selo-cc">CC</span>' : ''}${chipTipo(s.tipo)}</span>
     <span class="text-[13px] font-semibold text-ink leading-snug">${esc(s.assunto)}</span>
     <span class="text-[11px] text-ink3">${esc(s.numero || '')}${s.municipio ? ' · ' + esc(s.municipio) : ''}</span>
     <span class="prazo ${situacao(s)} !text-[11.5px]">${textoPrazo(s)}</span>
@@ -2346,10 +2460,10 @@ function contagemPrazo(s) {
 function cartaoPrazo(s) {
   const c = contagemPrazo(s), sec = secDe(s);
   const podeG = pode('gravar');
-  return `<div class="pz-card ${c.cls}" style="--c:${c.cor}">
-    <div class="pz-cont"><span class="pz-n">${c.n}</span><span class="pz-r">${c.rot}</span><span class="pz-d">${fmt(s.prazo)}</span></div>
+  return `<div class="pz-card ${c.cls} ${s.urgente ? 'prio' : ''}" style="--c:${c.cor}">
+    ${s.urgente ? '<span class="prio-lado"><span class="prio-txt">Prioridade</span></span>' : ''}<div class="pz-cont"><span class="pz-n">${c.n}</span><span class="pz-r">${c.rot}</span><span class="pz-d">${fmt(s.prazo)}</span></div>
     <div class="min-w-0 flex-1">
-      <div class="flex flex-wrap items-center gap-1.5 mb-1">${s.urgente ? '<span class="selo-urg"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${chipTipo(s.tipo)}${chipStatus(s.status)}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}</div>
+      <div class="flex flex-wrap items-center gap-1.5 mb-1">${chipTipo(s.tipo)}${chipStatus(s.status)}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}</div>
       <button type="button" class="pz-tit" onclick="abrirDetalhe('${s.id}')">${esc(s.assunto)}</button>
       <p class="text-[12px] text-ink3 mt-0.5 truncate">${esc(s.numero || 's/ nº')}${sec.length ? ' · ' + esc(sec.join(', ')) : ''}${s.interessado ? ' · ' + esc(s.interessado) : ''}</p>
       <div class="flex flex-wrap gap-1.5 mt-2.5">
@@ -2408,7 +2522,7 @@ function montarMapa() {
   box.addEventListener('mousemove', e => {
     const p = e.target.closest('path'); if (!p) { tip.classList.add('hidden'); return; }
     const n = MT_MAPA.m[+p.dataset.i].n, d = dadosMun()[n] || {};
-    tip.innerHTML = `<b>${esc(n)}</b><br><span>${d.total || 0} solicitações · ${d.pendentes || 0} pendentes</span>${d.urgentes ? `<br><span style="color:#fca5a5">${d.urgentes} urgente(s)</span>` : ''}${d.agenda ? `<br><span>${d.agenda} compromisso(s) na agenda</span>` : ''}`;
+    tip.innerHTML = `<b>${esc(n)}</b><br><span>${d.total || 0} solicitações · ${d.pendentes || 0} pendentes</span>${d.urgentes ? `<br><span style="color:#fca5a5">${d.urgentes} prioridade(s)</span>` : ''}${d.agenda ? `<br><span>${d.agenda} compromisso(s) na agenda</span>` : ''}`;
     const r = card.getBoundingClientRect();
     let x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
     if (x > r.width - 200) x -= 220;
@@ -2438,7 +2552,7 @@ function renderMapa() {
   const met = mapaEstado.metrica, dm = dadosMun();
   const val = n => (dm[n] && dm[n][met]) || 0;
   const max = Math.max(1, ...MT_MAPA.m.map(x => val(x.n)));
-  const rotMet = { total: 'solicitações', pendentes: 'pendentes', urgentes: 'urgentes', cc: 'demandas da Casa Civil', agenda: 'compromissos' }[met];
+  const rotMet = { total: 'solicitações', pendentes: 'pendentes', urgentes: 'prioridades', cc: 'demandas da Casa Civil', agenda: 'compromissos' }[met];
   const hi = met === 'urgentes' ? 'var(--urg)' : met === 'cc' ? 'var(--cc)' : met === 'agenda' ? '#0d9488' : 'var(--map-hi)';
   document.querySelectorAll('#mapa-g path').forEach(p => {
     const n = MT_MAPA.m[+p.dataset.i].n, v = val(n);
@@ -2524,7 +2638,7 @@ function itensDia(d, ignorarFiltros) {
   });
   if (F.prazo && fonteVisivel('prazo')) Store.sol.filter(s => s.prazo === d && !FEITO(s)).forEach(s => {
     if (!ignorarFiltros && !agBate(s.assunto, s.numero, s.origem, s.municipio)) return;
-    out.push({ k: 'prazo', id: s.id, d, hora: '', titulo: s.assunto, cor: s.urgente ? '#dc2626' : '#4f46e5', ico: s.urgente ? 'fa-bolt' : 'fa-hourglass-half', tipoRot: 'Prazo de assinatura', obj: s,
+    out.push({ k: 'prazo', id: s.id, d, hora: '', titulo: s.assunto, cor: s.urgente ? '#dc2626' : '#4f46e5', ico: s.urgente ? 'fa-flag' : 'fa-hourglass-half', tipoRot: 'Prazo de assinatura', obj: s,
                urgente: !!s.urgente, sub: [s.numero, (STATUS[s.status] || {}).rot].filter(Boolean).join(' · '), abrir: `abrirDetalhe('${s.id}')` });
   });
   if (F.comunicado && fonteVisivel('comunicado')) Store.comunicados.filter(c => c.validoAte === d && !c.arquivado).forEach(c => {
@@ -2590,13 +2704,13 @@ function cartaoItemAg(it, conflitos) {
     if (['agendado', 'confirmado'].includes(it.sit) && it.d <= hojeISO()) acoes.push(`<button type="button" class="ag-acao" style="--c:#16a34a" onclick="event.stopPropagation();mudarSitAgenda('${it.id}','realizado')" title="Marcar como realizado"><i class="fa-solid fa-flag-checkered"></i><span>Realizado</span></button>`);
   }
   if (it.k === 'comp' && a.link) acoes.push(`<a class="ag-acao" style="--c:#2563eb" href="${esc(a.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Abrir link da reunião"><i class="fa-solid fa-video"></i><span>Entrar</span></a>`);
-  return `<div class="ag-card ${riscado ? 'cancelado' : ''} ${conflito ? 'conflito' : ''}" style="--c:${it.cor}" role="button" tabindex="0" onclick="${it.abrir}" onkeydown="if(event.key==='Enter')${it.abrir}">
-    ${horaItem(it)}
+  return `<div class="ag-card ${riscado ? 'cancelado' : ''} ${conflito ? 'conflito' : ''} ${it.urgente ? 'prio' : ''}" style="--c:${it.cor}" role="button" tabindex="0" onclick="${it.abrir}" onkeydown="if(event.key==='Enter')${it.abrir}">
+    ${it.urgente ? '<span class="prio-lado"><span class="prio-txt">Prioridade</span></span>' : ''}${horaItem(it)}
     <div class="min-w-0 flex-1">
       <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
         ${it.k === 'prazo' || it.k === 'comunicado' ? '' : `<span class="chip" style="--c:${it.cor}"><i class="fa-solid ${it.ico}"></i>${esc(it.tipoRot)}</span>`}
         ${s ? `<span class="chip" style="--c:${s.cor}"><i class="fa-solid ${s.ico}"></i>${s.rot}</span>` : ''}
-        ${it.urgente ? '<span class="chip" style="--c:#dc2626"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${it.k === 'prazo' && it.obj.prazo < hojeISO() ? '<span class="chip" style="--c:#dc2626">Vencido</span>' : ''}
+${it.k === 'prazo' && it.obj.prazo < hojeISO() ? '<span class="chip" style="--c:#dc2626">Vencido</span>' : ''}
         ${conflito ? '<span class="chip" style="--c:#dc2626" title="Outro compromisso no mesmo horário"><i class="fa-solid fa-triangle-exclamation"></i>Choque de horário</span>' : ''}
       </div>
       <p class="ag-tit">${esc(it.titulo)}</p>
@@ -2704,7 +2818,7 @@ function renderAgenda() {
   const listaPrazos = [...venc.sort((a, b) => a.prazo.localeCompare(b.prazo)), ...em7.sort((a, b) => a.prazo.localeCompare(b.prazo))].slice(0, 8);
   const painelPrazos = fonteVisivel('prazo') ? `<div class="dv-card">
     <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#4f46e5"><i class="fa-solid fa-hourglass-half"></i></span>Prazos de assinatura</h3><p>Vencidos e próximos 7 dias</p></div></div>
-    <div class="space-y-1.5">${listaPrazos.map(s => { const dd = diasEntre(hoje, s.prazo); return `<button type="button" class="ag-prazo" onclick="abrirDetalhe('${s.id}')"><span class="ag-prazo-d ${dd < 0 ? 'venc' : dd === 0 ? 'hoje' : ''}">${dd < 0 ? `${-dd}d<small>atraso</small>` : dd === 0 ? 'hoje' : `${dd}d<small>${fmtCurto(s.prazo)}</small>`}</span><span class="min-w-0 flex-1 text-left"><span class="block text-[12.5px] font-semibold text-ink truncate">${s.urgente ? '<i class="fa-solid fa-bolt mr-1" style="color:var(--urg)"></i>' : ''}${esc(s.assunto)}</span><span class="block text-[11.5px] text-ink3 truncate">${esc(s.numero || 's/ nº')} · ${esc((STATUS[s.status] || {}).rot || '')}</span></span></button>`; }).join('') || '<p class="text-[13px] text-ink3 py-2"><i class="fa-solid fa-circle-check mr-1" style="color:var(--ok)"></i>Nenhum prazo vencido ou próximo.</p>'}</div>
+    <div class="space-y-1.5">${listaPrazos.map(s => { const dd = diasEntre(hoje, s.prazo); return `<button type="button" class="ag-prazo" onclick="abrirDetalhe('${s.id}')"><span class="ag-prazo-d ${dd < 0 ? 'venc' : dd === 0 ? 'hoje' : ''}">${dd < 0 ? `${-dd}d<small>atraso</small>` : dd === 0 ? 'hoje' : `${dd}d<small>${fmtCurto(s.prazo)}</small>`}</span><span class="min-w-0 flex-1 text-left"><span class="block text-[12.5px] font-semibold text-ink truncate">${s.urgente ? '<i class="fa-solid fa-flag mr-1" style="color:var(--urg)"></i>' : ''}${esc(s.assunto)}</span><span class="block text-[11.5px] text-ink3 truncate">${esc(s.numero || 's/ nº')} · ${esc((STATUS[s.status] || {}).rot || '')}</span></span></button>`; }).join('') || '<p class="text-[13px] text-ink3 py-2"><i class="fa-solid fa-circle-check mr-1" style="color:var(--ok)"></i>Nenhum prazo vencido ou próximo.</p>'}</div>
   </div>` : '';
 
   c.innerHTML = `${kpis}${ferramentas}<div class="grid grid-cols-1 ${agEstado.vista === 'semana' ? '' : 'xl:grid-cols-[1fr_370px]'} gap-4 items-start">
@@ -2746,7 +2860,7 @@ function exportarAgendaICS() {
 function solsPeriodo() { const P = periodoRel(); return Store.sol.filter(s => !P.ini || P.dentro(s.recebidoEm)); }
 async function exportarCSV() {
   const L = solsPeriodo();
-  const cab = ['Nº SIGADOC', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Urgente', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável'];
+  const cab = ['Nº SIGADOC', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Prioridade', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável'];
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const linhas = L.map(s => [s.numero, (TIPOS[s.tipo] || TIPOS.outro).rot, s.assunto, s.origem, s.interessado, s.municipio, fmt(s.recebidoEm), fmt(s.prazo), (STATUS[s.status] || {}).rot, s.assinadoEm ? fmt(s.assinadoEm) : '', s.urgente ? 'Sim' : 'Não', s.casaCivil ? 'Sim' : 'Não', s.casaCivil ? (ETAPAS_CC[s.ccEtapa] || {}).rot : '', s.ccNumero, s.responsavel].map(q).join(';'));
   const csv = '﻿' + [cab.map(q).join(';')].concat(linhas).join('\r\n');
@@ -2859,7 +2973,7 @@ function abrirForm(id, pre = {}) {
           <label class="switch-card" style="--c:var(--urg)">
             <input type="checkbox" id="s-urg" ${s.urgente ? 'checked' : ''} onchange="$('s-motivo-box').hidden=!this.checked">
             <span class="switch"><span></span></span>
-            <span class="min-w-0"><span class="block font-bold text-[13.5px]" style="color:var(--urg)"><i class="fa-solid fa-bolt mr-1"></i>URGENTE</span><span class="block text-[11.5px] text-ink3">Vai para o topo da mesa e da trilha de urgentes</span></span>
+            <span class="min-w-0"><span class="block font-bold text-[13.5px]" style="color:var(--urg)"><i class="fa-solid fa-flag mr-1"></i>PRIORIDADE</span><span class="block text-[11.5px] text-ink3">Fica com borda vermelha e vai para o topo da mesa</span></span>
           </label>
           <label class="switch-card" style="--c:var(--cc)">
             <input type="checkbox" id="s-cc" ${s.casaCivil ? 'checked' : ''} onchange="$('s-cc-box').hidden=!this.checked">
@@ -2867,7 +2981,7 @@ function abrirForm(id, pre = {}) {
             <span class="min-w-0"><span class="block font-bold text-[13.5px]" style="color:var(--cc)"><i class="fa-solid fa-landmark mr-1"></i>Casa Civil</span><span class="block text-[11.5px] text-ink3">Entra na trilha especial da Casa Civil</span></span>
           </label>
         </div>
-        <div id="s-motivo-box" ${s.urgente ? '' : 'hidden'}><input class="campo w-full" id="s-motivo" value="${esc(s.motivoUrgencia || '')}" placeholder="Motivo da urgência (aparece na mesa da Secretária)" style="border-color:color-mix(in srgb, var(--urg) 45%, var(--line))"></div>
+        <div id="s-motivo-box" ${s.urgente ? '' : 'hidden'}><input class="campo w-full" id="s-motivo" value="${esc(s.motivoUrgencia || '')}" placeholder="Motivo da prioridade (aparece na mesa da Secretária)" style="border-color:color-mix(in srgb, var(--urg) 45%, var(--line))"></div>
         <div id="s-cc-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3" ${s.casaCivil ? '' : 'hidden'}>
           <label><span class="rotulo">Etapa na Casa Civil</span><select class="campo w-full" id="s-ccetapa">${opt(ETAPAS_CC, s.ccEtapa || 'preparo')}</select></label>
           <label><span class="rotulo">Nº do processo na Casa Civil</span><input class="campo w-full" id="s-ccnum" value="${esc(s.ccNumero || '')}"></label>
@@ -2952,7 +3066,7 @@ async function salvarForm(id) {
   if (antigo) {
     const mud = [];
     if (antigo.status !== dados.status) mud.push('Situação: ' + STATUS[dados.status].rot);
-    if (!!antigo.urgente !== dados.urgente) mud.push(dados.urgente ? 'Marcado como URGENTE' : 'Urgência retirada');
+    if (!!antigo.urgente !== dados.urgente) mud.push(dados.urgente ? 'Marcado como PRIORIDADE' : 'Prioridade retirada');
     if (!!antigo.casaCivil !== dados.casaCivil) mud.push(dados.casaCivil ? 'Incluído na trilha da Casa Civil' : 'Retirado da trilha da Casa Civil');
     else if (dados.casaCivil && antigo.ccEtapa !== dados.ccEtapa) mud.push('Casa Civil: ' + ETAPAS_CC[dados.ccEtapa].rot);
     dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: mud.length ? mud.join(' · ') : 'Dados atualizados', obs: '', por: meuId() });
@@ -2994,14 +3108,14 @@ function renderDetalhe() {
   el.innerHTML = `
     <div class="modal-topo">
       <div class="min-w-0 space-y-1.5">
-        <div class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg pulso"><i class="fa-solid fa-bolt"></i>Urgente</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}${chipStatus(s.status)}</div>
+        <div class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}${chipStatus(s.status)}</div>
         <h3 class="text-[17px] font-bold leading-snug">${esc(s.assunto)}</h3>
         <p class="text-[12.5px] text-ink3">${esc(s.numero || 'Sem número')} · <span class="prazo ${situacao(s)}">${textoPrazo(s)}</span></p>
       </div>
       <button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
     </div>
     <div class="modal-corpo space-y-5">
-      ${s.urgente && s.motivoUrgencia ? `<p class="text-[13px] rounded-lg px-3 py-2" style="background:color-mix(in srgb, var(--urg) 9%, var(--card));color:var(--ink)"><b style="color:var(--urg)">Motivo da urgência:</b> ${esc(s.motivoUrgencia)}</p>` : ''}
+      ${s.urgente && s.motivoUrgencia ? `<p class="text-[13px] rounded-lg px-3 py-2" style="background:color-mix(in srgb, var(--urg) 9%, var(--card));color:var(--ink)"><b style="color:var(--urg)">Motivo da prioridade:</b> ${esc(s.motivoUrgencia)}</p>` : ''}
       <dl class="info-grade">
         <div><dt>Tipo</dt><dd>${t.rot}</dd></div>
         <div><dt>Secretarias / origem</dt><dd>${esc(s.origem || '—')}</dd></div>
@@ -3019,7 +3133,7 @@ function renderDetalhe() {
         <p class="rotulo !mb-0">Registrar andamento</p>
         <textarea id="d-obs" rows="2" class="campo w-full" placeholder="Observação opcional (ex.: ajustes pedidos, quem levou à mesa)"></textarea>
         <div class="flex flex-wrap gap-2">${acoes}
-          <button class="btn btn-sec" data-requer="gravar" onclick="alternarUrgente()"><i class="fa-solid fa-bolt" style="color:var(--urg)"></i>${s.urgente ? 'Retirar urgência' : 'Marcar como urgente'}</button>
+          <button class="btn btn-sec" data-requer="gravar" onclick="alternarUrgente()"><i class="fa-solid fa-flag" style="color:var(--urg)"></i>${s.urgente ? 'Retirar prioridade' : 'Marcar como prioridade'}</button>
           ${!s.casaCivil ? `<button class="btn btn-sec" data-requer="casacivil:2" onclick="incluirCC()"><i class="fa-solid fa-landmark" style="color:var(--cc)"></i>Incluir na trilha da Casa Civil</button>` : ''}
           ${s.casaCivil && s.status === 'assinado' && (s.ccEtapa || 'preparo') === 'preparo' ? `<button class="btn btn-sec" onclick="mudarEtapaCC('${s.id}','enviado')"><i class="fa-solid fa-paper-plane" style="color:var(--cc)"></i>Enviar à Casa Civil</button>` : ''}
         </div>
@@ -3038,8 +3152,8 @@ function acaoDetalhe(k) { const obs = ($('d-obs') || {}).value || ''; acaoRapida
 async function alternarUrgente() {
   const s = Store.sol.find(x => x.id === modalAberto.id); const d = copia(s);
   d.urgente = !s.urgente; if (!d.urgente) d.motivoUrgencia = ''; else { const o = ($('d-obs').value || '').trim(); if (o) d.motivoUrgencia = o; }
-  d.historico = (d.historico || []).concat({ em: new Date().toISOString(), acao: d.urgente ? 'Marcado como URGENTE' : 'Urgência retirada', obs: ($('d-obs').value || '').trim(), por: meuId() });
-  if (await salvarSol(s.id, d)) toast(d.urgente ? 'Marcado como urgente.' : 'Urgência retirada.');
+  d.historico = (d.historico || []).concat({ em: new Date().toISOString(), acao: d.urgente ? 'Marcado como PRIORIDADE' : 'Prioridade retirada', obs: ($('d-obs').value || '').trim(), por: meuId() });
+  if (await salvarSol(s.id, d)) toast(d.urgente ? 'Marcado como prioridade.' : 'Prioridade retirada.');
 }
 async function incluirCC() {
   const s = Store.sol.find(x => x.id === modalAberto.id); const d = copia(s);
@@ -3568,7 +3682,7 @@ async function baixarArquivo(nome, conteudo) {
 }
 
 /* ----- solicitações: edição e ações ----- */
-const ROT_CAMPO = { numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da urgência' };
+const ROT_CAMPO = { numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da prioridade' };
 const ACAO_STATUS = { analise: 'Análise iniciada', aguardando: 'Encaminhado à mesa da Secretária', ajuste: 'Devolvido para ajuste', assinado: 'Assinado pela Secretária', expedido: 'Expedido', recebido: 'Retornado para recebidos' };
 /** Grava vários campos de uma solicitação com uma única movimentação descritiva. */
 async function editarSolCampos(s, campos) {
@@ -3581,7 +3695,7 @@ async function editarSolCampos(s, campos) {
     if (key === 'status') {
       textos.push(ACAO_STATUS[valor] || 'Situação alterada');
       if (['assinado', 'expedido'].includes(valor)) { if (!d.assinadoEm) d.assinadoEm = hojeISO(); } else d.assinadoEm = '';
-    } else if (key === 'urgente') { textos.push(valor ? 'Marcado como URGENTE' : 'Urgência retirada'); if (!valor) d.motivoUrgencia = ''; }
+    } else if (key === 'urgente') { textos.push(valor ? 'Marcado como PRIORIDADE' : 'Prioridade retirada'); if (!valor) d.motivoUrgencia = ''; }
     else if (key === 'casaCivil') { textos.push(valor ? 'Incluído na trilha da Casa Civil' : 'Retirado da trilha da Casa Civil'); d.ccEtapa = valor ? (d.ccEtapa || 'preparo') : ''; }
     else if (key === 'ccEtapa') textos.push('Casa Civil: ' + (ETAPAS_CC[valor] || {}).rot);
     else editados.push(ROT_CAMPO[key] || key);
@@ -3616,7 +3730,7 @@ function colunasSolBase() {
     { key: 'prazo', rot: 'Prazo', w: 115, tipo: 'data', editavel: true },
     { key: 'status', rot: 'Situação', w: 185, wCompacta: 178, tipo: 'select', editavel: true, opcoes: opcoesStatus, render: celStatus },
     { key: 'situacaoPrazo', rot: 'Situação do prazo', w: 165, tipo: 'texto', editavel: false, valor: s => textoPrazo(s), render: celPrazo },
-    { key: 'urgente', rot: 'Urgente', w: 82, tipo: 'check', editavel: true },
+    { key: 'urgente', rot: 'Prioridade', w: 92, tipo: 'check', editavel: true },
     { key: 'casaCivil', rot: 'Casa Civil', w: 90, tipo: 'check', editavel: true },
     { key: 'observacoes', rot: 'Observações', w: 260, tipo: 'texto', editavel: true }
   ];
@@ -3638,7 +3752,7 @@ function botoesAcoesSol(id, s) {
   const principal = p && pode(p[4]) ? `<button type="button" class="gs-acao" style="--c:${p[3]}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'status','${p[0]}')" title="${esc(STATUS[p[0]].rot)}"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>`
     : FEITO(s) ? `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>` : `<span class="gs-acao-fim !text-ink3" title="${esc(STATUS[s.status] ? STATUS[s.status].rot : '')}"><i class="fa-solid fa-lock text-[10px]"></i>${esc(STATUS[s.status] ? STATUS[s.status].rot.split(' ')[0] : '')}</span>`;
   return `<div class="gs-acoes-in">${principal}
-    ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${s.urgente ? 'Retirar urgência' : 'Marcar como urgente'}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-bolt"></i></button>` : ''}
+    ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${s.urgente ? 'Retirar prioridade' : 'Marcar como prioridade'}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-flag"></i></button>` : ''}
     <button type="button" class="gs-ico" title="Abrir detalhes e histórico" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button>
     <button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('${id}','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
 }
@@ -3651,7 +3765,7 @@ function menuAcoesSol(s) {
     st('ajuste', 'Devolver para ajuste', 'fa-rotate-left', '#ea580c', s.status === 'aguardando' ? 'assinar' : 'gravar'),
     st('expedido', 'Expedir / arquivar', 'fa-box-archive', '#0f766e'),
     { sep: true },
-    { rot: s.urgente ? 'Retirar urgência' : 'Marcar como URGENTE', ico: 'fa-bolt', cor: '#dc2626', perm: 'gravar', fn: () => editarSolCelula(s, 'urgente', !s.urgente) },
+    { rot: s.urgente ? 'Retirar prioridade' : 'Marcar como PRIORIDADE', ico: 'fa-flag', cor: '#dc2626', perm: 'gravar', fn: () => editarSolCelula(s, 'urgente', !s.urgente) },
     { rot: s.casaCivil ? 'Retirar da Casa Civil' : 'Incluir na Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', perm: 'casacivil:2', fn: () => editarSolCelula(s, 'casaCivil', !s.casaCivil) },
     ...(s.casaCivil ? Object.entries(ETAPAS_CC).filter(([k]) => k !== (s.ccEtapa || 'preparo')).map(([k, e]) => ({ rot: 'Casa Civil: ' + e.rot, ico: e.ico, cor: e.cor, perm: 'casacivil:2', fn: () => editarSolCelula(s, 'ccEtapa', k) })) : []),
     { sep: true },
@@ -3668,8 +3782,8 @@ function acoesLoteSol() {
     st('assinado', 'Registrar assinatura', 'fa-signature', '#16a34a', 'assinar'),
     st('ajuste', 'Devolver p/ ajuste', 'fa-rotate-left', '#ea580c', 'assinar'),
     st('expedido', 'Expedir', 'fa-box-archive', '#0f766e', 'gravar'),
-    { rot: 'Marcar urgente', ico: 'fa-bolt', cor: '#dc2626', perm: 'gravar', campos: () => ({ urgente: true }) },
-    { rot: 'Retirar urgência', ico: 'fa-bolt', cor: '#64748b', perm: 'gravar', campos: () => ({ urgente: false }) },
+    { rot: 'Marcar prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'gravar', campos: () => ({ urgente: true }) },
+    { rot: 'Retirar prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'gravar', campos: () => ({ urgente: false }) },
     { rot: 'Incluir na Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', perm: 'casacivil:2', campos: () => ({ casaCivil: true }) }
   ];
 }
@@ -4236,7 +4350,7 @@ function gruposRotulos() {
   const st = (pref, lista) => lista.map(s => [pref + '.' + slugRot(s), s]);
   return [
     { id: 'filtros', titulo: 'Filtros e contadores', sub: 'Valem para todas as planilhas (Gestão, Portarias, Ofícios, Despachos…), Painel e Casa Civil.', ico: 'fa-filter', cor: '#2563eb', itens: [
-      ['filtro.todos', 'Todos'], ['filtro.pend', 'Em andamento'], ['filtro.mesa', 'Na mesa'], ['filtro.urg', 'Urgentes'], ['filtro.venc', 'Vencidos'],
+      ['filtro.todos', 'Todos'], ['filtro.pend', 'Em andamento'], ['filtro.mesa', 'Na mesa'], ['filtro.urg', 'Prioridades'], ['filtro.venc', 'Vencidos'],
       ['filtro.proc', 'Processos'], ['filtro.feito', 'Concluídos'], ['filtro.fim', 'Concluído']] },
     { id: 'status', titulo: 'Situações das solicitações', sub: 'Aparecem nas planilhas, nos detalhes, no Painel e na planilha do Google.', ico: 'fa-list-check', cor: '#4f46e5',
       itens: Object.keys(STATUS).map(k => ['status.' + k, PADRAO_FIXO.status[k]]) },
@@ -4433,7 +4547,7 @@ function renderPainel() {
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
       ${cardInd('#4f46e5', 'fa-bars-progress', 'Secretaria × situação', 'Como está a carteira de cada secretaria (todos os registros)', '<div style="height:360px"><canvas id="pn-secsit" aria-label="Barras empilhadas por secretaria e situação"></canvas></div>')}
-      ${cardInd('#dc2626', 'fa-bolt', 'Urgências e Casa Civil por secretaria', 'Quantos registros de cada secretaria são urgentes ou vão à Casa Civil', '<div style="height:360px"><canvas id="pn-urgcc" aria-label="Urgentes e Casa Civil por secretaria"></canvas></div>')}
+      ${cardInd('#dc2626', 'fa-flag', 'Prioridades e Casa Civil por secretaria', 'Quantos registros de cada secretaria são prioridade ou vão à Casa Civil', '<div style="height:360px"><canvas id="pn-urgcc" aria-label="Prioridades e Casa Civil por secretaria"></canvas></div>')}
     </div>
     ${tituloSecao('pn-mais', 'fa-landmark', 'Casa Civil, eventos e comunicados', 'Andamento da trilha da Casa Civil e agenda institucional')}
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -4486,7 +4600,7 @@ function renderPainel() {
   graficos.pnSecSit = new Chart($('pn-secsit'), { type: 'bar', data: { labels: secAtivas, datasets: sts.map(k => ({ label: STATUS[k].rot, data: secAtivas.map(sg => sols.filter(s => s.status === k && temSec(s, sg)).length), backgroundColor: STATUS[k].cor, borderColor: cor('--card'), borderWidth: { right: 2 }, borderSkipped: false, maxBarThickness: 18, categoryPercentage: .8, barPercentage: .9 })) },
     options: { indexAxis: 'y', maintainAspectRatio: false, interaction: { mode: 'index', axis: 'y', intersect: false }, plugins: { legend: legenda, tooltip: { mode: 'index', intersect: false, filter: it => it.parsed.x > 0 } }, scales: { x: { ...eixoY, stacked: true }, y: { stacked: true, grid: { display: false }, border: { display: false }, ticks: { font: { weight: 700 } } } } } });
   graficos.pnUrgCc = new Chart($('pn-urgcc'), { type: 'bar', data: { labels: urgSec.map(x => x.sg), datasets: [
-    { label: 'Urgentes', data: urgSec.map(x => x.u), backgroundColor: '#dc2626', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 },
+    { label: 'Prioridades', data: urgSec.map(x => x.u), backgroundColor: '#dc2626', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 },
     { label: 'Casa Civil', data: urgSec.map(x => x.cc), backgroundColor: '#7c3aed', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 }
   ] }, options: { maintainAspectRatio: false, interaction: tip, plugins: { legend: legenda, tooltip: tip }, scales: { y: eixoY, x: semEixoX } } });
   graficos.indEv = new Chart($('ind-ev'), { type: 'bar', data: { labels: meses.map(nomeMes), datasets: [{ label: 'Eventos', data: meses.map(m => evs.filter(e => (e.dataInicio || '').slice(0, 7) === m).length), backgroundColor: '#c026d3', borderRadius: 4, borderSkipped: false, maxBarThickness: 26 }] },
@@ -4536,8 +4650,8 @@ function dadosSemana(desloc) {
 }
 function climaSemana(w) {
   const pendSem = w.prazos.filter(s => !FEITO(s)).length, venc = w.atrasados.length, urg = w.urgentes.length;
-  if (venc > 5 || (urg && venc)) return { k: 'critica', rot: 'Semana crítica', cor: '#dc2626', ico: 'fa-fire', txt: `${venc} prazo(s) vencido(s)${urg ? ` e ${urg} urgência(s) em aberto` : ''}. Vale priorizar a mesa da Secretária.` };
-  if (venc || pendSem > 8 || urg) return { k: 'atencao', rot: 'Semana de atenção', cor: '#d97706', ico: 'fa-triangle-exclamation', txt: `${pendSem} prazo(s) ainda em aberto nesta semana${venc ? `, ${venc} já vencido(s)` : ''}${urg ? ` e ${urg} urgência(s)` : ''}.` };
+  if (venc > 5 || (urg && venc)) return { k: 'critica', rot: 'Semana crítica', cor: '#dc2626', ico: 'fa-fire', txt: `${venc} prazo(s) vencido(s)${urg ? ` e ${urg} prioridade(s) em aberto` : ''}. Vale priorizar a mesa da Secretária.` };
+  if (venc || pendSem > 8 || urg) return { k: 'atencao', rot: 'Semana de atenção', cor: '#d97706', ico: 'fa-triangle-exclamation', txt: `${pendSem} prazo(s) ainda em aberto nesta semana${venc ? `, ${venc} já vencido(s)` : ''}${urg ? ` e ${urg} prioridade(s)` : ''}.` };
   return { k: 'tranquila', rot: 'Semana tranquila', cor: '#16a34a', ico: 'fa-face-smile', txt: pendSem ? `${pendSem} prazo(s) para cumprir, nada vencido.` : 'Nenhum prazo pendente para esta semana.' };
 }
 function textoSemana(w, clima) {
@@ -4577,7 +4691,7 @@ function renderSemana() {
     const itens = [
       ...ag.map(a => `<button type="button" class="sem-item" style="--c:${(TIPOS_AGENDA[a.tipo] || TIPOS_AGENDA.outro).cor}" onclick="agEstado.dia='${d}';agEstado.mes='${d.slice(0, 7)}';irPara('agenda')"><i class="fa-regular fa-clock"></i><span><b>${esc(a.hora || 'Dia todo')}</b> ${esc(a.titulo)}</span></button>`),
       ...ev.map(e => `<button type="button" class="sem-item" style="--c:#c026d3" onclick="irPara('eventos')"><i class="fa-solid fa-calendar-check"></i><span>${esc(e.titulo)}${e.municipio ? ` <small>· ${esc(e.municipio)}</small>` : ''}</span></button>`),
-      ...pz.map(s => `<button type="button" class="sem-item ${FEITO(s) ? 'feito' : ''}" style="--c:${FEITO(s) ? '#16a34a' : s.urgente ? '#dc2626' : '#4f46e5'}" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid ${FEITO(s) ? 'fa-circle-check' : s.urgente ? 'fa-bolt' : 'fa-hourglass-half'}"></i><span>Prazo: ${esc(s.assunto)}</span></button>`),
+      ...pz.map(s => `<button type="button" class="sem-item ${FEITO(s) ? 'feito' : ''}" style="--c:${FEITO(s) ? '#16a34a' : s.urgente ? '#dc2626' : '#4f46e5'}" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid ${FEITO(s) ? 'fa-circle-check' : s.urgente ? 'fa-flag' : 'fa-hourglass-half'}"></i><span>Prazo: ${esc(s.assunto)}</span></button>`),
       ...cm.map(x => `<button type="button" class="sem-item" style="--c:#0284c7" onclick="lerComunicado('${x.id}')"><i class="fa-solid fa-bullhorn"></i><span>Comunicado expira: ${esc(x.titulo)}</span></button>`)
     ];
     const MAX = 5;
@@ -4610,7 +4724,7 @@ function renderSemana() {
     </div>
     <div class="sem-grade">${w.dias.map(diaHtml).join('')}</div>
     <div class="grid grid-cols-1 xl:grid-cols-5 gap-4">
-      <div class="xl:col-span-3">${cardInd('#dc2626', 'fa-list-ol', 'Prioridades da semana', 'Vencidos primeiro, depois urgentes e os prazos mais próximos',
+      <div class="xl:col-span-3">${cardInd('#dc2626', 'fa-list-ol', 'Prioridades da semana', 'Vencidos primeiro, depois prioridades e os prazos mais próximos',
         prior.length ? `<div class="sem-prior">${prior.map((x, i) => linhaPrioridade(x, i)).join('')}</div>` : vazioMini('Nada pendente para esta semana. 🎉'))}</div>
       <div class="xl:col-span-2">${cardInd('#2563eb', 'fa-chart-column', 'Movimento da semana', 'Recebidos e concluídos por dia', '<div class="h-56"><canvas id="sem-mov" aria-label="Recebidos e concluídos por dia da semana"></canvas></div>')}</div>
     </div>`;
@@ -4624,7 +4738,7 @@ function renderSemana() {
 function linhaPrioridade(s, i) {
   const sit = situacao(s), corP = sit === 'vencido' ? '#dc2626' : sit === 'hoje' ? '#ea580c' : sit === 'proximo' ? '#d97706' : '#64748b';
   return `<button type="button" class="sem-p" onclick="abrirDetalhe('${s.id}')">
-    <span class="sem-p-n" style="--c:${s.urgente ? '#dc2626' : '#4f46e5'}">${s.urgente ? '<i class="fa-solid fa-bolt"></i>' : i + 1}</span>
+    <span class="sem-p-n" style="--c:${s.urgente ? '#dc2626' : '#4f46e5'}">${s.urgente ? '<i class="fa-solid fa-flag"></i>' : i + 1}</span>
     <span class="min-w-0 flex-1"><b>${esc(s.assunto)}</b><small>${esc(s.numero || 's/ nº')} · ${esc(STATUS[s.status] ? STATUS[s.status].rot : '')}${s.origem ? ' · ' + esc(s.origem) : ''}</small></span>
     <span class="sem-p-prazo" style="color:${corP}">${esc(textoPrazo(s))}</span></button>`;
 }
@@ -4642,7 +4756,7 @@ async function copiarSemana(btn) {
 const TEMAS_REL = [
   { k: 'geral', rot: 'Relatório geral do Gabinete', ico: 'fa-building-columns', cor: '#2563eb', desc: 'Números, gráficos, secretarias, prazos e Casa Civil' },
   { k: 'mesa', rot: 'Mesa da Secretária', ico: 'fa-pen-nib', cor: '#4f46e5', desc: 'Documentos aguardando assinatura' },
-  { k: 'urgentes', rot: 'Urgências e prazos vencidos', ico: 'fa-triangle-exclamation', cor: '#dc2626', desc: 'O que precisa de atenção agora' },
+  { k: 'urgentes', rot: 'Prioridades e prazos vencidos', ico: 'fa-triangle-exclamation', cor: '#dc2626', desc: 'O que precisa de atenção agora' },
   { k: 'secretaria', rot: 'Por secretaria adjunta', ico: 'fa-sitemap', cor: '#7c3aed', desc: 'Carteira completa de uma secretaria' },
   { k: 'municipio', rot: 'Por município', ico: 'fa-map-location-dot', cor: '#0891b2', desc: 'Demandas de um município de MT' },
   { k: 'casacivil', rot: 'Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', desc: 'Trilha e etapas na Casa Civil' },
@@ -4717,7 +4831,7 @@ function montarRelatorio() {
       add(graf(graficoMeses(sols, 6)));
       add(graf(graficoStatus(sols)));
       const porSec = SECRETARIAS.map(sg => { const l = sols.filter(s => secDe(s).includes(sg)); return [sg + (NOME_SEC[sg] ? ' · ' + NOME_SEC[sg] : ''), l.filter(s => !FEITO(s)).length, l.filter(s => FEITO(s) && P.dentro(s.assinadoEm)).length, l.filter(s => !FEITO(s) && situacao(s) === 'vencido').length, l.filter(s => s.urgente && !FEITO(s)).length]; }).filter(r => r[1] + r[2]);
-      add(tab('Por secretaria adjunta', [{ rot: 'Secretaria', w: '*' }, { rot: L('filtro.pend'), w: 'auto', n: 1 }, { rot: L('filtro.feito'), w: 'auto', n: 1 }, { rot: 'Vencidos', w: 'auto', n: 1 }, { rot: 'Urgentes', w: 'auto', n: 1 }], porSec));
+      add(tab('Por secretaria adjunta', [{ rot: 'Secretaria', w: '*' }, { rot: L('filtro.pend'), w: 'auto', n: 1 }, { rot: L('filtro.feito'), w: 'auto', n: 1 }, { rot: 'Vencidos', w: 'auto', n: 1 }, { rot: 'Prioridades', w: 'auto', n: 1 }], porSec));
       const porTipo = Object.keys(TIPOS).map(k => [TIPOS[k].rot, sols.filter(s => s.tipo === k && P.dentro(s.recebidoEm)).length, sols.filter(s => s.tipo === k && !FEITO(s)).length]).filter(r => r[1] + r[2]);
       add(tab('Por tipo de documento', [{ rot: 'Tipo', w: '*' }, { rot: 'Recebidos no período', w: 'auto', n: 1 }, { rot: L('filtro.pend'), w: 'auto', n: 1 }], porTipo));
       const cc = sols.filter(s => s.casaCivil);
@@ -4726,17 +4840,17 @@ function montarRelatorio() {
     }
     case 'mesa': {
       const l = naMesa();
-      add(kp([{ rot: 'Na mesa', val: l.length, cor: '#4f46e5' }, { rot: 'Urgentes', val: l.filter(s => s.urgente).length, cor: '#dc2626' }, { rot: 'Vencidos', val: l.filter(s => situacao(s) === 'vencido').length, cor: '#ea580c' }, { rot: 'Casa Civil', val: l.filter(s => s.casaCivil).length, cor: '#7c3aed' }]));
+      add(kp([{ rot: 'Na mesa', val: l.length, cor: '#4f46e5' }, { rot: 'Prioridades', val: l.filter(s => s.urgente).length, cor: '#dc2626' }, { rot: 'Vencidos', val: l.filter(s => situacao(s) === 'vencido').length, cor: '#ea580c' }, { rot: 'Casa Civil', val: l.filter(s => s.casaCivil).length, cor: '#7c3aed' }]));
       add(tab('Documentos na mesa, na ordem de despacho', [{ rot: '#', w: 'auto', n: 1 }].concat(COLS_SOL), l.map((s, i) => [i + 1].concat(linhaSolTabela(s))), 'A mesa está vazia.'));
       subtitulo = 'Situação em ' + fmt(hojeISO());
       break;
     }
     case 'urgentes': {
       const l = urgentesAtivos().sort(ordemDespacho);
-      add(kp([{ rot: 'Total', val: l.length, cor: '#dc2626' }, { rot: 'Marcados como urgentes', val: l.filter(s => s.urgente).length, cor: '#dc2626' }, { rot: 'Prazo vencido', val: l.filter(s => situacao(s) === 'vencido').length, cor: '#ea580c' }]));
+      add(kp([{ rot: 'Total', val: l.length, cor: '#dc2626' }, { rot: 'Marcados como prioridade', val: l.filter(s => s.urgente).length, cor: '#dc2626' }, { rot: 'Prazo vencido', val: l.filter(s => situacao(s) === 'vencido').length, cor: '#ea580c' }]));
       const porSec = SECRETARIAS.map(sg => [sg, l.filter(s => secDe(s).includes(sg)).length]).filter(r => r[1]);
-      add(graf({ tipo: 'bar', titulo: 'Urgências por secretaria', labels: porSec.map(r => r[0]), series: [{ rot: 'Urgências', dados: porSec.map(r => r[1]), cores: porSec.map(r => COR_SEC[r[0]] || '#64748b') }] }));
-      add(tab('Urgências e vencidos', COLS_SOL.concat([{ rot: 'Motivo da urgência', w: '*' }]), l.map(s => linhaSolTabela(s).concat([s.motivoUrgencia || '']))));
+      add(graf({ tipo: 'bar', titulo: 'Prioridades por secretaria', labels: porSec.map(r => r[0]), series: [{ rot: 'Prioridades', dados: porSec.map(r => r[1]), cores: porSec.map(r => COR_SEC[r[0]] || '#64748b') }] }));
+      add(tab('Prioridades e vencidos', COLS_SOL.concat([{ rot: 'Motivo da prioridade', w: '*' }]), l.map(s => linhaSolTabela(s).concat([s.motivoUrgencia || '']))));
       subtitulo = 'Situação em ' + fmt(hojeISO());
       break;
     }
@@ -4854,7 +4968,7 @@ function montarRelatorio() {
   return modelo;
 }
 function anexosPermitidos() { return { eventos: nivelArea('eventos') >= 1, comunicados: nivelArea('comunicados') >= 1, mapa: nivelArea('mapa') >= 1 }; }
-const METRICAS_MAPA = { pendentes: ['Demandas em andamento', '#2563eb'], total: ['Todas as solicitações', '#2563eb'], urgentes: ['Urgências em aberto', '#dc2626'], cc: ['Casa Civil', '#7c3aed'], agenda: ['Compromissos da agenda', '#0d9488'], eventos: ['Eventos', '#c026d3'] };
+const METRICAS_MAPA = { pendentes: ['Demandas em andamento', '#2563eb'], total: ['Todas as solicitações', '#2563eb'], urgentes: ['Prioridades em aberto', '#dc2626'], cc: ['Casa Civil', '#7c3aed'], agenda: ['Compromissos da agenda', '#0d9488'], eventos: ['Eventos', '#c026d3'] };
 function misturarHex(a, b, t) { const h = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16)); const A = h(a), B = h(b); return '#' + A.map((v, i) => Math.round(v * t + B[i] * (1 - t)).toString(16).padStart(2, '0')).join(''); }
 /** Mapa de MT como SVG estático (cores fixas, serve para a tela e para o PDF). */
 function blocoMapa(destaque) {
@@ -5147,7 +5261,7 @@ function classeMov(h) {
   if (/assinad/.test(a)) return 'assinado';
   if (/mesa/.test(a)) return 'aguardando';
   if (/devolvid|ajuste/.test(a)) return 'ajuste';
-  if (/urgen/.test(a)) return 'urgente';
+  if (/urgen|priorid/.test(a)) return 'urgente';
   if (/casa civil/.test(a)) return 'casa';
   if (/registrad/.test(a)) return 'cadastro';
   if (/exclu/.test(a)) return 'exclusao';
@@ -5156,7 +5270,7 @@ function classeMov(h) {
 function Utils_norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
 const MOV_ESTILO = {
   assinado: ['#16a34a', 'fa-signature', 'Assinatura'], aguardando: ['#4f46e5', 'fa-pen-nib', 'À mesa'], ajuste: ['#ea580c', 'fa-rotate-left', 'Devolução'],
-  urgente: ['#dc2626', 'fa-bolt', 'Urgência'], casa: ['#7c3aed', 'fa-landmark', 'Casa Civil'], cadastro: ['#2563eb', 'fa-inbox', 'Cadastro'],
+  urgente: ['#dc2626', 'fa-flag', 'Prioridade'], casa: ['#7c3aed', 'fa-landmark', 'Casa Civil'], cadastro: ['#2563eb', 'fa-inbox', 'Cadastro'],
   exclusao: ['#64748b', 'fa-trash', 'Exclusão'], outro: ['#0d9488', 'fa-arrow-right-arrow-left', 'Andamento']
 };
 function todasMovimentacoes() {
@@ -5324,16 +5438,24 @@ async function persSalvar() {
   if (new Set(siglas).size !== siglas.length) return toast('Há siglas repetidas.', 'fa-triangle-exclamation');
   if (!d.secretarias.some(s => s.ativa)) return toast('Deixe pelo menos uma secretaria ativa.', 'fa-triangle-exclamation');
   d.unidades = ($('pers-unid') ? $('pers-unid').value : d.unidades.join('\n')).split('\n').map(x => x.trim()).filter(Boolean);
-  const btn = $('pers-salvar'); persEd.salvando = true; if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Salvando…'; }
-  try {
-    const r = await API.post('admin_salvar_personalizacao', { personalizacao: d }, 120000);
-    aplicarPersonalizacao(r.personalizacao);
-    admEstado.pers = r.personalizacao; persIniciar(r.personalizacao);
-    if (r.dataVersion) Store.versao = r.dataVersion;
-    toast(`Personalização salva${r.celulas ? ` · ${r.celulas} célula(s) da planilha atualizadas` : ''}.`, 'fa-circle-check');
-    atualizarBadges();
-  } catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
-  finally { persEd.salvando = false; renderAdmin(); }
+  // Aplica na hora na tela e grava em segundo plano (o andamento aparece no canto)
+  const envio = JSON.parse(JSON.stringify(d));
+  aplicarPersonalizacao(envio);
+  persEd.sujo = false; persEd.salvando = true;
+  renderAdmin(); atualizarBadges();
+  tarefaGrav({ rotulo: 'Personalização do sistema', detalhe: `${envio.secretarias.length} secretaria(s) · ${Object.keys(envio.rotulos).length} nome(s) personalizado(s)`, icone: 'fa-palette',
+    executar: () => API.post('admin_salvar_personalizacao', { personalizacao: envio }, 180000),
+    aoOk: r => {
+      persEd.salvando = false;
+      aplicarPersonalizacao(r.personalizacao);
+      admEstado.pers = r.personalizacao;
+      if (!persEd.sujo) persIniciar(r.personalizacao);
+      if (r.dataVersion) Store.versao = r.dataVersion;
+      if (r.celulas) toast(`Personalização salva · ${r.celulas} célula(s) da planilha atualizadas.`, 'fa-circle-check');
+      atualizarBadges(); if (abaAtual === 'admin') renderAdmin();
+    },
+    aoErro: () => { persEd.salvando = false; persEd.sujo = true; if (abaAtual === 'admin') renderAdmin(); },
+    aoDescartar: () => { persEd.dados = null; admEstado.pers = null; if (abaAtual === 'admin') renderAdmin(); sincronizar(true); } });
 }
 function renderPersonalizacao(c) {
   if (!admEstado.pers) { c.innerHTML = vazio('fa-circle-notch fa-spin', 'Carregando…', 'Consultando a planilha.'); admCarregar('pers', 'admin_personalizacao', {}, 'personalizacao'); return; }
@@ -5425,14 +5547,18 @@ async function perfSalvar() {
   if (nomes.some(n => !n)) return toast('Dê um nome a todos os perfis.', 'fa-triangle-exclamation');
   if (new Set(nomes.map(n => Utils_norm(n))).size !== nomes.length) return toast('Há perfis com o mesmo nome.', 'fa-triangle-exclamation');
   if (nomes.some(n => Utils_norm(n) === 'administrador')) return toast('"Administrador" é reservado.', 'fa-triangle-exclamation');
-  const btn = $('perf-salvar'); perfEd.salvando = true; if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Salvando…'; }
-  try {
-    const r = await API.post('admin_salvar_perfis', { perfis: perfEd.dados.perfis.map(p => ({ nome: p.nome.trim(), areas: p.areas, assinar: !!p.assinar, descricao: p.descricao || '' })) }, 60000);
-    admEstado.perfis = r; perfIniciar(r);
-    if (r.dataVersion) Store.versao = r.dataVersion;
-    toast('Perfis salvos. As permissões já valem para quem está conectado.', 'fa-circle-check');
-  } catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
-  finally { perfEd.salvando = false; renderAdmin(); }
+  const envio = perfEd.dados.perfis.map(p => ({ nome: p.nome.trim(), areas: { ...p.areas }, assinar: !!p.assinar, descricao: p.descricao || '' }));
+  perfEd.sujo = false; perfEd.salvando = true; renderAdmin();
+  tarefaGrav({ rotulo: 'Perfis e permissões', detalhe: envio.map(p => p.nome).join(', '), icone: 'fa-user-lock',
+    executar: () => API.post('admin_salvar_perfis', { perfis: envio }, 90000),
+    aoOk: r => {
+      perfEd.salvando = false; admEstado.perfis = r;
+      if (!perfEd.sujo) perfIniciar(r);
+      if (r.dataVersion) Store.versao = r.dataVersion;
+      if (abaAtual === 'admin') renderAdmin();
+    },
+    aoErro: () => { perfEd.salvando = false; perfEd.sujo = true; if (abaAtual === 'admin') renderAdmin(); },
+    aoDescartar: () => perfDescartar() });
 }
 function perfDescartar() { admEstado.perfis = null; perfEd.dados = null; renderAdmin(); }
 function seletorNivel(pi, area, max, atual) {
@@ -5577,7 +5703,12 @@ async function admManut(tipo, btn, flag) {
   const R = admEstado.resultados;
   if ((tipo === 'sessoes' || (tipo === 'arquivar' && !flag) || (tipo === 'exemplos' && flag)) && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = 'Confirmar'; return; }
   const original = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Aguarde…';
-  try {
+  const ROT = { integridade: flag ? 'Corrigir integridade da planilha' : 'Verificar integridade', backup: 'Criar backup', backups: 'Listar backups', arquivar: flag ? 'Simular arquivamento' : 'Arquivar expedidas antigas',
+    exemplos: flag ? 'Remover dados de teste' : 'Gerar dados de teste', painel: 'Atualizar painel da planilha', resumo: 'Enviar resumo de teste', sessoes: 'Encerrar todas as sessões', diagnostico: 'Diagnóstico', estatisticas: 'Estatísticas' };
+  const chaveR = tipo === 'backups' ? 'backup' : tipo === 'estatisticas' ? 'diagnostico' : tipo;
+  const fim = () => { const b = document.querySelector(`[data-manut="${tipo}${flag ? '-1' : ''}"]`) || btn; b.disabled = false; b.innerHTML = original; delete b.dataset.conf; if (abaAtual === 'admin') renderAdmin(); };
+  tarefaGrav({ rotulo: ROT[tipo] || 'Manutenção', detalhe: 'Administração › Manutenção', icone: 'fa-screwdriver-wrench',
+    executar: async () => {
     if (tipo === 'integridade') {
       const r = (await API.post('admin_integridade', { corrigir: !!flag }, 120000)).integridade;
       R.integridade = !r.total ? '<span class="chip" style="--c:#16a34a">Nenhum problema encontrado</span>' :
@@ -5608,9 +5739,9 @@ async function admManut(tipo, btn, flag) {
       const e = (await API.post('admin_estatisticas', {})).estatisticas;
       R.diagnostico = `<ul class="space-y-0.5"><li>Planilha: <a class="text-blue-600 hover:underline" href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.planilha)}</a></li>${Object.keys(e.linhas).map(k => `<li>${esc(k)}: <b>${e.linhas[k]}</b> linhas</li>`).join('')}<li>Sessões ativas: <b>${e.sessoesAtivas}</b></li><li>Versão dos dados: ${e.dataVersion}</li><li>Fuso: ${esc(e.fuso)}</li></ul>`;
     }
-  } catch (e) { R[tipo === 'backups' ? 'backup' : tipo === 'estatisticas' ? 'diagnostico' : tipo] = `<span style="color:var(--urg)">${esc(e.message)}</span>`; }
-  btn.disabled = false; btn.innerHTML = original; delete btn.dataset.conf;
-  renderAdmin();
+    },
+    aoOk: fim,
+    aoErro: msg => { R[chaveR] = `<span style="color:var(--urg)">${esc(msg)}</span>`; fim(); } });
 }
 function admFormUsuario(i) {
   const u = i === undefined ? null : admEstado.usuarios[i];
@@ -5631,38 +5762,51 @@ async function admSalvarUsuario(i) {
   const u = i >= 0 ? admEstado.usuarios[i] : null;
   const dados = { usuarioOriginal: u ? u.usuario : '', usuario: $('u-nome').value.trim(), perfil: $('u-perfil').value, email: $('u-email').value.trim(), senha: $('u-senha').value, ativo: $('u-ativo').value === '1', exigirTroca: $('u-troca').checked };
   if (dados.senha && dados.senha.length < 6) { toast('A senha precisa ter pelo menos 6 caracteres.', 'fa-triangle-exclamation'); return; }
-  const btn = $('btn-u-salvar'); btn.disabled = true;
-  try { const r = await API.post('admin_salvar_usuario', dados); admEstado.usuarios = r.usuarios; fecharModal(); toast('Usuário salvo.'); renderAdmin(); }
-  catch (e) { toast(e.message, 'fa-triangle-exclamation'); btn.disabled = false; }
+  fecharModal();
+  tarefaGrav({ rotulo: u ? 'Usuário atualizado' : 'Novo usuário', detalhe: `${dados.usuario} · ${dados.perfil}`, icone: 'fa-user-pen',
+    executar: () => API.post('admin_salvar_usuario', dados, 60000),
+    aoOk: r => { admEstado.usuarios = r.usuarios; if (abaAtual === 'admin') renderAdmin(); },
+    aoErro: () => { if (abaAtual === 'admin') renderAdmin(); } });
 }
 async function admResetar(i, btn) {
   const u = admEstado.usuarios[i];
   if (!btn.dataset.conf) { btn.dataset.conf = '1'; btn.textContent = 'Confirmar?'; return; }
   btn.disabled = true;
-  try {
-    const r = await API.post('admin_resetar_senha', { usuario: u.usuario });
-    admEstado.usuarios = r.usuarios; renderAdmin();
+  tarefaGrav({ rotulo: 'Nova senha temporária', detalhe: u.usuario, icone: 'fa-key',
+    executar: () => API.post('admin_resetar_senha', { usuario: u.usuario }, 60000),
+    aoOk: r => mostrarSenhaTemporaria(u, r),
+    aoErro: () => { if (abaAtual === 'admin') renderAdmin(); } });
+}
+function mostrarSenhaTemporaria(u, r) {
+  {
+    admEstado.usuarios = r.usuarios; if (abaAtual === 'admin') renderAdmin();
     abrirModal(`<div class="modal-topo"><div><h3 class="text-[17px] font-bold">Senha temporária de ${esc(u.usuario)}</h3><p class="text-[12.5px] text-ink3">Entregue pessoalmente. Ela aparece só agora e será trocada no primeiro acesso.</p></div></div>
       <div class="modal-corpo"><p id="senha-temp" class="font-mono text-2xl font-black tracking-widest text-center py-4 rounded-xl" style="background:var(--card2)">${esc(r.senhaTemporaria)}</p></div>
       <div class="modal-rodape"><button class="btn btn-sec" onclick="copiarTexto('senha-temp')"><i class="fa-regular fa-copy"></i>Copiar</button><button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>`, 'senha');
-  } catch (e) { toast(e.message, 'fa-triangle-exclamation'); btn.disabled = false; }
+  }
 }
 async function admDesconectar(i) {
-  try { const r = await API.post('admin_encerrar_sessoes', { usuario: admEstado.usuarios[i].usuario }); admEstado.usuarios = r.usuarios; renderAdmin(); toast('Sessões encerradas.'); }
-  catch (e) { toast(e.message, 'fa-triangle-exclamation'); }
+  const nome = admEstado.usuarios[i].usuario;
+  tarefaGrav({ rotulo: 'Desconectar usuário', detalhe: nome, icone: 'fa-right-from-bracket',
+    executar: () => API.post('admin_encerrar_sessoes', { usuario: nome }, 60000),
+    aoOk: r => { admEstado.usuarios = r.usuarios; if (abaAtual === 'admin') renderAdmin(); } });
 }
 async function admExcluirUsuario(i, btn) {
   if (!btn.dataset.conf) { btn.dataset.conf = '1'; btn.textContent = 'Confirmar exclusão'; return; }
   btn.disabled = true;
-  try { const r = await API.post('admin_excluir_usuario', { usuario: admEstado.usuarios[i].usuario }); admEstado.usuarios = r.usuarios; renderAdmin(); toast('Usuário excluído.'); }
-  catch (e) { toast(e.message, 'fa-triangle-exclamation'); btn.disabled = false; }
+  const nome = admEstado.usuarios[i].usuario;
+  tarefaGrav({ rotulo: 'Exclusão de usuário', detalhe: nome, icone: 'fa-user-xmark',
+    executar: () => API.post('admin_excluir_usuario', { usuario: nome }, 60000),
+    aoOk: r => { admEstado.usuarios = r.usuarios; if (abaAtual === 'admin') renderAdmin(); },
+    aoErro: () => { if (abaAtual === 'admin') renderAdmin(); } });
 }
 async function admSalvarConfig() {
   const valores = {};
   document.querySelectorAll('#adm-config [data-k]').forEach(el => { valores[el.dataset.k] = el.value; });
-  const btn = $('btn-adm-config'); btn.disabled = true;
-  try { const r = await API.post('admin_salvar_config', { valores }); admEstado.config = r.config; toast('Configurações salvas.'); renderAdmin(); }
-  catch (e) { toast(e.message, 'fa-triangle-exclamation'); btn.disabled = false; }
+  tarefaGrav({ rotulo: 'Configurações do sistema', detalhe: Object.keys(valores).length + ' item(ns)', icone: 'fa-sliders',
+    executar: () => API.post('admin_salvar_config', { valores }, 60000),
+    aoOk: r => { admEstado.config = r.config; if (abaAtual === 'admin') renderAdmin(); },
+    aoDescartar: () => { admEstado.config = null; if (abaAtual === 'admin') renderAdmin(); } });
 }
 async function copiarTexto(id) {
   const el = $(id);
@@ -5795,6 +5939,7 @@ if (ss.get('gabdoc_entrou') && !(API.url() && !NO_CLAUDE)) $('login-screen').cla
 irPara(ls.get('gabdoc_aba') || 'painel');
 configurarPWA();
 aplicarPersonalizacao({});
+aplicarGrupos();
 iniciarStore().then(abrirAtalhoInicial);
 </script>
 
