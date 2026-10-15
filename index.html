@@ -195,6 +195,31 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .linha { display: grid; grid-template-columns: 4px 1fr; gap: 0; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
   .linha:hover { border-color: color-mix(in srgb, var(--brand) 40%, var(--line)); box-shadow: 0 6px 18px -12px rgba(15,23,42,.35); }
   .linha .faixa-c { background: var(--c, var(--line)); }
+  /* ---------- Seletor de período ---------- */
+  .sp { --c: var(--brand); border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--card); }
+  .sp .ag-seg button.on { color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
+  .sp-grade { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 640px) { .sp-grade { grid-template-columns: 1fr; } }
+  .sp-cal-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 13.5px; color: var(--ink); }
+  .sp-nav { width: 28px; height: 28px; border-radius: 8px; color: var(--ink2); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+  .sp-nav:hover { background: var(--card2); color: var(--ink); }
+  .sp-dsem, .sp-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .sp-dsem span { text-align: center; font-size: 10.5px; font-weight: 800; color: var(--ink3); padding: 2px 0 4px; }
+  .sp-dias { row-gap: 3px; }
+  .sp-dia { height: 34px; font-size: 13px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; position: relative; transition: background-color .12s, color .12s; }
+  .sp-dia:hover { background: color-mix(in srgb, var(--c) 10%, var(--card)); border-radius: 9px; }
+  .sp-dia.fora { color: var(--ink3); opacity: .5; }
+  .sp-dia.hoje { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 55%, var(--line)); border-radius: 9px; }
+  .sp-dia.entre { background: color-mix(in srgb, var(--c) 15%, var(--card)); color: color-mix(in srgb, var(--c) 80%, var(--ink)); border-radius: 0; }
+  .sp-dia.sel { background: var(--c); color: #fff; border-radius: 9px; }
+  .sp:not(.esp) .sp-dia.sel.ini:not(.fim) { border-radius: 9px 0 0 9px; }
+  .sp:not(.esp) .sp-dia.sel.fim:not(.ini) { border-radius: 0 9px 9px 0; }
+  .sp-dia:active { transform: scale(.94); }
+  .sp-lado { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .sp-resumo { border-radius: 12px; padding: 10px 12px; background: color-mix(in srgb, var(--c) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, var(--line)); font-size: 12.5px; color: var(--ink2); display: flex; flex-direction: column; gap: 2px; min-height: 54px; justify-content: center; }
+  .sp-resumo b { font-size: 16px; font-weight: 800; color: color-mix(in srgb, var(--c) 85%, var(--ink)); }
+  .sp-dica { font-size: 11.5px; color: var(--ink3); }
+  .sp.esp .sp-campos, .sp.esp .sp-atalhos { opacity: .55; }
   /* ---------- Prioridade: borda vermelha e "PRIORIDADE" escrito na lateral esquerda ---------- */
   .prio-txt { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9.5px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #fff; white-space: nowrap; line-height: 1; user-select: none; }
   .linha.prio { grid-template-columns: 24px 1fr; border: 2px solid var(--urg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--urg) 12%, transparent); }
@@ -2629,7 +2654,7 @@ function itensDia(d, ignorarFiltros) {
     out.push({ k: 'comp', id: a.id, d, hora: a.hora || '', horaFim: a.horaFim || '', titulo: a.titulo, cor: t.cor, ico: 'fa-calendar-day', tipoRot: t.rot, sit: agSit(a), obj: a,
                sub: [a.local, a.municipio].filter(Boolean).join(' · '), abrir: `abrirFormAgenda('${a.id}')` });
   });
-  if (F.evento && fonteVisivel('evento')) Store.eventos.filter(e => e.dataInicio && e.dataInicio <= d && evFim(e) >= d).forEach(e => {
+  if (F.evento && fonteVisivel('evento')) Store.eventos.filter(e => evNoDia(e, d)).forEach(e => {
     if (!ignorarFiltros && !agBate(e.titulo, e.local, e.municipio)) return;
     const multi = evFim(e) !== e.dataInicio;
     out.push({ k: 'evento', id: e.id, d, hora: d === e.dataInicio ? (e.hora || '') : '', titulo: e.titulo, cor: '#c026d3', ico: 'fa-calendar-check', tipoRot: 'Evento', obj: e,
@@ -3972,17 +3997,42 @@ const PARTICIPACAO_EV = {
 };
 const PROX_SIT_EV = { 'Planejamento': ['Em preparação', 'Preparar', 'fa-screwdriver-wrench'], 'Em preparação': ['Confirmado', 'Confirmar', 'fa-circle-check'], 'Confirmado': ['Realizado', 'Realizado', 'fa-flag-checkered'], 'Adiado': ['Confirmado', 'Remarcar', 'fa-calendar-check'] };
 const evFim = e => e.dataFim || e.dataInicio || '';
+/** Datas de um texto "20/10/2026, 22/10/2026" (ou ISO). */
+function listaDatas(txt) {
+  const L = String(txt || '').split(/[,;\n]+/).map(x => { x = x.trim(); let m = x.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return m[0]; m = x.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ''; }).filter(Boolean);
+  return [...new Set(L)].sort();
+}
+/** Dias do evento: os específicos (se houver) ou todos do período. */
+function diasDoEvento(e) {
+  const esp = listaDatas(e.dias);
+  if (esp.length > 1) return esp;
+  if (!e.dataInicio) return [];
+  const out = []; let d = e.dataInicio; const f = evFim(e);
+  while (d <= f && out.length < 400) { out.push(d); d = somaDias(1, d); }
+  return out;
+}
+const evNoDia = (e, d) => { const esp = listaDatas(e.dias); return esp.length > 1 ? esp.includes(d) : (!!e.dataInicio && e.dataInicio <= d && evFim(e) >= d); };
+const evDuracao = e => { const n = diasDoEvento(e).length; return n ? (n === 1 ? '1 dia' : n + ' dias') + (listaDatas(e.dias).length > 1 ? ' (alternados)' : '') : '—'; };
+/** "20, 22 e 24/10/2026" para listas curtas de dias. */
+function textoDias(L) {
+  if (!L.length) return '—';
+  if (L.length === 1) return fmt(L[0]);
+  const mesmoMes = L.every(d => d.slice(0, 7) === L[0].slice(0, 7));
+  if (mesmoMes && L.length <= 6) return L.slice(0, -1).map(d => String(Number(d.slice(8)))).join(', ') + ' e ' + fmt(L[L.length - 1]);
+  return L.length <= 4 ? L.slice(0, -1).map(d => fmt(d).slice(0, 5)).join(', ') + ' e ' + fmt(L[L.length - 1]) : `${fmt(L[0]).slice(0, 5)} a ${fmt(L[L.length - 1])} (${L.length} dias alternados)`;
+}
 const evEncerrado = e => /^(realiz|cancel)/.test(Utils_norm(e.situacao));
 const evProximo = (e, dias = 30) => !evEncerrado(e) && evFim(e) >= hojeISO() && (e.dataInicio || '') <= somaDias(dias);
 function evPeriodo(e) {
   if (!e.dataInicio) return '—';
+  const esp = listaDatas(e.dias); if (esp.length > 1) return textoDias(esp);
   const f = d => fmt(d).slice(0, 5);
   return e.dataFim && e.dataFim !== e.dataInicio ? `${f(e.dataInicio)} a ${fmt(e.dataFim)}` : fmt(e.dataInicio);
 }
 function evQuando(e) {
   if (!e.dataInicio || evEncerrado(e)) return '';
   const hoje = hojeISO();
-  if (e.dataInicio <= hoje && evFim(e) >= hoje) return '<span class="ev-tag" style="--c:#c026d3">acontecendo</span>';
+  if (evNoDia(e, hoje)) return '<span class="ev-tag" style="--c:#c026d3">acontecendo</span>';
   const d = Math.round((new Date(e.dataInicio + 'T12:00') - new Date(hoje + 'T12:00')) / 864e5);
   if (d < 0) return '<span class="ev-tag" style="--c:#ea580c">já passou</span>';
   if (d === 0) return '<span class="ev-tag" style="--c:#c026d3">hoje</span>';
@@ -4013,6 +4063,7 @@ function renderEventos() {
       { key: 'titulo', rot: 'Evento', w: 300, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', render: e => `${esc(e.titulo)} ${evQuando(e)}`, validar: v => !String(v).trim() ? 'O nome do evento não pode ficar vazio.' : '' },
       { key: 'dataInicio', rot: 'Início', w: 112, tipo: 'data', editavel: true, obrigatorio: true },
       { key: 'dataFim', rot: 'Término', w: 112, tipo: 'data', editavel: true },
+      { key: 'duracao', rot: 'Duração', w: 120, tipo: 'texto', valor: e => evDuracao(e), render: e => { const esp = listaDatas(e.dias); return `<span title="${esc(esp.length > 1 ? 'Dias: ' + esp.map(fmt).join(', ') : evPeriodo(e))}">${esc(evDuracao(e))}</span>`; } },
       { key: 'hora', rot: 'Horário', w: 85, tipo: 'texto', editavel: true },
       { key: 'municipio', rot: 'Município', w: 150, tipo: 'texto', editavel: true, lista: 'lista-mun', validar: validarMunicipio },
       { key: 'local', rot: 'Local', w: 210, tipo: 'texto', editavel: true },
@@ -4055,6 +4106,7 @@ function editarEvCampos(x, campos) {
   const d = { ...x }; delete d.id;
   Object.entries(campos).forEach(([k, v]) => { if (k === 'organizador') v = String(v).split(/\s*[,;]\s*/).filter(Boolean).map(s => ehSigla(s) ? s.toUpperCase() : s).join(', '); d[k] = v; });
   if (d.dataFim && d.dataInicio && d.dataFim < d.dataInicio) { toast('A data de término não pode ser antes do início.', 'fa-triangle-exclamation'); return Promise.resolve(false); }
+  if (('dataInicio' in campos || 'dataFim' in campos) && listaDatas(d.dias).length > 1) d.dias = ''; // mudou o período: deixa de ser em dias alternados
   d.atualizadoEm = new Date().toISOString();
   const rot = campos.situacao ? 'Situação → ' + campos.situacao : campos.participacao ? 'Participação → ' + campos.participacao : null;
   return salvarEvento(x.id, d, rot);
@@ -4084,9 +4136,8 @@ function abrirFormEvento(id) {
     <form class="modal-corpo space-y-6" id="form-ev" onsubmit="event.preventDefault();salvarFormEvento('${id || ''}')">
       ${bloco(1, '#c026d3', 'O evento', `
         ${rot('Nome do evento *', `<input class="campo campo-g w-full" id="e-titulo" required value="${esc(x.titulo || '')}" placeholder="Ex.: Fórum Estadual de Educação">`)}
+        <div><span class="rotulo !text-[12.5px]">Quando acontece</span>${seletorPeriodo('ev', { idIni: 'e-ini', idFim: 'e-fim', idDias: 'e-dias', ini: x.dataInicio, fim: x.dataFim, dias: x.dias, especificos: true, cor: '#c026d3' })}</div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          ${rot('Início *', `<input type="date" class="campo w-full" id="e-ini" required value="${esc(x.dataInicio || '')}">`)}
-          ${rot('Término', `<input type="date" class="campo w-full" id="e-fim" value="${esc(x.dataFim || '')}">`)}
           ${rot('Horário', `<input class="campo w-full" id="e-hora" value="${esc(x.hora || '')}" placeholder="08:00">`)}
         </div>`)}
       ${bloco(2, '#2563eb', 'Onde e quem organiza', `
@@ -4108,6 +4159,7 @@ function abrirFormEvento(id) {
     </form>
     <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('eventos:3') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirEventoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ev" id="btn-ev-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div></div>`, 'evento');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  spMontar('ev');
   setTimeout(() => $('e-titulo').focus(), 50);
 }
 async function salvarFormEvento(id) {
@@ -4120,7 +4172,7 @@ async function salvarFormEvento(id) {
   const ativo = g => (document.querySelector('.ev-' + g + '.ativo') || {}).dataset?.v || '';
   const antigo = id ? Store.eventos.find(e => e.id === id) : null;
   const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString() }),
-    titulo: v('e-titulo'), dataInicio: v('e-ini'), dataFim: v('e-fim'), hora: v('e-hora'), municipio: v('e-mun'), local: v('e-local'),
+    titulo: v('e-titulo'), dataInicio: v('e-ini'), dataFim: v('e-fim'), dias: listaDatas(v('e-dias')).length > 1 ? listaDatas(v('e-dias')).map(fmt).join(', ') : '', hora: v('e-hora'), municipio: v('e-mun'), local: v('e-local'),
     organizador: chipsMarcados('evsec').join(', '), publico: v('e-publico'), responsavel: v('e-resp'),
     situacao: ativo('sit') || 'Planejamento', participacao: ativo('part'), observacao: v('e-obs'), atualizadoEm: new Date().toISOString() };
   const naAgenda = !id && $('e-agenda') && $('e-agenda').checked;
@@ -4129,6 +4181,108 @@ async function salvarFormEvento(id) {
   if (naAgenda) eventoParaAgenda(dados);
   toast(gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', 'fa-calendar-check');
   if (abaAtual !== 'eventos') irPara('eventos');
+}
+
+
+/* ========================= Seletor de período (vários dias) ========================= */
+// Calendário para escolher um período contínuo (clique no 1º e no último dia) ou dias específicos
+// (clique em cada dia). Mantém sincronizados os campos de data do formulário (idIni / idFim / idDias).
+const SelPer = {};
+function seletorPeriodo(px, o) {
+  const dias = listaDatas(o.dias);
+  SelPer[px] = { idIni: o.idIni, idFim: o.idFim, idDias: o.idDias || '', esp: dias.length > 1, dias: new Set(dias),
+    ini: o.ini || '', fim: o.fim || '', mes: (o.ini || hojeISO()).slice(0, 7), semFim: !!o.semFim, cor: o.cor || 'var(--brand)', rotFim: o.rotFim || 'Término' };
+  const atalhos = (o.atalhos || [[1, 'Só 1 dia'], [2, '2 dias'], [3, '3 dias'], [5, '5 dias'], [7, '1 semana']]);
+  return `<div class="sp" id="sp-${px}" style="--c:${o.cor || 'var(--brand)'}">
+    ${o.especificos ? `<div class="ag-seg mb-2" role="tablist" aria-label="Tipo de período"><button type="button" data-m="0" onclick="spModo('${px}',false)"><i class="fa-solid fa-arrows-left-right"></i><span>Dias seguidos</span></button><button type="button" data-m="1" onclick="spModo('${px}',true)"><i class="fa-solid fa-calendar-plus"></i><span>Dias específicos</span></button></div>` : ''}
+    <div class="sp-grade">
+      <div class="sp-cal" id="sp-${px}-cal"></div>
+      <div class="sp-lado">
+        <div class="sp-resumo" id="sp-${px}-resumo" aria-live="polite"></div>
+        <div class="grid grid-cols-2 gap-2 sp-campos">
+          <label class="block"><span class="rotulo !text-[12px]">${esc(o.rotIni || 'Início')} *</span><input type="date" class="campo w-full" id="${o.idIni}" value="${esc(o.ini || '')}" onchange="spDigitou('${px}')" ${o.obrigatorio === false ? '' : 'required'}></label>
+          <label class="block"><span class="rotulo !text-[12px]">${esc(o.rotFim || 'Término')}</span><input type="date" class="campo w-full" id="${o.idFim}" value="${esc(o.fim || '')}" onchange="spDigitou('${px}')"></label>
+        </div>
+        <div class="sp-atalhos" id="sp-${px}-atalhos"><span class="rotulo !text-[11.5px] !mb-1">Duração rápida</span><div class="flex flex-wrap gap-1.5">${atalhos.map(([n, r]) => `<button type="button" class="chip-f !h-7 !text-[12px]" onclick="spDuracao('${px}',${n})">${r}</button>`).join('')}${o.semFim ? `<button type="button" class="chip-f !h-7 !text-[12px]" onclick="spDuracao('${px}',0)">${esc(o.rotSemFim || 'Sem término')}</button>` : ''}</div></div>
+        <p class="sp-dica" id="sp-${px}-dica"></p>
+        ${o.idDias ? `<input type="hidden" id="${o.idDias}" value="${esc(dias.join(','))}">` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+/** Desenha (depois de o formulário estar na tela). */
+function spMontar(px) { spRender(px); }
+function spRender(px) {
+  const st = SelPer[px]; const box = $('sp-' + px + '-cal'); if (!st || !box) return;
+  const [y, m] = st.mes.split('-').map(Number);
+  const prim = new Date(y, m - 1, 1), ini = new Date(prim); ini.setDate(1 - prim.getDay());
+  const hoje = hojeISO();
+  let cel = '';
+  for (let i = 0; i < 42; i++) {
+    const dt = new Date(ini); dt.setDate(ini.getDate() + i); const d = iso(dt);
+    const fora = d.slice(0, 7) !== st.mes;
+    let cls = '';
+    if (st.esp) { if (st.dias.has(d)) cls = 'sel'; }
+    else if (st.ini) {
+      const f = st.fim || st.ini;
+      if (d === st.ini && d === f) cls = 'sel ini fim';
+      else if (d === st.ini) cls = 'sel ini';
+      else if (d === f) cls = 'sel fim';
+      else if (d > st.ini && d < f) cls = 'entre';
+    }
+    cel += `<button type="button" class="sp-dia ${cls} ${fora ? 'fora' : ''} ${d === hoje ? 'hoje' : ''}" onclick="spClique('${px}','${d}')" aria-pressed="${/sel|entre/.test(cls)}" aria-label="${fmt(d)}">${dt.getDate()}</button>`;
+  }
+  box.innerHTML = `<div class="sp-cal-topo"><button type="button" class="sp-nav" onclick="spMes('${px}',-1)" aria-label="Mês anterior"><i class="fa-solid fa-chevron-left"></i></button><b>${MESES[m - 1].charAt(0).toUpperCase() + MESES[m - 1].slice(1)} ${y}</b><button type="button" class="sp-nav" onclick="spMes('${px}',1)" aria-label="Próximo mês"><i class="fa-solid fa-chevron-right"></i></button></div>
+    <div class="sp-dsem">${DIAS_CAL.map(d => `<span>${d.charAt(0)}</span>`).join('')}</div><div class="sp-dias">${cel}</div>`;
+  // resumo, dica e modo
+  const r = $('sp-' + px + '-resumo'), dica = $('sp-' + px + '-dica');
+  const lista = st.esp ? [...st.dias].sort() : [];
+  const n = st.esp ? lista.length : (st.ini ? diasEntre(st.ini, st.fim || st.ini) + 1 : 0);
+  const sem = d => { const s = new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', ''); return s; };
+  r.innerHTML = !n ? '<span class="text-ink3">Escolha as datas no calendário</span>'
+    : st.esp ? `<b>${n} ${n === 1 ? 'dia' : 'dias'}</b><span>${esc(textoDias(lista))}</span>`
+    : st.semFim && !st.fim ? `<b>A partir de ${fmt(st.ini)}</b><span>sem data de término</span>`
+    : `<b>${n} ${n === 1 ? 'dia' : 'dias'}</b><span>${n === 1 ? `${sem(st.ini)}, ${fmt(st.ini)}` : `${sem(st.ini)}, ${fmt(st.ini).slice(0, 5)} a ${sem(st.fim)}, ${fmt(st.fim)}`}</span>`;
+  dica.textContent = st.esp ? 'Clique em cada dia do evento para marcar ou desmarcar.' : !st.ini ? 'Clique no primeiro dia.' : !st.fim || st.fim === st.ini ? `Clique no último dia (ou deixe só ${fmt(st.ini).slice(0, 5)}).` : 'Clique de novo para começar outro período.';
+  const raiz = $('sp-' + px);
+  raiz.querySelectorAll('[data-m]').forEach(b => b.classList.toggle('on', (b.dataset.m === '1') === st.esp));
+  raiz.classList.toggle('esp', st.esp);
+  // campos do formulário
+  if (st.esp) { $(st.idIni).value = lista[0] || ''; $(st.idFim).value = lista.length > 1 ? lista[lista.length - 1] : ''; }
+  else { $(st.idIni).value = st.ini; $(st.idFim).value = st.fim && (st.fim !== st.ini || st.semFim) ? st.fim : ''; }
+  if (st.idDias && $(st.idDias)) $(st.idDias).value = st.esp && lista.length > 1 ? lista.join(',') : '';
+}
+function spClique(px, d) {
+  const st = SelPer[px];
+  if (st.esp) { st.dias.has(d) ? st.dias.delete(d) : st.dias.add(d); }
+  else if (!st.ini || (st.fim && st.fim !== st.ini)) { st.ini = d; st.fim = ''; }
+  else if (d < st.ini) { st.fim = st.ini; st.ini = d; }
+  else st.fim = d;
+  if (d.slice(0, 7) !== st.mes) st.mes = d.slice(0, 7);
+  spRender(px);
+}
+function spMes(px, n) { const st = SelPer[px]; const [y, m] = st.mes.split('-').map(Number); st.mes = iso(new Date(y, m - 1 + n, 1)).slice(0, 7); spRender(px); }
+function spModo(px, esp) {
+  const st = SelPer[px]; if (st.esp === esp) return;
+  if (esp) { st.dias = new Set(st.ini ? (st.fim && diasEntre(st.ini, st.fim) < 60 ? Array.from({ length: diasEntre(st.ini, st.fim) + 1 }, (_, i) => somaDias(i, st.ini)) : [st.ini]) : []); }
+  else { const L = [...st.dias].sort(); st.ini = L[0] || st.ini; st.fim = L.length > 1 ? L[L.length - 1] : ''; }
+  st.esp = esp; spRender(px);
+}
+function spDuracao(px, n) {
+  const st = SelPer[px];
+  if (st.esp) spModo(px, false);
+  if (!st.ini) st.ini = hojeISO();
+  st.fim = n ? somaDias(n - 1, st.ini) : '';
+  st.mes = st.ini.slice(0, 7);
+  spRender(px);
+}
+function spDigitou(px) {
+  const st = SelPer[px];
+  const a = $(st.idIni).value, b = $(st.idFim).value;
+  if (st.esp) { st.esp = false; }
+  st.ini = a; st.fim = b && a && b < a ? a : b;
+  if (a) st.mes = a.slice(0, 7);
+  spRender(px);
 }
 
 /* ========================= Comunicados importantes da SEDUC-MT ========================= */
@@ -4271,15 +4425,14 @@ function abrirFormComunicado(id) {
         ${rot('Referência / link', `<input class="campo w-full" id="m-ref" value="${esc(x.referencia || '')}" placeholder="Nº SIGADOC, publicação no Diário Oficial ou link">`)}`)}
       ${bloco(3, '#16a34a', 'Publicação', `
         <div><span class="rotulo !text-[12.5px]">Secretaria responsável</span><div class="sec-grade">${botoesSiglas(secSel).map(sg => botaoSec(sg, secSel.includes(sg), 'comsec')).join('')}</div></div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          ${rot('Publicado em', `<input type="date" class="campo w-full" id="m-pub" value="${esc(x.publicadoEm || hojeISO())}">`)}
-          ${rot('Válido até', `<input type="date" class="campo w-full" id="m-val" value="${esc(x.validoAte || '')}">`)}
-        </div>
+        <div><span class="rotulo !text-[12.5px]">Período em que o comunicado vale</span>${seletorPeriodo('com', { idIni: 'm-pub', idFim: 'm-val', ini: x.publicadoEm || hojeISO(), fim: x.validoAte || '', rotIni: 'Vale a partir de', rotFim: 'Válido até', semFim: true, rotSemFim: 'Sem data de término', obrigatorio: false, cor: '#0284c7',
+          atalhos: [[1, 'Só 1 dia'], [3, '3 dias'], [7, '1 semana'], [15, '15 dias'], [30, '1 mês']] })}</div>
         <label class="flex items-center gap-2 text-[13px] font-medium"><input type="checkbox" id="m-fix" class="w-4 h-4" ${x.fixado ? 'checked' : ''}> Fixar no topo do mural (aparece em destaque para toda a equipe)</label>`)}
       <p id="m-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
     </form>
     <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('comunicados:3') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirComunicadoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-com"><i class="fa-solid fa-check"></i>Publicar</button></div></div>`, 'comunicado');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  spMontar('com');
   setTimeout(() => $('m-titulo').focus(), 50);
 }
 async function salvarFormComunicado(id) {
@@ -4684,7 +4837,7 @@ function renderSemana() {
   const pct = totSem ? Math.round(feitosSem * 100 / totSem) : 100;
   const diaHtml = (d, i) => {
     const ag = w.agenda.filter(a => a.data === d).sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
-    const ev = w.eventos.filter(e => e.dataInicio <= d && evFim(e) >= d);
+    const ev = w.eventos.filter(e => evNoDia(e, d));
     const pz = w.prazos.filter(s => s.prazo === d);
     const cm = w.comunicados.filter(x => x.validoAte === d);
     const feitos = w.concluidos.filter(s => s.assinadoEm.slice(0, 10) === d).length;
