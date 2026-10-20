@@ -202,6 +202,16 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nav-btn.nav-sub { padding-left: 22px; font-size: 13.5px; }
   .nav-btn.nav-sub .ico { font-size: 13px; }
   html.sb-mini #sidebar .nav-btn.nav-sub { padding-left: 0; }
+  .gs-dias { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); }
+  .gs-dias i, .gs-dias svg { font-size: 10.5px; }
+  .gs-dias.vencido { color: #fff; background: var(--urg); border-color: var(--urg); }
+  .gs-dias.hoje { color: #fff; background: #ea580c; border-color: #ea580c; }
+  .gs-dias.proximo { color: #92400e; background: color-mix(in srgb, #f59e0b 22%, var(--card)); border-color: color-mix(in srgb, #f59e0b 45%, var(--line)); }
+  .gs-dias.ok { color: #166534; background: color-mix(in srgb, #22c55e 12%, var(--card)); border-color: color-mix(in srgb, #22c55e 30%, var(--line)); }
+  :root[data-theme="dark"] .gs-dias.ok { color: #86efac; } :root[data-theme="dark"] .gs-dias.proximo { color: #fcd34d; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gs-dias.ok { color: #86efac; } :root:not([data-theme="light"]) .gs-dias.proximo { color: #fcd34d; } }
+  .gs-dias.sem { color: var(--ink3); font-weight: 600; background: transparent; border-style: dashed; }
+  .gs-dias.feito { color: var(--ink3); font-weight: 600; background: transparent; border-color: transparent; padding-left: 0; }
   .gs-prazo { display: inline-flex; align-items: baseline; gap: 6px; font-size: 12.5px; white-space: nowrap; }
   .gs-prazo b { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
   .gs-prazo small { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 99px; }
@@ -4060,15 +4070,18 @@ function colunasSolBase() {
 /** Processos e Documentos para assinatura: a coluna G é o Prazo (com a contagem), em ordem dos mais apertados. */
 function colunasVisao() {
   const base = colunasSolBase(), por = k => base.find(c => c.key === k);
-  const prazo = { ...por('prazo'), rot: 'Prazo', w: 222, wCompacta: 212, render: s => celPrazoData(s) };
+  const prazo = { ...por('prazo'), rot: 'Prazo', w: 165, wCompacta: 160, render: s => celPrazoData(s) };
   return [por('numero'), { ...por('assunto'), w: 290 }, { ...por('natureza'), w: 160 }, por('tipo'), por('origem'), { ...por('responsavel'), w: 160 }]
     .concat([prazo], ['status', 'municipio', 'recebidoEm', 'urgente', 'casaCivil', 'observacoes'].map(por));
 }
+/** Coluna Prazo: em vez da data final, quantos dias faltam (ou há quantos dias venceu). A data fica na dica. */
 function celPrazoData(s) {
-  if (!s.prazo) return '<span class="prazo sem !text-[12px]">Sem prazo</span>';
-  const sit = situacao(s), d = diasAte(s.prazo);
-  const extra = sit === 'feito' ? '' : d < 0 ? `vencido há ${-d}d` : d === 0 ? 'vence hoje' : d === 1 ? 'amanhã' : `em ${d} dias`;
-  return `<span class="gs-prazo ${sit}"><b>${fmt(s.prazo)}</b>${extra ? `<small>${extra}</small>` : ''}</span>`;
+  if (!s.prazo) return '<span class="gs-dias sem">Sem prazo</span>';
+  const sit = situacao(s), d = diasAte(s.prazo), dica = `Prazo: ${fmt(s.prazo)}`;
+  if (sit === 'feito') return `<span class="gs-dias feito" title="${dica}"><i class="fa-solid fa-check"></i>Concluído</span>`;
+  const txt = d < 0 ? `Vencido há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'Vence hoje' : d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`;
+  const ico = d < 0 ? 'fa-circle-exclamation' : d === 0 ? 'fa-hourglass-end' : 'fa-hourglass-half';
+  return `<span class="gs-dias ${sit}" title="${dica}"><i class="fa-solid ${ico}"></i>${txt}</span>`;
 }
 function preencherListaResp() {
   const dl = $('lista-resp');
@@ -4144,8 +4157,8 @@ function renderVisaoGestao(k) {
     .concat(k === 'mesa' ? [['proc', L('filtro.proc'), ehProcesso, '#0d9488'], ['ass', 'Para assinatura', ehAssinatura, '#2563eb']] : [])
     .concat([['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']]);
   renderGrade(cont, {
-    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: k === 'mesa' ? colunasSolBase() : colunasVisao(),
-    compactas: k === 'mesa' ? ['numero', 'assunto', 'tipo', 'origem', 'status'] : ['numero', 'assunto', 'tipo', 'origem', 'prazo', 'status'],
+    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: colunasVisao(),
+    compactas: ['numero', 'assunto', 'tipo', 'origem', 'prazo', 'status'],
     ordemColuna: 'prazo',
     finalizado: FEITO,
     ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
