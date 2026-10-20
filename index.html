@@ -199,6 +199,42 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pers-previa-acoes .gs-acao { pointer-events: none; margin: 0 !important; }
   .menu-acoes .menu-sub { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); padding: 6px 10px 2px; }
   .det-mudar { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 8px; border-left: 1px solid var(--line); }
+  /* ---------- Usuários online ---------- */
+  .online-btn { width: 100%; display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.28); color: #e2e8f0; text-align: left; transition: background-color .15s, border-color .15s; }
+  .online-btn:hover { background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.45); }
+  .online-btn .ol-ponto { grid-row: 1 / span 2; }
+  .online-btn .ol-txt { font-size: 13px; font-weight: 600; } .online-btn .ol-txt b { font-weight: 900; color: #4ade80; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .online-btn .ol-sub { grid-column: 2 / span 2; font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ol-pilha { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; }
+  .ol-pilha .ol-av { width: 24px; height: 24px; font-size: 9.5px; margin-left: -6px; border: 2px solid #0f172a; }
+  .ol-ponto { width: 9px; height: 9px; border-radius: 99px; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,.6); animation: olPulso 2s infinite; flex: none; display: inline-block; }
+  @keyframes olPulso { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.55); } 70% { box-shadow: 0 0 0 7px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+  .ol-av { --c: #2563eb; position: relative; width: 32px; height: 32px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; color: #fff; background: var(--c); flex: none; }
+  .ol-av.ol-mais { background: #334155; }
+  .ol-on { position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 99px; background: #22c55e; border: 2px solid var(--card); }
+  .online-mob { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px; border-radius: 99px; font-size: 12px; font-weight: 800; color: #4ade80; background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.35); }
+  .online-mob.hidden, #online-box.hidden { display: none; }
+  html.sb-mini #online-box { padding: 10px 8px 0; }
+  html.sb-mini .online-btn { grid-template-columns: 1fr; justify-items: center; padding: 8px 4px; row-gap: 2px; }
+  html.sb-mini .online-btn .ol-pilha, html.sb-mini .online-btn .ol-sub { display: none; }
+  html.sb-mini .online-btn .ol-ponto { grid-row: auto; }
+  html.sb-mini .online-btn .ol-txt { font-size: 0; } html.sb-mini .online-btn .ol-txt b { font-size: 13px; }
+  .online-pop { position: fixed; z-index: 135; width: 320px; max-width: calc(100vw - 16px); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 20px 50px -15px rgba(0,0,0,.45); padding: 12px; animation: modalIn .22s cubic-bezier(.16,1,.3,1) both; }
+  .ol-pop-topo { display: flex; align-items: center; gap: 8px; font-size: 13.5px; padding: 2px 4px 10px; border-bottom: 1px solid var(--line); }
+  .online-pop ul { max-height: 320px; overflow-y: auto; padding: 6px 0; }
+  .online-pop li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 4px; border-radius: 10px; }
+  .online-pop li:hover { background: var(--card2); }
+  .ol-nome { font-size: 13px; font-weight: 700; } .ol-nome small { font-weight: 600; color: var(--ink3); }
+  .ol-onde { font-size: 11.5px; color: var(--ink3); } .ol-onde b { color: var(--ink2); font-weight: 600; }
+  .ol-proc { margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--brand); padding: 2px 7px; border-radius: 6px; background: color-mix(in srgb, var(--brand) 9%, var(--card)); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ol-seg { font-size: 10.5px; color: var(--ink3); white-space: nowrap; padding-top: 2px; }
+  .ol-dica { display: flex; gap: 8px; font-size: 11.5px; color: var(--ink3); padding: 8px 4px 2px; border-top: 1px solid var(--line); line-height: 1.45; }
+  .ol-dica svg { color: #16a34a; margin-top: 2px; flex: none; }
+  .det-colegas, .det-atual { display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; padding: 8px 10px; border-radius: 10px; }
+  .det-colegas { color: var(--ink); background: color-mix(in srgb, #d97706 11%, var(--card)); border: 1px solid color-mix(in srgb, #d97706 35%, var(--line)); }
+  .det-colegas svg { color: #d97706; flex: none; }
+  .det-atual { color: var(--ink); background: color-mix(in srgb, var(--brand) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--brand) 30%, var(--line)); }
+  .det-atual svg { color: var(--brand); flex: none; }
   /* ---------- Detalhes do processo ---------- */
   .modal.modal-det { max-width: 1000px; }
   .det { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
@@ -1030,6 +1066,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         </button>
       </div>
     </div>
+    <div class="px-4 pt-3 hidden" id="online-box">
+      <button type="button" id="online-btn" class="online-btn" onclick="abrirOnline(this)" aria-haspopup="dialog" title="Quem está usando o GABDoc agora"></button>
+    </div>
     <div class="flex-1 overflow-y-auto scrollbar-thin py-6">
       <nav class="px-4 space-y-3" id="nav">
         <div class="nav-grupo" data-g="visao">
@@ -1108,6 +1147,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="flex items-center gap-3">
         <button onclick="menuMobile(true)" class="text-gray-300 hover:text-white p-1" aria-label="Abrir menu"><i class="fa-solid fa-bars text-xl"></i></button>
         <h1 class="text-xl font-black tracking-tight text-white">GAB<span class="text-blue-500">Doc</span></h1>
+        <button type="button" id="online-mob" class="online-mob hidden" onclick="abrirOnline(this)" aria-label="Usuários online"></button>
       </div>
       <div class="flex gap-1.5" data-requer="gravar">
         <button onclick="novoRegistro('assinatura')" class="btn btn-novo !h-9 !px-2.5" style="--c:#3b82f6" aria-label="Nova solicitação de assinatura"><span class="novo-ico"><i class="fa-solid fa-file-signature"></i></span></button>
@@ -1708,6 +1748,7 @@ function aplicarCarga(r) {
   Store.pronto = true;
   statusSync();
   if (!r.semMudanca) aoMudarDados();
+  if (!Store.online.length) { _ultimoSinal = 0; enviarSinal(); }
 }
 let syncEmCurso = null;
 async function sincronizar(completo) {
@@ -1733,9 +1774,12 @@ let pollTimer = null;
 function iniciarPolling() {
   clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    if (document.hidden || !Store.sessao || sincronizando || Grav.ocupada()) return;
+    if (!Store.sessao || sincronizando) return;
     try {
-      const r = await API.post('versao', {}, 20000);
+      _ultimoSinal = Date.now();
+      const r = await API.post('versao', sinalPresenca(), 20000);
+      aplicarOnline(r.online);
+      if (document.hidden || Grav.ocupada()) return;
       if (r.dataVersion !== Store.versao) await sincronizar(false);
       else statusSync();
     } catch (e) { if (e.codigo !== 401) statusSync('erro'); }
@@ -2115,6 +2159,77 @@ function esconderLogin() { const t = $('login-screen'); t.classList.add('opacity
 
 
 
+
+/* ========================= Quem está online ========================= */
+// Cada sinal de atualização (a cada 20 s) informa ao servidor onde a pessoa está; a resposta traz
+// quem mais está usando o sistema. Ao abrir um processo, o sinal sai na hora, para os colegas verem.
+Store.online = [];
+const COR_AVATAR = ['#2563eb', '#16a34a', '#d97706', '#7c3aed', '#db2777', '#0891b2', '#ea580c', '#4f46e5'];
+function corAvatar(nome) { let h = 0; for (const ch of String(nome)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return COR_AVATAR[h % COR_AVATAR.length]; }
+function eu() { return Store.sessao ? Store.sessao.usuario : ''; }
+function nomeAba(aba) {
+  if (!aba) return '';
+  if (String(aba).startsWith('doc:')) { const d = SECOES_DOC.find(x => 'doc:' + x.tipo === aba); return d ? nomeSecaoDoc(d) : 'Documentos'; }
+  const b = document.querySelector(`.nav-btn[data-tab="${CSS.escape(aba)}"] span`); return b ? b.textContent.trim() : '';
+}
+function sinalPresenca() { return { aba: abaAtual, vendo: modalAberto && modalAberto.tipo === 'detalhe' ? modalAberto.id : '' }; }
+function aplicarOnline(lista) {
+  if (!Array.isArray(lista)) return;
+  Store.online = lista;
+  renderOnline();
+  if (modalAberto && modalAberto.tipo === 'detalhe') atualizarAvisoColegas();
+}
+/** Envia o sinal agora (ao abrir/fechar um processo), no máximo a cada 4 s. */
+let _ultimoSinal = 0;
+async function enviarSinal() {
+  if (Store.modo !== 'planilha' || !Store.sessao || Date.now() - _ultimoSinal < 4000) return;
+  _ultimoSinal = Date.now();
+  try { const r = await API.post('versao', sinalPresenca(), 15000); aplicarOnline(r.online); } catch (e) { /* o próximo sinal tenta de novo */ }
+}
+function renderOnline() {
+  const box = $('online-box'), btn = $('online-btn'), mob = $('online-mob');
+  if (!box) return;
+  const L = Store.modo === 'planilha' && Store.sessao ? Store.online : [];
+  const visivel = L.length > 0;
+  box.classList.toggle('hidden', !visivel); if (mob) mob.classList.toggle('hidden', !visivel);
+  if (!visivel) return;
+  const outros = L.filter(o => o.usuario !== eu());
+  const pilha = L.slice(0, 4).map(o => `<span class="ol-av" style="--c:${corAvatar(o.usuario)}" title="${esc(o.usuario)}">${esc(iniciais(o.usuario))}</span>`).join('') + (L.length > 4 ? `<span class="ol-av ol-mais">+${L.length - 4}</span>` : '');
+  btn.innerHTML = `<span class="ol-ponto"></span><span class="ol-txt"><b>${L.length}</b> ${L.length === 1 ? 'online' : 'online'}</span><span class="ol-pilha">${pilha}</span><span class="ol-sub">${outros.length ? (outros.length === 1 ? `você e ${esc(outros[0].usuario)}` : `você e mais ${outros.length}`) : 'só você agora'}</span>`;
+  btn.setAttribute('aria-label', `${L.length} usuário(s) online`);
+  if (mob) mob.innerHTML = `<span class="ol-ponto"></span>${L.length}`;
+  const pop = $('online-pop'); if (pop) pop.innerHTML = conteudoOnline();
+}
+function conteudoOnline() {
+  const L = Store.online;
+  return `<div class="ol-pop-topo"><span class="ol-ponto"></span><b>${L.length} ${L.length === 1 ? 'pessoa' : 'pessoas'} usando agora</b></div>
+    <ul>${L.map(o => { const proc = o.vendo ? Store.sol.find(s => s.id === o.vendo) : null; const eu_ = o.usuario === eu();
+      return `<li><span class="ol-av" style="--c:${corAvatar(o.usuario)}">${esc(iniciais(o.usuario))}<i class="ol-on"></i></span>
+        <div class="min-w-0 flex-1"><p class="ol-nome">${esc(o.usuario)}${eu_ ? ' <small>(você)</small>' : ''}</p>
+          <p class="ol-onde">${esc(o.perfil || '')}${nomeAba(o.aba) ? ` · em <b>${esc(nomeAba(o.aba))}</b>` : ''}</p>
+          ${proc ? `<button type="button" class="ol-proc" onclick="fecharOnline();abrirDetalhe('${proc.id}')"><i class="fa-solid fa-folder-open"></i>${esc(proc.numero || proc.assunto)}</button>` : ''}</div>
+        <span class="ol-seg">${o.segundos < 30 ? 'agora' : 'há ' + o.segundos + ' s'}</span></li>`; }).join('')}</ul>
+    <p class="ol-dica"><i class="fa-solid fa-shield-halved"></i>Várias pessoas podem usar ao mesmo tempo: cada alteração é gravada na ordem em que chega e a tela de todos se atualiza sozinha.</p>`;
+}
+function abrirOnline(btn) {
+  if ($('online-pop')) { fecharOnline(); return; }
+  enviarSinal();
+  const pop = document.createElement('div'); pop.id = 'online-pop'; pop.className = 'online-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Usuários online');
+  pop.innerHTML = conteudoOnline(); document.body.appendChild(pop);
+  const r = btn.getBoundingClientRect();
+  pop.style.top = (r.bottom + 8) + 'px'; pop.style.left = Math.max(8, Math.min(innerWidth - pop.offsetWidth - 8, r.left)) + 'px';
+  setTimeout(() => document.addEventListener('click', fecharOnlineFora, true), 0);
+}
+function fecharOnline() { const p = $('online-pop'); if (p) p.remove(); document.removeEventListener('click', fecharOnlineFora, true); }
+function fecharOnlineFora(e) { const p = $('online-pop'); if (p && !p.contains(e.target) && !e.target.closest('#online-btn,#online-mob')) fecharOnline(); }
+/** No detalhe: avisa quem mais está com o mesmo processo aberto. */
+function atualizarAvisoColegas() {
+  const box = $('det-colegas'); if (!box || !modalAberto) return;
+  const outros = Store.online.filter(o => o.usuario !== eu() && o.vendo === modalAberto.id);
+  box.innerHTML = outros.length ? `<i class="fa-solid fa-user-group"></i><span><b>${esc(outros.map(o => o.usuario).join(', '))}</b> ${outros.length === 1 ? 'também está' : 'também estão'} com este processo aberto agora. Combine antes de mudar a situação.</span>` : '';
+  box.hidden = !outros.length;
+}
+
 /* ========================= Tela de carregamento e animações ========================= */
 const Boot = { el: null, t0: 0, timer: null };
 function saudacao() { const h = new Date().getHours(); return h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite'; }
@@ -2371,6 +2486,7 @@ async function sair() {
   ss.del('gabdoc_entrou');
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
+    Store.online = []; renderOnline(); fecharOnline();
     Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
@@ -2974,7 +3090,7 @@ function abrirModal(html, tipo, extra = {}) {
   $('modal-raiz').innerHTML = `<div class="modal-fundo" onclick="if(event.target===this&&modalAberto&&modalAberto.tipo!=='senha-obrigatoria')fecharModal()"><div class="modal anim-fade-up" role="dialog" aria-modal="true">${html}</div></div>`;
   const f = $('modal-raiz').querySelector('input,select,textarea'); if (f && tipo !== 'detalhe') setTimeout(() => f.focus(), 50);
 }
-function fecharModal() { modalAberto = null; $('modal-raiz').innerHTML = ''; }
+function fecharModal() { const eraDet = modalAberto && modalAberto.tipo === 'detalhe'; modalAberto = null; $('modal-raiz').innerHTML = ''; if (eraDet) { _ultimoSinal = 0; enviarSinal(); } }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalAberto && modalAberto.tipo !== 'senha-obrigatoria') fecharModal(); });
 const copia = s => { const o = JSON.parse(JSON.stringify(s)); delete o.id; return o; };
 
@@ -3193,7 +3309,8 @@ async function acaoRapida(id, acao, obs = '') {
   if (await salvarSol(id, dados)) toast(`${STATUS[st].rot}.`, STATUS[st].ico);
 }
 function abrirDetalhe(id) {
-  abrirModal('<div id="detalhe" class="det"></div>', 'detalhe', { id });
+  abrirModal('<div id="detalhe" class="det"></div>', 'detalhe', { id, abertoEm: new Date().toISOString() });
+  _ultimoSinal = 0; setTimeout(enviarSinal, 50);
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo', 'modal-det');
   renderDetalhe();
 }
@@ -3228,6 +3345,8 @@ function renderDetalhe() {
         <button type="button" class="det-num" title="Copiar o número" onclick="navigator.clipboard && navigator.clipboard.writeText(${esc(JSON.stringify(s.numero || ''))}).then(() => toast('Número copiado.', 'fa-copy'))">${esc(s.numero || 'Sem número')}<i class="fa-regular fa-copy"></i></button>
         ${diasCasa !== null ? `<span><i class="fa-regular fa-clock"></i>${diasCasa === 0 ? 'recebido hoje' : `${diasCasa} dia${diasCasa === 1 ? '' : 's'} ${s.status === 'assinado' ? 'até a assinatura' : 'desde o recebimento'}`}</span>` : ''}
       </div>
+      <div class="det-colegas" id="det-colegas" hidden></div>
+      ${(() => { const ult = hist[0]; const outro = ult && modalAberto.abertoEm && ult.em > modalAberto.abertoEm && (ult.porNome ? ult.porNome !== eu() : ult.por && ult.por !== meuId()); return outro ? `<div class="det-atual"><i class="fa-solid fa-rotate"></i><span><b>${esc(autorDe(ult))}</b> acabou de registrar: ${esc(ult.acao)}</span></div>` : ''; })()}
       <div class="det-faixa">
         <div class="det-status" style="--c:${st.cor}"><i class="fa-solid ${st.ico}"></i><div><small>Situação</small><b>${esc(st.rot)}</b></div></div>
         <div class="det-status" style="--c:${aberto ? corPrazo : '#64748b'}"><i class="fa-solid ${aberto ? icoPrazo : 'fa-calendar'}"></i><div><small>Prazo</small><b>${!s.prazo ? 'Sem prazo' : aberto ? esc(textoPrazo(s)) : fmt(s.prazo)}</b></div></div>
@@ -3284,6 +3403,7 @@ function renderDetalhe() {
     </div>`;
   const obs = $('d-obs'); if (obs && obsAntes) { obs.value = obsAntes; if (focoObs) obs.focus(); }
   const corpo = el.querySelector('.det-corpo'); if (corpo && rolagem) corpo.scrollTop = rolagem;
+  atualizarAvisoColegas();
 }
 function acaoDetalhe(k) { const o = $('d-obs'); const obs = o ? o.value.trim() : ''; if (o) o.value = ''; acaoRapida(modalAberto.id, k, obs); }
 async function alternarUrgente() {
