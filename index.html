@@ -199,6 +199,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pers-previa-acoes .gs-acao { pointer-events: none; margin: 0 !important; }
   .menu-acoes .menu-sub { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); padding: 6px 10px 2px; }
   .det-mudar { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 8px; border-left: 1px solid var(--line); }
+  .nav-btn.nav-sub { padding-left: 22px; font-size: 13.5px; }
+  .nav-btn.nav-sub .ico { font-size: 13px; }
+  html.sb-mini #sidebar .nav-btn.nav-sub { padding-left: 0; }
   /* ---------- Usuários online ---------- */
   .online-btn { width: 100%; display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.28); color: #e2e8f0; text-align: left; transition: background-color .15s, border-color .15s; }
   .online-btn:hover { background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.45); }
@@ -1090,6 +1093,8 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
           </div>
           <div class="space-y-1">
             <button class="nav-btn" data-tab="mesa"><i class="ico fa-solid fa-table-cells"></i><span>Gestão de Processos</span><span id="bdg-mesa" class="nav-badge bg-indigo-500 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="processos"><i class="ico fa-solid fa-folder-open" style="color:#2dd4bf"></i><span>Processos</span><span id="bdg-proc" class="nav-badge bg-teal-600 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="assinaturas"><i class="ico fa-solid fa-file-signature" style="color:#60a5fa"></i><span>Documentos para assinatura</span><span id="bdg-ass" class="nav-badge bg-blue-600 hidden"></span></button>
             <button class="nav-btn" data-tab="fila"><i class="ico fa-solid fa-folder-open"></i><span>Solicitações</span><span id="bdg-fila" class="nav-badge bg-slate-600 hidden"></span></button>
             <button class="nav-btn" data-tab="prazos"><i class="ico fa-solid fa-hourglass-half text-orange-400"></i><span class="text-orange-300 font-bold">Prazos</span><span id="bdg-urg" class="nav-badge bg-red-600 hidden"></span></button>
             <button class="nav-btn" data-tab="casacivil"><i class="ico fa-solid fa-landmark text-violet-400"></i><span class="text-violet-300 font-semibold">Casa Civil</span><span id="bdg-cc" class="nav-badge bg-violet-600 hidden"></span></button>
@@ -1211,12 +1216,38 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-table-cells text-indigo-300"></i> Gestão de Processos</h2>
-            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Todos os documentos e processos do Gabinete em formato de planilha (a Correição fica na seção própria).</p>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Processos e documentos para assinatura juntos, em formato de planilha (a Correição fica na seção própria).</p>
           </div>
           <div class="text-xs text-blue-100/80" id="mesa-resumo"></div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="mesa-corpo"></div></div>
+    </section>
+
+    <section id="tab-processos" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#06302d">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-folder-open text-teal-300"></i> Processos</h2>
+            <p class="text-teal-100/70 text-xs mt-0.5 hidden sm:block">Processos do Gabinete (cadastrados como "Novo processo"), em formato de planilha.</p>
+          </div>
+          <div class="text-xs text-teal-100/80" id="proc-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="proc-corpo"></div></div>
+    </section>
+
+    <section id="tab-assinaturas" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#0b2350">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-file-signature text-blue-300"></i> Documentos para assinatura</h2>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Documentos cadastrados como "Nova assinatura", em formato de planilha.</p>
+          </div>
+          <div class="text-xs text-blue-100/80" id="ass-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="ass-corpo"></div></div>
     </section>
 
     <!-- SOLICITAÇÕES -->
@@ -1603,7 +1634,7 @@ function pode(perm) {
 const podeGrade = id => { const a = Grades[id] && Grades[id].cfg && Grades[id].cfg.area; return a ? pode(a + ':2') : pode('gravar'); };
 /** Seção do menu → área de permissão. */
 function areaDaAba(tab) {
-  if (String(tab).startsWith('doc:') || ['mesa', 'fila', 'prazos'].includes(tab)) return 'sol';
+  if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos'].includes(tab)) return 'sol';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
 function abaPermitida(tab) { if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
@@ -2529,7 +2560,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -2546,7 +2577,9 @@ function ordemDespacho(a, b) {
 }
 function atualizarBadges() {
   const set = (id, n) => { const el = $(id); el.textContent = n; el.classList.toggle('hidden', !n); el.classList.toggle('inline-flex', !!n); };
-  set('bdg-mesa', naMesa().length);
+  set('bdg-mesa', pendentes().length);
+  set('bdg-proc', Store.sol.filter(s => ehProcesso(s) && !FEITO(s)).length);
+  set('bdg-ass', Store.sol.filter(s => ehAssinatura(s) && !FEITO(s)).length);
   set('bdg-fila', pendentes().length);
   set('bdg-urg', prazosAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
@@ -4036,27 +4069,46 @@ function acoesLoteSol() {
 
 /* ----- Gestão de Processos (todas as solicitações e processos, menos a Correição) ----- */
 function abrirGestao(chip) { estadoGrade('gestao').chip = chip || ''; irPara('mesa'); }
-function renderMesa() {
-  const cont = $('mesa-corpo');
-  const pend = Store.sol.filter(s => !FEITO(s));
-  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'analise').length} ${STATUS.analise.rot.toLowerCase()}`;
+/** Natureza do cadastro: "Novo processo" e/ou "Nova assinatura" (um registro pode ter as duas). */
+const ehProcesso = s => String(s.natureza || '').includes('Processo');
+const ehAssinatura = s => !s.natureza || /assinatura/i.test(String(s.natureza));
+const VISOES_GESTAO = {
+  mesa:        { grade: 'gestao', corpo: 'mesa-corpo', resumo: 'mesa-resumo', filtro: () => true, novo: 'assinatura', cor: '#2563eb', rotulo: 'registro(s)',
+                 textoNovo: 'Nova solicitação de assinatura ou processo (abre o formulário)', vazio: 'Nenhuma solicitação ou processo registrado.' },
+  processos:   { grade: 'g-proc', corpo: 'proc-corpo', resumo: 'proc-resumo', filtro: ehProcesso, novo: 'processo', cor: '#0d9488', rotulo: 'processo(s)',
+                 textoNovo: 'Novo processo (abre o formulário)', vazio: 'Nenhum processo cadastrado. Use "Novo processo".' },
+  assinaturas: { grade: 'g-ass', corpo: 'ass-corpo', resumo: 'ass-resumo', filtro: ehAssinatura, novo: 'assinatura', cor: '#2563eb', rotulo: 'documento(s)',
+                 textoNovo: 'Nova assinatura (abre o formulário)', vazio: 'Nenhum documento para assinatura. Use "Nova assinatura".' }
+};
+function renderMesa() { renderVisaoGestao('mesa'); }
+function renderProcessos() { renderVisaoGestao('processos'); }
+function renderAssinaturas() { renderVisaoGestao('assinaturas'); }
+function renderVisaoGestao(k) {
+  const v = VISOES_GESTAO[k];
+  const cont = $(v.corpo);
+  const todos = Store.sol.filter(v.filtro);
+  const pend = todos.filter(s => !FEITO(s));
+  $(v.resumo).textContent = `${todos.length} ${v.rotulo} · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'analise').length} ${STATUS.analise.rot.toLowerCase()}`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
+  const chips = [['', L('filtro.todos'), () => true, v.cor], ['pend', L('filtro.pend'), s => !FEITO(s), v.cor], ['mesa', L('filtro.mesa'), s => s.status === 'analise', '#4f46e5'],
+    ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c']]
+    .concat(k === 'mesa' ? [['proc', L('filtro.proc'), ehProcesso, '#0d9488'], ['ass', 'Para assinatura', ehAssinatura, '#2563eb']] : [])
+    .concat([['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']]);
   renderGrade(cont, {
-    id: 'gestao', area: 'sol', linhas: Store.sol, fonte: () => Store.sol, colunas: colunasSolBase(),
+    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: colunasSolBase(),
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'status'],
     finalizado: FEITO,
     ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
-    chips: [['', L('filtro.todos'), () => true, '#2563eb'], ['pend', L('filtro.pend'), s => !FEITO(s), '#2563eb'], ['mesa', L('filtro.mesa'), s => s.status === 'analise', '#4f46e5'],
-            ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'],
-            ['proc', L('filtro.proc'), s => String(s.natureza || '').includes('Processo'), '#0d9488'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
+    chips,
     aoEditarCampos: editarSolCampos,
-    acoes: s => botoesAcoesSol('gestao', s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
+    acoes: s => botoesAcoesSol(v.grade, s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
     tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
-    novaLinha: () => novoRegistro('assinatura'), textoNovaLinha: 'Nova solicitação de assinatura ou processo (abre o formulário)',
-    textoVazio: 'Nenhuma solicitação ou processo registrado.',
-    botaoNovo: `<button class="btn btn-pri !h-9" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-plus"></i>Novo</button>`
+    novaLinha: () => novoRegistro(v.novo), textoNovaLinha: v.textoNovo,
+    textoVazio: v.vazio,
+    botaoNovo: k === 'mesa' ? `<button class="btn btn-pri !h-9" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-plus"></i>Novo</button>`
+      : `<button class="btn btn-pri !h-9" onclick="novoRegistro('${v.novo}')"><i class="fa-solid fa-plus"></i>${k === 'processos' ? 'Novo processo' : 'Nova assinatura'}</button>`
   });
 }
 
