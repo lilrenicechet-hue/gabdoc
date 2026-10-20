@@ -199,6 +199,58 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pers-previa-acoes .gs-acao { pointer-events: none; margin: 0 !important; }
   .menu-acoes .menu-sub { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); padding: 6px 10px 2px; }
   .det-mudar { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 8px; border-left: 1px solid var(--line); }
+  /* ---------- Detalhes do processo ---------- */
+  .modal.modal-det { max-width: 1000px; }
+  .det { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+  .det-topo { flex-shrink: 0; padding: 16px 20px 14px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+  .det-fechar { width: 32px; height: 32px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink3); flex: none; }
+  .det-fechar:hover { background: var(--card2); color: var(--ink); }
+  .det-titulo { font-size: 18px; font-weight: 800; line-height: 1.3; color: var(--ink); overflow-wrap: anywhere; }
+  .det-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12.5px; color: var(--ink3); }
+  .det-meta span { display: inline-flex; align-items: center; gap: 5px; }
+  .det-num { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ink2); font-variant-numeric: tabular-nums; padding: 2px 6px; margin-left: -6px; border-radius: 6px; }
+  .det-num:hover { background: var(--card2); color: var(--ink); }
+  .det-num svg { font-size: 10.5px; opacity: .6; }
+  .det-faixa { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin-top: 4px; }
+  .det-status { --c: var(--brand); display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); min-width: 0; }
+  .det-status > svg { color: var(--c); font-size: 15px; flex: none; }
+  .det-status small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ink3); line-height: 1.2; }
+  .det-status b { display: block; font-size: 13.5px; font-weight: 800; color: color-mix(in srgb, var(--c) 82%, var(--ink)); line-height: 1.25; }
+  .det-assinar { margin-left: auto; height: auto !important; min-height: 44px; padding: 0 18px !important; font-size: 13.5px !important; }
+  @media (max-width: 640px) { .det-assinar { margin-left: 0; width: 100%; } .det-status { flex: 1 1 140px; } }
+  .det-corpo { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; background: var(--ground); }
+  .det-grade { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .det-grade { grid-template-columns: 1fr; } }
+  .det-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .det-card h4 { font-size: 13.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .det-card h4 > svg { color: var(--ink3); font-size: 12px; }
+  .det-alerta { display: flex; gap: 10px; align-items: baseline; font-size: 13px; color: var(--ink); padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--urg) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--urg) 30%, var(--line)); }
+  .det-alerta > svg { color: var(--urg); flex: none; }
+  .det-alerta b { color: var(--urg); }
+  .det-sits { display: flex; flex-wrap: wrap; gap: 6px; }
+  .det-sit { --c: var(--brand); display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 11px; border-radius: 9px; font-size: 12.5px; font-weight: 700; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: var(--card); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); transition: background-color .15s, transform .12s; }
+  .det-sit:hover { background: color-mix(in srgb, var(--c) 10%, var(--card)); }
+  .det-sit:active { transform: scale(.96); }
+  .det-sit.atual { color: #fff; background: var(--c); border-color: var(--c); cursor: default; }
+  .det-infos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+  @media (max-width: 520px) { .det-infos { grid-template-columns: 1fr; } }
+  .det-info { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+  .det-info-ico { width: 28px; height: 28px; border-radius: 8px; flex: none; display: inline-flex; align-items: center; justify-content: center; background: var(--card2); color: var(--ink3); font-size: 11.5px; }
+  .det-info dt { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+  .det-info dd { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 1px; overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .det-obs-txt { border-top: 1px dashed var(--line); padding-top: 10px; }
+  .det-obs-txt p:last-child { font-size: 13px; color: var(--ink2); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .det-hist { position: sticky; top: 0; }
+  @media (max-width: 640px) { .det { overflow-y: auto; } .det-corpo { flex: none; overflow: visible; } .det > .modal-rodape { position: sticky; bottom: 0; background: var(--card); z-index: 2; } }
+  @media (max-width: 860px) { .det-hist { position: static; } }
+  .det-tl { display: flex; flex-direction: column; }
+  .det-tl-item { --c: var(--brand); display: flex; gap: 10px; position: relative; padding-bottom: 14px; }
+  .det-tl-item:not(:last-child)::before { content: ''; position: absolute; left: 13px; top: 28px; bottom: 0; width: 2px; background: var(--line); }
+  .det-tl-ico { width: 28px; height: 28px; border-radius: 99px; flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); position: relative; z-index: 1; }
+  .det-tl-item.ultimo .det-tl-ico { color: #fff; background: var(--c); border-color: var(--c); }
+  .det-tl-acao { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.35; padding-top: 4px; overflow-wrap: anywhere; }
+  .det-tl-obs { font-size: 12.5px; color: var(--ink2); margin-top: 2px; padding: 6px 8px; border-radius: 8px; background: var(--card2); overflow-wrap: anywhere; white-space: pre-wrap; }
+  .det-tl-quem { font-size: 11.5px; color: var(--ink3); margin-top: 3px; }
   /* ---------- Seletor de período ---------- */
   .sp { --c: var(--brand); border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--card); }
   .sp .ag-seg button.on { color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
@@ -3140,61 +3192,100 @@ async function acaoRapida(id, acao, obs = '') {
   dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: HIST_STATUS[st], obs, por: meuId() });
   if (await salvarSol(id, dados)) toast(`${STATUS[st].rot}.`, STATUS[st].ico);
 }
-function abrirDetalhe(id) { abrirModal('<div id="detalhe"></div>', 'detalhe', { id }); renderDetalhe(); }
+function abrirDetalhe(id) {
+  abrirModal('<div id="detalhe" class="det"></div>', 'detalhe', { id });
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo', 'modal-det');
+  renderDetalhe();
+}
+/** Janela de detalhes do processo. Ao atualizar (sincronização), preserva o texto digitado e a rolagem. */
 function renderDetalhe() {
-  const el = $('detalhe'); if (!el) return;
+  const el = $('detalhe'); if (!el || !modalAberto) return;
+  const obsAntes = $('d-obs') ? $('d-obs').value : '';
+  const corpoAntes = el.querySelector('.det-corpo'), rolagem = corpoAntes ? corpoAntes.scrollTop : 0;
+  const focoObs = document.activeElement && document.activeElement.id === 'd-obs';
   setTimeout(aplicarPermissoes, 0);
   const s = Store.sol.find(x => x.id === modalAberto.id);
-  if (!s) { el.innerHTML = `<div class="modal-corpo">${vazio('fa-file-circle-xmark', 'Solicitação não encontrada', 'Ela pode ter sido excluída por outra pessoa da equipe.')}</div><div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>`; return; }
-  const t = TIPOS[s.tipo] || TIPOS.outro;
+  if (!s) { el.innerHTML = `<div class="modal-corpo">${vazio('fa-file-circle-xmark', 'Processo não encontrado', 'Ele pode ter sido excluído por outra pessoa da equipe.')}</div><div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>`; return; }
+  const t = TIPOS[s.tipo] || TIPOS.outro, st = STATUS[s.status] || STATUS.recebido, sit = situacao(s);
   const hist = (s.historico || []).slice().reverse();
+  const aberto = !FEITO(s);
   const podeSt = k => k === 'assinado' ? pode('assinar') : k === 'ajuste' ? (pode('gravar') || pode('assinar')) : pode('gravar');
-  const acoes = (FEITO(s) || !pode('assinar') ? '' : `<button class="btn btn-pri" onclick="acaoDetalhe('assinado')"><i class="fa-solid fa-signature"></i>${esc(AC('assinar'))}</button>`) +
-    ((TRANSICOES_APP[s.status] || []).filter(k => k !== 'assinado' && podeSt(k)).length ? `<span class="det-mudar"><span class="text-[11.5px] font-semibold text-ink3">Mudar para</span>${(TRANSICOES_APP[s.status] || []).filter(k => podeSt(k) && !(k === 'assinado' && !FEITO(s))).map(k => `<button class="btn btn-sec !h-8 !px-2.5" style="color:${STATUS[k].cor}" onclick="acaoDetalhe('${k}')"><i class="fa-solid ${STATUS[k].ico}"></i>${esc(STATUS[k].rot)}</button>`).join('')}</span>` : '');
+  const podeAlgum = Object.keys(STATUS).some(k => k !== s.status && podeSt(k));
+  const corPrazo = { vencido: 'var(--urg)', hoje: '#ea580c', proximo: '#d97706', ok: '#16a34a', feito: '#16a34a', sem: 'var(--ink3)' }[sit] || 'var(--ink3)';
+  const icoPrazo = { vencido: 'fa-circle-exclamation', hoje: 'fa-hourglass-end', proximo: 'fa-hourglass-half', ok: 'fa-calendar-check', feito: 'fa-circle-check', sem: 'fa-calendar' }[sit] || 'fa-calendar';
+  const diasCasa = s.recebidoEm && (aberto || (s.status === 'assinado' && s.assinadoEm)) ? Math.max(0, diasEntre(s.recebidoEm, aberto ? hojeISO() : s.assinadoEm)) : null;
+  const secs = secDe(s);
+  const info = (ico, rot, val) => `<div class="det-info"><span class="det-info-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><dt>${rot}</dt><dd>${val}</dd></div></div>`;
+  const dica = !pode('gravar') && !pode('assinar') ? '<p class="text-[12.5px] text-ink3"><i class="fa-solid fa-lock mr-1"></i>Seu perfil só visualiza este processo.</p>' : '';
   el.innerHTML = `
-    <div class="modal-topo">
-      <div class="min-w-0 space-y-1.5">
-        <div class="flex flex-wrap items-center gap-1.5">${s.urgente && !FEITO(s) ? '<span class="selo-urg"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}${chipStatus(s.status)}</div>
-        <h3 class="text-[17px] font-bold leading-snug">${esc(s.assunto)}</h3>
-        <p class="text-[12.5px] text-ink3">${esc(s.numero || 'Sem número')} · <span class="prazo ${situacao(s)}">${textoPrazo(s)}</span></p>
+    <div class="det-topo">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-1.5 min-w-0">${s.urgente && aberto ? '<span class="selo-urg"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}<span class="chip" style="--c:#64748b">${esc((NATUREZAS_OP.find(n => n[0] === s.natureza) || [0, s.natureza || 'Solicitação de assinatura'])[1])}</span></div>
+        <button class="det-fechar" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <h3 class="det-titulo">${esc(s.assunto)}</h3>
+      <div class="det-meta">
+        <button type="button" class="det-num" title="Copiar o número" onclick="navigator.clipboard && navigator.clipboard.writeText(${esc(JSON.stringify(s.numero || ''))}).then(() => toast('Número copiado.', 'fa-copy'))">${esc(s.numero || 'Sem número')}<i class="fa-regular fa-copy"></i></button>
+        ${diasCasa !== null ? `<span><i class="fa-regular fa-clock"></i>${diasCasa === 0 ? 'recebido hoje' : `${diasCasa} dia${diasCasa === 1 ? '' : 's'} ${s.status === 'assinado' ? 'até a assinatura' : 'desde o recebimento'}`}</span>` : ''}
+      </div>
+      <div class="det-faixa">
+        <div class="det-status" style="--c:${st.cor}"><i class="fa-solid ${st.ico}"></i><div><small>Situação</small><b>${esc(st.rot)}</b></div></div>
+        <div class="det-status" style="--c:${aberto ? corPrazo : '#64748b'}"><i class="fa-solid ${aberto ? icoPrazo : 'fa-calendar'}"></i><div><small>Prazo</small><b>${!s.prazo ? 'Sem prazo' : aberto ? esc(textoPrazo(s)) : fmt(s.prazo)}</b></div></div>
+        ${s.assinadoEm ? `<div class="det-status" style="--c:#16a34a"><i class="fa-solid fa-signature"></i><div><small>Assinado em</small><b>${fmt(s.assinadoEm)}</b></div></div>` : ''}
+        ${aberto && pode('assinar') ? `<button class="btn btn-pri det-assinar" onclick="acaoDetalhe('assinado')"><i class="fa-solid fa-signature"></i>${esc(AC('assinar'))}</button>` : ''}
+      </div>
     </div>
-    <div class="modal-corpo space-y-5">
-      ${s.urgente && s.motivoUrgencia ? `<p class="text-[13px] rounded-lg px-3 py-2" style="background:color-mix(in srgb, var(--urg) 9%, var(--card));color:var(--ink)"><b style="color:var(--urg)">Motivo da prioridade:</b> ${esc(s.motivoUrgencia)}</p>` : ''}
-      <dl class="info-grade">
-        <div><dt>Tipo</dt><dd>${t.rot}</dd></div>
-        <div><dt>Secretarias / origem</dt><dd>${esc(s.origem || '—')}</dd></div>
-        <div><dt>Interessado</dt><dd>${esc(s.interessado || '—')}</dd></div>
-        <div><dt>Município</dt><dd>${esc(s.municipio || '—')}</dd></div>
-        <div><dt>Recebido em</dt><dd>${fmt(s.recebidoEm)}</dd></div>
-        <div><dt>Prazo</dt><dd>${fmt(s.prazo)}</dd></div>
-        <div><dt>Assinado em</dt><dd>${s.assinadoEm ? fmt(s.assinadoEm) : '—'}</dd></div>
-        <div><dt>Solicitado por</dt><dd>${esc(s.responsavel || '—')}</dd></div>
-        <div><dt>Natureza</dt><dd>${esc(s.natureza || 'Solicitação de assinatura')}</dd></div>
-        ${s.casaCivil ? `<div><dt>Casa Civil</dt><dd>${(ETAPAS_CC[s.ccEtapa] || ETAPAS_CC.preparo).rot}${s.ccNumero ? '<br><span class="text-ink3 font-medium">' + esc(s.ccNumero) + '</span>' : ''}</dd></div>` : ''}
-      </dl>
-      ${s.observacoes ? `<div><p class="rotulo">Observações</p><p class="text-[13px] text-ink2 whitespace-pre-wrap">${esc(s.observacoes)}</p></div>` : ''}
-      <div class="rounded-xl p-3 space-y-2" style="background:var(--card2)">
-        <p class="rotulo !mb-0">Registrar andamento</p>
-        <textarea id="d-obs" rows="2" class="campo w-full" placeholder="Observação opcional (ex.: o que foi corrigido, quem assinou)"></textarea>
-        <div class="flex flex-wrap gap-2">${acoes}
-          <button class="btn btn-sec" data-requer="gravar" onclick="alternarUrgente()"><i class="fa-solid fa-flag" style="color:var(--urg)"></i>${esc(s.urgente ? AC('prio_off') : AC('prio_on'))}</button>
-          ${!s.casaCivil ? `<button class="btn btn-sec" data-requer="casacivil:2" onclick="incluirCC()"><i class="fa-solid fa-landmark" style="color:var(--cc)"></i>${esc(AC('cc_on'))}</button>` : ''}
-          ${s.casaCivil && s.status === 'assinado' && (s.ccEtapa || 'preparo') === 'preparo' ? `<button class="btn btn-sec" onclick="mudarEtapaCC('${s.id}','enviado')"><i class="fa-solid fa-paper-plane" style="color:var(--cc)"></i>Enviar à Casa Civil</button>` : ''}
+    <div class="det-corpo">
+      <div class="det-grade">
+        <div class="space-y-4 min-w-0">
+          ${s.urgente && s.motivoUrgencia && aberto ? `<p class="det-alerta"><i class="fa-solid fa-flag"></i><span><b>Motivo da prioridade:</b> ${esc(s.motivoUrgencia)}</span></p>` : ''}
+          ${podeAlgum || pode('gravar') ? `<section class="det-card">
+            <h4><i class="fa-solid fa-bolt"></i>Andamento</h4>
+            <label class="block"><span class="rotulo !text-[11.5px]">Observação para o histórico <small class="font-normal text-ink3">(opcional)</small></span>
+              <textarea id="d-obs" rows="2" class="campo w-full" placeholder="Ex.: o que foi corrigido, quem assinou, número do despacho…"></textarea></label>
+            ${podeAlgum ? `<div><span class="rotulo !text-[11.5px]">Mudar a situação</span>
+              <div class="det-sits">${Object.entries(STATUS).map(([k, x]) => k === s.status
+                ? `<span class="det-sit atual" style="--c:${x.cor}"><i class="fa-solid fa-check"></i>${esc(x.rot)}</span>`
+                : podeSt(k) ? `<button type="button" class="det-sit" style="--c:${x.cor}" onclick="acaoDetalhe('${k}')"><i class="fa-solid ${x.ico}"></i>${esc(k === 'assinado' && aberto ? AC('assinar') : x.rot)}</button>` : '').join('')}</div></div>` : ''}
+            ${pode('gravar') || pode('casacivil:2') ? `<div><span class="rotulo !text-[11.5px]">Outras ações</span><div class="flex flex-wrap gap-1.5">
+              ${pode('gravar') ? `<button class="ag-acao" style="--c:#dc2626" onclick="alternarUrgente()"><i class="fa-solid fa-flag"></i><span>${esc(s.urgente ? AC('prio_off') : AC('prio_on'))}</span></button>` : ''}
+              ${!s.casaCivil && pode('casacivil:2') ? `<button class="ag-acao" style="--c:#7c3aed" onclick="incluirCC()"><i class="fa-solid fa-landmark"></i><span>${esc(AC('cc_on'))}</span></button>` : ''}
+              ${s.casaCivil && s.status === 'assinado' && (s.ccEtapa || 'preparo') === 'preparo' && pode('casacivil:2') ? `<button class="ag-acao" style="--c:#7c3aed" onclick="mudarEtapaCC('${s.id}','enviado')"><i class="fa-solid fa-paper-plane"></i><span>Enviar à Casa Civil</span></button>` : ''}
+              ${aberto && pode('gravar') ? `<span class="pz-prorrogar !border-0 !pl-0"><span class="text-[11px] font-semibold text-ink3 mr-0.5">${esc(AC('prorrogar'))}</span>${[1, 3, 5].map(n => `<button class="ag-acao" style="--c:#64748b" onclick="prorrogarPrazo('${s.id}',${n})" title="Novo prazo: ${fmt(somaDias(n, s.prazo && s.prazo > hojeISO() ? s.prazo : hojeISO()))}">+${n}d</button>`).join('')}</span>` : ''}
+            </div></div>` : ''}
+          </section>` : dica}
+          <section class="det-card">
+            <h4><i class="fa-solid fa-circle-info"></i>Informações</h4>
+            <dl class="det-infos">
+              ${info('fa-building-columns', 'Secretarias / origem', secs.length ? secs.map(pilulaSigla).join(' ') : esc(s.origem || '—'))}
+              ${info('fa-user', 'Interessado', esc(s.interessado || '—'))}
+              ${info('fa-location-dot', 'Município', esc(s.municipio || '—'))}
+              ${info('fa-user-pen', 'Solicitado por', esc(s.responsavel || '—'))}
+              ${info('fa-inbox', 'Recebido em', s.recebidoEm ? fmt(s.recebidoEm) : '—')}
+              ${info('fa-calendar-day', 'Prazo', s.prazo ? fmt(s.prazo) : 'Sem prazo')}
+              ${info(t.ico, 'Tipo de documento', esc(t.rot))}
+              ${s.casaCivil ? info('fa-landmark', 'Casa Civil', `${esc((ETAPAS_CC[s.ccEtapa] || ETAPAS_CC.preparo).rot)}${s.ccNumero ? `<br><span class="text-ink3 font-medium">${esc(s.ccNumero)}</span>` : ''}`) : ''}
+            </dl>
+            ${s.observacoes ? `<div class="det-obs-txt"><p class="rotulo !text-[11.5px]">Observações</p><p>${esc(s.observacoes)}</p></div>` : ''}
+          </section>
         </div>
-      </div>
-      <div>
-        <p class="rotulo">Tramitação</p>
-        <div class="tl">${hist.map(h => `<div class="tl-item"><p class="text-[13px] font-semibold text-ink">${esc(h.acao)}</p>${h.obs ? `<p class="text-[12.5px] text-ink2">${esc(h.obs)}</p>` : ''}<p class="text-[11.5px] text-ink3">${fmtHora(h.em)} · ${esc(autorDe(h))}</p></div>`).join('')}</div>
+        <section class="det-card det-hist">
+          <h4><i class="fa-solid fa-clock-rotate-left"></i>Tramitação <span class="text-ink3 font-semibold">${hist.length}</span></h4>
+          ${hist.length ? `<div class="det-tl">${hist.map((h, i) => { const [cor, ico] = MOV_ESTILO[classeMov(h)] || MOV_ESTILO.outro; return `<div class="det-tl-item ${i === 0 ? 'ultimo' : ''}" style="--c:${cor}">
+            <span class="det-tl-ico"><i class="fa-solid ${ico}"></i></span>
+            <div class="min-w-0"><p class="det-tl-acao">${esc(h.acao)}</p>${h.obs ? `<p class="det-tl-obs">${esc(h.obs)}</p>` : ''}<p class="det-tl-quem">${fmtHora(h.em)} · ${esc(autorDe(h))}</p></div>
+          </div>`; }).join('')}</div>` : '<p class="text-[13px] text-ink3">Ainda sem andamentos registrados.</p>'}
+        </section>
       </div>
     </div>
     <div class="modal-rodape !justify-between">
-      <button class="btn btn-perigo" data-requer="excluir" id="btn-excluir" onclick="confirmarExclusao(this)"><i class="fa-solid fa-trash"></i>Excluir</button>
-      <div class="flex gap-2"><button class="btn btn-sec" data-requer="gravar" onclick="abrirForm('${s.id}')"><i class="fa-solid fa-pen"></i>Editar</button><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>
+      <button class="btn btn-perigo" data-requer="excluir" id="btn-excluir" onclick="confirmarExclusao(this)"><i class="fa-solid fa-trash"></i><span class="hidden sm:inline">${esc(AC('excluir'))}</span></button>
+      <div class="flex gap-2"><button class="btn btn-sec" data-requer="gravar" onclick="abrirForm('${s.id}')"><i class="fa-solid fa-pen"></i>${esc(AC('editar'))}</button><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>
     </div>`;
+  const obs = $('d-obs'); if (obs && obsAntes) { obs.value = obsAntes; if (focoObs) obs.focus(); }
+  const corpo = el.querySelector('.det-corpo'); if (corpo && rolagem) corpo.scrollTop = rolagem;
 }
-function acaoDetalhe(k) { const obs = ($('d-obs') || {}).value || ''; acaoRapida(modalAberto.id, k, obs.trim()); }
+function acaoDetalhe(k) { const o = $('d-obs'); const obs = o ? o.value.trim() : ''; if (o) o.value = ''; acaoRapida(modalAberto.id, k, obs); }
 async function alternarUrgente() {
   const s = Store.sol.find(x => x.id === modalAberto.id); const d = copia(s);
   d.urgente = !s.urgente; if (!d.urgente) d.motivoUrgencia = ''; else { const o = ($('d-obs').value || '').trim(); if (o) d.motivoUrgencia = o; }
