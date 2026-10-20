@@ -657,6 +657,22 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .rel-estilo { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 12.5px; font-weight: 700; color: var(--ink2); background: var(--card); }
   .rel-estilo > span { width: 18px; height: 18px; border-radius: 6px; }
   .rel-estilo.ativo { border-color: var(--brand); color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 15%, transparent); }
+  .rel-cenarios { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rel-cenario { --c: var(--brand); display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); font-size: 12.5px; font-weight: 700; color: var(--ink2); transition: border-color .15s, background .15s, transform .12s; }
+  .rel-cenario i, .rel-cenario svg { color: var(--c); font-size: 12px; }
+  .rel-cenario:hover { border-color: color-mix(in srgb, var(--c) 55%, var(--line)); transform: translateY(-1px); }
+  .rel-cenario.ativo { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--card)); color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 16%, transparent); }
+  .rel-filtros { display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 12px; background: var(--card2); border: 1px solid var(--line); }
+  .rel-fchip { --c: var(--brand); display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--card); font-size: 12px; font-weight: 700; color: var(--ink3); transition: border-color .12s, background .12s, color .12s; }
+  .rel-fchip:hover { border-color: color-mix(in srgb, var(--c) 50%, var(--line)); color: var(--ink2); }
+  .rel-fchip.ativo { color: var(--c); border-color: var(--c); background: color-mix(in srgb, var(--c) 11%, var(--card)); }
+  .rel-fchip.ativo::before { content: '✓'; font-weight: 900; font-size: 11px; }
+  .rel-mais summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; color: var(--ink2); }
+  .rel-mais summary::-webkit-details-marker { display: none; }
+  .rel-mais summary i, .rel-mais summary svg { font-size: 10px; transition: transform .15s; }
+  .rel-mais[open] summary i, .rel-mais[open] summary svg { transform: rotate(90deg); }
+  .rel-resumo-f { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--ink2); padding-top: 10px; border-top: 1px dashed var(--line); }
+  .rel-resumo-f i, .rel-resumo-f svg { color: var(--brand); margin-right: 6px; }
   .rel-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
   .rel-previa-caixa { background: var(--card2); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
   .rp-folha { background: #fff; color: #0f172a; border-radius: 6px; box-shadow: 0 10px 30px -12px rgba(15,23,42,.35); padding: 26px 28px; max-width: 640px; margin: 0 auto; font-size: 11px; line-height: 1.4; }
@@ -863,6 +879,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   @media (prefers-reduced-motion: reduce) { .grav, .grav-spin { animation-duration: 2s; } .grav { animation: none; } }
   .gs-compacto table.gs th, .gs-compacto table.gs td { height: 38px; }
   .gs-compacto table.gs td.gs-cel { font-size: 13px; }
+  /* Texto completo: o assunto e o nº do processo aparecem inteiros; a linha cresce o quanto precisar */
+  .gs-leitura table.gs tbody td { height: auto; min-height: 40px; vertical-align: top; }
+  .gs-leitura table.gs td.gs-cel { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.45; padding-top: 9px; padding-bottom: 9px; }
+  .gs-leitura table.gs td.gs-cel .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
+  .gs-leitura table.gs td.gs-num, .gs-leitura table.gs td.gs-acoes { vertical-align: middle; }
   .menu-acoes { position: fixed; z-index: 130; min-width: 250px; max-width: 320px; max-height: 70vh; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 20px 40px -12px rgba(15,23,42,.45); padding: 6px; }
   .menu-acoes .menu-tit { font-size: 11px; font-weight: 700; color: var(--ink3); padding: 6px 8px 8px; border-bottom: 1px solid var(--line); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .menu-acoes button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--ink); text-align: left; }
@@ -3104,12 +3125,15 @@ function exportarAgendaICS() {
 }
 
 /* ----- Relatórios ----- */
-function solsPeriodo() { const P = periodoRel(); return Store.sol.filter(s => !P.ini || P.dentro(s.recebidoEm)); }
+function solsPeriodo() {
+  if (relEstado.tema === 'personalizado') return ordenarRel(filtrarSolRel(Store.sol, true), relEstado.ordem);
+  const P = periodoRel(); return filtrarSolRel(Store.sol, false).filter(s => !P.ini || P.dentro(s.recebidoEm));
+}
 async function exportarCSV() {
   const L = solsPeriodo();
-  const cab = ['Nº SIGADOC', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Prioridade', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável'];
+  const cab = ['Nº SIGADOC', 'Natureza', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Prioridade', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável'];
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const linhas = L.map(s => [s.numero, (TIPOS[s.tipo] || TIPOS.outro).rot, s.assunto, s.origem, s.interessado, s.municipio, fmt(s.recebidoEm), fmt(s.prazo), (STATUS[s.status] || {}).rot, s.assinadoEm ? fmt(s.assinadoEm) : '', s.urgente ? 'Sim' : 'Não', s.casaCivil ? 'Sim' : 'Não', s.casaCivil ? (ETAPAS_CC[s.ccEtapa] || {}).rot : '', s.ccNumero, s.responsavel].map(q).join(';'));
+  const linhas = L.map(s => [s.numero, natRotulo(s), (TIPOS[s.tipo] || TIPOS.outro).rot, s.assunto, s.origem, s.interessado, s.municipio, fmt(s.recebidoEm), fmt(s.prazo), (STATUS[s.status] || {}).rot, s.assinadoEm ? fmt(s.assinadoEm) : '', s.urgente ? 'Sim' : 'Não', s.casaCivil ? 'Sim' : 'Não', s.casaCivil ? (ETAPAS_CC[s.ccEtapa] || {}).rot : '', s.ccNumero, s.responsavel].map(q).join(';'));
   const csv = '﻿' + [cab.map(q).join(';')].concat(linhas).join('\r\n');
   let dl = null;
   try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
@@ -3579,8 +3603,10 @@ const TRANSICOES_APP = Object.fromEntries(['recebido', 'analise', 'assinado', 'a
 function letraCol(n) { let s = ''; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 function estadoGrade(id, padrao) {
   if (!Grades[id]) {
-    let compacto = false; try { compacto = localStorage.getItem('gabdoc_compacto_' + id) === '1'; } catch (e) {}
-    Grades[id] = Object.assign({ busca: '', ordem: null, dir: 1, filtros: {}, mostrarFiltros: false, ativa: null, faixa: null, chip: '', compacto }, padrao || {});
+    let modo = ''; try { modo = localStorage.getItem('gabdoc_compacto_' + id) || ''; } catch (e) {}
+    // compacto: só as colunas essenciais · leitura: as mesmas colunas, com o texto inteiro (linhas mais altas)
+    const leitura = modo === 'L', compacto = modo === '1' || leitura;
+    Grades[id] = Object.assign({ busca: '', ordem: null, dir: 1, filtros: {}, mostrarFiltros: false, ativa: null, faixa: null, chip: '', compacto, leitura }, padrao || {});
   }
   return Grades[id];
 }
@@ -3652,14 +3678,14 @@ function renderGrade(cont, cfg) {
         <input class="campo w-full !pl-8 !h-9" id="gs-busca-${cfg.id}" value="${esc(st.busca)}" placeholder="Buscar em todas as colunas" oninput="buscarGrade('${cfg.id}', this)" aria-label="Buscar"></div>
       ${cfg.chips ? `<div class="flex flex-wrap gap-1.5">${cfg.chips.map(([k, rot, , cor]) => `<button type="button" class="chip-f !h-8 ${st.chip === k ? 'ativo' : ''}" style="--c:${cor || 'var(--brand)'}" onclick="chipGrade('${cfg.id}','${k}')">${rot}<b>${k ? cfg.linhas.filter(cfg.chips.find(c => c[0] === k)[2]).length : cfg.linhas.length}</b></button>`).join('')}</div>` : ''}
       <div class="flex flex-wrap gap-1.5 ml-auto">
-        ${cfg.compactas ? `<div class="dv-seg" role="group" aria-label="Modo de visualização"><button type="button" class="${st.compacto ? '' : 'ativo'}" onclick="modoGrade('${cfg.id}', false)" title="Todas as colunas"><i class="fa-solid fa-table-cells mr-1"></i>Completo</button><button type="button" class="${st.compacto ? 'ativo' : ''}" onclick="modoGrade('${cfg.id}', true)" title="Só o essencial"><i class="fa-solid fa-table-list mr-1"></i>Compacto</button></div>` : ''}
+        ${cfg.compactas ? `<div class="dv-seg" role="group" aria-label="Modo de visualização"><button type="button" class="${st.compacto ? '' : 'ativo'}" aria-pressed="${!st.compacto}" onclick="modoGrade('${cfg.id}', false)" title="Todas as colunas"><i class="fa-solid fa-table-cells mr-1"></i>Completo</button><button type="button" class="${st.compacto && !st.leitura ? 'ativo' : ''}" aria-pressed="${st.compacto && !st.leitura}" onclick="modoGrade('${cfg.id}', true)" title="Só o essencial"><i class="fa-solid fa-table-list mr-1"></i>Compacto</button><button type="button" class="${st.leitura ? 'ativo' : ''}" aria-pressed="${!!st.leitura}" onclick="modoGrade('${cfg.id}', true, true)" title="Mostra o assunto e o nº do processo inteiros, mesmo que a linha fique mais alta"><i class="fa-solid fa-align-left mr-1"></i>Texto completo</button></div>` : ''}
         <button type="button" class="btn btn-sec !h-9 ${st.mostrarFiltros ? '!border-blue-500' : ''}" onclick="alternarFiltrosGrade('${cfg.id}')"><i class="fa-solid fa-filter"></i>Filtros</button>
         <button type="button" class="btn btn-sec !h-9" onclick="exportarGrade('${cfg.id}')"><i class="fa-solid fa-file-csv"></i>CSV</button>
         ${cfg.botaoNovo && podeEditar ? cfg.botaoNovo : ''}
       </div>
     </div>
     <div class="gs-lote" id="gs-lote-${cfg.id}" hidden></div>
-    <div class="gs-caixa scrollbar-thin ${st.compacto ? 'gs-compacto' : ''}" id="gs-${cfg.id}" tabindex="0" onkeydown="teclaGrade(event,'${cfg.id}')">
+    <div class="gs-caixa scrollbar-thin ${st.compacto ? 'gs-compacto' : ''} ${st.leitura ? 'gs-leitura' : ''}" id="gs-${cfg.id}" tabindex="0" onkeydown="teclaGrade(event,'${cfg.id}')">
       <table class="gs" style="${flexivel ? `width:100%;min-width:${largura}px` : `width:max(100%, ${largura}px)`}"><colgroup>${colgroup}</colgroup>
         <thead><tr class="gs-letras"><th class="gs-canto" title="Selecionar tudo" onclick="selecionarTudo('${cfg.id}')"></th>${cols.map((c, i) => `<th data-ci="${i}" onclick="selecionarColuna('${cfg.id}', ${i}, event)">${letraCol(i)}</th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>
           <tr><th class="gs-num gs-cab-num">#</th>${cab}${cfg.acoes ? '<th class="gs-acoes gs-acoes-cab"><i class="fa-solid fa-bolt mr-1"></i>Ações</th>' : ''}</tr>${filtros}</thead>
@@ -3955,7 +3981,7 @@ async function executarLote(id, i, btn) {
 
 /* ----- utilidades da planilha ----- */
 function rerenderGrade(id) { const g = Grades[id]; if (g && g.cfg) renderAba(); }
-function modoGrade(id, compacto) { const st = Grades[id]; st.compacto = compacto; try { localStorage.setItem('gabdoc_compacto_' + id, compacto ? '1' : '0'); } catch (e) {} if (st.ativa) st.ativa.ci = 0; st.faixa = null; rerenderGrade(id); }
+function modoGrade(id, compacto, leitura) { const st = Grades[id]; st.compacto = !!(compacto || leitura); st.leitura = !!leitura; try { localStorage.setItem('gabdoc_compacto_' + id, leitura ? 'L' : compacto ? '1' : '0'); } catch (e) {} if (st.ativa) st.ativa.ci = 0; st.faixa = null; rerenderGrade(id); }
 function ordenarGrade(id, key) { const st = Grades[id]; if (st.ordem === key) { if (st.dir > 0) st.dir = -1; else { st.ordem = null; st.dir = 1; } } else { st.ordem = key; st.dir = 1; } rerenderGrade(id); }
 function buscarGrade(id, el) { Grades[id].busca = el.value; const pos = el.selectionStart; rerenderGrade(id); const n = $('gs-busca-' + id); if (n) { n.focus(); n.setSelectionRange(pos, pos); } }
 function filtrarGrade(id, el) { Grades[id].filtros[el.dataset.k] = el.value; const k = el.dataset.k, pos = el.selectionStart; rerenderGrade(id); const n = document.querySelector(`#gs-${id} .gs-filtro[data-k="${k}"]`); if (n) { n.focus(); n.setSelectionRange(pos, pos); } }
@@ -5201,6 +5227,7 @@ async function copiarSemana(btn) {
 // pré-visualização em HTML na tela e PDF de verdade (pdfmake, texto selecionável),
 // com cabeçalho institucional, selo do GABDoc e código de verificação.
 const TEMAS_REL = [
+  { k: 'personalizado', rot: 'Relatório personalizado', ico: 'fa-sliders', cor: '#0f766e', desc: 'Você escolhe o que entra: situações, processos ou documentos, prazos, colunas…' },
   { k: 'geral', rot: 'Relatório geral do Gabinete', ico: 'fa-building-columns', cor: '#2563eb', desc: 'Números, gráficos, secretarias, prazos e Casa Civil' },
   { k: 'mesa', rot: 'Em andamento', ico: 'fa-arrows-spin', cor: '#2563eb', desc: 'Documentos em andamento no Gabinete' },
   { k: 'urgentes', rot: 'Prioridades e prazos vencidos', ico: 'fa-triangle-exclamation', cor: '#dc2626', desc: 'O que precisa de atenção agora' },
@@ -5223,8 +5250,10 @@ const ESTILOS_REL = {
 const relEstado = (() => {
   let salvo = {}; try { salvo = JSON.parse(localStorage.getItem('gabdoc_rel') || '{}'); } catch (e) { salvo = {}; }
   return Object.assign({ tema: 'geral', periodo: '90', secretaria: '', municipio: '', estilo: 'azul', orientacao: 'retrato',
-    resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes' }, salvo);
+    resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
+    cols: ['numero', 'assunto', 'natureza', 'secretaria', 'status', 'prazo', 'andamento'], ordem: 'prazo', agrupar: '', tituloPers: '', cenario: '' }, salvo, { f: Object.assign(relFiltroPadrao(), salvo.f || {}) });
 })();
+function relFiltroPadrao() { return { nat: [], st: [], tipos: [], secs: [], mun: '', prio: '', cc: '', prazo: '', ref: 'recebidoEm', busca: '' }; }
 function guardarRel() { try { localStorage.setItem('gabdoc_rel', JSON.stringify({ ...relEstado, obs: '' })); } catch (e) {} }
 function relSet(k, v, redesenhar = true) { relEstado[k] = v; guardarRel(); if (redesenhar) renderRelatorios(); else agendarPrevia(); }
 let relTimer = null;
@@ -5262,6 +5291,129 @@ function graficoMeses(lista, n = 6) {
     { rot: L('filtro.feito'), dados: meses.map(m => lista.filter(s => FEITO(s) && (s.assinadoEm || '').slice(0, 7) === m).length), cor: '#16a34a' }] };
 }
 
+/* ----- filtros de registros (valem para todos os temas de solicitações) ----- */
+const SOL_TEMAS_REL = ['personalizado', 'geral', 'mesa', 'urgentes', 'secretaria', 'municipio', 'casacivil', 'movimentacoes', 'equipe'];
+const NAT_REL = { processo: ['Processos', 'fa-folder-open', ehProcesso], assinatura: ['Documentos para assinatura', 'fa-file-signature', ehAssinatura] };
+const PRAZO_REL = [['', 'Todos'], ['vencido', 'Vencidos'], ['hoje', 'Vencem hoje'], ['7', 'Vencem em até 7 dias'], ['30', 'Vencem em até 30 dias'], ['com', 'Com prazo'], ['sem', 'Sem prazo']];
+const REF_REL = [['recebidoEm', 'Data de recebimento'], ['assinadoEm', 'Data de assinatura'], ['prazo', 'Data do prazo'], ['atualizadoEm', 'Última atualização'], ['nenhuma', 'Sem filtro de data']];
+const ABERTOS_REL = ['recebido', 'analise', 'ajuste'];
+const CENARIOS_REL = [
+  { k: 'assinados', rot: 'Documentos assinados', ico: 'fa-signature', cor: '#16a34a', f: { nat: ['assinatura'], st: ['assinado'], ref: 'assinadoEm' } },
+  { k: 'aguardando', rot: 'Documentos aguardando assinatura', ico: 'fa-file-signature', cor: '#4f46e5', f: { nat: ['assinatura'], st: ['recebido', 'analise'] } },
+  { k: 'processos', rot: 'Processos em aberto', ico: 'fa-folder-open', cor: '#2563eb', f: { nat: ['processo'], st: ABERTOS_REL, ref: 'nenhuma' } },
+  { k: 'procfim', rot: 'Processos concluídos', ico: 'fa-folder-closed', cor: '#0d9488', f: { nat: ['processo'], st: ['assinado', 'expedido'], ref: 'atualizadoEm' } },
+  { k: 'vencidos', rot: 'Prazos vencidos', ico: 'fa-hourglass-end', cor: '#dc2626', f: { prazo: 'vencido', ref: 'nenhuma' } },
+  { k: 'semana', rot: 'Vencem nos próximos 7 dias', ico: 'fa-hourglass-half', cor: '#ea580c', f: { prazo: '7', st: ABERTOS_REL, ref: 'nenhuma' } },
+  { k: 'devolvidos', rot: 'Devolvidos para correção', ico: 'fa-rotate-left', cor: '#d97706', f: { st: ['ajuste'], ref: 'nenhuma' } },
+  { k: 'prioridades', rot: 'Prioridades em aberto', ico: 'fa-triangle-exclamation', cor: '#dc2626', f: { prio: 'sim', st: ABERTOS_REL, ref: 'nenhuma' } },
+  { k: 'arquivados', rot: 'Arquivados', ico: 'fa-box-archive', cor: '#64748b', f: { st: ['expedido'], ref: 'atualizadoEm' } },
+  { k: 'cancelados', rot: 'Cancelados', ico: 'fa-ban', cor: '#6b7280', f: { st: ['cancelado'], ref: 'atualizadoEm' } },
+  { k: 'casacivil', rot: 'Na Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', f: { cc: 'sim', ref: 'nenhuma' } }
+];
+const natRotulo = s => ehProcesso(s) && /assinatura/i.test(String(s.natureza || '')) ? 'Assinatura + Processo' : ehProcesso(s) ? 'Processo' : 'Documento para assinatura';
+const COLS_REL = {
+  numero: ['Nº do processo', 'auto', s => s.numero || 's/ nº'],
+  assunto: ['Assunto', '*', s => s.assunto || ''],
+  natureza: ['Natureza', 'auto', natRotulo],
+  tipo: ['Tipo', 'auto', s => (TIPOS[s.tipo] || TIPOS.outro).curto],
+  secretaria: ['Secretaria', 'auto', s => secDe(s).join(', ') || '—'],
+  responsavel: ['Solicitante', 'auto', s => s.responsavel || '—'],
+  municipio: ['Município', 'auto', s => s.municipio || '—'],
+  status: ['Situação', 'auto', s => STATUS[s.status] ? STATUS[s.status].rot : (s.status || '—')],
+  recebido: ['Recebido', 'auto', s => fmt(s.recebidoEm)],
+  prazo: ['Prazo', 'auto', s => s.prazo ? fmt(s.prazo) : '—'],
+  andamento: ['Andamento do prazo', 'auto', s => textoPrazo(s)],
+  assinado: ['Assinado em', 'auto', s => s.assinadoEm ? fmt(s.assinadoEm) : '—'],
+  prioridade: ['Prioridade', 'auto', s => s.urgente ? 'Sim' : '—'],
+  casacivil: ['Casa Civil', 'auto', s => s.casaCivil ? ((ETAPAS_CC[s.ccEtapa || 'preparo'] || {}).rot || 'Sim') : '—'],
+  observacoes: ['Observações', '*', s => s.observacoes || '']
+};
+const ORDENS_REL = [['prazo', 'Prazo (vencidos primeiro)'], ['recebido', 'Recebimento (mais recentes)'], ['assinado', 'Assinatura (mais recentes)'], ['numero', 'Nº do processo'], ['status', 'Situação'], ['secretaria', 'Secretaria'], ['assunto', 'Assunto (A–Z)']];
+const GRUPOS_REL = [['', 'Sem agrupar'], ['status', 'Situação'], ['natureza', 'Natureza'], ['secretaria', 'Secretaria'], ['tipo', 'Tipo de documento'], ['municipio', 'Município'], ['mes', 'Mês de recebimento']];
+function ordenarRel(lista, ordem) {
+  const kStatus = Object.keys(STATUS), txt = (a, b) => String(a || '').localeCompare(String(b || ''), 'pt-BR', { numeric: true, sensitivity: 'base' });
+  const f = {
+    prazo: (a, b) => (FEITO(a) - FEITO(b)) || ((!a.prazo) - (!b.prazo)) || String(a.prazo || '').localeCompare(String(b.prazo || '')) || txt(a.numero, b.numero),
+    recebido: (a, b) => String(b.recebidoEm || '').localeCompare(String(a.recebidoEm || '')),
+    assinado: (a, b) => String(b.assinadoEm || '').localeCompare(String(a.assinadoEm || '')),
+    numero: (a, b) => txt(a.numero, b.numero),
+    status: (a, b) => (kStatus.indexOf(a.status) - kStatus.indexOf(b.status)) || String(a.prazo || '9').localeCompare(String(b.prazo || '9')),
+    secretaria: (a, b) => txt(secDe(a)[0] || '~', secDe(b)[0] || '~'),
+    assunto: (a, b) => txt(a.assunto, b.assunto)
+  }[ordem] || ((a, b) => 0);
+  return lista.slice().sort(f);
+}
+function grupoRel(s, g) {
+  if (g === 'status') return STATUS[s.status] ? STATUS[s.status].rot : 'Sem situação';
+  if (g === 'natureza') return natRotulo(s);
+  if (g === 'secretaria') return secDe(s)[0] ? secDe(s)[0] + (NOME_SEC[secDe(s)[0]] ? ' · ' + NOME_SEC[secDe(s)[0]] : '') : 'Sem secretaria';
+  if (g === 'tipo') return (TIPOS[s.tipo] || TIPOS.outro).rot;
+  if (g === 'municipio') return s.municipio || 'Sem município';
+  if (g === 'mes') { const m = String(s.recebidoEm || '').slice(0, 7); return m ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][Number(m.slice(5)) - 1] + ' de ' + m.slice(0, 4) : 'Sem data'; }
+  return '';
+}
+/** Aplica os filtros de registros. comPeriodo=true também filtra pela data de referência escolhida (relatório personalizado). */
+function filtrarSolRel(lista, comPeriodo) {
+  const f = relEstado.f, P = periodoRel();
+  const busca = Utils_norm(f.busca || '').trim();
+  return lista.filter(s => {
+    if (f.nat.length && !f.nat.some(n => NAT_REL[n] && NAT_REL[n][2](s))) return false;
+    if (f.st.length && !f.st.includes(s.status)) return false;
+    if (f.tipos.length && !f.tipos.includes(s.tipo)) return false;
+    if (f.secs.length && !secDe(s).some(x => f.secs.includes(x))) return false;
+    if (f.mun && s.municipio !== f.mun) return false;
+    if (f.prio === 'sim' && !s.urgente) return false;
+    if (f.prio === 'nao' && s.urgente) return false;
+    if (f.cc === 'sim' && !s.casaCivil) return false;
+    if (f.cc === 'nao' && s.casaCivil) return false;
+    if (f.prazo) {
+      const d = s.prazo ? diasAte(s.prazo) : null, aberto = !FEITO(s);
+      if (f.prazo === 'sem' && s.prazo) return false;
+      if (f.prazo === 'com' && !s.prazo) return false;
+      if (f.prazo === 'vencido' && !(aberto && d !== null && d < 0)) return false;
+      if (f.prazo === 'hoje' && !(aberto && d === 0)) return false;
+      if ((f.prazo === '7' || f.prazo === '30') && !(aberto && d !== null && d >= 0 && d <= Number(f.prazo))) return false;
+    }
+    if (busca && !Utils_norm([s.numero, s.assunto, s.responsavel, s.interessado, s.observacoes, s.origem].join(' ')).includes(busca)) return false;
+    if (comPeriodo && f.ref !== 'nenhuma' && P.ini) {
+      const d = f.ref === 'atualizadoEm' ? (s.atualizadoEm || s.assinadoEm || s.recebidoEm) : s[f.ref];
+      if (!d) return false;
+      if (f.ref === 'prazo') { if (String(d).slice(0, 10) < P.ini) return false; } else if (!P.dentro(d)) return false;
+    }
+    return true;
+  });
+}
+function filtrosAtivosRel() {
+  const f = relEstado.f, out = [];
+  if (f.nat.length) out.push(f.nat.map(n => NAT_REL[n][0]).join(' e '));
+  if (f.st.length) out.push(f.st.map(k => STATUS[k] ? STATUS[k].rot : k).join(', '));
+  if (f.prazo) out.push((PRAZO_REL.find(x => x[0] === f.prazo) || [])[1]);
+  if (f.prio) out.push(f.prio === 'sim' ? 'Só prioridades' : 'Sem prioridade');
+  if (f.cc) out.push(f.cc === 'sim' ? 'Na Casa Civil' : 'Fora da Casa Civil');
+  if (f.secs.length) out.push(f.secs.join(', '));
+  if (f.tipos.length) out.push(f.tipos.map(t => (TIPOS[t] || {}).curto || t).join(', '));
+  if (f.mun) out.push(f.mun);
+  if (f.busca) out.push('“' + f.busca + '”');
+  return out.filter(Boolean);
+}
+function relFiltro(k, v) { relEstado.f[k] = v; relEstado.cenario = ''; guardarRel(); renderRelatorios(); }
+function relAlternar(k, v) { const a = relEstado.f[k]; relFiltro(k, a.includes(v) ? a.filter(x => x !== v) : a.concat([v])); }
+function relColuna(k) { const c = relEstado.cols; relEstado.cols = c.includes(k) ? c.filter(x => x !== k) : Object.keys(COLS_REL).filter(x => x === k || c.includes(x)); if (!relEstado.cols.length) relEstado.cols = ['assunto']; guardarRel(); renderRelatorios(); }
+function relCenario(k) {
+  const c = CENARIOS_REL.find(x => x.k === k); if (!c) return;
+  relEstado.tema = 'personalizado'; relEstado.cenario = k; relEstado.tituloPers = '';
+  relEstado.f = Object.assign(relFiltroPadrao(), JSON.parse(JSON.stringify(c.f)));
+  if (c.f.ref === 'nenhuma') relEstado.ordem = 'prazo'; else if (c.f.ref === 'assinadoEm') relEstado.ordem = 'assinado';
+  guardarRel(); renderRelatorios();
+}
+function relLimparFiltros() { relEstado.f = relFiltroPadrao(); relEstado.cenario = ''; guardarRel(); renderRelatorios(); }
+function tituloRel() {
+  if (relEstado.tema !== 'personalizado') return nomeTema(relEstado.tema);
+  if (relEstado.tituloPers.trim()) return relEstado.tituloPers.trim();
+  const c = CENARIOS_REL.find(x => x.k === relEstado.cenario);
+  return c ? c.rot : 'Relatório personalizado';
+}
+
 /* ----- montagem por tema ----- */
 function montarRelatorio() {
   const e = relEstado, P = periodoRel(), B = [];
@@ -5270,8 +5422,37 @@ function montarRelatorio() {
   const graf = g => e.graficos && g ? { t: 'grafico', ...g } : null;
   const kp = itens => e.resumo ? { t: 'kpis', itens } : null;
   let subtitulo = P.rot;
-  const sols = Store.sol;
+  const sols = filtrarSolRel(Store.sol, false);
+  const filtrosTxt = filtrosAtivosRel();
   switch (e.tema) {
+    case 'personalizado': {
+      const l = ordenarRel(filtrarSolRel(Store.sol, true), e.ordem);
+      const ref = (REF_REL.find(x => x[0] === e.f.ref) || REF_REL[0]);
+      subtitulo = [filtrosTxt.join(' · '), e.f.ref === 'nenhuma' ? 'Situação em ' + fmt(hojeISO()) : P.rot + ' (' + ref[1].toLowerCase() + ')'].filter(Boolean).join(' · ');
+      const abertos = l.filter(s => !FEITO(s));
+      add(kp([{ rot: 'Registros', val: l.length, cor: '#0f766e' }, { rot: 'Em aberto', val: abertos.length, cor: '#4f46e5' }, { rot: STATUS.assinado.rot, val: l.filter(s => s.status === 'assinado').length, cor: '#16a34a' },
+        { rot: 'Vencidos', val: abertos.filter(s => situacao(s) === 'vencido').length, cor: '#dc2626' }, { rot: 'Prioridades', val: abertos.filter(s => s.urgente).length, cor: '#ea580c' }]));
+      if (l.length) {
+        add(graf(graficoStatus(l)));
+        const porSec = SECRETARIAS.map(sg => [sg, l.filter(s => secDe(s).includes(sg)).length]).filter(r => r[1]);
+        if (porSec.length > 1) add(graf({ tipo: 'hbar', titulo: 'Registros por secretaria', labels: porSec.map(r => r[0]), series: [{ rot: 'Registros', dados: porSec.map(r => r[1]), cores: porSec.map(r => COR_SEC[r[0]] || '#64748b') }] }));
+      }
+      const cols = e.cols.filter(k => COLS_REL[k]);
+      const colunas = cols.map(k => ({ rot: COLS_REL[k][0], w: COLS_REL[k][1] }));
+      const linhas = lista => lista.map(s => cols.map(k => COLS_REL[k][2](s)));
+      if (e.agrupar) {
+        const grupos = new Map();
+        l.forEach(s => { const g = grupoRel(s, e.agrupar); if (!grupos.has(g)) grupos.set(g, []); grupos.get(g).push(s); });
+        const chaves = [...grupos.keys()];
+        if (e.agrupar === 'status') chaves.sort((a, b) => Object.values(STATUS).findIndex(x => x.rot === a) - Object.values(STATUS).findIndex(x => x.rot === b));
+        else if (e.agrupar === 'mes') chaves.sort((a, b) => String(grupos.get(b)[0].recebidoEm || '').localeCompare(String(grupos.get(a)[0].recebidoEm || '')));
+        else chaves.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        if (e.tabela && e.graficos && chaves.length > 1 && e.agrupar !== 'status') add(graf({ tipo: 'hbar', titulo: 'Registros por ' + (GRUPOS_REL.find(x => x[0] === e.agrupar) || [])[1].toLowerCase(), labels: chaves.slice(0, 14), series: [{ rot: 'Registros', dados: chaves.slice(0, 14).map(k => grupos.get(k).length), cor: '#0f766e' }] }));
+        chaves.forEach(k => add(tab(k, colunas, linhas(grupos.get(k)))));
+        if (!chaves.length) add(tab('Registros', colunas, [], 'Nenhum registro com esses filtros.'));
+      } else add(tab('Registros', colunas, linhas(l), 'Nenhum registro com esses filtros.'));
+      break;
+    }
     case 'geral': {
       add(kp(kpisSol(sols, P)));
       add({ t: 'texto', titulo: 'Síntese', paragrafos: [sinteseGeral(P)] });
@@ -5389,6 +5570,7 @@ function montarRelatorio() {
       break;
     }
   }
+  if (e.tema !== 'personalizado' && SOL_TEMAS_REL.includes(e.tema) && filtrosTxt.length) subtitulo += ' · Filtros: ' + filtrosTxt.join(' · ');
   // ----- anexos escolhidos (eventos, comunicados, mapa de MT) -----
   const anexos = anexosPermitidos();
   if (e.anexoMapa && anexos.mapa) { add({ t: 'secao', titulo: 'Mapa de Mato Grosso' }); add(blocoMapa(e.tema === 'municipio' ? e.municipio : '')); }
@@ -5409,7 +5591,7 @@ function montarRelatorio() {
   const unidade = (Store.config && Store.config.unidade) || 'Gabinete da Secretária · Assessoria';
   const agora = new Date();
   const autor = (Store.sessao && Store.sessao.usuario) || (Store.eu && Store.eu.name) || 'Assessoria';
-  const modelo = { titulo: nomeTema(e.tema), subtitulo, orgao, unidade, autor, emitidoEm: agora, blocos: B, estilo: ESTILOS_REL[e.estilo] || ESTILOS_REL.azul, paisagem: e.orientacao === 'paisagem',
+  const modelo = { titulo: tituloRel(), subtitulo, orgao, unidade, autor, emitidoEm: agora, blocos: B, estilo: ESTILOS_REL[e.estilo] || ESTILOS_REL.azul, paisagem: e.orientacao === 'paisagem',
     assinatura: e.assinatura ? { nome: e.responsavel || autor, cargo: e.cargo || '' } : null };
   modelo.codigo = codigoVerificacao(modelo);
   return modelo;
@@ -5649,9 +5831,15 @@ function renderRelatorios() {
   destruirGraficos();
   if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
   const e = relEstado;
-  const temas = TEMAS_REL.filter(t => { const a = { geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
+  const temas = TEMAS_REL.filter(t => { const a = { personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
   if (!temas.some(t => t.k === e.tema)) e.tema = (temas[0] || TEMAS_REL[0]).k;
-  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe'].includes(e.tema);
+  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
+  const ehSol = SOL_TEMAS_REL.includes(e.tema), pers = e.tema === 'personalizado', f = e.f;
+  const chipF = (k, v, rot, ico, cor) => `<button type="button" class="rel-fchip ${f[k].includes(v) ? 'ativo' : ''}" ${cor ? `style="--c:${cor}"` : ''} aria-pressed="${f[k].includes(v)}" onclick="relAlternar('${k}','${esc(v)}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${esc(rot)}</button>`;
+  const selF = (k, lista, rot) => `<label class="block"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="relFiltro('${k}',this.value)">${lista.map(([v, r]) => `<option value="${esc(v)}" ${String(f[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`;
+  const nRegs = ehSol ? (pers ? filtrarSolRel(Store.sol, true) : filtrarSolRel(Store.sol, false)).length : 0;
+  const ativos = filtrosAtivosRel();
+  const maisAberto = !!(f.secs.length || f.tipos.length || f.mun || f.busca);
   const muns = [...new Set(Store.sol.map(s => s.municipio).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   const opc = (k, lista) => lista.map(([v, r]) => `<option value="${esc(v)}" ${String(e[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('');
   const chk = (k, rot, ico) => `<label class="rel-chk"><input type="checkbox" ${e[k] ? 'checked' : ''} onchange="relSet('${k}',this.checked)"><span><i class="fa-solid ${ico}"></i>${rot}</span></label>`;
@@ -5663,11 +5851,43 @@ function renderRelatorios() {
       </div>
       <div class="dv-card space-y-3">
         <p class="rel-passo"><span>2</span>Filtros</p>
+        ${ehSol ? `<div><span class="rotulo">Cenários prontos <span class="text-ink3 font-normal normal-case tracking-normal">· um clique monta o relatório</span></span>
+          <div class="rel-cenarios">${CENARIOS_REL.map(c => `<button type="button" class="rel-cenario ${pers && e.cenario === c.k ? 'ativo' : ''}" style="--c:${c.cor}" onclick="relCenario('${c.k}')"><i class="fa-solid ${c.ico}"></i>${esc(c.rot)}</button>`).join('')}</div></div>` : ''}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <label class="block ${usaPeriodo ? '' : 'opacity-50'}"><span class="rotulo">Período</span><select class="campo w-full" ${usaPeriodo ? '' : 'disabled title="Este tema mostra a situação de hoje"'} onchange="relSet('periodo',this.value)">${opc('periodo', [['30', 'Últimos 30 dias'], ['90', 'Últimos 90 dias'], ['180', 'Últimos 6 meses'], ['365', 'Últimos 12 meses'], ['mes', 'Mês atual'], ['ano', 'Ano atual'], ['tudo', 'Todo o período']])}</select></label>
+          <label class="block ${usaPeriodo ? '' : 'opacity-50'}"><span class="rotulo">Período</span><select class="campo w-full" ${usaPeriodo ? '' : 'disabled title="Este relatório mostra a situação de hoje"'} onchange="relSet('periodo',this.value)">${opc('periodo', [['30', 'Últimos 30 dias'], ['90', 'Últimos 90 dias'], ['180', 'Últimos 6 meses'], ['365', 'Últimos 12 meses'], ['mes', 'Mês atual'], ['ano', 'Ano atual'], ['tudo', 'Todo o período']])}</select></label>
+          ${pers ? selF('ref', REF_REL, 'O período considera') : ''}
           ${e.tema === 'secretaria' ? `<label class="block"><span class="rotulo">Secretaria adjunta</span><select class="campo w-full" onchange="relSet('secretaria',this.value)">${opc('secretaria', SECRETARIAS.map(s => [s, s + (NOME_SEC[s] ? ' · ' + NOME_SEC[s] : '')]))}</select></label>` : ''}
           ${e.tema === 'municipio' ? `<label class="block"><span class="rotulo">Município</span><select class="campo w-full" onchange="relSet('municipio',this.value)">${opc('municipio', (muns.length ? muns : ['Cuiabá']).map(m => [m, m]))}</select></label>` : ''}
         </div>
+        ${ehSol ? `<div class="rel-filtros">
+          <div><span class="rotulo">O que entra no relatório</span><div class="flex flex-wrap gap-1.5">${Object.entries(NAT_REL).map(([k, v]) => chipF('nat', k, v[0], v[1])).join('')}</div></div>
+          <div><span class="rotulo">Situações</span><div class="flex flex-wrap gap-1.5">${Object.keys(STATUS).map(k => chipF('st', k, STATUS[k].rot, '', STATUS[k].cor)).join('')}</div></div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            ${selF('prazo', PRAZO_REL, 'Prazo')}
+            ${selF('prio', [['', 'Todas'], ['sim', 'Só prioridades'], ['nao', 'Sem prioridade']], 'Prioridade')}
+            ${selF('cc', [['', 'Todos'], ['sim', 'Só Casa Civil'], ['nao', 'Fora da Casa Civil']], 'Casa Civil')}
+          </div>
+          <details class="rel-mais" ${maisAberto ? 'open' : ''}><summary><i class="fa-solid fa-chevron-right"></i>Mais filtros <span class="text-ink3 font-normal">· secretarias, tipos, município e busca</span></summary>
+            <div class="space-y-3 pt-3">
+              ${e.tema !== 'secretaria' ? `<div><span class="rotulo">Secretarias</span><div class="flex flex-wrap gap-1.5">${SECRETARIAS.map(sg => chipF('secs', sg, sg, '', COR_SEC[sg])).join('')}</div></div>` : ''}
+              <div><span class="rotulo">Tipos de documento</span><div class="flex flex-wrap gap-1.5">${Object.keys(TIPOS).map(k => chipF('tipos', k, TIPOS[k].curto || TIPOS[k].rot)).join('')}</div></div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${e.tema !== 'municipio' ? selF('mun', [['', 'Todos os municípios']].concat(muns.map(m => [m, m])), 'Município') : ''}
+                <label class="block"><span class="rotulo">Contém o texto</span><input class="campo w-full" value="${esc(f.busca)}" placeholder="Nº, assunto, solicitante…" onchange="relFiltro('busca',this.value)"></label>
+              </div>
+            </div>
+          </details>
+          <div class="rel-resumo-f"><span><i class="fa-solid fa-filter"></i><b>${nRegs}</b> ${nRegs === 1 ? 'registro' : 'registros'}${ativos.length ? ' · ' + esc(ativos.join(' · ')) : ' · sem filtros'}</span>${ativos.length ? `<button type="button" class="btn btn-sec !h-8 !px-3 text-[12px]" onclick="relLimparFiltros()"><i class="fa-solid fa-xmark"></i>Limpar filtros</button>` : ''}</div>
+        </div>` : ''}
+        ${pers ? `<div class="rel-filtros">
+          <label class="block"><span class="rotulo">Título do relatório</span><input class="campo w-full" value="${esc(e.tituloPers)}" placeholder="${esc(tituloRel())}" oninput="relSet('tituloPers',this.value,false)"></label>
+          <div><span class="rotulo">Colunas da tabela</span><div class="flex flex-wrap gap-1.5">${Object.entries(COLS_REL).map(([k, v]) => `<button type="button" class="rel-fchip ${e.cols.includes(k) ? 'ativo' : ''}" aria-pressed="${e.cols.includes(k)}" onclick="relColuna('${k}')">${esc(v[0])}</button>`).join('')}</div>
+            ${e.cols.length > 7 && e.orientacao !== 'paisagem' ? `<p class="text-[11.5px] text-ink3 mt-1.5"><i class="fa-solid fa-lightbulb"></i> Com muitas colunas, a orientação <b>Paisagem</b> fica mais legível.</p>` : ''}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="block"><span class="rotulo">Ordenar por</span><select class="campo w-full" onchange="relSet('ordem',this.value)">${opc('ordem', ORDENS_REL)}</select></label>
+            <label class="block"><span class="rotulo">Agrupar por</span><select class="campo w-full" onchange="relSet('agrupar',this.value)">${opc('agrupar', GRUPOS_REL)}</select></label>
+          </div>
+        </div>` : ''}
         ${(() => { const ax = anexosPermitidos(); const itens = [ax.eventos && e.tema !== 'eventos' ? chk('anexoEventos', 'Eventos', 'fa-calendar-check') : '', ax.comunicados && e.tema !== 'comunicados' ? chk('anexoComunicados', 'Comunicados importantes', 'fa-bullhorn') : '', ax.mapa ? chk('anexoMapa', 'Mapa de MT', 'fa-map-location-dot') : ''].filter(Boolean);
           return itens.length ? `<div><span class="rotulo">Incluir também no relatório</span><div class="flex flex-wrap gap-2">${itens.join('')}</div>
             ${e.anexoMapa && ax.mapa ? `<label class="block mt-2 max-w-xs"><span class="rotulo">O que o mapa mostra</span><select class="campo w-full" onchange="relSet('mapaMetrica',this.value)">${opc('mapaMetrica', Object.entries(METRICAS_MAPA).map(([k, v]) => [k, v[0]]))}</select></label>` : ''}</div>` : ''; })()}
