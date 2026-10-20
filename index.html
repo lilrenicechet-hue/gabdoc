@@ -202,6 +202,14 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nav-btn.nav-sub { padding-left: 22px; font-size: 13.5px; }
   .nav-btn.nav-sub .ico { font-size: 13px; }
   html.sb-mini #sidebar .nav-btn.nav-sub { padding-left: 0; }
+  .gs-prazo { display: inline-flex; align-items: baseline; gap: 6px; font-size: 12.5px; white-space: nowrap; }
+  .gs-prazo b { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .gs-prazo small { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 99px; }
+  .gs-prazo.vencido small { color: #fff; background: var(--urg); } .gs-prazo.vencido b { color: var(--urg); }
+  .gs-prazo.hoje small { color: #fff; background: #ea580c; }
+  .gs-prazo.proximo small { color: #92400e; background: color-mix(in srgb, #f59e0b 22%, var(--card)); }
+  .gs-prazo.ok small { color: var(--ink3); background: var(--card2); }
+  .gs-prazo.feito b { color: var(--ink3); font-weight: 600; }
   /* ---------- Usuários online ---------- */
   .online-btn { width: 100%; display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.28); color: #e2e8f0; text-align: left; transition: background-color .15s, border-color .15s; }
   .online-btn:hover { background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.45); }
@@ -3622,8 +3630,9 @@ function renderGrade(cont, cfg) {
   const flexivel = st.compacto ? cols.find(c => c.flex) : null;
   const largura = 46 + cols.reduce((a, c) => a + (c === flexivel ? 200 : (c.w || 140)), 0) + larguraAcoes;
   const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${c.w || 140}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
-  const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="Ordenar por ${esc(c.rot)}">
-      <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}</th>`).join('');
+  const padraoCol = !st.ordem && cfg.ordemColuna;
+  const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key || padraoCol === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="${padraoCol === c.key ? 'Ordenado por prazo: vencidos e mais apertados primeiro' : 'Ordenar por ' + esc(c.rot)}">
+      <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : padraoCol === c.key ? '<i class="fa-solid fa-arrow-down-short-wide text-[10px]"></i>' : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}</th>`).join('');
   const filtros = st.mostrarFiltros ? `<tr class="gs-filtros"><th class="gs-num"><i class="fa-solid fa-filter text-[10px]"></i></th>${cols.map(c => `<th><input class="gs-filtro" data-k="${c.key}" value="${esc(st.filtros[c.key] || '')}" placeholder="Filtrar…" oninput="filtrarGrade('${cfg.id}', this)" aria-label="Filtrar ${esc(c.rot)}"></th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>` : '';
   const iniFim = cfg.finalizado ? L.findIndex(r => cfg.finalizado(r)) : -1;
   const corpo = L.map((r, ri) => `<tr data-ri="${ri}" data-id="${esc(r.id)}" class="${ri === iniFim && ri > 0 ? 'gs-ini-fim ' : ''}${cfg.classeLinha ? cfg.classeLinha(r) : ''}${Grav.pendente(r.id) ? ' gs-pend' : ''}">
@@ -4022,6 +4031,19 @@ function colunasSolBase() {
     { key: 'observacoes', rot: 'Observações', w: 260, tipo: 'texto', editavel: true }
   ];
 }
+/** Processos e Documentos para assinatura: a coluna G é o Prazo (com a contagem), em ordem dos mais apertados. */
+function colunasVisao() {
+  const base = colunasSolBase(), por = k => base.find(c => c.key === k);
+  const prazo = { ...por('prazo'), rot: 'Prazo', w: 222, wCompacta: 212, render: s => celPrazoData(s) };
+  return [por('numero'), { ...por('assunto'), w: 290 }, { ...por('natureza'), w: 160 }, por('tipo'), por('origem'), { ...por('responsavel'), w: 160 }]
+    .concat([prazo], ['status', 'municipio', 'recebidoEm', 'urgente', 'casaCivil', 'observacoes'].map(por));
+}
+function celPrazoData(s) {
+  if (!s.prazo) return '<span class="prazo sem !text-[12px]">Sem prazo</span>';
+  const sit = situacao(s), d = diasAte(s.prazo);
+  const extra = sit === 'feito' ? '' : d < 0 ? `vencido há ${-d}d` : d === 0 ? 'vence hoje' : d === 1 ? 'amanhã' : `em ${d} dias`;
+  return `<span class="gs-prazo ${sit}"><b>${fmt(s.prazo)}</b>${extra ? `<small>${extra}</small>` : ''}</span>`;
+}
 function preencherListaResp() {
   const dl = $('lista-resp');
   if (dl) dl.innerHTML = [...new Set(Store.sol.map(x => x.responsavel).filter(Boolean))].sort().map(n => `<option value="${esc(n)}">`).join('');
@@ -4096,8 +4118,9 @@ function renderVisaoGestao(k) {
     .concat(k === 'mesa' ? [['proc', L('filtro.proc'), ehProcesso, '#0d9488'], ['ass', 'Para assinatura', ehAssinatura, '#2563eb']] : [])
     .concat([['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']]);
   renderGrade(cont, {
-    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: colunasSolBase(),
-    compactas: ['numero', 'assunto', 'tipo', 'origem', 'status'],
+    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: k === 'mesa' ? colunasSolBase() : colunasVisao(),
+    compactas: k === 'mesa' ? ['numero', 'assunto', 'tipo', 'origem', 'status'] : ['numero', 'assunto', 'tipo', 'origem', 'prazo', 'status'],
+    ordemColuna: 'prazo',
     finalizado: FEITO,
     ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
