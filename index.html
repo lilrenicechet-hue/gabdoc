@@ -197,6 +197,8 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .linha .faixa-c { background: var(--c, var(--line)); }
   .pers-previa-acoes { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; background: var(--card2); }
   .pers-previa-acoes .gs-acao { pointer-events: none; margin: 0 !important; }
+  .menu-acoes .menu-sub { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); padding: 6px 10px 2px; }
+  .det-mudar { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 8px; border-left: 1px solid var(--line); }
   /* ---------- Seletor de período ---------- */
   .sp { --c: var(--brand); border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--card); }
   .sp .ag-seg button.on { color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
@@ -1163,7 +1165,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <div class="flex flex-wrap gap-2 items-center text-[12.5px]">
               <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-urg" class="accent-red-600 w-4 h-4"> Só prioridades</label>
               <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-cc" class="accent-violet-600 w-4 h-4"> Só Casa Civil</label>
-              <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-concl" class="w-4 h-4"> Mostrar expedidos/arquivados</label>
+              <label class="inline-flex items-center gap-2 font-semibold text-ink2"><input type="checkbox" id="f-concl" class="w-4 h-4"> Mostrar arquivados e cancelados</label>
               <span class="ml-auto text-ink3" id="f-contagem"></span>
             </div>
           </div>
@@ -1320,7 +1322,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <div class="dv-seg" id="mov-periodo"><button data-p="1">Hoje</button><button data-p="7">7 dias</button><button data-p="30">30 dias</button><button data-p="">Tudo</button></div>
             <select id="mov-usuario" class="campo" aria-label="Usuário"></select>
             <select id="mov-tipo" class="campo" aria-label="Tipo de movimentação">
-              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Encaminhamentos à mesa</option><option value="ajuste">Devoluções</option><option value="urgente">Prioridade</option><option value="casa">Casa Civil</option>
+              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Em andamento</option><option value="ajuste">Devoluções</option><option value="urgente">Prioridade</option><option value="casa">Casa Civil</option>
             </select>
             <div class="relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input id="mov-busca" class="campo w-full !pl-8" placeholder="Buscar ação, assunto, nº ou observação" aria-label="Buscar movimentação"></div>
           </div>
@@ -1366,12 +1368,12 @@ const TIPOS = {
   outro:     { rot: 'Outros documentos',   curto: 'Outros',    ico: 'fa-folder',              cor: '#64748b' }
 };
 const STATUS = {
-  recebido:   { rot: 'Recebido',              ico: 'fa-inbox',               cor: '#64748b' },
-  analise:    { rot: 'Em análise',            ico: 'fa-magnifying-glass',    cor: '#2563eb' },
-  ajuste:     { rot: 'Devolvido p/ ajuste',   ico: 'fa-rotate-left',         cor: '#ea580c' },
-  aguardando: { rot: 'Na mesa p/ assinatura', ico: 'fa-pen-nib',             cor: '#4f46e5' },
-  assinado:   { rot: 'Assinado',              ico: 'fa-signature',           cor: '#16a34a' },
-  expedido:   { rot: 'Expedido / arquivado',  ico: 'fa-box-archive',         cor: '#0f766e' }
+  recebido:   { rot: 'Pendente',                ico: 'fa-hourglass-start',  cor: '#d97706' },
+  analise:    { rot: 'Em andamento',            ico: 'fa-arrows-spin',      cor: '#2563eb' },
+  assinado:   { rot: 'Assinado',                ico: 'fa-signature',        cor: '#16a34a' },
+  ajuste:     { rot: 'Devolvido para correção', ico: 'fa-rotate-left',      cor: '#db2777' },
+  expedido:   { rot: 'Arquivado',               ico: 'fa-box-archive',      cor: '#0f766e' },
+  cancelado:  { rot: 'Cancelado',               ico: 'fa-ban',              cor: '#6b7280' }
 };
 const ETAPAS_CC = {
   preparo:    { rot: 'Em preparo no Gabinete', ico: 'fa-pen-ruler',          cor: '#64748b' },
@@ -1389,7 +1391,10 @@ const TIPOS_AGENDA = {
 };
 const UNIDADES = ['Gabinete da Secretária', 'Secretaria Adjunta de Gestão Educacional', 'Secretaria Adjunta de Gestão de Pessoas', 'Secretaria Adjunta de Administração Sistêmica', 'Secretaria Adjunta de Infraestrutura e Patrimônio', 'Secretaria Adjunta Executiva', 'Assessoria Jurídica', 'Unidade de Controle Interno', 'Coordenadoria de Transporte Escolar', 'Coordenadoria de Alimentação Escolar', 'Diretoria Regional de Educação', 'Casa Civil', 'Prefeitura Municipal', 'Assembleia Legislativa', 'Ministério Público', 'Tribunal de Contas do Estado'];
 const SECRETARIAS = ['GS', 'SAEX', 'SAGE', 'SAGP', 'SAIP', 'SAGR', 'SARC', 'SAAS'];
-const FEITO = s => s.status === 'assinado' || s.status === 'expedido';
+const FEITO = s => s.status === 'assinado' || s.status === 'expedido' || s.status === 'cancelado';
+/** Situações antigas que já vieram de outras versões: "Na mesa" virou "Em andamento". */
+const STATUS_ANTIGO = { aguardando: 'analise' };
+const normSol = s => { if (STATUS_ANTIGO[s.status]) s.status = STATUS_ANTIGO[s.status]; if (!STATUS[s.status]) s.status = 'recebido'; return s; };
 const CC_ATIVO = s => s.casaCivil && s.ccEtapa !== 'concluido';
 
 /* ========================= Utilidades ========================= */
@@ -1415,7 +1420,7 @@ function situacao(s) {
 }
 function textoPrazo(s) {
   const sit = situacao(s);
-  if (sit === 'feito') return `Assinado ${s.assinadoEm ? 'em ' + fmtCurto(s.assinadoEm) : ''}`;
+  if (sit === 'feito') return s.status === 'cancelado' ? STATUS.cancelado.rot : s.status === 'expedido' && !s.assinadoEm ? STATUS.expedido.rot : `${STATUS.assinado.rot} ${s.assinadoEm ? 'em ' + fmtCurto(s.assinadoEm) : ''}`;
   if (sit === 'sem') return 'Sem prazo';
   const d = diasAte(s.prazo);
   if (d < 0) return `Vencido há ${-d} dia${d === -1 ? '' : 's'}`;
@@ -1547,7 +1552,7 @@ async function iniciarStore() {
   if (db) {
     Store.modo = 'nuvem';
     db.collection('solicitacoes').onSnapshot(snap => {
-      Store.sol = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      Store.sol = snap.docs.map(d => normSol({ id: d.id, ...d.data() }));
       Store.pronto = true; aoMudarDados();
     }, err => { statusSync('erro', err && err.message); });
     db.collection('correicao').onSnapshot(snap => {
@@ -1637,7 +1642,7 @@ let sincronizando = false;
 /** Aplica uma carga completa vinda do servidor (carregar ou resposta de lote). */
 function aplicarCarga(r) {
   if (!r.semMudanca) {
-    Store.sol = r.solicitacoes || [];
+    Store.sol = (r.solicitacoes || []).map(normSol);
     Store.agenda = r.agenda || [];
     Store.correicao = r.correicao || [];
     Store.eventos = r.eventos || [];
@@ -1652,20 +1657,25 @@ function aplicarCarga(r) {
   statusSync();
   if (!r.semMudanca) aoMudarDados();
 }
+let syncEmCurso = null;
 async function sincronizar(completo) {
-  if (Store.modo !== 'planilha' || !Store.sessao || sincronizando) return;
+  if (Store.modo !== 'planilha' || !Store.sessao) return;
+  // Já há uma carga em andamento: espera ela terminar (e refaz se foi pedida a carga completa e ainda não há dados)
+  if (sincronizando) { try { await syncEmCurso; } catch (e) {} if (!completo || Store.pronto) return; }
+  if (sincronizando) return;
   // Com gravações na fila, a carga do servidor apagaria as alterações ainda não salvas:
   // a sincronização fica para quando a fila esvaziar.
   if (Grav.ocupada()) { Grav.syncDepois = true; return; }
   sincronizando = true;
   const seq = Grav.seq;
+  let fim; syncEmCurso = new Promise(r => { fim = r; });
   try {
     const r = await API.post('carregar', completo ? {} : { versaoLocal: Store.versao });
     if (Grav.ocupada() || Grav.seq !== seq) { Grav.syncDepois = true; return; }
     aplicarCarga(r);
   } catch (e) {
     if (e.codigo !== 401) statusSync('erro', completo ? e.message : '');
-  } finally { sincronizando = false; }
+  } finally { sincronizando = false; fim(); }
 }
 let pollTimer = null;
 function iniciarPolling() {
@@ -2140,16 +2150,16 @@ function gerarExemplos() {
     historico: hist(rec, passos)
   });
   const sol = [
-    S('oficio', 'SEDUC-OFI-2026/04812', 'Resposta à Prefeitura sobre rota de transporte escolar rural', 'Coordenadoria de Transporte Escolar', 'Sinop', 'Prefeitura Municipal de Sinop', h(-6), h(1), 'aguardando', { urgente: true, motivo: 'Início do semestre: rotas suspensas desde segunda-feira.' }, [[1, 'Análise iniciada'], [3, 'Encaminhado à mesa de assinatura']]),
-    S('despacho', 'SEDUC-PRO-2026/11873', 'Autorização de reforma emergencial de cobertura em escola estadual', 'Secretaria Adjunta de Infraestrutura e Patrimônio', 'Rondonópolis', 'Diretoria Regional de Educação de Rondonópolis', h(-4), h(0), 'aguardando', { urgente: true, motivo: 'Laudo da Defesa Civil indica risco estrutural.' }, [[1, 'Análise iniciada'], [2, 'Encaminhado à mesa de assinatura']]),
+    S('oficio', 'SEDUC-OFI-2026/04812', 'Resposta à Prefeitura sobre rota de transporte escolar rural', 'Coordenadoria de Transporte Escolar', 'Sinop', 'Prefeitura Municipal de Sinop', h(-6), h(1), 'analise', { urgente: true, motivo: 'Início do semestre: rotas suspensas desde segunda-feira.' }, [[1, 'Análise iniciada'], [3, 'Encaminhado à mesa de assinatura']]),
+    S('despacho', 'SEDUC-PRO-2026/11873', 'Autorização de reforma emergencial de cobertura em escola estadual', 'Secretaria Adjunta de Infraestrutura e Patrimônio', 'Rondonópolis', 'Diretoria Regional de Educação de Rondonópolis', h(-4), h(0), 'analise', { urgente: true, motivo: 'Laudo da Defesa Civil indica risco estrutural.' }, [[1, 'Análise iniciada'], [2, 'Encaminhado à mesa de assinatura']]),
     S('oficio', 'SEDUC-OFI-2026/04790', 'Encaminhamento de minuta de decreto do calendário escolar 2027', 'Gabinete da Secretária', 'Cuiabá', 'Casa Civil', h(-12), h(2), 'assinado', { cc: 'analise_cc', ccNumero: 'CC-2026/03321', assinadoEm: h(-8) }, [[1, 'Análise iniciada'], [2, 'Encaminhado à mesa de assinatura'], [4, 'Documento assinado'], [5, 'Enviado à Casa Civil']]),
     S('memorando', 'SEDUC-MEM-2026/02215', 'Manifestação sobre projeto de lei de valorização docente', 'Secretaria Adjunta de Gestão de Pessoas', 'Cuiabá', 'Casa Civil', h(-9), h(-1), 'analise', { cc: 'preparo', urgente: true, motivo: 'Prazo da Casa Civil para manifestação técnica.' }, [[1, 'Análise iniciada']]),
     S('oficio', 'SEDUC-OFI-2026/04655', 'Resposta a pedido de informação da Assembleia Legislativa', 'Assessoria Jurídica', 'Cuiabá', 'Assembleia Legislativa', h(-20), h(-6), 'assinado', { cc: 'pendencia', ccNumero: 'CC-2026/03104', assinadoEm: h(-10), obs: 'Casa Civil pediu anexar planilha de matrículas.' }, [[2, 'Análise iniciada'], [6, 'Encaminhado à mesa de assinatura'], [10, 'Documento assinado'], [11, 'Enviado à Casa Civil'], [15, 'Casa Civil abriu diligência']]),
-    S('circular', 'SEDUC-CIR-2026/00148', 'Orientações para o Censo Escolar às Diretorias Regionais', 'Secretaria Adjunta de Gestão Educacional', 'Cuiabá', 'Diretorias Regionais de Educação', h(-3), h(4), 'aguardando', {}, [[1, 'Análise iniciada'], [2, 'Encaminhado à mesa de assinatura']]),
+    S('circular', 'SEDUC-CIR-2026/00148', 'Orientações para o Censo Escolar às Diretorias Regionais', 'Secretaria Adjunta de Gestão Educacional', 'Cuiabá', 'Diretorias Regionais de Educação', h(-3), h(4), 'analise', {}, [[1, 'Análise iniciada'], [2, 'Encaminhado à mesa de assinatura']]),
     S('interno', 'SEDUC-DOC-2026/18820', 'Plano de trabalho do programa de recomposição das aprendizagens', 'Secretaria Adjunta de Gestão Educacional', 'Cuiabá', 'Gabinete da Secretária', h(-2), h(6), 'analise', {}, [[1, 'Análise iniciada']]),
     S('capturado', 'SEDUC-CAP-2026/07731', 'Requerimento do sindicato sobre pagamento de RGA', 'Gabinete da Secretária', 'Várzea Grande', 'Sindicato dos Trabalhadores da Educação', h(-1), h(9), 'recebido'),
     S('portaria', 'SEDUC-POR-2026/00391', 'Designação de comissão de avaliação de estágio probatório', 'Secretaria Adjunta de Gestão de Pessoas', 'Cuiabá', 'Servidores efetivos', h(-7), h(3), 'ajuste', { obs: 'Corrigir lotação de dois membros.' }, [[1, 'Análise iniciada'], [3, 'Devolvido para ajuste', 'Corrigir lotação de dois membros.']]),
-    S('oficio', 'SEDUC-OFI-2026/04833', 'Cessão de uso de escola para Conferência Municipal de Educação', 'Diretoria Regional de Educação', 'Barra do Garças', 'Prefeitura Municipal de Barra do Garças', h(-5), h(5), 'aguardando', {}, [[1, 'Análise iniciada'], [3, 'Encaminhado à mesa de assinatura']]),
+    S('oficio', 'SEDUC-OFI-2026/04833', 'Cessão de uso de escola para Conferência Municipal de Educação', 'Diretoria Regional de Educação', 'Barra do Garças', 'Prefeitura Municipal de Barra do Garças', h(-5), h(5), 'analise', {}, [[1, 'Análise iniciada'], [3, 'Encaminhado à mesa de assinatura']]),
     S('despacho', 'SEDUC-PRO-2026/11640', 'Homologação de processo seletivo de professores contratados', 'Secretaria Adjunta de Gestão de Pessoas', 'Tangará da Serra', 'Diretoria Regional de Educação de Tangará da Serra', h(-15), h(-9), 'expedido', { assinadoEm: h(-10) }, [[1, 'Análise iniciada'], [3, 'Encaminhado à mesa de assinatura'], [5, 'Documento assinado'], [6, 'Expedido']]),
     S('oficio', 'SEDUC-OFI-2026/04520', 'Resposta a recomendação do Ministério Público sobre merenda escolar', 'Coordenadoria de Alimentação Escolar', 'Cáceres', 'Ministério Público', h(-25), h(-14), 'expedido', { assinadoEm: h(-15) }, [[2, 'Análise iniciada'], [8, 'Encaminhado à mesa de assinatura'], [10, 'Documento assinado'], [11, 'Expedido']]),
     S('despacho', 'SEDUC-PRO-2026/11902', 'Aquisição de mobiliário para escolas do campo', 'Secretaria Adjunta de Administração Sistêmica', 'Juína', 'Diretoria Regional de Educação de Juína', h(-8), h(-2), 'analise', {}, [[2, 'Análise iniciada']]),
@@ -2356,7 +2366,7 @@ function renderAba() {
   aplicarPermissoes();
 }
 const pendentes = () => Store.sol.filter(s => !FEITO(s));
-const naMesa = () => Store.sol.filter(s => s.status === 'aguardando').sort(ordemDespacho);
+const naMesa = () => Store.sol.filter(s => s.status === 'analise').sort(ordemDespacho);
 const urgentesAtivos = () => Store.sol.filter(s => !FEITO(s) && (s.urgente || situacao(s) === 'vencido'));
 /** Ordem das planilhas: prazo mais próximo primeiro (vencidos no topo); sem prazo depois; finalizados no fim, do mais recente ao mais antigo. */
 const porPrazo = (a, b) => String(a.prazo || '9999').localeCompare(String(b.prazo || '9999')) || (!!b.urgente - !!a.urgente) || String(a.recebidoEm || '').localeCompare(String(b.recebidoEm || ''));
@@ -2438,7 +2448,7 @@ function filtrar(ignorarTipo) {
   return Store.sol.filter(s => {
     if (!ignorarTipo && filtro.tipo && s.tipo !== filtro.tipo) return false;
     if (filtro.status && s.status !== filtro.status) return false;
-    if (!filtro.status && !filtro.concl && s.status === 'expedido') return false;
+    if (!filtro.status && !filtro.concl && (s.status === 'expedido' || s.status === 'cancelado')) return false;
     if (filtro.mun && s.municipio !== filtro.mun) return false;
     if (filtro.sec && !String(s.origem || '').split(/\s*,\s*/).map(x => x.toUpperCase()).includes(filtro.sec)) return false;
     if (filtro.urg && !s.urgente) return false;
@@ -2459,9 +2469,9 @@ function renderFila() {
   $('f-contagem').textContent = `${lista.length} de ${Store.sol.length} solicitações`;
   const el = $('fila-lista');
   if (!Store.sol.length) { el.innerHTML = estadoInicial(); return; }
-  if (!lista.length) { el.innerHTML = vazio('fa-filter-circle-xmark', 'Nada com esses filtros', 'Tente outro tipo de documento, limpe a busca ou marque "Mostrar expedidos/arquivados".'); return; }
+  if (!lista.length) { el.innerHTML = vazio('fa-filter-circle-xmark', 'Nada com esses filtros', 'Tente outro tipo de documento, limpe a busca ou marque "Mostrar arquivados e cancelados".'); return; }
   if (filtro.vista === 'quadro') {
-    const cols = Object.keys(STATUS).filter(k => k !== 'expedido' || filtro.concl || filtro.status === 'expedido');
+    const cols = Object.keys(STATUS).filter(k => !['expedido', 'cancelado'].includes(k) || filtro.concl || filtro.status === k);
     el.innerHTML = `<div class="quadro scrollbar-thin">${cols.map(k => { const itens = lista.filter(s => s.status === k); return `<div class="coluna"><h4><span class="w-2.5 h-2.5 rounded-full" style="background:${STATUS[k].cor}"></span>${STATUS[k].rot}<span class="ml-auto text-ink3 tabular-nums">${itens.length}</span></h4>${itens.map(cartaoK).join('') || '<p class="text-[12px] text-ink3 px-1">Vazio</p>'}</div>`; }).join('')}</div>`;
   } else el.innerHTML = lista.map(linhaSol).join('');
 }
@@ -2495,8 +2505,8 @@ function cartaoPrazo(s) {
       <button type="button" class="pz-tit" onclick="abrirDetalhe('${s.id}')">${esc(s.assunto)}</button>
       <p class="text-[12px] text-ink3 mt-0.5 truncate">${esc(s.numero || 's/ nº')}${sec.length ? ' · ' + esc(sec.join(', ')) : ''}${s.interessado ? ' · ' + esc(s.interessado) : ''}</p>
       <div class="flex flex-wrap gap-1.5 mt-2.5">
-        ${s.status === 'aguardando' && pode('assinar') ? `<button class="ag-acao" style="--c:#16a34a" onclick="acaoRapida('${s.id}','assinar')"><i class="fa-solid fa-signature"></i><span>${esc(AC('assinar'))}</span></button>` : ''}
-        ${['recebido', 'analise', 'ajuste'].includes(s.status) && podeG ? `<button class="ag-acao" style="--c:#4f46e5" onclick="acaoRapida('${s.id}','mesa')"><i class="fa-solid fa-pen-nib"></i><span>${esc(AC('mesa'))}</span></button>` : ''}
+        ${!FEITO(s) && pode('assinar') ? `<button class="ag-acao" style="--c:#16a34a" onclick="acaoRapida('${s.id}','assinar')"><i class="fa-solid fa-signature"></i><span>${esc(AC('assinar'))}</span></button>` : ''}
+        ${s.status === 'recebido' && podeG ? `<button class="ag-acao" style="--c:${STATUS.analise.cor}" onclick="acaoRapida('${s.id}','analise')"><i class="fa-solid ${STATUS.analise.ico}"></i><span>${esc(STATUS.analise.rot)}</span></button>` : ''}
         ${podeG ? `<span class="pz-prorrogar"><span class="text-[11px] font-semibold text-ink3 mr-0.5">${esc(AC('prorrogar'))}</span>${[1, 3, 5].map(n => `<button class="ag-acao" style="--c:#64748b" onclick="prorrogarPrazo('${s.id}',${n})" title="Novo prazo: ${fmt(somaDias(n, s.prazo < hojeISO() ? hojeISO() : s.prazo))}">+${n}d</button>`).join('')}</span>` : ''}
         <button class="ag-acao" style="--c:#2563eb" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i><span>${esc(AC('detalhes'))}</span></button>
       </div>
@@ -2529,9 +2539,9 @@ function renderPrazos() {
     </div></div>`;
   const kpis = `<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
     <button type="button" class="dv-kpi" style="--c:var(--urg)" onclick="pzEstado.faixa='vencido';renderPrazos()"><span class="rot"><i class="fa-solid fa-circle-exclamation"></i>Vencidos</span><span class="val">${venc.length}</span><span class="sub">${venc.length ? `o mais antigo há ${-diasAte(venc[0].prazo)} dia(s)` : 'nenhum atraso'}</span></button>
-    <button type="button" class="dv-kpi" style="--c:#ea580c" onclick="pzEstado.faixa='hoje';renderPrazos()"><span class="rot"><i class="fa-solid fa-sun"></i>Vencem hoje</span><span class="val">${hoje.length}</span><span class="sub">${hoje.filter(s => s.status === 'aguardando').length} já na mesa</span></button>
+    <button type="button" class="dv-kpi" style="--c:#ea580c" onclick="pzEstado.faixa='hoje';renderPrazos()"><span class="rot"><i class="fa-solid fa-sun"></i>Vencem hoje</span><span class="val">${hoje.length}</span><span class="sub">${hoje.filter(s => s.status === 'analise').length} já na mesa</span></button>
     <button type="button" class="dv-kpi" style="--c:#d97706" onclick="pzEstado.faixa='breve';renderPrazos()"><span class="rot"><i class="fa-solid fa-hourglass-half"></i>Próximos ${DIAS_PRAZO} dias</span><span class="val">${breve.length}</span><span class="sub">até ${fmt(somaDias(DIAS_PRAZO))}</span></button>
-    <div class="dv-kpi" style="--c:#4f46e5"><span class="rot"><i class="fa-solid fa-pen-nib"></i>Na mesa de assinatura</span><span class="val">${todos.filter(s => s.status === 'aguardando').length}</span><span class="sub">dos ${todos.length} com prazo próximo</span></div>
+    <div class="dv-kpi" style="--c:#4f46e5"><span class="rot"><i class="fa-solid fa-arrows-spin"></i>${esc(STATUS.analise.rot)}</span><span class="val">${todos.filter(s => s.status === 'analise').length}</span><span class="sub">dos ${todos.length} com prazo próximo</span></div>
   </div>`;
   if (!todos.length) { c.innerHTML = kpis + vazio('fa-calendar-check', 'Nenhum prazo apertado', `Nada vencido, vencendo hoje ou nos próximos ${DIAS_PRAZO} dias. Bom trabalho!`); return; }
   const grupo = (ico, cor, titulo, desc, L) => { const F = filtrar(L); return F.length ? `<div class="space-y-2.5"><div class="pz-grupo" style="--c:${cor}"><span><i class="fa-solid ${ico}"></i></span><div><h3>${titulo} <b>${F.length}</b></h3><p>${desc}</p></div></div><div class="grid grid-cols-1 2xl:grid-cols-2 gap-2.5">${F.map(cartaoPrazo).join('')}</div></div>` : ''; };
@@ -2927,7 +2937,7 @@ function botaoSec(sg, ativo, grupo) {
 }
 function abrirForm(id, pre = {}) {
   if (!pode('gravar')) { toast('Seu perfil (' + Store.sessao.perfil + ') não cadastra nem edita solicitações.', 'fa-lock'); return; }
-  const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: somaDias(5), urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
+  const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: '', urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
   const opt = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v.rot}</option>`).join('');
   const partesOrigem = String(s.origem || '').split(/\s*,\s*/).filter(Boolean);
   const secSel = partesOrigem.filter(ehSigla).map(x => x.toUpperCase());
@@ -2991,10 +3001,10 @@ function abrirForm(id, pre = {}) {
           <label><span class="rotulo">Município</span><input class="campo w-full" id="s-municipio" list="lista-mun" value="${esc(s.municipio || '')}" placeholder="Município de MT"></label>
         </div>`)}
 
-      ${passo(3, '#d97706', 'Prazo e prioridade', 'Escolha um atalho ou a data exata.', `
+      ${passo(3, '#d97706', 'Prazo e prioridade', 'O prazo é opcional: escolha um atalho, a data exata ou deixe sem prazo.', `
         <div class="flex flex-wrap items-end gap-3">
-          <label><span class="rotulo">Prazo *</span><input type="date" class="campo campo-g" id="s-prazo" required value="${esc(s.prazo || '')}"></label>
-          <div class="flex flex-wrap gap-1.5 pb-0.5">${atalhos.map(([r, d]) => `<button type="button" class="atalho" onclick="$('s-prazo').value=somaDias(${d});atualizarPassos()">${r}</button>`).join('')}</div>
+          <label><span class="rotulo">Prazo <small class="font-normal text-ink3">(opcional)</small></span><input type="date" class="campo campo-g" id="s-prazo" value="${esc(s.prazo || '')}"></label>
+          <div class="flex flex-wrap gap-1.5 pb-0.5">${atalhos.map(([r, d]) => `<button type="button" class="atalho" onclick="$('s-prazo').value=somaDias(${d});atualizarPassos()">${r}</button>`).join('')}<button type="button" class="atalho" onclick="$('s-prazo').value='';atualizarPassos()">Sem prazo</button></div>
         </div>
         <p id="prazo-info" class="text-[12.5px] font-semibold"></p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -3036,7 +3046,7 @@ function atualizarPassos() {
   const ok = {
     1: chipsMarcados('nat').length > 0 && !!val('s-assunto'),
     2: (chipsMarcados('sec').length > 0 || !!val('s-origem-outra')) && !!val('s-resp'),
-    3: !!val('s-prazo')
+    3: true
   };
   Object.keys(ok).forEach(n => {
     document.querySelector(`.passo[data-passo="${n}"]`)?.classList.toggle('feito', ok[n]);
@@ -3044,7 +3054,7 @@ function atualizarPassos() {
   });
   const p = val('s-prazo'), info = $('prazo-info');
   if (info) {
-    if (!p) { info.textContent = ''; }
+    if (!p) { info.innerHTML = '<span class="text-ink3"><i class="fa-regular fa-calendar mr-1"></i>Sem prazo definido</span>'; }
     else {
       const d = diasAte(p);
       info.innerHTML = d < 0 ? `<span style="color:var(--urg)"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Prazo já vencido há ${-d} dia(s)</span>`
@@ -3076,7 +3086,6 @@ async function salvarForm(id) {
   if (!naturezas.length) return aviso('Marque se é solicitação de assinatura, processo ou os dois.');
   if (!secretarias.length && !v('s-origem-outra')) return aviso('Marque pelo menos uma secretaria (ou informe outra unidade).');
   if (!v('s-resp')) { $('s-resp').focus(); return aviso('Informe quem solicitou a assinatura.'); }
-  if (!v('s-prazo')) { $('s-prazo').focus(); return aviso('Informe o prazo.'); }
   if (!v('s-assunto')) { $('s-assunto').focus(); return aviso('Informe o assunto.'); }
   const antigo = id ? Store.sol.find(x => x.id === id) : null;
   const dados = antigo ? copia(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId(), historico: [{ em: new Date().toISOString(), acao: 'Solicitação registrada', por: meuId() }] };
@@ -3089,7 +3098,7 @@ async function salvarForm(id) {
     casaCivil: $('s-cc').checked, ccEtapa: $('s-cc').checked ? v('s-ccetapa') : '', ccNumero: $('s-cc').checked ? v('s-ccnum') : '',
     observacoes: v('s-obs')
   });
-  if (['assinado', 'expedido'].includes(dados.status) && !dados.assinadoEm) dados.assinadoEm = hojeISO();
+  if (dados.status === 'assinado' && !dados.assinadoEm) dados.assinadoEm = hojeISO();
   if (!['assinado', 'expedido'].includes(dados.status)) dados.assinadoEm = '';
   if (antigo) {
     const mud = [];
@@ -3106,34 +3115,30 @@ async function salvarForm(id) {
 }
 
 /** Nomes das ações dos menus, do detalhe, das ações em lote e dos atalhos (o Administrador pode trocar em Personalização). */
+/** Ações que não são situação (o Administrador pode trocar os nomes em Personalização › Situações e ações). */
 const ACOES_MENU = [
-  ['analise', 'Iniciar análise', 'fa-magnifying-glass', '#2563eb'], ['reanalise', 'Reabrir para análise', 'fa-magnifying-glass', '#2563eb'],
-  ['mesa', 'Levar à mesa', 'fa-pen-nib', '#4f46e5'], ['assinar', 'Assinar', 'fa-signature', '#16a34a'],
-  ['ajuste', 'Devolver para ajuste', 'fa-rotate-left', '#ea580c'], ['expedir', 'Expedir / arquivar', 'fa-box-archive', '#0f766e'],
-  ['reabrir', 'Reabrir', 'fa-folder-open', '#64748b'], ['prio_on', 'Marcar como prioridade', 'fa-flag', '#dc2626'],
-  ['prio_off', 'Retirar prioridade', 'fa-flag', '#64748b'], ['cc_on', 'Incluir na Casa Civil', 'fa-landmark', '#7c3aed'],
-  ['cc_off', 'Retirar da Casa Civil', 'fa-landmark', '#7c3aed'], ['prorrogar', 'Prorrogar', 'fa-calendar-plus', '#64748b'],
-  ['detalhes', 'Detalhes', 'fa-up-right-from-square', '#2563eb'], ['editar', 'Editar no formulário', 'fa-pen', '#64748b'], ['excluir', 'Excluir', 'fa-trash', '#dc2626']
+  ['assinar', 'Assinar', 'fa-signature', '#16a34a'],
+  ['prio_on', 'Marcar como prioridade', 'fa-flag', '#dc2626'], ['prio_off', 'Retirar prioridade', 'fa-flag', '#64748b'],
+  ['cc_on', 'Incluir na Casa Civil', 'fa-landmark', '#7c3aed'], ['cc_off', 'Retirar da Casa Civil', 'fa-landmark', '#7c3aed'],
+  ['prorrogar', 'Prorrogar', 'fa-calendar-plus', '#64748b'], ['detalhes', 'Detalhes', 'fa-up-right-from-square', '#2563eb'],
+  ['editar', 'Editar no formulário', 'fa-pen', '#64748b'], ['excluir', 'Excluir', 'fa-trash', '#dc2626']
 ];
 const AC = k => L('acaoc.' + k);
-const ACOES = {
-  analise:  { rot: 'Iniciar análise',             ico: 'fa-magnifying-glass', status: 'analise',    hist: 'Análise iniciada' },
-  mesa:     { rot: 'Levar à mesa',                ico: 'fa-pen-nib',          status: 'aguardando', hist: 'Encaminhado à mesa de assinatura' },
-  ajuste:   { rot: 'Devolver para ajuste',        ico: 'fa-rotate-left',      status: 'ajuste',     hist: 'Devolvido para ajuste' },
-  assinar:  { rot: 'Assinar',                     ico: 'fa-signature',        status: 'assinado',   hist: 'Documento assinado' },
-  expedir:  { rot: 'Expedir / arquivar',          ico: 'fa-box-archive',      status: 'expedido',   hist: 'Expedido' },
-  reabrir:  { rot: 'Reabrir',                     ico: 'fa-folder-open',      status: 'analise',    hist: 'Reaberto para análise' }
-};
-const ACOES_POR_STATUS = { recebido: ['analise', 'mesa'], analise: ['mesa', 'ajuste'], ajuste: ['analise'], aguardando: ['assinar', 'ajuste'], assinado: ['expedir', 'reabrir'], expedido: ['reabrir'] };
+/** Ações rápidas → situação (nomes antigos continuam aceitos). */
+const ACAO_PARA_STATUS = { pendente: 'recebido', recebido: 'recebido', analise: 'analise', andamento: 'analise', mesa: 'analise', reabrir: 'analise', assinar: 'assinado', assinado: 'assinado',
+  ajuste: 'ajuste', expedir: 'expedido', arquivar: 'expedido', expedido: 'expedido', cancelar: 'cancelado', cancelado: 'cancelado' };
+/** Texto gravado no histórico ao mudar de situação (igual ao da planilha). */
+const HIST_STATUS = { recebido: 'Marcado como pendente', analise: 'Em andamento', assinado: 'Documento assinado', ajuste: 'Devolvido para correção', expedido: 'Arquivado', cancelado: 'Cancelado' };
 async function acaoRapida(id, acao, obs = '') {
   const s = Store.sol.find(x => x.id === id); if (!s) return;
-  const a = ACOES[acao], dados = copia(s);
-  dados.status = a.status;
-  if (a.status === 'assinado') dados.assinadoEm = hojeISO();
-  if (acao === 'reabrir') dados.assinadoEm = '';
-  if (a.status === 'assinado' && dados.casaCivil && (!dados.ccEtapa || dados.ccEtapa === 'preparo')) dados.ccEtapa = 'preparo';
-  dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: a.hist, obs, por: meuId() });
-  if (await salvarSol(id, dados)) toast(a.hist + '.');
+  const st = ACAO_PARA_STATUS[acao] || acao; if (!STATUS[st]) return;
+  const dados = copia(s);
+  dados.status = st;
+  if (st === 'assinado') dados.assinadoEm = dados.assinadoEm || hojeISO();
+  else if (st !== 'expedido') dados.assinadoEm = '';
+  if (st === 'assinado' && dados.casaCivil && (!dados.ccEtapa || dados.ccEtapa === 'preparo')) dados.ccEtapa = 'preparo';
+  dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: HIST_STATUS[st], obs, por: meuId() });
+  if (await salvarSol(id, dados)) toast(`${STATUS[st].rot}.`, STATUS[st].ico);
 }
 function abrirDetalhe(id) { abrirModal('<div id="detalhe"></div>', 'detalhe', { id }); renderDetalhe(); }
 function renderDetalhe() {
@@ -3143,7 +3148,9 @@ function renderDetalhe() {
   if (!s) { el.innerHTML = `<div class="modal-corpo">${vazio('fa-file-circle-xmark', 'Solicitação não encontrada', 'Ela pode ter sido excluída por outra pessoa da equipe.')}</div><div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>`; return; }
   const t = TIPOS[s.tipo] || TIPOS.outro;
   const hist = (s.historico || []).slice().reverse();
-  const acoes = (ACOES_POR_STATUS[s.status] || []).filter(k => pode('gravar') || (pode('assinar') && (k === 'assinar' || k === 'ajuste'))).map(k => `<button class="btn ${k === 'assinar' || k === 'mesa' ? 'btn-pri' : 'btn-sec'}" onclick="acaoDetalhe('${k}')"><i class="fa-solid ${ACOES[k].ico}"></i>${ACOES[k].rot}</button>`).join('');
+  const podeSt = k => k === 'assinado' ? pode('assinar') : k === 'ajuste' ? (pode('gravar') || pode('assinar')) : pode('gravar');
+  const acoes = (FEITO(s) || !pode('assinar') ? '' : `<button class="btn btn-pri" onclick="acaoDetalhe('assinado')"><i class="fa-solid fa-signature"></i>${esc(AC('assinar'))}</button>`) +
+    ((TRANSICOES_APP[s.status] || []).filter(k => k !== 'assinado' && podeSt(k)).length ? `<span class="det-mudar"><span class="text-[11.5px] font-semibold text-ink3">Mudar para</span>${(TRANSICOES_APP[s.status] || []).filter(k => podeSt(k) && !(k === 'assinado' && !FEITO(s))).map(k => `<button class="btn btn-sec !h-8 !px-2.5" style="color:${STATUS[k].cor}" onclick="acaoDetalhe('${k}')"><i class="fa-solid ${STATUS[k].ico}"></i>${esc(STATUS[k].rot)}</button>`).join('')}</span>` : '');
   el.innerHTML = `
     <div class="modal-topo">
       <div class="min-w-0 space-y-1.5">
@@ -3170,10 +3177,10 @@ function renderDetalhe() {
       ${s.observacoes ? `<div><p class="rotulo">Observações</p><p class="text-[13px] text-ink2 whitespace-pre-wrap">${esc(s.observacoes)}</p></div>` : ''}
       <div class="rounded-xl p-3 space-y-2" style="background:var(--card2)">
         <p class="rotulo !mb-0">Registrar andamento</p>
-        <textarea id="d-obs" rows="2" class="campo w-full" placeholder="Observação opcional (ex.: ajustes pedidos, quem levou à mesa)"></textarea>
+        <textarea id="d-obs" rows="2" class="campo w-full" placeholder="Observação opcional (ex.: o que foi corrigido, quem assinou)"></textarea>
         <div class="flex flex-wrap gap-2">${acoes}
           <button class="btn btn-sec" data-requer="gravar" onclick="alternarUrgente()"><i class="fa-solid fa-flag" style="color:var(--urg)"></i>${esc(s.urgente ? AC('prio_off') : AC('prio_on'))}</button>
-          ${!s.casaCivil ? `<button class="btn btn-sec" data-requer="casacivil:2" onclick="incluirCC()"><i class="fa-solid fa-landmark" style="color:var(--cc)"></i>Incluir na trilha da Casa Civil</button>` : ''}
+          ${!s.casaCivil ? `<button class="btn btn-sec" data-requer="casacivil:2" onclick="incluirCC()"><i class="fa-solid fa-landmark" style="color:var(--cc)"></i>${esc(AC('cc_on'))}</button>` : ''}
           ${s.casaCivil && s.status === 'assinado' && (s.ccEtapa || 'preparo') === 'preparo' ? `<button class="btn btn-sec" onclick="mudarEtapaCC('${s.id}','enviado')"><i class="fa-solid fa-paper-plane" style="color:var(--cc)"></i>Enviar à Casa Civil</button>` : ''}
         </div>
       </div>
@@ -3315,11 +3322,8 @@ function excluirCorreicaoBtn(id, btn) {
 //  • Modo compacto opcional (nº, assunto, tipo, secretaria adjunta, situação e ações).
 const Grades = {};
 let gradeEditando = null, gradeRenderPendente = false, gradeArrastando = null;
-const TRANSICOES_APP = {
-  recebido: ['analise', 'aguardando', 'ajuste', 'expedido'], analise: ['aguardando', 'ajuste', 'recebido', 'expedido'],
-  ajuste: ['analise', 'aguardando', 'recebido'], aguardando: ['assinado', 'ajuste', 'analise'],
-  assinado: ['expedido', 'analise', 'aguardando'], expedido: ['analise', 'assinado']
-};
+// Fluxo simples: de qualquer situação é possível passar para qualquer outra.
+const TRANSICOES_APP = Object.fromEntries(['recebido', 'analise', 'assinado', 'ajuste', 'expedido', 'cancelado'].map(k => [k, ['recebido', 'analise', 'assinado', 'ajuste', 'expedido', 'cancelado'].filter(x => x !== k)]));
 function letraCol(n) { let s = ''; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 function estadoGrade(id, padrao) {
   if (!Grades[id]) {
@@ -3650,11 +3654,11 @@ function abrirMenuAcoes(id, rowId, btn) {
   const g = Grades[id], row = g.cfg.linhas.find(r => r.id === rowId); if (!row) return;
   if (menuAtual && menuAtual.rowId === rowId && menuAtual.id === id) { fecharMenuAcoes(); return; }
   fecharMenuAcoes();
-  const itens = (g.cfg.menuAcoes(row) || []).filter(x => x.sep || !x.perm || pode(x.perm));
+  const itens = (g.cfg.menuAcoes(row) || []).filter(x => x.sep || x.titulo || !x.perm || pode(x.perm));
   menuAtual = { id, rowId, itens };
   const m = document.createElement('div');
   m.id = 'menu-acoes'; m.className = 'menu-acoes';
-  m.innerHTML = `<p class="menu-tit">${esc(g.cfg.tituloLinha ? g.cfg.tituloLinha(row) : '')}</p>` + itens.map((x, i) => x.sep ? '<hr>' :
+  m.innerHTML = `<p class="menu-tit">${esc(g.cfg.tituloLinha ? g.cfg.tituloLinha(row) : '')}</p>` + itens.map((x, i) => x.sep ? '<hr>' : x.titulo ? `<p class="menu-sub">${esc(x.titulo)}</p>` :
     `<button type="button" class="${x.perigo ? 'perigo' : ''}" onclick="executarAcaoMenu(${i}, this)"><span class="mi" style="--c:${x.cor || 'var(--ink3)'}"><i class="fa-solid ${x.ico}"></i></span>${esc(x.rot)}</button>`).join('');
   document.body.appendChild(m);
   const r = btn.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
@@ -3722,7 +3726,7 @@ async function baixarArquivo(nome, conteudo) {
 
 /* ----- solicitações: edição e ações ----- */
 const ROT_CAMPO = { numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da prioridade' };
-const ACAO_STATUS = { analise: 'Análise iniciada', aguardando: 'Encaminhado à mesa de assinatura', ajuste: 'Devolvido para ajuste', assinado: 'Documento assinado', expedido: 'Expedido', recebido: 'Retornado para recebidos' };
+const ACAO_STATUS = HIST_STATUS;
 /** Grava vários campos de uma solicitação com uma única movimentação descritiva. */
 async function editarSolCampos(s, campos) {
   const d = copia(s);
@@ -3733,7 +3737,7 @@ async function editarSolCampos(s, campos) {
     d[key] = valor;
     if (key === 'status') {
       textos.push(ACAO_STATUS[valor] || 'Situação alterada');
-      if (['assinado', 'expedido'].includes(valor)) { if (!d.assinadoEm) d.assinadoEm = hojeISO(); } else d.assinadoEm = '';
+      if (valor === 'assinado') { if (!d.assinadoEm) d.assinadoEm = hojeISO(); } else if (valor !== 'expedido') d.assinadoEm = '';
     } else if (key === 'urgente') { textos.push(valor ? 'Marcado como PRIORIDADE' : 'Prioridade retirada'); if (!valor) d.motivoUrgencia = ''; }
     else if (key === 'casaCivil') { textos.push(valor ? 'Incluído na trilha da Casa Civil' : 'Retirado da trilha da Casa Civil'); d.ccEtapa = valor ? (d.ccEtapa || 'preparo') : ''; }
     else if (key === 'ccEtapa') textos.push('Casa Civil: ' + (ETAPAS_CC[valor] || {}).rot);
@@ -3779,12 +3783,11 @@ function preencherListaResp() {
   if (dl) dl.innerHTML = [...new Set(Store.sol.map(x => x.responsavel).filter(Boolean))].sort().map(n => `<option value="${esc(n)}">`).join('');
 }
 /** Próximo passo natural de cada situação (botão principal da coluna Ações). */
+// Botão rápido da linha: "Assinar" enquanto o documento está em aberto
 const PROXIMO = {
-  recebido: ['analise', 'Analisar', 'fa-magnifying-glass', '#2563eb', 'gravar'],
-  analise: ['aguardando', 'À mesa', 'fa-pen-nib', '#4f46e5', 'gravar'],
-  ajuste: ['analise', 'Reanalisar', 'fa-rotate', '#2563eb', 'gravar'],
-  aguardando: ['assinado', 'Assinar', 'fa-signature', '#16a34a', 'assinar'],
-  assinado: ['expedido', 'Expedir', 'fa-box-archive', '#0f766e', 'gravar']
+  recebido: ['assinado', 'Assinar', 'fa-signature', '#16a34a', 'assinar'],
+  analise: ['assinado', 'Assinar', 'fa-signature', '#16a34a', 'assinar'],
+  ajuste: ['assinado', 'Assinar', 'fa-signature', '#16a34a', 'assinar']
 };
 function botoesAcoesSol(id, s) {
   const p = PROXIMO[s.status];
@@ -3796,13 +3799,10 @@ function botoesAcoesSol(id, s) {
     <button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('${id}','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
 }
 function menuAcoesSol(s) {
-  const st = (k, rot, ico, cor, perm) => s.status !== k && (TRANSICOES_APP[s.status] || []).includes(k) ? { rot, ico, cor, perm: perm || 'gravar', fn: () => editarSolCelula(s, 'status', k) } : null;
+  const st = k => s.status !== k && (TRANSICOES_APP[s.status] || []).includes(k) ? { rot: (k === 'assinado' && !FEITO(s) ? AC('assinar') : STATUS[k].rot), ico: STATUS[k].ico, cor: STATUS[k].cor, perm: k === 'assinado' ? 'assinar' : 'gravar', fn: () => editarSolCelula(s, 'status', k) } : null;
   return [
-    st('analise', FEITO(s) ? AC('reanalise') : AC('analise'), 'fa-magnifying-glass', '#2563eb'),
-    st('aguardando', AC('mesa'), 'fa-pen-nib', '#4f46e5'),
-    st('assinado', AC('assinar'), 'fa-signature', '#16a34a', 'assinar'),
-    st('ajuste', AC('ajuste'), 'fa-rotate-left', '#ea580c', s.status === 'aguardando' ? 'assinar' : 'gravar'),
-    st('expedido', AC('expedir'), 'fa-box-archive', '#0f766e'),
+    { titulo: 'Mudar a situação para' },
+    ...['recebido', 'analise', 'assinado', 'ajuste', 'expedido', 'cancelado'].map(st),
     { sep: true },
     { rot: s.urgente ? AC('prio_off') : AC('prio_on'), ico: 'fa-flag', cor: '#dc2626', perm: 'gravar', fn: () => editarSolCelula(s, 'urgente', !s.urgente) },
     { rot: s.casaCivil ? AC('cc_off') : AC('cc_on'), ico: 'fa-landmark', cor: '#7c3aed', perm: 'casacivil:2', fn: () => editarSolCelula(s, 'casaCivil', !s.casaCivil) },
@@ -3814,13 +3814,9 @@ function menuAcoesSol(s) {
   ].filter(Boolean);
 }
 function acoesLoteSol() {
-  const st = (k, rot, ico, cor, perm) => ({ rot, ico, cor, perm, campos: () => ({ status: k }), filtro: r => r.status !== k && (opcoesStatus(r).some(o => o[0] === k)) });
+  const st = k => ({ rot: STATUS[k].rot, ico: STATUS[k].ico, cor: STATUS[k].cor, perm: k === 'assinado' ? 'assinar' : 'gravar', campos: () => ({ status: k }), filtro: r => r.status !== k && (opcoesStatus(r).some(o => o[0] === k)) });
   return [
-    st('analise', AC('analise'), 'fa-magnifying-glass', '#2563eb', 'gravar'),
-    st('aguardando', AC('mesa'), 'fa-pen-nib', '#4f46e5', 'gravar'),
-    st('assinado', AC('assinar'), 'fa-signature', '#16a34a', 'assinar'),
-    st('ajuste', AC('ajuste'), 'fa-rotate-left', '#ea580c', 'assinar'),
-    st('expedido', AC('expedir'), 'fa-box-archive', '#0f766e', 'gravar'),
+    ...['recebido', 'analise', 'assinado', 'ajuste', 'expedido', 'cancelado'].map(st),
     { rot: AC('prio_on'), ico: 'fa-flag', cor: '#dc2626', perm: 'gravar', campos: () => ({ urgente: true }) },
     { rot: AC('prio_off'), ico: 'fa-flag', cor: '#64748b', perm: 'gravar', campos: () => ({ urgente: false }) },
     { rot: AC('cc_on'), ico: 'fa-landmark', cor: '#7c3aed', perm: 'casacivil:2', campos: () => ({ casaCivil: true }) }
@@ -3832,7 +3828,7 @@ function abrirGestao(chip) { estadoGrade('gestao').chip = chip || ''; irPara('me
 function renderMesa() {
   const cont = $('mesa-corpo');
   const pend = Store.sol.filter(s => !FEITO(s));
-  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  $('mesa-resumo').textContent = `${Store.sol.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'analise').length} ${STATUS.analise.rot.toLowerCase()}`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
   renderGrade(cont, {
@@ -3841,7 +3837,7 @@ function renderMesa() {
     finalizado: FEITO,
     ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
-    chips: [['', L('filtro.todos'), () => true, '#2563eb'], ['pend', L('filtro.pend'), s => !FEITO(s), '#2563eb'], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
+    chips: [['', L('filtro.todos'), () => true, '#2563eb'], ['pend', L('filtro.pend'), s => !FEITO(s), '#2563eb'], ['mesa', L('filtro.mesa'), s => s.status === 'analise', '#4f46e5'],
             ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'],
             ['proc', L('filtro.proc'), s => String(s.natureza || '').includes('Processo'), '#0d9488'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
     aoEditarCampos: editarSolCampos,
@@ -3861,7 +3857,7 @@ function renderDocs() {
   const pend = todos.filter(s => !FEITO(s));
   $('docs-titulo').innerHTML = `<i class="fa-solid ${t.ico}" style="color:${t.cor}"></i> ${esc(nomeSecaoDoc(d))}`;
   $('docs-desc').textContent = d.desc;
-  $('docs-resumo').textContent = `${todos.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'aguardando').length} na mesa`;
+  $('docs-resumo').textContent = `${todos.length} registro(s) · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'analise').length} ${STATUS.analise.rot.toLowerCase()}`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
   const id = 'doc_' + d.tipo;
@@ -3871,7 +3867,7 @@ function renderDocs() {
     id, area: 'sol', linhas: todos, fonte: () => Store.sol,
     topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi('pend', L('filtro.pend'), 'fa-arrows-spin', t.cor, pend.length)}
-      ${kpi('mesa', L('filtro.mesa'), 'fa-pen-nib', '#4f46e5', pend.filter(s => s.status === 'aguardando').length)}
+      ${kpi('mesa', L('filtro.mesa'), 'fa-pen-nib', '#4f46e5', pend.filter(s => s.status === 'analise').length)}
       ${kpi('venc', L('filtro.venc'), 'fa-clock', '#ea580c', todos.filter(s => situacao(s) === 'vencido').length)}
       ${kpi('feito', L('filtro.feito'), 'fa-signature', '#16a34a', todos.filter(FEITO).length)}</div>`,
     colunas: colunasSolBase().filter(c => c.key !== 'tipo'),
@@ -3879,7 +3875,7 @@ function renderDocs() {
     finalizado: FEITO,
     ordemPadrao: ordemFinalizados(FEITO, porPrazo, porFimRecente('assinadoEm')),
     classeLinha: s => (s.urgente && !FEITO(s) ? 'gs-urg ' : '') + (FEITO(s) ? 'gs-feito' : ''),
-    chips: [['', L('filtro.todos'), () => true, t.cor], ['pend', L('filtro.pend'), s => !FEITO(s), t.cor], ['mesa', L('filtro.mesa'), s => s.status === 'aguardando', '#4f46e5'],
+    chips: [['', L('filtro.todos'), () => true, t.cor], ['pend', L('filtro.pend'), s => !FEITO(s), t.cor], ['mesa', L('filtro.mesa'), s => s.status === 'analise', '#4f46e5'],
             ['urg', L('filtro.urg'), s => s.urgente && !FEITO(s), '#dc2626'], ['venc', L('filtro.venc'), s => situacao(s) === 'vencido', '#ea580c'], ['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']],
     aoEditarCampos: editarSolCampos,
     acoes: s => botoesAcoesSol(id, s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
@@ -4507,7 +4503,6 @@ const PADRAO_SECRETARIAS = SECRETARIAS.map(s => ({ sigla: s, nome: NOMES_SEC_PAD
 const NOME_SEC = {};
 const PADRAO_FIXO = {
   status: Object.fromEntries(Object.entries(STATUS).map(([k, v]) => [k, v.rot])),
-  acao: Object.fromEntries(Object.entries(PROXIMO).map(([k, v]) => [k, v[1]])),
   tipo: Object.fromEntries(Object.entries(TIPOS).map(([k, v]) => [k, v.rot])),
   tipoCurto: Object.fromEntries(Object.entries(TIPOS).map(([k, v]) => [k, v.curto])),
   cc: Object.fromEntries(Object.entries(ETAPAS_CC).map(([k, v]) => [k, v.rot]))
@@ -4517,14 +4512,11 @@ function gruposRotulos() {
   const st = (pref, lista) => lista.map(s => [pref + '.' + slugRot(s), s]);
   return [
     { id: 'filtros', titulo: 'Filtros e contadores', sub: 'Valem para todas as planilhas (Gestão, Portarias, Ofícios, Despachos…), Painel e Casa Civil.', ico: 'fa-filter', cor: '#2563eb', itens: [
-      ['filtro.todos', 'Todos'], ['filtro.pend', 'Em andamento'], ['filtro.mesa', 'Na mesa'], ['filtro.urg', 'Prioridades'], ['filtro.venc', 'Vencidos'],
+      ['filtro.todos', 'Todos'], ['filtro.pend', 'Em aberto'], ['filtro.mesa', 'Em andamento'], ['filtro.urg', 'Prioridades'], ['filtro.venc', 'Vencidos'],
       ['filtro.proc', 'Processos'], ['filtro.feito', 'Concluídos'], ['filtro.fim', 'Concluído']] },
-    { id: 'status', titulo: 'Situações das solicitações', sub: 'Aparecem nas planilhas, nos detalhes, no Painel e na planilha do Google.', ico: 'fa-list-check', cor: '#4f46e5',
-      itens: Object.keys(STATUS).map(k => ['status.' + k, PADRAO_FIXO.status[k]]) },
-    { id: 'acoes', titulo: 'Botões de ação das planilhas', sub: 'O botão principal de cada linha, na coluna Ações (ex.: Analisar, À mesa, Assinar, Expedir).', ico: 'fa-bolt', cor: '#16a34a', previa: true,
-      itens: Object.keys(PROXIMO).map(k => ['acao.' + k, PADRAO_FIXO.acao[k], 'quando está em "' + L('status.' + k) + '"', PROXIMO[k][2], PROXIMO[k][3]]) },
-    { id: 'acoesmenu', titulo: 'Ações dos menus e do detalhe', sub: 'Menu ⋮ das linhas, janela de detalhes, ações em lote e atalhos da seção Prazos.', ico: 'fa-list-ul', cor: '#0f766e', previa: true,
-      itens: ACOES_MENU.map(([k, pad, ico, cor]) => ['acaoc.' + k, pad, '', ico, cor]) },
+    { id: 'acoes', titulo: 'Situações e ações', sub: 'As 6 situações (aparecem no menu ⋮, no detalhe, nas ações em lote, nas planilhas e na planilha do Google) e os demais botões.', ico: 'fa-bolt', cor: '#16a34a', previa: true,
+      itens: [...Object.keys(STATUS).map(k => ['status.' + k, PADRAO_FIXO.status[k], 'situação', STATUS[k].ico, STATUS[k].cor]),
+              ...ACOES_MENU.map(([k, pad, ico, cor]) => ['acaoc.' + k, pad, k === 'assinar' ? 'botão rápido em cada linha' : 'ação', ico, cor])] },
     { id: 'tipos', titulo: 'Tipos de documento', sub: 'Também mudam o nome das seções do menu.', ico: 'fa-file-lines', cor: '#0891b2',
       itens: Object.keys(TIPOS).map(k => ['tipo.' + k, PADRAO_FIXO.tipo[k]]) },
     { id: 'cc', titulo: 'Casa Civil', sub: 'Etapas, filtros curtos e botões da trilha da Casa Civil.', ico: 'fa-landmark', cor: '#7c3aed', itens: [
@@ -4545,7 +4537,7 @@ let _rotPadrao = null;
 function rotPadrao() { if (!_rotPadrao) { _rotPadrao = {}; gruposRotulos().forEach(g => g.itens.forEach(([k, v]) => { if (!(k in _rotPadrao)) _rotPadrao[k] = v; })); } return _rotPadrao; }
 /** Nome exibido: o personalizado ou o padrão. */
 function L(chave, padrao) { return Pers.rotulos[chave] || PADRAO_FIXO_GET(chave) || rotPadrao()[chave] || padrao || chave; }
-function PADRAO_FIXO_GET(chave) { const [g, k] = chave.split('.'); return g === 'status' ? PADRAO_FIXO.status[k] : g === 'acao' ? PADRAO_FIXO.acao[k] : g === 'tipo' ? PADRAO_FIXO.tipo[k] : g === 'cc' ? PADRAO_FIXO.cc[k] : ''; }
+function PADRAO_FIXO_GET(chave) { const [g, k] = chave.split('.'); return g === 'status' ? PADRAO_FIXO.status[k] : g === 'tipo' ? PADRAO_FIXO.tipo[k] : g === 'cc' ? PADRAO_FIXO.cc[k] : ''; }
 const rotCor = s => s && SITUACOES_COR.includes(s) ? L('cor.' + slugRot(s), s) : (s || '');
 const rotEv = s => s ? L('ev.' + slugRot(s), s) : '';
 const rotPart = s => s ? L('evpart.' + slugRot(s), s) : '';
@@ -4561,8 +4553,7 @@ function aplicarPersonalizacao(p) {
   Pers.atualizadoEm = p.atualizadoEm || ''; Pers.atualizadoPor = p.atualizadoPor || '';
   _rotPadrao = null;
   Object.keys(STATUS).forEach(k => { STATUS[k].rot = L('status.' + k); });
-  Object.keys(PROXIMO).forEach(k => { PROXIMO[k][1] = L('acao.' + k); });
-  Object.keys(ACOES).forEach(k => { if (ACOES_MENU.some(a => a[0] === k)) ACOES[k].rot = AC(k); });
+  Object.keys(PROXIMO).forEach(k => { PROXIMO[k][1] = AC('assinar'); });
   Object.keys(TIPOS).forEach(k => { TIPOS[k].rot = L('tipo.' + k); TIPOS[k].curto = Pers.rotulos['tipo.' + k] || PADRAO_FIXO.tipoCurto[k]; });
   Object.keys(ETAPAS_CC).forEach(k => { ETAPAS_CC[k].rot = L('cc.' + k); });
   // secretarias adjuntas
@@ -4677,7 +4668,7 @@ function renderPainel() {
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
       ${tileInd('#2563eb', 'fa-inbox', 'Recebidos', recebidos.length, 'no período')}
       ${tileInd('#16a34a', 'fa-signature', esc(L('filtro.feito')), concluidos.length, taxa == null ? '—' : `${taxa}% dos recebidos no período`)}
-      ${tileInd('#4f46e5', 'fa-arrows-spin', esc(L('filtro.pend')), pend.length, `${pend.filter(s => s.status === 'aguardando').length} ${esc(L('filtro.mesa').toLowerCase())}`, "irPara('mesa')")}
+      ${tileInd('#4f46e5', 'fa-arrows-spin', esc(L('filtro.pend')), pend.length, `${pend.filter(s => s.status === 'analise').length} ${esc(L('filtro.mesa').toLowerCase())}`, "irPara('mesa')")}
       ${tileInd('#0d9488', 'fa-stopwatch', 'Tempo médio', tMedio == null ? '—' : tMedio.toFixed(1).replace('.', ',') + '<small class="text-[14px] font-bold text-ink3"> dias</small>', 'do recebimento à assinatura')}
       ${tileInd(pctPrazo == null ? '#64748b' : pctPrazo >= 80 ? '#16a34a' : pctPrazo >= 60 ? '#d97706' : '#dc2626', 'fa-bullseye', 'Dentro do prazo', pctPrazo == null ? '—' : pctPrazo + '%', `${noPrazo} de ${comPrazo.length} concluídos com prazo`)}
     </div>
@@ -4925,7 +4916,7 @@ async function copiarSemana(btn) {
 // com cabeçalho institucional, selo do GABDoc e código de verificação.
 const TEMAS_REL = [
   { k: 'geral', rot: 'Relatório geral do Gabinete', ico: 'fa-building-columns', cor: '#2563eb', desc: 'Números, gráficos, secretarias, prazos e Casa Civil' },
-  { k: 'mesa', rot: 'Mesa de assinatura', ico: 'fa-pen-nib', cor: '#4f46e5', desc: 'Documentos aguardando assinatura' },
+  { k: 'mesa', rot: 'Em andamento', ico: 'fa-arrows-spin', cor: '#2563eb', desc: 'Documentos em andamento no Gabinete' },
   { k: 'urgentes', rot: 'Prioridades e prazos vencidos', ico: 'fa-triangle-exclamation', cor: '#dc2626', desc: 'O que precisa de atenção agora' },
   { k: 'secretaria', rot: 'Por secretaria adjunta', ico: 'fa-sitemap', cor: '#7c3aed', desc: 'Carteira completa de uma secretaria' },
   { k: 'municipio', rot: 'Por município', ico: 'fa-map-location-dot', cor: '#0891b2', desc: 'Demandas de um município de MT' },
@@ -5427,7 +5418,8 @@ const movEstado = { periodo: '30', usuario: '', tipo: '', busca: '' };
 function classeMov(h) {
   const a = Utils_norm(h.acao);
   if (h.situacaoNova === 'assinado' && h.situacaoAnterior !== 'assinado') return 'assinado';
-  if (h.situacaoNova === 'aguardando' && h.situacaoAnterior !== 'aguardando') return 'aguardando';
+  if ((h.situacaoNova === 'aguardando' || h.situacaoNova === 'analise') && h.situacaoAnterior !== h.situacaoNova) return 'aguardando';
+  if (h.situacaoNova === 'cancelado' && h.situacaoAnterior !== 'cancelado') return 'cancelado';
   if (/assinad/.test(a)) return 'assinado';
   if (/mesa/.test(a)) return 'aguardando';
   if (/devolvid|ajuste/.test(a)) return 'ajuste';
@@ -5439,7 +5431,7 @@ function classeMov(h) {
 }
 function Utils_norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
 const MOV_ESTILO = {
-  assinado: ['#16a34a', 'fa-signature', 'Assinatura'], aguardando: ['#4f46e5', 'fa-pen-nib', 'À mesa'], ajuste: ['#ea580c', 'fa-rotate-left', 'Devolução'],
+  assinado: ['#16a34a', 'fa-signature', 'Assinatura'], aguardando: ['#2563eb', 'fa-arrows-spin', 'Em andamento'], cancelado: ['#6b7280', 'fa-ban', 'Cancelamento'], ajuste: ['#ea580c', 'fa-rotate-left', 'Devolução'],
   urgente: ['#dc2626', 'fa-flag', 'Prioridade'], casa: ['#7c3aed', 'fa-landmark', 'Casa Civil'], cadastro: ['#2563eb', 'fa-inbox', 'Cadastro'],
   exclusao: ['#64748b', 'fa-trash', 'Exclusão'], outro: ['#0d9488', 'fa-arrow-right-arrow-left', 'Andamento']
 };
@@ -5480,7 +5472,7 @@ function renderMovimentacoes() {
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi('#0d9488', 'fa-arrow-right-arrow-left', 'Movimentações', lista.length, movEstado.periodo ? `nos últimos ${movEstado.periodo === '1' ? 'hoje' : movEstado.periodo + ' dias'}` : 'em todo o período')}
       ${kpi('#16a34a', 'fa-signature', 'Assinaturas', conta('assinado'), 'registradas')}
-      ${kpi('#4f46e5', 'fa-pen-nib', 'Levados à mesa', conta('aguardando'), `${conta('ajuste')} devolvido(s) p/ ajuste`)}
+      ${kpi('#2563eb', 'fa-arrows-spin', 'Postos em andamento', conta('aguardando'), `${conta('ajuste')} devolvido(s) para correção`)}
       ${kpi('#64748b', 'fa-users', 'Pessoas', new Set(lista.map(m => m.autor)).size, 'movimentaram documentos')}
     </div>
     ${dias.length ? dias.map(d => `
@@ -5654,7 +5646,7 @@ function renderPersonalizacao(c) {
 ${persEd.sub === 'nomes' ? `
     <div class="dv-card">
       <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#c026d3"><i class="fa-solid fa-tags"></i></span>Nomes das situações, ações e filtros</h3><p>Troque, por exemplo, "Em tramitação" por "Em andamento" ou "Assinados" por "Concluídos". Os dados gravados não mudam, só o nome exibido.</p></div></div>
-      <div class="relative mb-3 max-w-md"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input id="pers-busca" class="campo w-full !pl-8" placeholder="Procurar um nome (ex.: Assinar, À mesa, Concluído…)" value="${esc(persEd.busca)}" oninput="persEd.busca=this.value;clearTimeout(persEd.t);persEd.t=setTimeout(()=>{renderAdmin();const e=$('pers-busca');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},200)"></div>
+      <div class="relative mb-3 max-w-md"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input id="pers-busca" class="campo w-full !pl-8" placeholder="Procurar um nome (ex.: Assinar, Pendente, Arquivado…)" value="${esc(persEd.busca)}" oninput="persEd.busca=this.value;clearTimeout(persEd.t);persEd.t=setTimeout(()=>{renderAdmin();const e=$('pers-busca');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},200)"></div>
       <div class="pers-grupos ${persEd.busca ? 'opacity-50' : ''}">${grupos.map(x => `<button type="button" class="${x.id === g.id ? 'ativo' : ''}" style="--c:${x.cor}" onclick="persEd.grupo='${x.id}';persEd.busca='';renderAdmin()"><i class="fa-solid ${x.ico}"></i>${x.titulo}${contaMud(x) ? `<b>${contaMud(x)}</b>` : ''}</button>`).join('')}</div>
       ${persEd.busca ? `<p class="text-[12.5px] text-ink3 mt-4 mb-2">${itensVis.length} resultado(s) para "${esc(persEd.busca)}" em todos os grupos.</p>` : `<div class="flex items-center justify-between gap-2 mt-4 mb-2"><p class="text-[12.5px] text-ink3">${g.sub}</p>${contaMud(g) ? `<button class="btn btn-sec !h-8 flex-shrink-0" onclick="persRestaurarGrupo('${g.id}')"><i class="fa-solid fa-rotate-left"></i>Voltar ao padrão</button>` : ''}</div>`}
       ${!persEd.busca && g.previa ? `<div class="pers-previa-acoes"><span class="rotulo !mb-1">Prévia de como os botões vão aparecer</span><div class="flex flex-wrap gap-1.5" id="pers-previa-acoes">${persPreviaAcoes(g)}</div></div>` : ''}
