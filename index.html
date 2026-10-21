@@ -202,6 +202,30 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nav-btn.nav-sub { padding-left: 22px; font-size: 13.5px; }
   .nav-btn.nav-sub .ico { font-size: 13px; }
   html.sb-mini #sidebar .nav-btn.nav-sub { padding-left: 0; }
+  .selo-chefe { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: none; color: #92400e; background: #fef3c7; border: 1px solid #fcd34d; vertical-align: 1px; }
+  .chefe-cartao { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: start; padding: 18px; border-radius: 16px; background: linear-gradient(135deg, color-mix(in srgb, #f59e0b 12%, var(--card)), var(--card) 60%); border: 1px solid color-mix(in srgb, #f59e0b 35%, var(--line)); box-shadow: var(--sombra); }
+  .chefe-av { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-size: 20px; font-weight: 900; color: #fff; background: linear-gradient(135deg, #d97706, #92400e); box-shadow: 0 8px 20px -10px #92400e; }
+  .chefe-nome { font-size: 18px; font-weight: 900; color: var(--ink); line-height: 1.2; }
+  .chefe-cargo { font-size: 12.5px; font-weight: 700; color: #b45309; margin-top: 2px; }
+  .chefe-dados { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--ink2); }
+  .chefe-dados a, .chefe-dados span { display: inline-flex; align-items: center; gap: 6px; }
+  .chefe-dados i, .chefe-dados svg { color: #b45309; font-size: 11.5px; }
+  .chefe-dados a:hover { color: var(--brand); text-decoration: underline; }
+  .chefe-obs { margin-top: 10px; font-size: 12.5px; color: var(--ink2); padding: 8px 10px; border-radius: 10px; background: var(--card2); border: 1px dashed var(--line); white-space: pre-line; }
+  @media (max-width: 640px) { .chefe-cartao { grid-template-columns: auto minmax(0, 1fr); } .chefe-cartao > .chefe-edit { grid-column: 1 / -1; } }
+  .dv-tit { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 10px; flex-wrap: wrap; }
+  .chefe-atalhos { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .chefe-atalho { --c: #b45309; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); text-align: left; font-size: 13px; font-weight: 700; color: var(--ink); transition: border-color .15s, transform .12s; }
+  .chefe-atalho:hover { border-color: var(--c); transform: translateY(-1px); }
+  .chefe-atalho > span:first-child { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: var(--c); flex: none; }
+  .chefe-atalho small { display: block; font-size: 11px; font-weight: 600; color: var(--ink3); }
+  .chefe-prazos { display: flex; flex-direction: column; }
+  .chefe-pz { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 4px; border-bottom: 1px solid var(--line); text-align: left; width: 100%; }
+  .chefe-pz:last-child { border-bottom: 0; }
+  .chefe-pz:hover { background: var(--card2); }
+  .chefe-pz-ico { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-size: 12px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); }
+  .chefe-pz b { display: block; font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chefe-pz small { display: block; font-size: 11.5px; color: var(--ink3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .gs-dias { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); }
   .gs-dias i, .gs-dias svg { font-size: 10.5px; }
   .gs-dias.vencido { color: #fff; background: var(--urg); border-color: var(--urg); }
@@ -1141,6 +1165,17 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
           </div>
           </div></div>
         </div>
+        <div class="nav-grupo" data-g="chefe">
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('chefe')" aria-expanded="true"><i class="fa-solid fa-user-tie nav-titulo-ico"></i><span class="nav-titulo-txt">Chefe de Gabinete</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <div class="nav-grupo-corpo"><div class="nav-grupo-in">
+          <div class="space-y-1">
+            <button class="nav-btn" data-tab="chefe"><i class="ico fa-solid fa-user-tie" style="color:#fbbf24"></i><span>Painel do Chefe</span><span id="bdg-chefe" class="nav-badge bg-red-600 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="chefe-proc"><i class="ico fa-solid fa-folder-open" style="color:#fcd34d"></i><span>Processos</span><span id="bdg-chefe-proc" class="nav-badge bg-amber-600 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="chefe-ass"><i class="ico fa-solid fa-file-signature" style="color:#fcd34d"></i><span>Documentos para assinatura</span><span id="bdg-chefe-ass" class="nav-badge bg-amber-600 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="simec"><i class="ico fa-solid fa-building-flag" style="color:#5eead4"></i><span>SIMEC</span><span id="bdg-simec" class="nav-badge bg-teal-600 hidden"></span></button>
+          </div>
+          </div></div>
+        </div>
         <div class="nav-grupo" data-g="docs">
           <button type="button" class="nav-titulo" onclick="alternarGrupo('docs')" aria-expanded="true"><i class="fa-solid fa-folder-tree nav-titulo-ico"></i><span class="nav-titulo-txt">Documentos e eventos</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
           <div class="nav-grupo-corpo"><div class="nav-grupo-in">
@@ -1426,6 +1461,56 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     </section>
 
     <!-- PROCESSOS DE CORREIÇÃO -->
+    <!-- CHEFE DE GABINETE -->
+    <section id="tab-chefe" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#2b1d04">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-user-tie text-amber-300"></i> Chefe de Gabinete</h2>
+            <p class="text-amber-100/70 text-xs mt-0.5 hidden sm:block">Dados do Chefe de Gabinete e resumo dos processos, documentos para assinatura e demandas do SIMEC dele (cadastro separado do da Secretária).</p>
+          </div>
+          <div class="text-xs text-amber-100/80" id="chefe-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin pb-2" id="chefe-corpo"></div></div>
+    </section>
+    <section id="tab-chefe-proc" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#2b1d04">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-folder-open text-amber-300"></i> Processos · Chefe de Gabinete</h2>
+            <p class="text-amber-100/70 text-xs mt-0.5 hidden sm:block">Processos do Chefe de Gabinete. Não aparecem nas seções da Secretária.</p>
+          </div>
+          <div class="text-xs text-amber-100/80" id="cproc-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cproc-corpo"></div></div>
+    </section>
+    <section id="tab-chefe-ass" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#2b1d04">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-file-signature text-amber-300"></i> Documentos para assinatura · Chefe de Gabinete</h2>
+            <p class="text-amber-100/70 text-xs mt-0.5 hidden sm:block">Documentos que o Chefe de Gabinete assina ou acompanha. Não aparecem nas seções da Secretária.</p>
+          </div>
+          <div class="text-xs text-amber-100/80" id="cass-resumo"></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cass-corpo"></div></div>
+    </section>
+    <section id="tab-simec" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#042f2e">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-building-flag text-teal-300"></i> SIMEC</h2>
+            <p class="text-teal-100/70 text-xs mt-0.5 hidden sm:block">Demandas do SIMEC (Sistema Integrado de Monitoramento, Execução e Controle do MEC) acompanhadas pelo Chefe de Gabinete.</p>
+          </div>
+          <button onclick="abrirFormSimec()" data-requer="chefe:2" class="btn bg-teal-600 hover:bg-teal-500 text-white"><i class="fa-solid fa-plus"></i>Nova demanda do SIMEC</button>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="simec-corpo"></div></div>
+    </section>
+
     <section id="tab-correicao" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern" style="background-color:#3a2306">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -1605,7 +1690,15 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+// Dois cadastros separados na mesma lista: o da Secretária (Store.sol, usado por todo o sistema)
+// e o do Chefe de Gabinete (Store.solChefe, só na seção dele). Store.solTodos tem os dois.
+const ehChefe = s => !!s && s.gabinete === 'chefe';
+Object.defineProperty(Store, 'sol', { get() { return this._sol.filter(x => !ehChefe(x)); }, set(v) { this._sol = Array.isArray(v) ? v : []; } });
+Object.defineProperty(Store, 'solChefe', { get() { return this._sol.filter(ehChefe); } });
+Object.defineProperty(Store, 'solTodos', { get() { return this._sol; } });
+/** Procura um registro pelo id nos dois cadastros. */
+const solPorId = id => Store._sol.find(x => x.id === id) || null;
 const NO_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
 
 /* ----- API do Apps Script ----- */
@@ -1660,7 +1753,7 @@ function nivelArea(area) {
   if (p.admin) return 3;
   if (p.areas) return Number(p.areas[area] || 0);
   // backend anterior (sem áreas): deduz pelas permissões gerais
-  if (area === 'sol' || area === 'casacivil' || area === 'correicao' || area === 'comunicados' || area === 'eventos') return p.excluir ? 3 : p.gravar ? 2 : 1;
+  if (area === 'sol' || area === 'casacivil' || area === 'correicao' || area === 'comunicados' || area === 'eventos' || area === 'chefe') return p.excluir ? 3 : p.gravar ? 2 : 1;
   if (area === 'agenda') return p.agenda ? 3 : 1;
   return 1;
 }
@@ -1674,6 +1767,7 @@ const podeGrade = id => { const a = Grades[id] && Grades[id].cfg && Grades[id].c
 /** Seção do menu → área de permissão. */
 function areaDaAba(tab) {
   if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos'].includes(tab)) return 'sol';
+  if (['chefe', 'chefe-proc', 'chefe-ass', 'simec'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
 function abaPermitida(tab) { if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
@@ -1729,6 +1823,14 @@ async function iniciarStore() {
       Store.eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('simec').onSnapshot(snap => {
+      Store.simec = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
+    db.collection('chefe').onSnapshot(snap => {
+      const d = snap.docs.find(x => x.id === 'info'); Store.chefe = d ? d.data() : {};
+      aoMudarDados();
+    }, () => {});
     db.collection('agenda').onSnapshot(snap => {
       Store.agenda = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -1741,6 +1843,7 @@ async function iniciarStore() {
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
     Store.comunicados = ex.comunicados.map((e, i) => ({ id: 'cm' + i, ...e }));
+    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.chefe = exc.info;
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -1809,10 +1912,12 @@ function aplicarCarga(r) {
     Store.correicao = r.correicao || [];
     Store.eventos = r.eventos || [];
     Store.comunicados = r.comunicados || [];
+    Store.simec = r.simec || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
   if (r.personalizacao) aplicarPersonalizacao(r.personalizacao);
   if (r.config) Store.config = r.config;
+  if ('chefe' in r) Store.chefe = r.chefe;
   if (r.permissoes && Store.sessao) { Store.sessao.permissoes = r.permissoes; try { localStorage.setItem('gabdoc_sessao', JSON.stringify(Store.sessao)); } catch (e) {} aplicarAcessoMenu(); }
   if (r.dataVersion) Store.versao = r.dataVersion;
   Store.pronto = true;
@@ -1946,7 +2051,7 @@ function concluirGrav(t, res) {
 function falharGrav(t, msg) { t.estado = 'erro'; t.erro = msg || 'Não foi possível salvar.'; Grav.minimizado = false; }
 /** Backend antigo devolve outro id para registros novos: troca na tela e na fila. */
 function trocarIdLocal(colecao, de, para) {
-  const x = (Store[colecao] || []).find(r => r.id === de); if (x) x.id = para;
+  const x = (colecao === 'sol' ? Store._sol : (Store[colecao] || [])).find(r => r.id === de); if (x) x.id = para;
   Grav.itens.forEach(t => { if (t.ref === de) { t.ref = para; if (t.payload && t.payload.id === de) { t.payload.id = para; t.payload.criarComId = false; } } });
   if (modalAberto && modalAberto.id === de) modalAberto.id = para;
 }
@@ -2043,14 +2148,14 @@ window.addEventListener('beforeunload', e => { if (Grav.ocupada()) { e.preventDe
 function semHistorico(d) { const o = { ...d }; delete o.historico; delete o.id; return o; }
 function semId(d) { const o = { ...d }; delete o.id; return o; }
 function novosMovimentos(id, dados) {
-  const antigo = id ? Store.sol.find(x => x.id === id) : null;
+  const antigo = id ? solPorId(id) : null;
   const n = antigo && antigo.historico ? antigo.historico.length : 0;
   return (dados.historico || []).slice(n).map(h => ({ acao: h.acao, obs: h.obs || '' }));
 }
 function substituirLocal(s) {
   if (!s) return;
-  const i = Store.sol.findIndex(x => x.id === s.id);
-  if (i >= 0) Store.sol[i] = s; else Store.sol.push(s);
+  const i = Store._sol.findIndex(x => x.id === s.id);
+  if (i >= 0) Store._sol[i] = s; else Store._sol.push(s);
 }
 function trocarNaLista(lista, id, obj) { const i = lista.findIndex(x => x.id === id); if (i >= 0) lista[i] = obj; else lista.push(obj); }
 const gravaEmFila = () => Store.modo === 'planilha' || Store.modo === 'nuvem';
@@ -2060,7 +2165,7 @@ async function salvarSol(id, dados, rotulo) {
   const novo = !id;
   if (!gravaEmFila()) {
     if (novo) id = 'loc' + Date.now();
-    trocarNaLista(Store.sol, id, { ...dados, id });
+    trocarNaLista(Store._sol, id, { ...dados, id });
     aoMudarDados();
     return id;
   }
@@ -2068,7 +2173,7 @@ async function salvarSol(id, dados, rotulo) {
   if (novo) id = novoIdLocal('S');
   const local = { ...dados, id };
   if (novo && !local.criadoEm) local.criadoEm = dados.atualizadoEm;
-  trocarNaLista(Store.sol, id, local);
+  trocarNaLista(Store._sol, id, local);
   aoMudarDados();
   const ref = id;
   enfileirar({
@@ -2082,8 +2187,8 @@ async function salvarSol(id, dados, rotulo) {
   return id;
 }
 async function excluirSol(id) {
-  const s = Store.sol.find(x => x.id === id);
-  Store.sol = Store.sol.filter(x => x.id !== id); aoMudarDados();
+  const s = solPorId(id);
+  Store._sol = Store._sol.filter(x => x.id !== id); aoMudarDados();
   if (!gravaEmFila()) return;
   enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão', detalhe: s ? [s.numero, s.assunto].filter(Boolean).join(' · ') : '',
     action: 'excluir_solicitacao', payload: { id }, nuvem: () => Store.db.collection('solicitacoes').doc(id).delete() });
@@ -2180,7 +2285,7 @@ async function removerExemplos(btn) {
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Removendo…'; }
   try {
     await Promise.all([
-      ...Store.sol.filter(x => x.exemplo).map(s => Store.db.collection('solicitacoes').doc(s.id).delete()),
+      ...Store._sol.filter(x => x.exemplo).map(s => Store.db.collection('solicitacoes').doc(s.id).delete()),
       ...Store.agenda.filter(x => x.exemplo).map(a => Store.db.collection('agenda').doc(a.id).delete()),
       ...Store.correicao.filter(x => x.exemplo).map(c => Store.db.collection('correicao').doc(c.id).delete()),
       ...Store.eventos.filter(x => x.exemplo).map(e => Store.db.collection('eventos').doc(e.id).delete()),
@@ -2273,7 +2378,7 @@ function renderOnline() {
 function conteudoOnline() {
   const L = Store.online;
   return `<div class="ol-pop-topo"><span class="ol-ponto"></span><b>${L.length} ${L.length === 1 ? 'pessoa' : 'pessoas'} usando agora</b></div>
-    <ul>${L.map(o => { const proc = o.vendo ? Store.sol.find(s => s.id === o.vendo) : null; const eu_ = o.usuario === eu();
+    <ul>${L.map(o => { const proc = o.vendo ? solPorId(o.vendo) : null; const eu_ = o.usuario === eu();
       return `<li><span class="ol-av" style="--c:${corAvatar(o.usuario)}">${esc(iniciais(o.usuario))}<i class="ol-on"></i></span>
         <div class="min-w-0 flex-1"><p class="ol-nome">${esc(o.usuario)}${eu_ ? ' <small>(você)</small>' : ''}</p>
           <p class="ol-onde">${esc(o.perfil || '')}${nomeAba(o.aba) ? ` · em <b>${esc(nomeAba(o.aba))}</b>` : ''}</p>
@@ -2557,7 +2662,7 @@ async function sair() {
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
     Store.online = []; renderOnline(); fecharOnline();
-    Store.sessao = null; Store.sol = []; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.simec = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -2591,7 +2696,7 @@ function emLote(fn) { renderAdiado++; try { return fn(); } finally { if (--rende
 function aoMudarDados() {
   if (renderAdiado) { renderPerdido = true; return; }
   atualizarBadges();
-  resolverNomes(Store.sol.flatMap(s => (s.historico || []).map(h => h.por))).then(() => { if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe(); });
+  resolverNomes(Store._sol.flatMap(s => (s.historico || []).map(h => h.por))).then(() => { if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe(); });
   renderAba();
   if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe();
   statusSync();
@@ -2599,7 +2704,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -2627,6 +2732,11 @@ function atualizarBadges() {
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
   set('bdg-cor', Store.correicao.filter(c => !/^(conclu|arquiv)/i.test(Utils_norm(c.situacao))).length);
+  const ch = Store.solChefe;
+  set('bdg-chefe-proc', ch.filter(s => ehProcesso(s) && !FEITO(s)).length);
+  set('bdg-chefe-ass', ch.filter(s => ehAssinatura(s) && !FEITO(s)).length);
+  set('bdg-simec', (Store.simec || []).filter(x => !simecFeito(x)).length);
+  set('bdg-chefe', prazosChefe().filter(x => x.dias <= 0).length);
   somarBadgesGrupos();
   const sino = $('sino-count'), n = prazosAtivos().filter(s => diasAte(s.prazo) <= 0).length;
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
@@ -2754,7 +2864,7 @@ function cartaoPrazo(s) {
   </div>`;
 }
 async function prorrogarPrazo(id, n) {
-  const s = Store.sol.find(x => x.id === id); if (!s || !pode('gravar')) return;
+  const s = solPorId(id); if (!s || !pode('gravar')) return;
   const base = s.prazo < hojeISO() ? hojeISO() : s.prazo, novo = somaDias(n, base);
   if (await editarSolCampos(s, { prazo: novo })) toast(`Prazo prorrogado para ${fmt(novo)}.`, 'fa-calendar-plus');
 }
@@ -3180,7 +3290,7 @@ function botaoSec(sg, ativo, grupo) {
 }
 function abrirForm(id, pre = {}) {
   if (!pode('gravar')) { toast('Seu perfil (' + Store.sessao.perfil + ') não cadastra nem edita solicitações.', 'fa-lock'); return; }
-  const s = id ? Store.sol.find(x => x.id === id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: '', urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
+  const s = id ? solPorId(id) : { tipo: 'oficio', status: 'recebido', natureza: 'Solicitação de assinatura', prazo: '', urgente: false, casaCivil: false, ccEtapa: 'preparo', ...pre };
   const opt = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v.rot}</option>`).join('');
   const partesOrigem = String(s.origem || '').split(/\s*,\s*/).filter(Boolean);
   const secSel = partesOrigem.filter(ehSigla).map(x => x.toUpperCase());
@@ -3207,7 +3317,7 @@ function abrirForm(id, pre = {}) {
           <span id="hero-ico-pro" class="${nat.includes('Processo') ? 'on' : ''}" style="--c:#0d9488"><i class="fa-solid fa-folder-open"></i></span>
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-300">${id ? 'Editar registro' : 'Novo registro'}</p>
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-300">${id ? 'Editar registro' : 'Novo registro'}${ehChefe(s) ? ' <span class="selo-chefe"><i class="fa-solid fa-user-tie"></i>Chefe de Gabinete</span>' : ''}</p>
           <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${id ? esc(s.assunto) : 'Solicitação de assinatura ou processo'}</h3>
           <p class="text-[12.5px] text-blue-100/70 mt-1">${id ? 'Recebido em ' + fmt(s.recebidoEm) : 'Três passos. A data de recebimento entra sozinha: hoje, ' + fmt(hojeISO()) + '.'}</p>
         </div>
@@ -3220,6 +3330,7 @@ function abrirForm(id, pre = {}) {
       </ol>
     </div>
     <form class="modal-corpo space-y-4" id="form-sol" oninput="atualizarPassos()" onclick="setTimeout(atualizarPassos)" onsubmit="event.preventDefault();salvarForm('${id || ''}')">
+      <input type="hidden" id="s-gabinete" value="${ehChefe(s) ? 'chefe' : ''}">
 
       ${passo(1, '#2563eb', 'O que está chegando', 'Marque um ou os dois e descreva o documento.', `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="s-natureza">
@@ -3312,9 +3423,10 @@ function atualizarPassos() {
   const r = $('form-resumo');
   if (r) r.innerHTML = feitos === 3 ? '<span style="color:var(--ok)"><i class="fa-solid fa-circle-check mr-1"></i>Tudo pronto para registrar</span>' : `${feitos} de 3 passos completos`;
 }
-function novoRegistro(qual) {
+function novoRegistro(qual, gabinete) {
   menuMobile(false);
-  abrirForm(null, { natureza: qual === 'processo' ? 'Processo' : 'Solicitação de assinatura', tipo: qual === 'processo' ? 'despacho' : 'oficio' });
+  if (gabinete === 'chefe' && !pode('chefe:2')) { toast('Seu perfil não cadastra registros do Chefe de Gabinete.', 'fa-lock'); return; }
+  abrirForm(null, { natureza: qual === 'processo' ? 'Processo' : 'Solicitação de assinatura', tipo: qual === 'processo' ? 'despacho' : 'oficio', gabinete: gabinete === 'chefe' ? 'chefe' : '' });
 }
 function alternarChip(btn) {
   const ativo = !btn.classList.contains('ativo');
@@ -3330,13 +3442,14 @@ async function salvarForm(id) {
   if (!secretarias.length && !v('s-origem-outra')) return aviso('Marque pelo menos uma secretaria (ou informe outra unidade).');
   if (!v('s-resp')) { $('s-resp').focus(); return aviso('Informe quem solicitou a assinatura.'); }
   if (!v('s-assunto')) { $('s-assunto').focus(); return aviso('Informe o assunto.'); }
-  const antigo = id ? Store.sol.find(x => x.id === id) : null;
+  const antigo = id ? solPorId(id) : null;
   const dados = antigo ? copia(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId(), historico: [{ em: new Date().toISOString(), acao: 'Solicitação registrada', por: meuId() }] };
   Object.assign(dados, {
     tipo: v('s-tipo'), natureza: naturezas.join(', '), numero: v('s-numero'), assunto: v('s-assunto'),
     origem: secretarias.concat(v('s-origem-outra') ? [v('s-origem-outra')] : []).join(', '), interessado: v('s-interessado'),
     municipio: v('s-municipio'), responsavel: v('s-resp'), recebidoEm: antigo ? (antigo.recebidoEm || hojeISO()) : hojeISO(), prazo: v('s-prazo'),
     status: antigo ? (v('s-status') || antigo.status) : 'recebido',
+    gabinete: antigo ? (antigo.gabinete || '') : (v('s-gabinete') === 'chefe' ? 'chefe' : ''),
     urgente: $('s-urg').checked, motivoUrgencia: $('s-urg').checked ? v('s-motivo') : '',
     casaCivil: $('s-cc').checked, ccEtapa: $('s-cc').checked ? v('s-ccetapa') : '', ccNumero: $('s-cc').checked ? v('s-ccnum') : '',
     observacoes: v('s-obs')
@@ -3373,7 +3486,7 @@ const ACAO_PARA_STATUS = { pendente: 'recebido', recebido: 'recebido', analise: 
 /** Texto gravado no histórico ao mudar de situação (igual ao da planilha). */
 const HIST_STATUS = { recebido: 'Marcado como pendente', analise: 'Em andamento', assinado: 'Documento assinado', ajuste: 'Devolvido para correção', expedido: 'Arquivado', cancelado: 'Cancelado' };
 async function acaoRapida(id, acao, obs = '') {
-  const s = Store.sol.find(x => x.id === id); if (!s) return;
+  const s = solPorId(id); if (!s) return;
   const st = ACAO_PARA_STATUS[acao] || acao; if (!STATUS[st]) return;
   const dados = copia(s);
   dados.status = st;
@@ -3396,7 +3509,7 @@ function renderDetalhe() {
   const corpoAntes = el.querySelector('.det-corpo'), rolagem = corpoAntes ? corpoAntes.scrollTop : 0;
   const focoObs = document.activeElement && document.activeElement.id === 'd-obs';
   setTimeout(aplicarPermissoes, 0);
-  const s = Store.sol.find(x => x.id === modalAberto.id);
+  const s = solPorId(modalAberto.id);
   if (!s) { el.innerHTML = `<div class="modal-corpo">${vazio('fa-file-circle-xmark', 'Processo não encontrado', 'Ele pode ter sido excluído por outra pessoa da equipe.')}</div><div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>`; return; }
   const t = TIPOS[s.tipo] || TIPOS.outro, st = STATUS[s.status] || STATUS.recebido, sit = situacao(s);
   const hist = (s.historico || []).slice().reverse();
@@ -3412,7 +3525,7 @@ function renderDetalhe() {
   el.innerHTML = `
     <div class="det-topo">
       <div class="flex items-start justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-1.5 min-w-0">${s.urgente && aberto ? '<span class="selo-urg"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}<span class="chip" style="--c:#64748b">${esc((NATUREZAS_OP.find(n => n[0] === s.natureza) || [0, s.natureza || 'Solicitação de assinatura'])[1])}</span></div>
+        <div class="flex flex-wrap items-center gap-1.5 min-w-0">${ehChefe(s) ? '<span class="selo-chefe"><i class="fa-solid fa-user-tie"></i>Chefe de Gabinete</span>' : ''}${s.urgente && aberto ? '<span class="selo-urg"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}${s.casaCivil ? '<span class="selo-cc"><i class="fa-solid fa-landmark"></i>Casa Civil</span>' : ''}${chipTipo(s.tipo)}<span class="chip" style="--c:#64748b">${esc((NATUREZAS_OP.find(n => n[0] === s.natureza) || [0, s.natureza || 'Solicitação de assinatura'])[1])}</span></div>
         <button class="det-fechar" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <h3 class="det-titulo">${esc(s.assunto)}</h3>
@@ -3482,13 +3595,13 @@ function renderDetalhe() {
 }
 function acaoDetalhe(k) { const o = $('d-obs'); const obs = o ? o.value.trim() : ''; if (o) o.value = ''; acaoRapida(modalAberto.id, k, obs); }
 async function alternarUrgente() {
-  const s = Store.sol.find(x => x.id === modalAberto.id); const d = copia(s);
+  const s = solPorId(modalAberto.id); const d = copia(s);
   d.urgente = !s.urgente; if (!d.urgente) d.motivoUrgencia = ''; else { const o = ($('d-obs').value || '').trim(); if (o) d.motivoUrgencia = o; }
   d.historico = (d.historico || []).concat({ em: new Date().toISOString(), acao: d.urgente ? 'Marcado como PRIORIDADE' : 'Prioridade retirada', obs: ($('d-obs').value || '').trim(), por: meuId() });
   if (await salvarSol(s.id, d)) toast(d.urgente ? 'Marcado como prioridade.' : 'Prioridade retirada.');
 }
 async function incluirCC() {
-  const s = Store.sol.find(x => x.id === modalAberto.id); const d = copia(s);
+  const s = solPorId(modalAberto.id); const d = copia(s);
   d.casaCivil = true; d.ccEtapa = 'preparo';
   d.historico = (d.historico || []).concat({ em: new Date().toISOString(), acao: 'Incluído na trilha da Casa Civil', obs: ($('d-obs').value || '').trim(), por: meuId() });
   if (await salvarSol(s.id, d)) toast('Incluído na trilha da Casa Civil.');
@@ -4096,10 +4209,10 @@ const PROXIMO = {
 };
 function botoesAcoesSol(id, s) {
   const p = PROXIMO[s.status];
-  const principal = p && pode(p[4]) ? `<button type="button" class="gs-acao" style="--c:${p[3]}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'status','${p[0]}')" title="${esc(STATUS[p[0]].rot)}"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>`
+  const principal = p && pode(p[4]) ? `<button type="button" class="gs-acao" style="--c:${p[3]}" onclick="editarSolCelula(solPorId('${s.id}'),'status','${p[0]}')" title="${esc(STATUS[p[0]].rot)}"><i class="fa-solid ${p[2]}"></i>${p[1]}</button>`
     : FEITO(s) ? `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>` : `<span class="gs-acao-fim !text-ink3" title="${esc(STATUS[s.status] ? STATUS[s.status].rot : '')}"><i class="fa-solid fa-lock text-[10px]"></i>${esc(STATUS[s.status] ? STATUS[s.status].rot.split(' ')[0] : '')}</span>`;
   return `<div class="gs-acoes-in">${principal}
-    ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${esc(s.urgente ? AC('prio_off') : AC('prio_on'))}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-flag"></i></button>` : ''}
+    ${pode('gravar') ? `<button type="button" class="gs-ico ${s.urgente ? 'on-urg' : ''}" title="${esc(s.urgente ? AC('prio_off') : AC('prio_on'))}" onclick="editarSolCelula(solPorId('${s.id}'),'urgente',${!s.urgente})"><i class="fa-solid fa-flag"></i></button>` : ''}
     <button type="button" class="gs-ico" title="Abrir detalhes e histórico" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button>
     <button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('${id}','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
 }
@@ -4139,15 +4252,23 @@ const VISOES_GESTAO = {
   processos:   { grade: 'g-proc', corpo: 'proc-corpo', resumo: 'proc-resumo', filtro: ehProcesso, novo: 'processo', cor: '#0d9488', rotulo: 'processo(s)',
                  textoNovo: 'Novo processo (abre o formulário)', vazio: 'Nenhum processo cadastrado. Use "Novo processo".' },
   assinaturas: { grade: 'g-ass', corpo: 'ass-corpo', resumo: 'ass-resumo', filtro: ehAssinatura, novo: 'assinatura', cor: '#2563eb', rotulo: 'documento(s)',
-                 textoNovo: 'Nova assinatura (abre o formulário)', vazio: 'Nenhum documento para assinatura. Use "Nova assinatura".' }
+                 textoNovo: 'Nova assinatura (abre o formulário)', vazio: 'Nenhum documento para assinatura. Use "Nova assinatura".' },
+  // Cadastro separado do Chefe de Gabinete
+  chefeProc:   { grade: 'gc-proc', corpo: 'cproc-corpo', resumo: 'cproc-resumo', filtro: ehProcesso, novo: 'processo', gabinete: 'chefe', cor: '#b45309', rotulo: 'processo(s)',
+                 textoNovo: 'Novo processo do Chefe de Gabinete', vazio: 'Nenhum processo do Chefe de Gabinete. Use "Novo processo".' },
+  chefeAss:    { grade: 'gc-ass', corpo: 'cass-corpo', resumo: 'cass-resumo', filtro: ehAssinatura, novo: 'assinatura', gabinete: 'chefe', cor: '#b45309', rotulo: 'documento(s)',
+                 textoNovo: 'Novo documento para assinatura do Chefe de Gabinete', vazio: 'Nenhum documento para assinatura do Chefe de Gabinete. Use "Nova assinatura".' }
 };
+function renderChefeProc() { renderVisaoGestao('chefeProc'); }
+function renderChefeAss() { renderVisaoGestao('chefeAss'); }
 function renderMesa() { renderVisaoGestao('mesa'); }
 function renderProcessos() { renderVisaoGestao('processos'); }
 function renderAssinaturas() { renderVisaoGestao('assinaturas'); }
 function renderVisaoGestao(k) {
   const v = VISOES_GESTAO[k];
   const cont = $(v.corpo);
-  const todos = Store.sol.filter(v.filtro);
+  const fonte = v.gabinete === 'chefe' ? () => Store.solChefe : () => Store.sol;
+  const todos = fonte().filter(v.filtro);
   const pend = todos.filter(s => !FEITO(s));
   $(v.resumo).textContent = `${todos.length} ${v.rotulo} · ${pend.length} ${L('filtro.pend').toLowerCase()} · ${pend.filter(s => s.status === 'analise').length} ${STATUS.analise.rot.toLowerCase()}`;
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
@@ -4157,7 +4278,7 @@ function renderVisaoGestao(k) {
     .concat(k === 'mesa' ? [['proc', L('filtro.proc'), ehProcesso, '#0d9488'], ['ass', 'Para assinatura', ehAssinatura, '#2563eb']] : [])
     .concat([['feito', L('filtro.feito'), s => FEITO(s), '#16a34a']]);
   renderGrade(cont, {
-    id: v.grade, area: 'sol', linhas: todos, fonte: () => Store.sol, colunas: colunasVisao(),
+    id: v.grade, area: v.gabinete === 'chefe' ? 'chefe' : 'sol', linhas: todos, fonte, colunas: colunasVisao(),
     compactas: ['numero', 'assunto', 'tipo', 'origem', 'prazo', 'status'],
     ordemColuna: 'prazo',
     finalizado: FEITO,
@@ -4167,10 +4288,10 @@ function renderVisaoGestao(k) {
     aoEditarCampos: editarSolCampos,
     acoes: s => botoesAcoesSol(v.grade, s), menuAcoes: menuAcoesSol, acoesLote: acoesLoteSol(),
     tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
-    novaLinha: () => novoRegistro(v.novo), textoNovaLinha: v.textoNovo,
+    novaLinha: () => novoRegistro(v.novo, v.gabinete), textoNovaLinha: v.textoNovo,
     textoVazio: v.vazio,
     botaoNovo: k === 'mesa' ? `<button class="btn btn-pri !h-9" onclick="novoRegistro('assinatura')"><i class="fa-solid fa-plus"></i>Novo</button>`
-      : `<button class="btn btn-pri !h-9" onclick="novoRegistro('${v.novo}')"><i class="fa-solid fa-plus"></i>${k === 'processos' ? 'Novo processo' : 'Nova assinatura'}</button>`
+      : `<button class="btn ${v.gabinete ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'btn-pri'} !h-9" onclick="novoRegistro('${v.novo}','${v.gabinete || ''}')"><i class="fa-solid fa-plus"></i>${v.novo === 'processo' ? 'Novo processo' : 'Nova assinatura'}</button>`
   });
 }
 
@@ -4240,7 +4361,7 @@ function renderCC() {
     aoEditarCampos: editarSolCampos,
     acoes: s => {
       const prox = PROX_ETAPA[s.ccEtapa || 'preparo'];
-      const btn = prox && pode('casacivil:2') ? `<button type="button" class="gs-acao" style="--c:${ETAPAS_CC[prox].cor}" title="${esc(ETAPAS_CC[prox].rot)}" onclick="editarSolCelula(Store.sol.find(x=>x.id==='${s.id}'),'ccEtapa','${prox}')"><i class="fa-solid ${ETAPAS_CC[prox].ico}"></i>${esc(L('ccacao.' + prox, { enviado: 'Enviar', analise_cc: 'Em análise', concluido: 'Concluir' }[prox]))}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
+      const btn = prox && pode('casacivil:2') ? `<button type="button" class="gs-acao" style="--c:${ETAPAS_CC[prox].cor}" title="${esc(ETAPAS_CC[prox].rot)}" onclick="editarSolCelula(solPorId('${s.id}'),'ccEtapa','${prox}')"><i class="fa-solid ${ETAPAS_CC[prox].ico}"></i>${esc(L('ccacao.' + prox, { enviado: 'Enviar', analise_cc: 'Em análise', concluido: 'Concluir' }[prox]))}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Abrir detalhes" onclick="abrirDetalhe('${s.id}')"><i class="fa-solid fa-up-right-from-square"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('casacivil','${s.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
     menuAcoes: menuAcoesSol, tituloLinha: s => (s.numero || 's/ nº') + ' · ' + s.assunto,
@@ -4252,7 +4373,7 @@ function renderCC() {
   });
 }
 async function mudarEtapaCC(id, etapa) {
-  const s = Store.sol.find(x => x.id === id); if (!s || s.ccEtapa === etapa) return;
+  const s = solPorId(id); if (!s || s.ccEtapa === etapa) return;
   if (await editarSolCelula(s, 'ccEtapa', etapa)) toast('Etapa atualizada: ' + ETAPAS_CC[etapa].rot);
 }
 
@@ -4316,6 +4437,285 @@ function renderCorreicao() {
     textoVazio: 'Nenhum processo de correição registrado.',
     botaoNovo: `<button class="btn !h-9 bg-amber-500 hover:bg-amber-400 text-white" onclick="abrirFormCorreicao()"><i class="fa-solid fa-plus"></i>Novo</button>`
   });
+}
+
+/* ========================= Chefe de Gabinete e SIMEC ========================= */
+// Cadastro separado: os processos e documentos do Chefe de Gabinete (gabinete = 'chefe') ficam fora
+// de todas as seções da Secretária; o SIMEC tem a própria aba na planilha.
+const SITUACOES_SIMEC = {
+  'Pendente':                        ['#64748b', 'fa-inbox'],
+  'Em andamento':                    ['#2563eb', 'fa-arrows-spin'],
+  'Aguardando retorno do MEC/FNDE':  ['#d97706', 'fa-hourglass-half'],
+  'Em diligência':                   ['#ea580c', 'fa-magnifying-glass'],
+  'Concluída':                       ['#16a34a', 'fa-circle-check'],
+  'Cancelada':                       ['#6b7280', 'fa-ban']
+};
+const MODULOS_SIMEC = ['PAR', 'PDDE Interativo', 'Obras 2.0', 'Monitoramento', 'Termos de Compromisso', 'Emendas', 'Mais Educação', 'Censo / Educacenso'];
+const simecFeito = x => /^(conclu|cancel)/.test(Utils_norm(x && x.situacao));
+const corSimec = sit => SITUACOES_SIMEC[sit] || ['#64748b', 'fa-circle'];
+/** Contagem de dias do prazo (mesmo visual da coluna Prazo das planilhas). */
+function celPrazoDias(prazo, feito) {
+  if (!prazo) return '<span class="gs-dias sem">Sem prazo</span>';
+  const d = diasAte(prazo), dica = `Prazo: ${fmt(prazo)}`;
+  if (feito) return `<span class="gs-dias feito" title="${dica}"><i class="fa-solid fa-check"></i>Concluída</span>`;
+  const sit = d < 0 ? 'vencido' : d === 0 ? 'hoje' : d <= 3 ? 'proximo' : 'ok';
+  const txt = d < 0 ? `Vencido há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'Vence hoje' : d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`;
+  return `<span class="gs-dias ${sit}" title="${dica}"><i class="fa-solid ${d < 0 ? 'fa-circle-exclamation' : d === 0 ? 'fa-hourglass-end' : 'fa-hourglass-half'}"></i>${txt}</span>`;
+}
+/** Prazos do Chefe (processos, documentos e SIMEC) vencidos ou que vencem em até 7 dias. */
+function prazosChefe() {
+  const out = [];
+  Store.solChefe.filter(s => !FEITO(s) && s.prazo).forEach(s => out.push({ tipo: ehProcesso(s) ? 'proc' : 'ass', id: s.id, titulo: s.assunto, numero: s.numero, prazo: s.prazo, dias: diasAte(s.prazo), urgente: s.urgente }));
+  (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => out.push({ tipo: 'simec', id: x.id, titulo: x.assunto, numero: x.numero || x.modulo, prazo: x.prazo, dias: diasAte(x.prazo) }));
+  return out.filter(x => x.dias <= 7).sort((a, b) => a.dias - b.dias || (!!b.urgente - !!a.urgente));
+}
+
+/* ----- gravação do SIMEC (fila em segundo plano, como as demais) ----- */
+async function salvarSimec(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'sm' + Date.now();
+    trocarNaLista(Store.simec, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  const antigo = novo ? null : Store.simec.find(x => x.id === id);
+  if (novo) id = novoIdLocal('F');
+  trocarNaLista(Store.simec, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'simec', idLocal: novo ? id : null, icone: 'fa-building-flag',
+    rotulo: rotulo || (novo ? 'Nova demanda do SIMEC' : antigo && antigo.situacao !== dados.situacao ? 'SIMEC · ' + (dados.situacao || '—') : 'SIMEC atualizado'),
+    detalhe: [dados.numero, dados.assunto].filter(Boolean).join(' · '),
+    action: 'salvar_simec', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('simec').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirSimecId(id) {
+  const x = Store.simec.find(r => r.id === id);
+  Store.simec = Store.simec.filter(r => r.id !== id); aoMudarDados();
+  toast('Demanda do SIMEC excluída.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão no SIMEC', detalhe: x ? x.assunto : '',
+    action: 'excluir_simec', payload: { id }, nuvem: () => Store.db.collection('simec').doc(id).delete() });
+}
+async function editarSimecCampos(x, campos) { const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarSimec(x.id, d); }
+
+/* ----- formulário do SIMEC ----- */
+function abrirFormSimec(id) {
+  if (!pode('chefe:2')) { toast('Seu perfil não cadastra demandas do SIMEC.', 'fa-lock'); return; }
+  const x = id ? Store.simec.find(c => c.id === id) : { situacao: 'Pendente' };
+  if (!x) return;
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#042f2e;background-image:radial-gradient(600px 200px at 0% 0%, rgba(20,184,166,.35), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#0d9488"><i class="fa-solid fa-building-flag"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-teal-300">${id ? 'Editar' : 'Nova'} · Chefe de Gabinete</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Demanda do SIMEC</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-4" id="form-simec" onsubmit="event.preventDefault();salvarFormSimec('${id || ''}')">
+      ${campo(1, '#0d9488', 'Assunto *', `<textarea class="campo campo-g w-full" rows="2" id="sm-assunto" required placeholder="Ex.: Pendência de prestação de contas no PAR">${esc(x.assunto || '')}</textarea>`)}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        ${campo(2, '#2563eb', 'Nº / Identificação', `<input class="campo w-full" id="sm-numero" value="${esc(x.numero || '')}" placeholder="Nº do termo, processo ou demanda">`)}
+        ${campo(3, '#7c3aed', 'Módulo / Programa', `<input class="campo w-full" id="sm-modulo" list="lista-mod-simec" value="${esc(x.modulo || '')}" placeholder="Ex.: PAR, Obras 2.0">`)}
+        ${campo(4, '#0891b2', 'Município', `<input class="campo w-full" id="sm-municipio" list="lista-mun" value="${esc(x.municipio || '')}" placeholder="Município de MT">`)}
+        ${campo(5, '#0891b2', 'Escola / Unidade', `<input class="campo w-full" id="sm-escola" value="${esc(x.escola || '')}" placeholder="Opcional">`)}
+        ${campo(6, '#64748b', 'Responsável', `<input class="campo w-full" id="sm-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha">`)}
+        ${campo(7, '#dc2626', 'Prazo', `<input type="date" class="campo w-full" id="sm-prazo" value="${esc(x.prazo || '')}">
+          <div class="flex flex-wrap gap-1.5 mt-2">${[[5, '+5 dias'], [10, '+10 dias'], [30, '+30 dias']].map(([n, r]) => `<button type="button" class="chip" style="--c:#dc2626;cursor:pointer" onclick="$('sm-prazo').value='${somaDias(n)}'">${r}</button>`).join('')}<button type="button" class="chip" style="--c:#64748b;cursor:pointer" onclick="$('sm-prazo').value=''">Sem prazo</button></div>`)}
+      </div>
+      ${campo(8, '#d97706', 'Situação', `<div class="flex flex-wrap gap-1.5" id="sm-sits">${Object.entries(SITUACOES_SIMEC).map(([k, [cor, ico]]) => `<button type="button" class="det-sit ${k === (x.situacao || 'Pendente') ? 'atual' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('#sm-sits .det-sit').forEach(b=>b.classList.toggle('atual',b===this))"><i class="fa-solid ${ico}"></i>${esc(k)}</button>`).join('')}</div>`)}
+      ${campo(9, '#64748b', 'Observações', `<textarea class="campo w-full" rows="3" id="sm-obs" placeholder="Andamento, contatos no MEC/FNDE, protocolos…">${esc(x.observacoes || '')}</textarea>`)}
+      <p id="sm-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <datalist id="lista-mod-simec">${MODULOS_SIMEC.map(m => `<option value="${esc(m)}">`).join('')}</datalist>
+    <div class="modal-rodape">${id && pode('chefe:3') ? `<button class="btn btn-sec !text-red-600 mr-auto" onclick="if(confirmarDuplo(this)){fecharModal();excluirSimecId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5 !bg-teal-600" type="submit" form="form-simec" id="btn-simec-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'simec');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  setTimeout(() => $('sm-assunto').focus(), 60);
+}
+function confirmarDuplo(btn) {
+  if (btn.dataset.conf) return true;
+  btn.dataset.conf = '1'; const antes = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>Confirmar exclusão';
+  setTimeout(() => { if (btn.isConnected) { delete btn.dataset.conf; btn.innerHTML = antes; } }, 4000);
+  return false;
+}
+async function salvarFormSimec(id) {
+  const v = k => $(k).value.trim();
+  const aviso = t => { const el = $('sm-aviso'); el.textContent = t; el.classList.remove('hidden'); };
+  if (!v('sm-assunto')) return aviso('Informe o assunto da demanda.');
+  if (v('sm-municipio') && validarMunicipio(v('sm-municipio'))) return aviso(validarMunicipio(v('sm-municipio')));
+  const sit = (document.querySelector('#sm-sits .det-sit.atual') || {}).dataset;
+  const antigo = id ? Store.simec.find(c => c.id === id) : null;
+  const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
+    assunto: v('sm-assunto'), numero: v('sm-numero'), modulo: v('sm-modulo'), municipio: v('sm-municipio'), escola: v('sm-escola'),
+    responsavel: v('sm-resp'), prazo: v('sm-prazo'), situacao: (sit && sit.v) || 'Pendente', observacoes: v('sm-obs'), atualizadoEm: new Date().toISOString() };
+  const btn = $('btn-simec-salvar'); btn.disabled = true;
+  if (await salvarSimec(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Demanda do SIMEC registrada · salvando em segundo plano.' : 'Demanda do SIMEC salva.', 'fa-building-flag'); if (abaAtual !== 'simec' && abaAtual !== 'chefe') irPara('simec'); }
+  else btn.disabled = false;
+}
+
+/* ----- planilha do SIMEC ----- */
+function renderSimec() {
+  const cont = $('simec-corpo');
+  const todas = Store.simec || [];
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const abertas = todas.filter(x => !simecFeito(x));
+  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('simec','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  const sitAcao = s => ({ rot: s, ico: corSimec(s)[1], cor: corSimec(s)[0], perm: 'chefe:2', campos: () => ({ situacao: s }) });
+  const venc = x => !simecFeito(x) && x.prazo && diasAte(x.prazo) < 0;
+  renderGrade(cont, {
+    id: 'simec', area: 'chefe', linhas: todas, fonte: () => Store.simec,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi('#0d9488', 'fa-building-flag', 'Em aberto', abertas.length, `de ${todas.length} demanda(s)`, 'aberto')}
+      ${kpi('#dc2626', 'fa-circle-exclamation', 'Vencidas', todas.filter(venc).length, 'prazo passou', 'venc')}
+      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando MEC/FNDE', todas.filter(x => /^aguard/.test(Utils_norm(x.situacao))).length, 'retorno do governo federal', 'aguard')}
+      ${kpi('#16a34a', 'fa-circle-check', 'Concluídas', todas.filter(x => /^conclu/.test(Utils_norm(x.situacao))).length, 'finalizadas', 'feito')}</div>`,
+    colunas: [
+      { key: 'numero', rot: 'Nº / Identificação', w: 190, wCompacta: 170, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, validar: v => !String(v).trim() ? 'O assunto não pode ficar vazio.' : '' },
+      { key: 'modulo', rot: 'Módulo / Programa', w: 160, wCompacta: 140, tipo: 'texto', editavel: true, lista: 'lista-mod-simec-g', render: x => x.modulo ? `<span class="gs-pill" style="--c:#7c3aed">${esc(x.modulo)}</span>` : '' },
+      { key: 'municipio', rot: 'Município', w: 150, tipo: 'texto', editavel: true, lista: 'lista-mun', validar: validarMunicipio },
+      { key: 'escola', rot: 'Escola / Unidade', w: 190, tipo: 'texto', editavel: true },
+      { key: 'responsavel', rot: 'Responsável', w: 150, tipo: 'texto', editavel: true },
+      { key: 'prazo', rot: 'Prazo', w: 165, wCompacta: 160, tipo: 'data', editavel: true, render: x => celPrazoDias(x.prazo, simecFeito(x)) },
+      { key: 'situacao', rot: 'Situação', w: 210, wCompacta: 200, tipo: 'select', editavel: true, opcoes: x => Object.keys(SITUACOES_SIMEC).concat(x.situacao && !SITUACOES_SIMEC[x.situacao] ? [x.situacao] : []).map(k => [k, k]),
+        render: x => { if (!x.situacao) return ''; const [cor, ico] = corSimec(x.situacao); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.situacao)}</span>`; } },
+      { key: 'observacoes', rot: 'Observações', w: 280, tipo: 'texto', editavel: true }
+    ],
+    compactas: ['numero', 'assunto', 'modulo', 'prazo', 'situacao'],
+    ordemColuna: 'prazo',
+    larguraAcoes: 150,
+    finalizado: simecFeito,
+    ordemPadrao: ordemFinalizados(simecFeito, porPrazo, porFimRecente('atualizadoEm')),
+    classeLinha: x => simecFeito(x) ? 'gs-feito' : '',
+    chips: [['', L('filtro.todos'), () => true, '#0d9488'], ['aberto', 'Em aberto', x => !simecFeito(x), '#0d9488'], ['venc', 'Vencidas', venc, '#dc2626'],
+            ['aguard', 'Aguardando MEC/FNDE', x => /^aguard/.test(Utils_norm(x.situacao)), '#d97706'], ['feito', 'Concluídas', x => /^conclu/.test(Utils_norm(x.situacao)), '#16a34a']],
+    aoEditarCampos: editarSimecCampos,
+    acoes: x => {
+      const btn = !simecFeito(x) && pode('chefe:2') ? `<button type="button" class="gs-acao" style="--c:#16a34a" onclick="editarSimecCampos(Store.simec.find(c=>c.id==='${x.id}'),{situacao:'Concluída'})"><i class="fa-solid fa-circle-check"></i>Concluir</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormSimec('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('simec','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    tituloLinha: x => [x.numero, x.assunto].filter(Boolean).join(' · '),
+    menuAcoes: x => [{ titulo: 'Mudar a situação para' }].concat(Object.keys(SITUACOES_SIMEC).filter(s => s !== x.situacao).map(s => ({ rot: s, ico: corSimec(s)[1], cor: corSimec(s)[0], perm: 'chefe:2', fn: () => editarSimecCampos(x, { situacao: s }) })))
+      .concat([{ sep: true }, { rot: 'Prorrogar +5 dias', ico: 'fa-calendar-plus', cor: '#64748b', perm: 'chefe:2', fn: () => editarSimecCampos(x, { prazo: somaDias(5, x.prazo && x.prazo > hojeISO() ? x.prazo : hojeISO()) }) },
+               { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'chefe:2', fn: () => abrirFormSimec(x.id) },
+               { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'chefe:3', perigo: true, fn: () => excluirSimecId(x.id) }]),
+    acoesLote: Object.keys(SITUACOES_SIMEC).map(sitAcao),
+    novaLinha: () => abrirFormSimec(), textoNovaLinha: 'Nova demanda do SIMEC',
+    textoVazio: 'Nenhuma demanda do SIMEC registrada.',
+    botaoNovo: `<button class="btn !h-9 bg-teal-600 hover:bg-teal-500 text-white" onclick="abrirFormSimec()"><i class="fa-solid fa-plus"></i>Nova demanda</button>`
+  });
+  if (!$('lista-mod-simec-g')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-mod-simec-g">${MODULOS_SIMEC.map(m => `<option value="${esc(m)}">`).join('')}</datalist>`);
+}
+
+/** Exemplos do modo demonstração (sem planilha). */
+function exemplosChefe() {
+  const h = n => somaDias(n), agora = new Date().toISOString();
+  const S = (i, natureza, tipo, numero, assunto, origem, prazo, status, extra = {}) => ({ id: 'exc' + i, gabinete: 'chefe', natureza, tipo, numero, assunto, origem, interessado: '', municipio: extra.municipio || 'Cuiabá', responsavel: extra.resp || 'Gabinete', recebidoEm: h(-6 - i), prazo, status, urgente: !!extra.urgente, casaCivil: false, observacoes: '', exemplo: true,
+    historico: [{ em: agora, acao: 'Solicitação registrada', por: 'demo' }].concat(status === 'analise' ? [{ em: agora, acao: 'Em andamento', por: 'demo' }] : []) });
+  return {
+    sol: [
+      S(1, 'Processo', 'despacho', 'SEDUC-PRO-2026/20811', 'Contratação emergencial de transporte escolar — análise de viabilidade', 'SAGP', h(-2), 'analise', { urgente: true, municipio: 'Sinop' }),
+      S(2, 'Processo', 'despacho', 'SEDUC-PRO-2026/20877', 'Termo de cooperação com o Tribunal de Contas para capacitação de gestores', 'GS', h(4), 'recebido'),
+      S(3, 'Solicitação de assinatura', 'oficio', 'SEDUC-OFI-2026/31402', 'Ofício ao FNDE sobre repasse do PNAE', 'SAGE', h(1), 'recebido', { municipio: 'Cuiabá' }),
+      S(4, 'Solicitação de assinatura', 'memorando', 'SEDUC-MEM-2026/31455', 'Designação de servidores para comissão de inventário', 'SAGP', h(9), 'analise'),
+      S(5, 'Solicitação de assinatura', 'portaria', 'SEDUC-POR-2026/31490', 'Portaria de horário especial do Gabinete', 'GS', '', 'assinado', { })
+    ],
+    simec: [
+      { id: 'sm1', numero: 'PAR 2026/1182', assunto: 'Prestação de contas pendente de termo de compromisso de obras', modulo: 'PAR', municipio: 'Rondonópolis', escola: 'E.E. Major Otávio Pitaluga', responsavel: 'Ana Paula', prazo: h(-1), situacao: 'Em diligência', observacoes: 'Aguardando relatório fotográfico da obra.', exemplo: true },
+      { id: 'sm2', numero: 'OBR-55120', assunto: 'Atualização de vistoria no Obras 2.0 — quadra coberta', modulo: 'Obras 2.0', municipio: 'Sorriso', escola: 'E.E. 13 de Maio', responsavel: 'Carlos Mendes', prazo: h(5), situacao: 'Em andamento', observacoes: '', exemplo: true },
+      { id: 'sm3', numero: '', assunto: 'Resposta à notificação do FNDE sobre saldo do PDDE', modulo: 'PDDE Interativo', municipio: 'Cuiabá', escola: '', responsavel: 'Juliana Costa', prazo: h(12), situacao: 'Aguardando retorno do MEC/FNDE', observacoes: 'Protocolo enviado em 10/10.', exemplo: true },
+      { id: 'sm4', numero: 'EMD-2026/044', assunto: 'Cadastro de emenda parlamentar para aquisição de mobiliário', modulo: 'Emendas', municipio: 'Barra do Garças', escola: '', responsavel: 'Rodrigo Alves', prazo: h(-12), situacao: 'Concluída', observacoes: '', exemplo: true }
+    ],
+    info: { nome: 'Chefe de Gabinete (exemplo)', cargo: 'Chefe de Gabinete', email: 'gabinete@seduc.mt.gov.br', telefone: '(65) 3613-0000', ramal: '0000', local: 'Gabinete da Secretária', obs: 'Dados de exemplo. Edite em "Editar dados".' }
+  };
+}
+
+/* ----- Painel do Chefe de Gabinete ----- */
+function renderChefe() {
+  const c = $('chefe-corpo');
+  if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
+  const ch = Store.solChefe, sm = Store.simec || [], info = Store.chefe || {};
+  const procA = ch.filter(s => ehProcesso(s) && !FEITO(s)), assA = ch.filter(s => ehAssinatura(s) && !FEITO(s)), smA = sm.filter(x => !simecFeito(x));
+  const pz = prazosChefe(), venc = pz.filter(x => x.dias < 0), prox = pz.filter(x => x.dias >= 0);
+  const prio = ch.filter(s => s.urgente && !FEITO(s));
+  $('chefe-resumo').textContent = `${procA.length} processo(s) · ${assA.length} documento(s) · ${smA.length} SIMEC em aberto`;
+  const kpi = (cor, ico, rot, val, sub, aba) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="irPara('${aba}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  const dado = (ico, txt, href) => txt ? (href ? `<a href="${href}" target="_blank" rel="noopener"><i class="fa-solid ${ico}"></i>${esc(txt)}</a>` : `<span><i class="fa-solid ${ico}"></i>${esc(txt)}</span>`) : '';
+  const tel = String(info.telefone || '').replace(/\D/g, '');
+  const tipoPz = { proc: ['fa-folder-open', '#b45309', 'Processo'], ass: ['fa-file-signature', '#2563eb', 'Documento'], simec: ['fa-building-flag', '#0d9488', 'SIMEC'] };
+  const abrirPz = x => x.tipo === 'simec' ? `abrirFormSimec('${x.id}')` : `abrirDetalhe('${x.id}')`;
+  const ultimas = ch.flatMap(s => (s.historico || []).map(h => ({ h, s }))).sort((a, b) => String(b.h.em).localeCompare(String(a.h.em))).slice(0, 6);
+  c.innerHTML = `<div class="space-y-4">
+    <div class="chefe-cartao">
+      <div class="chefe-av">${info.nome ? esc(iniciais(info.nome)) : '<i class="fa-solid fa-user-tie"></i>'}</div>
+      <div class="min-w-0">
+        <p class="chefe-nome">${esc(info.nome || 'Chefe de Gabinete')}</p>
+        <p class="chefe-cargo">${esc(info.cargo || 'Chefe de Gabinete')}${info.nome ? '' : ' · <span class="text-ink3 font-semibold">dados ainda não preenchidos</span>'}</p>
+        <div class="chefe-dados">${dado('fa-envelope', info.email, info.email ? 'mailto:' + info.email : '')}${dado('fa-phone', info.telefone, tel ? 'tel:+55' + tel : '')}${dado('fa-headset', info.ramal ? 'Ramal ' + info.ramal : '')}${dado('fa-location-dot', info.local)}</div>
+        ${info.obs ? `<p class="chefe-obs">${esc(info.obs)}</p>` : ''}
+      </div>
+      ${pode('chefe:2') ? `<button class="btn btn-sec chefe-edit" onclick="abrirFormChefe()"><i class="fa-solid fa-pen"></i>Editar dados</button>` : '<span></span>'}
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+      ${kpi('#b45309', 'fa-folder-open', 'Processos', procA.length, 'em aberto', 'chefe-proc')}
+      ${kpi('#2563eb', 'fa-file-signature', 'Para assinatura', assA.length, 'em aberto', 'chefe-ass')}
+      ${kpi('#0d9488', 'fa-building-flag', 'SIMEC', smA.length, 'demandas em aberto', 'simec')}
+      ${kpi('#dc2626', 'fa-circle-exclamation', 'Vencidos', venc.length, 'processos, documentos e SIMEC', venc[0] && venc[0].tipo === 'simec' ? 'simec' : 'chefe-proc')}
+      ${kpi('#ea580c', 'fa-hourglass-half', 'Vencem em 7 dias', prox.length, 'atenção nos próximos dias', 'chefe-proc')}
+      ${kpi('#dc2626', 'fa-flag', 'Prioridades', prio.length, 'marcadas como prioridade', 'chefe-proc')}
+    </div>
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-4">
+      <section class="dv-card">
+        <h3 class="dv-tit"><i class="fa-solid fa-hourglass-half text-orange-500"></i>Prazos do Chefe de Gabinete <span class="text-ink3 font-normal text-[12px]">· vencidos e próximos 7 dias</span></h3>
+        ${pz.length ? `<div class="chefe-prazos">${pz.slice(0, 14).map(x => { const [ico, cor, rot] = tipoPz[x.tipo]; return `<button type="button" class="chefe-pz" onclick="${abrirPz(x)}"><span class="chefe-pz-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="min-w-0"><b>${x.urgente ? '<i class="fa-solid fa-flag text-red-600 mr-1"></i>' : ''}${esc(x.titulo || '—')}</b><small>${rot}${x.numero ? ' · ' + esc(x.numero) : ''}</small></span>${celPrazoDias(x.prazo, false)}</button>`; }).join('')}</div>${pz.length > 14 ? `<p class="text-[12px] text-ink3 mt-2">+ ${pz.length - 14} outro(s)</p>` : ''}`
+          : `<p class="text-[13px] text-ink3 py-6 text-center"><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>Nenhum prazo vencido ou vencendo nos próximos 7 dias.</p>`}
+      </section>
+      <div class="space-y-4">
+        ${pode('chefe:2') ? `<section class="dv-card"><h3 class="dv-tit"><i class="fa-solid fa-plus text-amber-600"></i>Registrar</h3><div class="chefe-atalhos">
+          <button type="button" class="chefe-atalho" style="--c:#b45309" onclick="novoRegistro('processo','chefe')"><span><i class="fa-solid fa-folder-plus"></i></span><span>Novo processo<small>do Chefe de Gabinete</small></span></button>
+          <button type="button" class="chefe-atalho" style="--c:#2563eb" onclick="novoRegistro('assinatura','chefe')"><span><i class="fa-solid fa-file-signature"></i></span><span>Nova assinatura<small>documento do Chefe</small></span></button>
+          <button type="button" class="chefe-atalho" style="--c:#0d9488" onclick="abrirFormSimec()"><span><i class="fa-solid fa-building-flag"></i></span><span>Demanda do SIMEC<small>governo federal</small></span></button>
+        </div></section>` : ''}
+        <section class="dv-card"><h3 class="dv-tit"><i class="fa-solid fa-clock-rotate-left text-slate-500"></i>Últimas movimentações</h3>
+          ${ultimas.length ? `<div class="chefe-prazos">${ultimas.map(({ h, s }) => `<button type="button" class="chefe-pz" onclick="abrirDetalhe('${s.id}')"><span class="chefe-pz-ico" style="--c:#64748b"><i class="fa-solid fa-circle-dot"></i></span><span class="min-w-0"><b>${esc(h.acao)}</b><small>${esc(s.assunto)}</small></span><small class="text-ink3 whitespace-nowrap">${h.em ? fmtCurto(String(h.em).slice(0, 10)) : ''}</small></button>`).join('')}</div>`
+            : '<p class="text-[13px] text-ink3 py-4 text-center">Sem movimentações ainda.</p>'}
+        </section>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ----- dados do Chefe de Gabinete ----- */
+const CAMPOS_CHEFE = [['nome', 'Nome', 'fa-user', 'Nome completo'], ['cargo', 'Cargo', 'fa-id-badge', 'Chefe de Gabinete'], ['email', 'E-mail', 'fa-envelope', 'nome@seduc.mt.gov.br'],
+  ['telefone', 'Telefone / WhatsApp', 'fa-phone', '(65) 9 0000-0000'], ['ramal', 'Ramal', 'fa-headset', 'Ex.: 3613-0000'], ['local', 'Sala / localização', 'fa-location-dot', 'Ex.: Bloco III, 2º andar']];
+function abrirFormChefe() {
+  if (!pode('chefe:2')) return;
+  const x = Store.chefe || {};
+  abrirModal(`
+    <div class="form-hero" style="background-color:#2b1d04;background-image:radial-gradient(600px 200px at 0% 0%, rgba(245,158,11,.35), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#d97706"><i class="fa-solid fa-user-tie"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-300">Editar</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Dados do Chefe de Gabinete</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-3" id="form-chefe" onsubmit="event.preventDefault();salvarFormChefe()">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${CAMPOS_CHEFE.map(([k, rot, ico, ph]) => `<label class="block"><span class="rotulo"><i class="fa-solid ${ico} mr-1 opacity-60"></i>${rot}</span><input class="campo w-full" id="ch-${k}" value="${esc(x[k] || '')}" placeholder="${esc(ph)}" ${k === 'email' ? 'type="email"' : ''}></label>`).join('')}</div>
+      <label class="block"><span class="rotulo"><i class="fa-solid fa-note-sticky mr-1 opacity-60"></i>Observações</span><textarea class="campo w-full" rows="3" id="ch-obs" placeholder="Horários de atendimento, assessores, recados…">${esc(x.obs || '')}</textarea></label>
+      <p id="ch-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-chefe"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'chefe-info');
+}
+function salvarFormChefe() {
+  const dados = {}; CAMPOS_CHEFE.concat([['obs']]).forEach(([k]) => { dados[k] = $('ch-' + k).value.trim(); });
+  if (dados.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) { const el = $('ch-aviso'); el.textContent = 'E-mail inválido.'; el.classList.remove('hidden'); return; }
+  const antes = Store.chefe;
+  Store.chefe = { ...(Store.chefe || {}), ...dados };
+  fecharModal(); aoMudarDados(); toast('Dados do Chefe de Gabinete atualizados.', 'fa-user-tie');
+  if (Store.modo === 'planilha') tarefaGrav({ rotulo: 'Dados do Chefe de Gabinete', icone: 'fa-user-tie', detalhe: dados.nome || '',
+    executar: () => API.post('salvar_chefe_info', dados), aoOk: r => { if (r.chefe) { Store.chefe = r.chefe; aoMudarDados(); } }, aoErro: () => { Store.chefe = antes; aoMudarDados(); } });
+  else if (Store.modo === 'nuvem' && Store.db) Store.db.collection('chefe').doc('info').set(Store.chefe).catch(() => toast('Não foi possível salvar os dados do Chefe.', 'fa-triangle-exclamation'));
 }
 
 /* ========================= Eventos da SEDUC-MT ========================= */
@@ -5248,6 +5648,7 @@ const TEMAS_REL = [
   { k: 'municipio', rot: 'Por município', ico: 'fa-map-location-dot', cor: '#0891b2', desc: 'Demandas de um município de MT' },
   { k: 'casacivil', rot: 'Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', desc: 'Trilha e etapas na Casa Civil' },
   { k: 'correicao', rot: 'Processos de Correição', ico: 'fa-clipboard-check', cor: '#d97706', desc: 'Situação de cada processo' },
+  { k: 'chefe', rot: 'Chefe de Gabinete', ico: 'fa-user-tie', cor: '#b45309', desc: 'Processos, documentos para assinatura e SIMEC do Chefe' },
   { k: 'eventos', rot: 'Eventos', ico: 'fa-calendar-check', cor: '#c026d3', desc: 'Agenda de eventos da SEDUC-MT' },
   { k: 'comunicados', rot: 'Comunicados importantes', ico: 'fa-bullhorn', cor: '#0284c7', desc: 'Mural vigente com o texto completo' },
   { k: 'semana', rot: 'Minha semana', ico: 'fa-calendar-week', cor: '#10b981', desc: 'Resumo da semana, agenda e prioridades' },
@@ -5526,6 +5927,23 @@ function montarRelatorio() {
       add(tab('Demandas da Casa Civil', [{ rot: 'Nº', w: 'auto' }, { rot: 'Assunto', w: '*' }, { rot: 'Etapa', w: 'auto' }, { rot: 'Nº na Casa Civil', w: 'auto' }, { rot: 'Situação', w: 'auto' }, { rot: 'Prazo', w: 'auto' }],
         l.sort((a, b) => Object.keys(ETAPAS_CC).indexOf(a.ccEtapa || 'preparo') - Object.keys(ETAPAS_CC).indexOf(b.ccEtapa || 'preparo')).map(s => [s.numero || 's/ nº', s.assunto, (ETAPAS_CC[s.ccEtapa || 'preparo'] || {}).rot, s.ccNumero || '—', STATUS[s.status].rot, s.prazo ? fmt(s.prazo) : '—'])));
       subtitulo = 'Situação em ' + fmt(hojeISO());
+      break;
+    }
+    case 'chefe': {
+      const ch = Store.solChefe, sm = Store.simec || [], info = Store.chefe || {};
+      const proc = ordenarRel(ch.filter(ehProcesso), 'prazo'), ass = ordenarRel(ch.filter(ehAssinatura), 'prazo');
+      const smOrd = sm.slice().sort((a, b) => (simecFeito(a) - simecFeito(b)) || String(a.prazo || '9999').localeCompare(String(b.prazo || '9999')));
+      const vencidos = ch.filter(s => !FEITO(s) && situacao(s) === 'vencido').length + sm.filter(x => !simecFeito(x) && x.prazo && diasAte(x.prazo) < 0).length;
+      subtitulo = [info.nome, 'Situação em ' + fmt(hojeISO())].filter(Boolean).join(' · ');
+      add(kp([{ rot: 'Processos em aberto', val: proc.filter(s => !FEITO(s)).length, cor: '#b45309' }, { rot: 'Documentos em aberto', val: ass.filter(s => !FEITO(s)).length, cor: '#2563eb' },
+        { rot: 'SIMEC em aberto', val: sm.filter(x => !simecFeito(x)).length, cor: '#0d9488' }, { rot: 'Vencidos', val: vencidos, cor: '#dc2626' }]));
+      const dias = (prazo, feito) => !prazo ? 'Sem prazo' : feito ? 'Concluído' : (d => d < 0 ? `Vencido há ${-d}d` : d === 0 ? 'Vence hoje' : `Faltam ${d}d`)(diasAte(prazo));
+      const colS = [{ rot: 'Nº', w: 'auto' }, { rot: 'Assunto', w: '*' }, { rot: 'Secretaria', w: 'auto' }, { rot: 'Situação', w: 'auto' }, { rot: 'Prazo', w: 'auto' }];
+      const linS = s => [s.numero || 's/ nº', s.assunto, secDe(s).join(', ') || '—', STATUS[s.status] ? STATUS[s.status].rot : '—', dias(s.prazo, FEITO(s))];
+      add(tab('Processos do Chefe de Gabinete', colS, proc.map(linS)));
+      add(tab('Documentos para assinatura do Chefe de Gabinete', colS, ass.map(linS)));
+      add(tab('Demandas do SIMEC', [{ rot: 'Nº / Identificação', w: 'auto' }, { rot: 'Assunto', w: '*' }, { rot: 'Módulo', w: 'auto' }, { rot: 'Município', w: 'auto' }, { rot: 'Situação', w: 'auto' }, { rot: 'Prazo', w: 'auto' }],
+        smOrd.map(x => [x.numero || '—', x.assunto, x.modulo || '—', [x.municipio, x.escola].filter(Boolean).join(' · ') || '—', x.situacao || '—', dias(x.prazo, simecFeito(x))])));
       break;
     }
     case 'correicao': {
@@ -5844,7 +6262,7 @@ function renderRelatorios() {
   destruirGraficos();
   if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
   const e = relEstado;
-  const temas = TEMAS_REL.filter(t => { const a = { personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
+  const temas = TEMAS_REL.filter(t => { const a = { chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
   if (!temas.some(t => t.k === e.tema)) e.tema = (temas[0] || TEMAS_REL[0]).k;
   const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
   const ehSol = SOL_TEMAS_REL.includes(e.tema), pers = e.tema === 'personalizado', f = e.f;
@@ -6214,6 +6632,7 @@ const AREAS_PERFIL = [
   ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos e seções por tipo'],
   ['casacivil', 'Casa Civil', 'fa-landmark', '#7c3aed', 'Trilha e etapas da Casa Civil'],
   ['correicao', 'Processos de Correição', 'fa-clipboard-check', '#d97706', 'Planilha da Correição'],
+  ['chefe', 'Chefe de Gabinete', 'fa-user-tie', '#b45309', 'Processos, documentos e SIMEC do Chefe de Gabinete'],
   ['comunicados', 'Comunicados importantes', 'fa-bullhorn', '#0284c7', 'Mural da SEDUC-MT'],
   ['eventos', 'Eventos', 'fa-calendar-check', '#c026d3', 'Eventos da Secretaria'],
   ['agenda', 'Agenda e Prazos', 'fa-calendar-days', '#0d9488', 'Compromissos da Secretária'],
