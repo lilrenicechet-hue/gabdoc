@@ -1172,6 +1172,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn" data-tab="chefe"><i class="ico fa-solid fa-user-tie" style="color:#fbbf24"></i><span>Painel do Chefe</span><span id="bdg-chefe" class="nav-badge bg-red-600 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="chefe-proc"><i class="ico fa-solid fa-folder-open" style="color:#fcd34d"></i><span>Processos</span><span id="bdg-chefe-proc" class="nav-badge bg-amber-600 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="chefe-ass"><i class="ico fa-solid fa-file-signature" style="color:#fcd34d"></i><span>Documentos para assinatura</span><span id="bdg-chefe-ass" class="nav-badge bg-amber-600 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="contratacoes" title="Exclusivo do Chefe de Gabinete"><i class="ico fa-solid fa-file-contract" style="color:#fdba74"></i><span>Contratações <i class="fa-solid fa-lock text-[9px] opacity-60"></i></span><span id="bdg-contr" class="nav-badge bg-orange-700 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="simec"><i class="ico fa-solid fa-building-flag" style="color:#5eead4"></i><span>SIMEC</span><span id="bdg-simec" class="nav-badge bg-teal-600 hidden"></span></button>
           </div>
           </div></div>
@@ -1498,6 +1499,18 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="cass-corpo"></div></div>
     </section>
+    <section id="tab-contratacoes" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#3b1206">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-file-contract text-orange-300"></i> Contratações <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-orange-200"><i class="fa-solid fa-lock text-[9px] mr-1"></i>exclusivo do Chefe de Gabinete</span></h2>
+            <p class="text-orange-100/70 text-xs mt-0.5 hidden sm:block">Somente o perfil Chefe de Gabinete vê e edita esta seção. Nenhum outro perfil recebe estes dados, nem o Administrador.</p>
+          </div>
+          <button onclick="abrirFormContratacao()" class="btn bg-orange-700 hover:bg-orange-600 text-white" id="btn-nova-contr"><i class="fa-solid fa-plus"></i>Nova contratação</button>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="contr-corpo"></div></div>
+    </section>
     <section id="tab-simec" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern" style="background-color:#042f2e">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -1690,7 +1703,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], contratacoes: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 // Dois cadastros separados na mesma lista: o da Secretária (Store.sol, usado por todo o sistema)
 // e o do Chefe de Gabinete (Store.solChefe, só na seção dele). Store.solTodos tem os dois.
 const ehChefe = s => !!s && s.gabinete === 'chefe';
@@ -1770,7 +1783,7 @@ function areaDaAba(tab) {
   if (['chefe', 'chefe-proc', 'chefe-ass', 'simec'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
-function abaPermitida(tab) { if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
+function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
 /** Esconde do menu as seções sem acesso (e os títulos de grupo que ficarem vazios). */
 function aplicarAcessoMenu() {
   document.querySelectorAll('#nav .nav-btn[data-tab]').forEach(b => { if (b.dataset.tab !== 'admin') b.classList.toggle('sem-acesso', !abaPermitida(b.dataset.tab)); });
@@ -1827,6 +1840,10 @@ async function iniciarStore() {
       Store.simec = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('contratacoes').onSnapshot(snap => {
+      Store.contratacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('chefe').onSnapshot(snap => {
       const d = snap.docs.find(x => x.id === 'info'); Store.chefe = d ? d.data() : {};
       aoMudarDados();
@@ -1843,7 +1860,7 @@ async function iniciarStore() {
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
     Store.comunicados = ex.comunicados.map((e, i) => ({ id: 'cm' + i, ...e }));
-    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.chefe = exc.info;
+    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.contratacoes = exc.contratacoes; Store.chefe = exc.info;
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -1913,6 +1930,7 @@ function aplicarCarga(r) {
     Store.eventos = r.eventos || [];
     Store.comunicados = r.comunicados || [];
     Store.simec = r.simec || [];
+    Store.contratacoes = r.contratacoes || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
   if (r.personalizacao) aplicarPersonalizacao(r.personalizacao);
@@ -2662,7 +2680,7 @@ async function sair() {
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
     Store.online = []; renderOnline(); fecharOnline();
-    Store.sessao = null; Store.sol = []; Store.simec = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.simec = []; Store.contratacoes = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -2704,7 +2722,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -2736,6 +2754,7 @@ function atualizarBadges() {
   set('bdg-chefe-proc', ch.filter(s => ehProcesso(s) && !FEITO(s)).length);
   set('bdg-chefe-ass', ch.filter(s => ehAssinatura(s) && !FEITO(s)).length);
   set('bdg-simec', (Store.simec || []).filter(x => !simecFeito(x)).length);
+  set('bdg-contr', podeContratacoes() ? (Store.contratacoes || []).filter(x => !contrFeita(x)).length : 0);
   set('bdg-chefe', prazosChefe().filter(x => x.dias <= 0).length);
   somarBadgesGrupos();
   const sino = $('sino-count'), n = prazosAtivos().filter(s => diasAte(s.prazo) <= 0).length;
@@ -4466,6 +4485,7 @@ function celPrazoDias(prazo, feito) {
 function prazosChefe() {
   const out = [];
   Store.solChefe.filter(s => !FEITO(s) && s.prazo).forEach(s => out.push({ tipo: ehProcesso(s) ? 'proc' : 'ass', id: s.id, titulo: s.assunto, numero: s.numero, prazo: s.prazo, dias: diasAte(s.prazo), urgente: s.urgente }));
+  if (podeContratacoes()) (Store.contratacoes || []).filter(x => !contrFeita(x) && x.prazo).forEach(x => out.push({ tipo: 'contr', id: x.id, titulo: x.objeto, numero: x.numero || x.modalidade, prazo: x.prazo, dias: diasAte(x.prazo) }));
   (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => out.push({ tipo: 'simec', id: x.id, titulo: x.assunto, numero: x.numero || x.modulo, prazo: x.prazo, dias: diasAte(x.prazo) }));
   return out.filter(x => x.dias <= 7).sort((a, b) => a.dias - b.dias || (!!b.urgente - !!a.urgente));
 }
@@ -4627,8 +4647,170 @@ function exemplosChefe() {
       { id: 'sm3', numero: '', assunto: 'Resposta à notificação do FNDE sobre saldo do PDDE', modulo: 'PDDE Interativo', municipio: 'Cuiabá', escola: '', responsavel: 'Juliana Costa', prazo: h(12), situacao: 'Aguardando retorno do MEC/FNDE', observacoes: 'Protocolo enviado em 10/10.', exemplo: true },
       { id: 'sm4', numero: 'EMD-2026/044', assunto: 'Cadastro de emenda parlamentar para aquisição de mobiliário', modulo: 'Emendas', municipio: 'Barra do Garças', escola: '', responsavel: 'Rodrigo Alves', prazo: h(-12), situacao: 'Concluída', observacoes: '', exemplo: true }
     ],
+    contratacoes: [
+      { id: 'kt1', numero: 'SEDUC-PRO-2026/40210', objeto: 'Aquisição de mobiliário escolar para 40 unidades', modalidade: 'Pregão eletrônico', contratado: '', valor: 1850000, demandante: 'SAGE', prazo: h(6), situacao: 'Em análise jurídica', responsavel: 'Assessoria jurídica', observacoes: '', exemplo: true },
+      { id: 'kt2', numero: 'SEDUC-PRO-2026/40388', objeto: 'Contratação emergencial de transporte escolar — região Norte', modalidade: 'Contratação emergencial', contratado: 'Transportes Exemplo Ltda.', valor: 642300.5, demandante: 'SAEX', prazo: h(-1), situacao: 'Aguardando assinatura', responsavel: 'Gabinete', observacoes: '', exemplo: true },
+      { id: 'kt3', numero: 'SEDUC-PRO-2026/39911', objeto: 'Adesão a ata para notebooks dos professores', modalidade: 'Adesão a ata de registro de preços', contratado: 'Tecnologia Exemplo S.A.', valor: 3200000, demandante: 'SAGP', prazo: '', situacao: 'Contratada', responsavel: '', observacoes: '', exemplo: true }
+    ],
     info: { nome: 'Chefe de Gabinete (exemplo)', cargo: 'Chefe de Gabinete', email: 'gabinete@seduc.mt.gov.br', telefone: '(65) 3613-0000', ramal: '0000', local: 'Gabinete da Secretária', obs: 'Dados de exemplo. Edite em "Editar dados".' }
   };
+}
+
+/* ----- Contratações: exclusivas do perfil Chefe de Gabinete ----- */
+const SITUACOES_CONTR = {
+  'Planejamento':          ['#64748b', 'fa-lightbulb'],
+  'Em instrução':          ['#2563eb', 'fa-folder-open'],
+  'Em análise jurídica':   ['#7c3aed', 'fa-scale-balanced'],
+  'Aguardando assinatura': ['#d97706', 'fa-pen-nib'],
+  'Publicada':             ['#0891b2', 'fa-newspaper'],
+  'Contratada':            ['#16a34a', 'fa-file-circle-check'],
+  'Cancelada':             ['#6b7280', 'fa-ban']
+};
+const MODALIDADES_CONTR = ['Pregão eletrônico', 'Concorrência', 'Dispensa de licitação', 'Inexigibilidade', 'Adesão a ata de registro de preços', 'Chamamento público', 'Contratação emergencial', 'Aditivo contratual'];
+const contrFeita = x => /^(contratad|cancel)/.test(Utils_norm(x && x.situacao));
+const corContr = sit => SITUACOES_CONTR[sit] || ['#64748b', 'fa-circle'];
+/** Só o perfil Chefe de Gabinete (o servidor confere de novo a cada pedido). */
+function podeContratacoes() {
+  if (Store.modo !== 'planilha') return true;
+  return !!(Store.sessao && Store.sessao.permissoes && Store.sessao.permissoes.contratacoes);
+}
+const fmtBRL = v => v === '' || v === null || v === undefined || isNaN(Number(v)) ? '' : Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+function lerBRL(t) { if (t === '' || t === null || t === undefined) return ''; if (typeof t === 'number') return t; const n = Number(String(t).replace(/[R$\s]/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.')); return isNaN(n) ? NaN : Math.round(n * 100) / 100; }
+async function salvarContratacao(id, dados, rotulo) {
+  if (!podeContratacoes()) { toast('A seção Contratações é exclusiva do Chefe de Gabinete.', 'fa-lock'); return false; }
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'kt' + Date.now();
+    trocarNaLista(Store.contratacoes, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  const antigo = novo ? null : Store.contratacoes.find(x => x.id === id);
+  if (novo) id = novoIdLocal('K');
+  trocarNaLista(Store.contratacoes, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'contratacoes', idLocal: novo ? id : null, icone: 'fa-file-contract',
+    rotulo: rotulo || (novo ? 'Nova contratação' : antigo && antigo.situacao !== dados.situacao ? 'Contratação · ' + (dados.situacao || '—') : 'Contratação atualizada'),
+    detalhe: [dados.numero, dados.objeto].filter(Boolean).join(' · '),
+    action: 'salvar_contratacao', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('contratacoes').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirContratacaoId(id) {
+  const x = Store.contratacoes.find(r => r.id === id);
+  Store.contratacoes = Store.contratacoes.filter(r => r.id !== id); aoMudarDados();
+  toast('Contratação excluída.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de contratação', detalhe: x ? x.objeto : '',
+    action: 'excluir_contratacao', payload: { id }, nuvem: () => Store.db.collection('contratacoes').doc(id).delete() });
+}
+async function editarContrCampos(x, campos) {
+  if ('valor' in campos) { const n = lerBRL(campos.valor); if (Number.isNaN(n)) { toast('Valor inválido. Use, por exemplo, 1.250.000,00', 'fa-triangle-exclamation'); return false; } campos.valor = n; }
+  const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarContratacao(x.id, d);
+}
+function abrirFormContratacao(id) {
+  if (!podeContratacoes()) { toast('A seção Contratações é exclusiva do Chefe de Gabinete.', 'fa-lock'); return; }
+  const x = id ? Store.contratacoes.find(c => c.id === id) : { situacao: 'Planejamento' };
+  if (!x) return;
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#3b1206;background-image:radial-gradient(600px 200px at 0% 0%, rgba(234,88,12,.35), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:#c2410c"><i class="fa-solid fa-file-contract"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-orange-300">${id ? 'Editar' : 'Nova'} · <i class="fa-solid fa-lock text-[9px]"></i> exclusivo do Chefe de Gabinete</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Contratação</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-4" id="form-contr" onsubmit="event.preventDefault();salvarFormContratacao('${id || ''}')">
+      ${campo(1, '#c2410c', 'Objeto *', `<textarea class="campo campo-g w-full" rows="2" id="kt-objeto" required placeholder="O que será contratado">${esc(x.objeto || '')}</textarea>`)}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        ${campo(2, '#2563eb', 'Nº do processo', `<input class="campo w-full" id="kt-numero" value="${esc(x.numero || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
+        ${campo(3, '#7c3aed', 'Modalidade', `<input class="campo w-full" id="kt-modalidade" list="lista-mod-contr" value="${esc(x.modalidade || '')}" placeholder="Escolha ou escreva">`)}
+        ${campo(4, '#0891b2', 'Empresa / Contratado', `<input class="campo w-full" id="kt-contratado" value="${esc(x.contratado || '')}" placeholder="Razão social ou nome">`)}
+        ${campo(5, '#16a34a', 'Valor (R$)', `<input class="campo w-full" id="kt-valor" inputmode="decimal" value="${esc(x.valor === '' || x.valor == null ? '' : Number(x.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 }))}" placeholder="0,00">`)}
+        ${campo(6, '#64748b', 'Secretaria demandante', `<input class="campo w-full" id="kt-demandante" list="lista-sec-contr" value="${esc(x.demandante || '')}" placeholder="Ex.: SAGE">`)}
+        ${campo(7, '#dc2626', 'Prazo', `<input type="date" class="campo w-full" id="kt-prazo" value="${esc(x.prazo || '')}">
+          <div class="flex flex-wrap gap-1.5 mt-2">${[[5, '+5 dias'], [15, '+15 dias'], [30, '+30 dias']].map(([n, r]) => `<button type="button" class="chip" style="--c:#dc2626;cursor:pointer" onclick="$('kt-prazo').value='${somaDias(n)}'">${r}</button>`).join('')}<button type="button" class="chip" style="--c:#64748b;cursor:pointer" onclick="$('kt-prazo').value=''">Sem prazo</button></div>`)}
+        ${campo(8, '#64748b', 'Responsável', `<input class="campo w-full" id="kt-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha">`)}
+      </div>
+      ${campo(9, '#d97706', 'Situação', `<div class="flex flex-wrap gap-1.5" id="kt-sits">${Object.entries(SITUACOES_CONTR).map(([k, [cor, ico]]) => `<button type="button" class="det-sit ${k === (x.situacao || 'Planejamento') ? 'atual' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('#kt-sits .det-sit').forEach(b=>b.classList.toggle('atual',b===this))"><i class="fa-solid ${ico}"></i>${esc(k)}</button>`).join('')}</div>`)}
+      ${campo(10, '#64748b', 'Observações', `<textarea class="campo w-full" rows="3" id="kt-obs" placeholder="Andamento, pareceres, empenho, publicação…">${esc(x.observacoes || '')}</textarea>`)}
+      <p id="kt-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <datalist id="lista-mod-contr">${MODALIDADES_CONTR.map(m => `<option value="${esc(m)}">`).join('')}</datalist>
+    <datalist id="lista-sec-contr">${SECRETARIAS.map(m => `<option value="${esc(m)}">`).join('')}</datalist>
+    <div class="modal-rodape">${id ? `<button class="btn btn-sec !text-red-600 mr-auto" onclick="if(confirmarDuplo(this)){fecharModal();excluirContratacaoId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5 !bg-orange-700" type="submit" form="form-contr" id="btn-contr-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'contratacao');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  setTimeout(() => $('kt-objeto').focus(), 60);
+}
+async function salvarFormContratacao(id) {
+  const v = k => $(k).value.trim();
+  const aviso = t => { const el = $('kt-aviso'); el.textContent = t; el.classList.remove('hidden'); };
+  if (!v('kt-objeto')) return aviso('Informe o objeto da contratação.');
+  const valor = lerBRL(v('kt-valor'));
+  if (Number.isNaN(valor)) return aviso('Valor inválido. Use, por exemplo, 1.250.000,00');
+  const sit = (document.querySelector('#kt-sits .det-sit.atual') || {}).dataset;
+  const antigo = id ? Store.contratacoes.find(c => c.id === id) : null;
+  const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
+    objeto: v('kt-objeto'), numero: v('kt-numero'), modalidade: v('kt-modalidade'), contratado: v('kt-contratado'), valor, demandante: v('kt-demandante'),
+    prazo: v('kt-prazo'), responsavel: v('kt-resp'), situacao: (sit && sit.v) || 'Planejamento', observacoes: v('kt-obs'), atualizadoEm: new Date().toISOString() };
+  const btn = $('btn-contr-salvar'); btn.disabled = true;
+  if (await salvarContratacao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Contratação registrada · salvando em segundo plano.' : 'Contratação salva.', 'fa-file-contract'); if (abaAtual !== 'contratacoes' && abaAtual !== 'chefe') irPara('contratacoes'); }
+  else btn.disabled = false;
+}
+function renderContratacoes() {
+  const cont = $('contr-corpo');
+  if (!podeContratacoes()) { cont.innerHTML = vazio('fa-lock', 'Seção exclusiva do Chefe de Gabinete', 'Somente usuários com o perfil Chefe de Gabinete acessam as Contratações.'); return; }
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const todas = Store.contratacoes || [];
+  const abertas = todas.filter(x => !contrFeita(x));
+  const soma = l => l.reduce((t, x) => t + (Number(x.valor) || 0), 0);
+  const venc = x => !contrFeita(x) && x.prazo && diasAte(x.prazo) < 0;
+  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('contratacoes','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  renderGrade(cont, {
+    id: 'contratacoes', area: 'chefe', linhas: todas, fonte: () => Store.contratacoes,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi('#c2410c', 'fa-file-contract', 'Em andamento', abertas.length, fmtBRL(soma(abertas)) || 'R$ 0,00', 'aberto')}
+      ${kpi('#dc2626', 'fa-circle-exclamation', 'Prazo vencido', todas.filter(venc).length, 'precisam de atenção', 'venc')}
+      ${kpi('#d97706', 'fa-pen-nib', 'Aguardando assinatura', todas.filter(x => x.situacao === 'Aguardando assinatura').length, 'contratos e termos', 'assin')}
+      ${kpi('#16a34a', 'fa-file-circle-check', 'Contratadas', todas.filter(x => x.situacao === 'Contratada').length, fmtBRL(soma(todas.filter(x => x.situacao === 'Contratada'))) || 'R$ 0,00', 'feito')}</div>`,
+    colunas: [
+      { key: 'numero', rot: 'Nº do processo', w: 200, wCompacta: 180, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'objeto', rot: 'Objeto', w: 320, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, validar: v => !String(v).trim() ? 'O objeto não pode ficar vazio.' : '' },
+      { key: 'modalidade', rot: 'Modalidade', w: 180, wCompacta: 160, tipo: 'texto', editavel: true, lista: 'lista-mod-contr-g', render: x => x.modalidade ? `<span class="gs-pill" style="--c:#7c3aed">${esc(x.modalidade)}</span>` : '' },
+      { key: 'contratado', rot: 'Empresa / Contratado', w: 200, tipo: 'texto', editavel: true },
+      { key: 'valor', rot: 'Valor', w: 150, wCompacta: 140, tipo: 'texto', editavel: true, valor: x => x.valor === '' || x.valor == null ? '' : Number(x.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 }), render: x => `<span class="font-semibold tabular-nums">${esc(fmtBRL(x.valor))}</span>`, validar: v => Number.isNaN(lerBRL(v)) ? 'Valor inválido. Use, por exemplo, 1.250.000,00' : '' },
+      { key: 'demandante', rot: 'Secretaria demandante', w: 160, tipo: 'texto', editavel: true, render: x => String(x.demandante || '').split(/\s*,\s*/).filter(Boolean).map(s => ehSigla(s) ? pilulaSigla(s.toUpperCase()) : esc(s)).join(' ') },
+      { key: 'prazo', rot: 'Prazo', w: 165, wCompacta: 160, tipo: 'data', editavel: true, render: x => celPrazoDias(x.prazo, contrFeita(x)) },
+      { key: 'situacao', rot: 'Situação', w: 200, wCompacta: 190, tipo: 'select', editavel: true, opcoes: x => Object.keys(SITUACOES_CONTR).concat(x.situacao && !SITUACOES_CONTR[x.situacao] ? [x.situacao] : []).map(k => [k, k]),
+        render: x => { if (!x.situacao) return ''; const [cor, ico] = corContr(x.situacao); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.situacao)}</span>`; } },
+      { key: 'responsavel', rot: 'Responsável', w: 150, tipo: 'texto', editavel: true },
+      { key: 'observacoes', rot: 'Observações', w: 280, tipo: 'texto', editavel: true }
+    ],
+    compactas: ['numero', 'objeto', 'modalidade', 'valor', 'prazo', 'situacao'],
+    ordemColuna: 'prazo',
+    larguraAcoes: 150,
+    finalizado: contrFeita,
+    ordemPadrao: ordemFinalizados(contrFeita, porPrazo, porFimRecente('atualizadoEm')),
+    classeLinha: x => contrFeita(x) ? 'gs-feito' : '',
+    chips: [['', L('filtro.todos'), () => true, '#c2410c'], ['aberto', 'Em andamento', x => !contrFeita(x), '#c2410c'], ['venc', 'Prazo vencido', venc, '#dc2626'],
+            ['assin', 'Aguardando assinatura', x => x.situacao === 'Aguardando assinatura', '#d97706'], ['feito', 'Contratadas', x => x.situacao === 'Contratada', '#16a34a']],
+    aoEditarCampos: editarContrCampos,
+    acoes: x => {
+      const prox = { 'Planejamento': 'Em instrução', 'Em instrução': 'Em análise jurídica', 'Em análise jurídica': 'Aguardando assinatura', 'Aguardando assinatura': 'Publicada', 'Publicada': 'Contratada' }[x.situacao];
+      const btn = prox ? `<button type="button" class="gs-acao" style="--c:${corContr(prox)[0]}" title="Avançar para: ${esc(prox)}" onclick="editarContrCampos(Store.contratacoes.find(c=>c.id==='${x.id}'),{situacao:${esc(JSON.stringify(prox))}})"><i class="fa-solid ${corContr(prox)[1]}"></i>${esc(prox.split(' ')[0] === 'Em' ? prox.replace('Em ', '') : prox)}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormContratacao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('contratacoes','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    tituloLinha: x => [x.numero, x.objeto].filter(Boolean).join(' · '),
+    menuAcoes: x => [{ titulo: 'Mudar a situação para' }].concat(Object.keys(SITUACOES_CONTR).filter(s => s !== x.situacao).map(s => ({ rot: s, ico: corContr(s)[1], cor: corContr(s)[0], fn: () => editarContrCampos(x, { situacao: s }) })))
+      .concat([{ sep: true }, { rot: 'Prorrogar +15 dias', ico: 'fa-calendar-plus', cor: '#64748b', fn: () => editarContrCampos(x, { prazo: somaDias(15, x.prazo && x.prazo > hojeISO() ? x.prazo : hojeISO()) }) },
+               { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', fn: () => abrirFormContratacao(x.id) },
+               { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirContratacaoId(x.id) }]),
+    acoesLote: Object.keys(SITUACOES_CONTR).map(s => ({ rot: s, ico: corContr(s)[1], cor: corContr(s)[0], campos: () => ({ situacao: s }) })),
+    novaLinha: () => abrirFormContratacao(), textoNovaLinha: 'Nova contratação',
+    textoVazio: 'Nenhuma contratação registrada.',
+    botaoNovo: `<button class="btn !h-9 bg-orange-700 hover:bg-orange-600 text-white" onclick="abrirFormContratacao()"><i class="fa-solid fa-plus"></i>Nova contratação</button>`
+  });
+  if (!$('lista-mod-contr-g')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-mod-contr-g">${MODALIDADES_CONTR.map(m => `<option value="${esc(m)}">`).join('')}</datalist>`);
 }
 
 /* ----- Painel do Chefe de Gabinete ----- */
@@ -4643,8 +4825,9 @@ function renderChefe() {
   const kpi = (cor, ico, rot, val, sub, aba) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="irPara('${aba}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
   const dado = (ico, txt, href) => txt ? (href ? `<a href="${href}" target="_blank" rel="noopener"><i class="fa-solid ${ico}"></i>${esc(txt)}</a>` : `<span><i class="fa-solid ${ico}"></i>${esc(txt)}</span>`) : '';
   const tel = String(info.telefone || '').replace(/\D/g, '');
-  const tipoPz = { proc: ['fa-folder-open', '#b45309', 'Processo'], ass: ['fa-file-signature', '#2563eb', 'Documento'], simec: ['fa-building-flag', '#0d9488', 'SIMEC'] };
-  const abrirPz = x => x.tipo === 'simec' ? `abrirFormSimec('${x.id}')` : `abrirDetalhe('${x.id}')`;
+  const tipoPz = { proc: ['fa-folder-open', '#b45309', 'Processo'], ass: ['fa-file-signature', '#2563eb', 'Documento'], simec: ['fa-building-flag', '#0d9488', 'SIMEC'], contr: ['fa-file-contract', '#c2410c', 'Contratação'] };
+  const abrirPz = x => x.tipo === 'simec' ? `abrirFormSimec('${x.id}')` : x.tipo === 'contr' ? `abrirFormContratacao('${x.id}')` : `abrirDetalhe('${x.id}')`;
+  const kt = podeContratacoes() ? (Store.contratacoes || []).filter(x => !contrFeita(x)) : null;
   const ultimas = ch.flatMap(s => (s.historico || []).map(h => ({ h, s }))).sort((a, b) => String(b.h.em).localeCompare(String(a.h.em))).slice(0, 6);
   c.innerHTML = `<div class="space-y-4">
     <div class="chefe-cartao">
@@ -4657,8 +4840,9 @@ function renderChefe() {
       </div>
       ${pode('chefe:2') ? `<button class="btn btn-sec chefe-edit" onclick="abrirFormChefe()"><i class="fa-solid fa-pen"></i>Editar dados</button>` : '<span></span>'}
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+    <div class="grid grid-cols-2 md:grid-cols-3 ${kt ? 'xl:grid-cols-7' : 'xl:grid-cols-6'} gap-3">
       ${kpi('#b45309', 'fa-folder-open', 'Processos', procA.length, 'em aberto', 'chefe-proc')}
+      ${kt ? kpi('#c2410c', 'fa-file-contract', 'Contratações', kt.length, 'em andamento · exclusivo', 'contratacoes') : ''}
       ${kpi('#2563eb', 'fa-file-signature', 'Para assinatura', assA.length, 'em aberto', 'chefe-ass')}
       ${kpi('#0d9488', 'fa-building-flag', 'SIMEC', smA.length, 'demandas em aberto', 'simec')}
       ${kpi('#dc2626', 'fa-circle-exclamation', 'Vencidos', venc.length, 'processos, documentos e SIMEC', venc[0] && venc[0].tipo === 'simec' ? 'simec' : 'chefe-proc')}
@@ -4676,6 +4860,7 @@ function renderChefe() {
           <button type="button" class="chefe-atalho" style="--c:#b45309" onclick="novoRegistro('processo','chefe')"><span><i class="fa-solid fa-folder-plus"></i></span><span>Novo processo<small>do Chefe de Gabinete</small></span></button>
           <button type="button" class="chefe-atalho" style="--c:#2563eb" onclick="novoRegistro('assinatura','chefe')"><span><i class="fa-solid fa-file-signature"></i></span><span>Nova assinatura<small>documento do Chefe</small></span></button>
           <button type="button" class="chefe-atalho" style="--c:#0d9488" onclick="abrirFormSimec()"><span><i class="fa-solid fa-building-flag"></i></span><span>Demanda do SIMEC<small>governo federal</small></span></button>
+          ${kt ? `<button type="button" class="chefe-atalho" style="--c:#c2410c" onclick="abrirFormContratacao()"><span><i class="fa-solid fa-file-contract"></i></span><span>Nova contratação<small>exclusivo do Chefe</small></span></button>` : ''}
         </div></section>` : ''}
         <section class="dv-card"><h3 class="dv-tit"><i class="fa-solid fa-clock-rotate-left text-slate-500"></i>Últimas movimentações</h3>
           ${ultimas.length ? `<div class="chefe-prazos">${ultimas.map(({ h, s }) => `<button type="button" class="chefe-pz" onclick="abrirDetalhe('${s.id}')"><span class="chefe-pz-ico" style="--c:#64748b"><i class="fa-solid fa-circle-dot"></i></span><span class="min-w-0"><b>${esc(h.acao)}</b><small>${esc(s.assunto)}</small></span><small class="text-ink3 whitespace-nowrap">${h.em ? fmtCurto(String(h.em).slice(0, 10)) : ''}</small></button>`).join('')}</div>`
@@ -6689,7 +6874,8 @@ function htmlPerfis() {
   return `<div class="dv-card" id="perfis">
     <div class="perf-barra" id="perf-barra" ${perfEd.sujo ? 'data-sujo="1"' : ''}>
       <div class="min-w-0"><h3 class="text-[16px] font-extrabold flex items-center gap-2"><span class="dv-ico" style="--c:#4f46e5"><i class="fa-solid fa-user-lock"></i></span>Perfis e permissões</h3>
-        <p class="text-[12.5px] text-ink3 mt-1">Escolha o que cada perfil vê e pode alterar. Vale na hora para quem está conectado, e o servidor confere a cada ação.</p></div>
+        <p class="text-[12.5px] text-ink3 mt-1">Escolha o que cada perfil vê e pode alterar. Vale na hora para quem está conectado, e o servidor confere a cada ação.</p>
+        <p class="text-[12px] mt-1.5 inline-flex items-center gap-1.5 px-2 py-1 rounded-lg" style="background:color-mix(in srgb,#c2410c 10%,var(--card));color:#c2410c"><i class="fa-solid fa-lock text-[10px]"></i><span><b>Contratações</b> é exclusiva do perfil <b>Chefe de Gabinete</b> e não pode ser liberada para outros perfis (nem para o Administrador).</span></p></div>
       <div class="flex gap-2 items-center flex-shrink-0"><span class="pers-aviso"><i class="fa-solid fa-circle text-[7px]"></i>Alterações não salvas</span>
         <button class="btn btn-sec" onclick="perfDescartar()">Descartar</button><button class="btn btn-pri" id="perf-salvar" onclick="perfSalvar()" ${perfEd.salvando ? 'disabled' : ''}><i class="fa-solid fa-check"></i>Salvar perfis</button></div>
     </div>
