@@ -3270,9 +3270,9 @@ function solsPeriodo() {
 }
 async function exportarCSV() {
   const L = solsPeriodo();
-  const cab = ['Nº SIGADOC', 'Natureza', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Prioridade', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável'];
+  const cab = ['Nº SIGADOC', 'Natureza', 'Tipo', 'Assunto', 'Origem', 'Interessado', 'Município', 'Recebido em', 'Prazo', 'Situação', 'Assinado em', 'Prioridade', 'Casa Civil', 'Etapa Casa Civil', 'Nº Casa Civil', 'Responsável', 'Autoridade Autorizadora'];
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const linhas = L.map(s => [s.numero, natRotulo(s), (TIPOS[s.tipo] || TIPOS.outro).rot, s.assunto, s.origem, s.interessado, s.municipio, fmt(s.recebidoEm), fmt(s.prazo), (STATUS[s.status] || {}).rot, s.assinadoEm ? fmt(s.assinadoEm) : '', s.urgente ? 'Sim' : 'Não', s.casaCivil ? 'Sim' : 'Não', s.casaCivil ? (ETAPAS_CC[s.ccEtapa] || {}).rot : '', s.ccNumero, s.responsavel].map(q).join(';'));
+  const linhas = L.map(s => [s.numero, natRotulo(s), (TIPOS[s.tipo] || TIPOS.outro).rot, s.assunto, s.origem, s.interessado, s.municipio, fmt(s.recebidoEm), fmt(s.prazo), (STATUS[s.status] || {}).rot, s.assinadoEm ? fmt(s.assinadoEm) : '', s.urgente ? 'Sim' : 'Não', s.casaCivil ? 'Sim' : 'Não', s.casaCivil ? (ETAPAS_CC[s.ccEtapa] || {}).rot : '', s.ccNumero, s.responsavel, s.autoridade].map(q).join(';'));
   const csv = '﻿' + [cab.map(q).join(';')].concat(linhas).join('\r\n');
   let dl = null;
   try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
@@ -3370,6 +3370,8 @@ function abrirForm(id, pre = {}) {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label class="sm:col-span-2"><span class="rotulo">Responsável que solicitou a assinatura *</span>
             <div class="relative"><i class="fa-solid fa-user-pen absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo campo-g w-full !pl-8" id="s-resp" required value="${esc(s.responsavel || '')}" placeholder="Nome de quem pediu" list="lista-resp"></div></label>
+          <label class="sm:col-span-2"><span class="rotulo">Autoridade Autorizadora <small class="font-normal text-ink3 normal-case tracking-normal">· quem autorizou o documento</small></span>
+            <div class="relative"><i class="fa-solid fa-user-shield absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><select class="campo w-full !pl-8" id="s-autoridade">${opcoesAutoridade(s.autoridade || '').map(([v, r]) => `<option value="${esc(v)}" ${v === (s.autoridade || '') ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></div></label>
           <label><span class="rotulo">Interessado / destinatário</span><input class="campo w-full" id="s-interessado" value="${esc(s.interessado || '')}"></label>
           <label><span class="rotulo">Município</span><input class="campo w-full" id="s-municipio" list="lista-mun" value="${esc(s.municipio || '')}" placeholder="Município de MT"></label>
         </div>`)}
@@ -3466,7 +3468,7 @@ async function salvarForm(id) {
   Object.assign(dados, {
     tipo: v('s-tipo'), natureza: naturezas.join(', '), numero: v('s-numero'), assunto: v('s-assunto'),
     origem: secretarias.concat(v('s-origem-outra') ? [v('s-origem-outra')] : []).join(', '), interessado: v('s-interessado'),
-    municipio: v('s-municipio'), responsavel: v('s-resp'), recebidoEm: antigo ? (antigo.recebidoEm || hojeISO()) : hojeISO(), prazo: v('s-prazo'),
+    municipio: v('s-municipio'), responsavel: v('s-resp'), autoridade: v('s-autoridade'), recebidoEm: antigo ? (antigo.recebidoEm || hojeISO()) : hojeISO(), prazo: v('s-prazo'),
     status: antigo ? (v('s-status') || antigo.status) : 'recebido',
     gabinete: antigo ? (antigo.gabinete || '') : (v('s-gabinete') === 'chefe' ? 'chefe' : ''),
     urgente: $('s-urg').checked, motivoUrgencia: $('s-urg').checked ? v('s-motivo') : '',
@@ -3587,6 +3589,7 @@ function renderDetalhe() {
               ${info('fa-user', 'Interessado', esc(s.interessado || '—'))}
               ${info('fa-location-dot', 'Município', esc(s.municipio || '—'))}
               ${info('fa-user-pen', 'Solicitado por', esc(s.responsavel || '—'))}
+              ${info('fa-user-shield', 'Autoridade Autorizadora', s.autoridade ? esc(s.autoridade) + (cargoAutoridade(s.autoridade) ? ` <small class="text-ink3">· ${esc(cargoAutoridade(s.autoridade))}</small>` : '') : '—')}
               ${info('fa-inbox', 'Recebido em', s.recebidoEm ? fmt(s.recebidoEm) : '—')}
               ${info('fa-calendar-day', 'Prazo', s.prazo ? fmt(s.prazo) : 'Sem prazo')}
               ${info(t.ico, 'Tipo de documento', esc(t.rot))}
@@ -4146,7 +4149,7 @@ async function baixarArquivo(nome, conteudo) {
 }
 
 /* ----- solicitações: edição e ações ----- */
-const ROT_CAMPO = { numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da prioridade' };
+const ROT_CAMPO = { autoridade: 'autoridade autorizadora', numero: 'nº', natureza: 'natureza', tipo: 'tipo', assunto: 'assunto', origem: 'secretarias', responsavel: 'solicitante', municipio: 'município', prazo: 'prazo', observacoes: 'observações', interessado: 'interessado', ccNumero: 'nº na Casa Civil', motivoUrgencia: 'motivo da prioridade' };
 const ACAO_STATUS = HIST_STATUS;
 /** Grava vários campos de uma solicitação com uma única movimentação descritiva. */
 async function editarSolCampos(s, campos) {
@@ -4190,6 +4193,7 @@ function colunasSolBase() {
     { key: 'origem', rot: 'Secretaria adjunta', w: 165, wCompacta: 150, tipo: 'texto', editavel: true, render: celSecretarias },
     { key: 'responsavel', rot: 'Solicitante', w: 170, tipo: 'texto', editavel: true, lista: 'lista-resp' },
     { key: 'municipio', rot: 'Município', w: 150, tipo: 'texto', editavel: true, lista: 'lista-mun', validar: validarMunicipio },
+    { key: 'autoridade', rot: 'Autoridade Autorizadora', w: 210, tipo: 'select', editavel: true, opcoes: s => opcoesAutoridade(s.autoridade || ''), render: s => s.autoridade ? `<span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-user-shield text-[10px] text-ink3"></i>${esc(s.autoridade)}</span>` : '' },
     { key: 'recebidoEm', rot: 'Recebido', w: 100, tipo: 'data', editavel: false },
     { key: 'prazo', rot: 'Prazo', w: 115, tipo: 'data', editavel: true },
     { key: 'status', rot: 'Situação', w: 185, wCompacta: 178, tipo: 'select', editavel: true, opcoes: opcoesStatus, render: celStatus },
@@ -4204,7 +4208,7 @@ function colunasVisao() {
   const base = colunasSolBase(), por = k => base.find(c => c.key === k);
   const prazo = { ...por('prazo'), rot: 'Prazo', w: 165, wCompacta: 160, render: s => celPrazoData(s) };
   return [por('numero'), { ...por('assunto'), w: 290 }, { ...por('natureza'), w: 160 }, por('tipo'), por('origem'), { ...por('responsavel'), w: 160 }]
-    .concat([prazo], ['status', 'municipio', 'recebidoEm', 'urgente', 'casaCivil', 'observacoes'].map(por));
+    .concat([prazo], ['status', 'autoridade', 'municipio', 'recebidoEm', 'urgente', 'casaCivil', 'observacoes'].map(por));
 }
 /** Coluna Prazo: em vez da data final, quantos dias faltam (ou há quantos dias venceu). A data fica na dica. */
 function celPrazoData(s) {
@@ -5410,7 +5414,18 @@ function faixaComunicadosPainel() {
 // ação e dos filtros de todas as seções, além das secretarias adjuntas. Os valores gravados nos
 // registros não mudam (só o nome exibido), então renomear nunca quebra os dados existentes.
 const slugRot = s => Utils_norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-const Pers = { rotulos: {}, secretarias: null, unidades: null, atualizadoEm: '', atualizadoPor: '' };
+const Pers = { rotulos: {}, secretarias: null, unidades: null, autoridades: null, atualizadoEm: '', atualizadoPor: '' };
+/* ----- Autoridade Autorizadora (opções editadas em Administração › Personalização › Autoridades) ----- */
+const AUTORIDADES_PADRAO = [{ nome: 'Secretária de Estado de Educação', cargo: 'Secretária', ativa: true }, { nome: 'Chefe de Gabinete', cargo: 'Gabinete', ativa: true }, { nome: 'Secretário(a) Adjunto(a)', cargo: 'Secretaria Adjunta', ativa: true }];
+const autoridadesTodas = () => Pers.autoridades || AUTORIDADES_PADRAO;
+const autoridadesAtivas = () => autoridadesTodas().filter(a => a.ativa !== false);
+const cargoAutoridade = nome => { const a = autoridadesTodas().find(x => x.nome === nome); return a && a.cargo ? a.cargo : ''; };
+/** Opções do campo: as ativas + a já gravada no registro (mesmo que tenha sido desativada). */
+function opcoesAutoridade(atual) {
+  const l = autoridadesAtivas().map(a => [a.nome, a.cargo ? `${a.nome} · ${a.cargo}` : a.nome]);
+  if (atual && !l.some(o => o[0] === atual)) l.push([atual, atual + ' (inativa)']);
+  return [['', '— Não informada —']].concat(l);
+}
 const NOMES_SEC_PADRAO = { SAGE: 'Secretaria Adjunta de Gestão Educacional', SAAS: 'Secretaria Adjunta de Administração Sistêmica', SAIP: 'Secretaria Adjunta de Infraestrutura e Patrimônio', SAEX: 'Secretaria Adjunta Executiva', GS: 'Gabinete da Secretária', SAGP: 'Secretaria Adjunta de Gestão de Pessoas' };
 const PADRAO_SECRETARIAS = SECRETARIAS.map(s => ({ sigla: s, nome: NOMES_SEC_PADRAO[s] || '', cor: COR_SEC[s], icone: ICO_SEC_PADRAO[s], ativa: true }));
 const NOME_SEC = {};
@@ -5474,6 +5489,7 @@ function aplicarPersonalizacao(p) {
   Pers.secretarias = lista.map(s => { const sg = String(s.sigla || '').toUpperCase(); return { sigla: sg, nome: s.nome || '', cor: s.cor || '#64748b', icone: s.icone || ICO_SEC_PADRAO[sg] || 'fa-building-columns', ativa: s.ativa !== false }; }).filter(s => s.sigla);
   SECRETARIAS.length = 0;
   Pers.secretarias.forEach(s => { COR_SEC[s.sigla] = s.cor; NOME_SEC[s.sigla] = s.nome; ICO_SEC[s.sigla] = s.icone; if (s.ativa) SECRETARIAS.push(s.sigla); });
+  if (Array.isArray(p.autoridades)) Pers.autoridades = p.autoridades.map(a => ({ nome: String(a.nome || ''), cargo: String(a.cargo || ''), ativa: a.ativa !== false })).filter(a => a.nome);
   if (Array.isArray(p.unidades) && p.unidades.length) { Pers.unidades = p.unidades; const dl = $('lista-unid'); if (dl) dl.innerHTML = p.unidades.map(n => `<option value="${esc(n)}">`).join(''); }
   // nomes no menu (seções por tipo)
   SECOES_DOC.forEach(d => { const b = document.querySelector(`.nav-btn[data-tab="doc:${d.tipo}"] span:not(.nav-badge)`); if (b) b.textContent = nomeSecaoDoc(d); });
@@ -5856,7 +5872,7 @@ const relEstado = (() => {
     resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
     cols: ['numero', 'assunto', 'natureza', 'secretaria', 'status', 'prazo', 'andamento'], ordem: 'prazo', agrupar: '', tituloPers: '', cenario: '' }, salvo, { f: Object.assign(relFiltroPadrao(), salvo.f || {}) });
 })();
-function relFiltroPadrao() { return { nat: [], st: [], tipos: [], secs: [], mun: '', prio: '', cc: '', prazo: '', ref: 'recebidoEm', busca: '' }; }
+function relFiltroPadrao() { return { nat: [], st: [], tipos: [], secs: [], mun: '', aut: '', prio: '', cc: '', prazo: '', ref: 'recebidoEm', busca: '' }; }
 function guardarRel() { try { localStorage.setItem('gabdoc_rel', JSON.stringify({ ...relEstado, obs: '' })); } catch (e) {} }
 function relSet(k, v, redesenhar = true) { relEstado[k] = v; guardarRel(); if (redesenhar) renderRelatorios(); else agendarPrevia(); }
 let relTimer = null;
@@ -5921,6 +5937,7 @@ const COLS_REL = {
   tipo: ['Tipo', 'auto', s => (TIPOS[s.tipo] || TIPOS.outro).curto],
   secretaria: ['Secretaria', 'auto', s => secDe(s).join(', ') || '—'],
   responsavel: ['Solicitante', 'auto', s => s.responsavel || '—'],
+  autoridade: ['Autoridade Autorizadora', 'auto', s => s.autoridade || '—'],
   municipio: ['Município', 'auto', s => s.municipio || '—'],
   status: ['Situação', 'auto', s => STATUS[s.status] ? STATUS[s.status].rot : (s.status || '—')],
   recebido: ['Recebido', 'auto', s => fmt(s.recebidoEm)],
@@ -5932,7 +5949,7 @@ const COLS_REL = {
   observacoes: ['Observações', '*', s => s.observacoes || '']
 };
 const ORDENS_REL = [['prazo', 'Prazo (vencidos primeiro)'], ['recebido', 'Recebimento (mais recentes)'], ['assinado', 'Assinatura (mais recentes)'], ['numero', 'Nº do processo'], ['status', 'Situação'], ['secretaria', 'Secretaria'], ['assunto', 'Assunto (A–Z)']];
-const GRUPOS_REL = [['', 'Sem agrupar'], ['status', 'Situação'], ['natureza', 'Natureza'], ['secretaria', 'Secretaria'], ['tipo', 'Tipo de documento'], ['municipio', 'Município'], ['mes', 'Mês de recebimento']];
+const GRUPOS_REL = [['', 'Sem agrupar'], ['status', 'Situação'], ['natureza', 'Natureza'], ['secretaria', 'Secretaria'], ['tipo', 'Tipo de documento'], ['municipio', 'Município'], ['autoridade', 'Autoridade Autorizadora'], ['mes', 'Mês de recebimento']];
 function ordenarRel(lista, ordem) {
   const kStatus = Object.keys(STATUS), txt = (a, b) => String(a || '').localeCompare(String(b || ''), 'pt-BR', { numeric: true, sensitivity: 'base' });
   const f = {
@@ -5952,6 +5969,7 @@ function grupoRel(s, g) {
   if (g === 'secretaria') return secDe(s)[0] ? secDe(s)[0] + (NOME_SEC[secDe(s)[0]] ? ' · ' + NOME_SEC[secDe(s)[0]] : '') : 'Sem secretaria';
   if (g === 'tipo') return (TIPOS[s.tipo] || TIPOS.outro).rot;
   if (g === 'municipio') return s.municipio || 'Sem município';
+  if (g === 'autoridade') return s.autoridade || 'Autoridade não informada';
   if (g === 'mes') { const m = String(s.recebidoEm || '').slice(0, 7); return m ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][Number(m.slice(5)) - 1] + ' de ' + m.slice(0, 4) : 'Sem data'; }
   return '';
 }
@@ -5965,6 +5983,7 @@ function filtrarSolRel(lista, comPeriodo) {
     if (f.tipos.length && !f.tipos.includes(s.tipo)) return false;
     if (f.secs.length && !secDe(s).some(x => f.secs.includes(x))) return false;
     if (f.mun && s.municipio !== f.mun) return false;
+    if (f.aut && (f.aut === '__sem' ? !!s.autoridade : s.autoridade !== f.aut)) return false;
     if (f.prio === 'sim' && !s.urgente) return false;
     if (f.prio === 'nao' && s.urgente) return false;
     if (f.cc === 'sim' && !s.casaCivil) return false;
@@ -5996,6 +6015,7 @@ function filtrosAtivosRel() {
   if (f.secs.length) out.push(f.secs.join(', '));
   if (f.tipos.length) out.push(f.tipos.map(t => (TIPOS[t] || {}).curto || t).join(', '));
   if (f.mun) out.push(f.mun);
+  if (f.aut) out.push(f.aut === '__sem' ? 'Sem autoridade informada' : 'Autorizado por ' + f.aut);
   if (f.busca) out.push('“' + f.busca + '”');
   return out.filter(Boolean);
 }
@@ -6476,7 +6496,7 @@ function renderRelatorios() {
   const selF = (k, lista, rot) => `<label class="block"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="relFiltro('${k}',this.value)">${lista.map(([v, r]) => `<option value="${esc(v)}" ${String(f[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`;
   const nRegs = ehSol ? (pers ? filtrarSolRel(Store.sol, true) : filtrarSolRel(Store.sol, false)).length : 0;
   const ativos = filtrosAtivosRel();
-  const maisAberto = !!(f.secs.length || f.tipos.length || f.mun || f.busca);
+  const maisAberto = !!(f.secs.length || f.tipos.length || f.mun || f.aut || f.busca);
   const muns = [...new Set(Store.sol.map(s => s.municipio).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   const opc = (k, lista) => lista.map(([v, r]) => `<option value="${esc(v)}" ${String(e[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('');
   const chk = (k, rot, ico) => `<label class="rel-chk"><input type="checkbox" ${e[k] ? 'checked' : ''} onchange="relSet('${k}',this.checked)"><span><i class="fa-solid ${ico}"></i>${rot}</span></label>`;
@@ -6504,12 +6524,13 @@ function renderRelatorios() {
             ${selF('prio', [['', 'Todas'], ['sim', 'Só prioridades'], ['nao', 'Sem prioridade']], 'Prioridade')}
             ${selF('cc', [['', 'Todos'], ['sim', 'Só Casa Civil'], ['nao', 'Fora da Casa Civil']], 'Casa Civil')}
           </div>
-          <details class="rel-mais" ${maisAberto ? 'open' : ''}><summary><i class="fa-solid fa-chevron-right"></i>Mais filtros <span class="text-ink3 font-normal">· secretarias, tipos, município e busca</span></summary>
+          <details class="rel-mais" ${maisAberto ? 'open' : ''}><summary><i class="fa-solid fa-chevron-right"></i>Mais filtros <span class="text-ink3 font-normal">· secretarias, tipos, município, autoridade e busca</span></summary>
             <div class="space-y-3 pt-3">
               ${e.tema !== 'secretaria' ? `<div><span class="rotulo">Secretarias</span><div class="flex flex-wrap gap-1.5">${SECRETARIAS.map(sg => chipF('secs', sg, sg, '', COR_SEC[sg])).join('')}</div></div>` : ''}
               <div><span class="rotulo">Tipos de documento</span><div class="flex flex-wrap gap-1.5">${Object.keys(TIPOS).map(k => chipF('tipos', k, TIPOS[k].curto || TIPOS[k].rot)).join('')}</div></div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 ${e.tema !== 'municipio' ? selF('mun', [['', 'Todos os municípios']].concat(muns.map(m => [m, m])), 'Município') : ''}
+                ${selF('aut', [['', 'Todas as autoridades']].concat([...new Set(autoridadesTodas().map(a => a.nome).concat(Store.sol.map(s => s.autoridade).filter(Boolean)))].map(n => [n, n]), [['__sem', 'Sem autoridade informada']]), 'Autoridade Autorizadora')}
                 <label class="block"><span class="rotulo">Contém o texto</span><input class="campo w-full" value="${esc(f.busca)}" placeholder="Nº, assunto, solicitante…" onchange="relFiltro('busca',this.value)"></label>
               </div>
             </div>
@@ -6656,7 +6677,8 @@ async function admCarregar(chave, acao, payload, campo) {
 const persEd = { dados: null, grupo: 'acoes', busca: '', sub: 'nomes', sujo: false, salvando: false };
 function persIniciar(p) {
   persEd.dados = { secretarias: JSON.parse(JSON.stringify(p.secretarias && p.secretarias.length ? p.secretarias : PADRAO_SECRETARIAS)),
-                   rotulos: { ...(p.rotulos || {}) }, unidades: (p.unidades || UNIDADES).slice() };
+                   rotulos: { ...(p.rotulos || {}) }, unidades: (p.unidades || UNIDADES).slice(),
+                   autoridades: JSON.parse(JSON.stringify(Array.isArray(p.autoridades) ? p.autoridades : AUTORIDADES_PADRAO)) };
   persEd.dados.secretarias.forEach(s => { if (!s.nome && NOME_SEC[s.sigla]) s.nome = NOME_SEC[s.sigla]; if (!s.icone) s.icone = icoSec(s.sigla); });
   persEd.sujo = false;
 }
@@ -6741,6 +6763,11 @@ function persConfirmarTransf(de) {
   fecharModal(); renderAdmin();
   toast(`${r.sol.length + r.ev.length + r.com.length} registro(s) passando de ${de} para ${alvo} · salvando em segundo plano.`, 'fa-right-left');
 }
+function usosAutoridade(nome) { const k = Utils_norm(nome); return k ? Store.solTodos.filter(s => Utils_norm(s.autoridade) === k).length : 0; }
+function persAut(i, k, v) { const a = persEd.dados.autoridades[i]; if (!a) return; a[k] = v; persMarcar(); }
+function persAutNova() { persEd.dados.autoridades = persEd.dados.autoridades || []; persEd.dados.autoridades.push({ nome: '', cargo: '', ativa: true }); persMarcar(); renderAdmin(); setTimeout(() => { const l = document.querySelectorAll('[data-aut-nome]'); l[l.length - 1]?.focus(); }, 30); }
+function persAutMover(i, d) { const L2 = persEd.dados.autoridades, j = i + d; if (j < 0 || j >= L2.length) return; [L2[i], L2[j]] = [L2[j], L2[i]]; persMarcar(); renderAdmin(); }
+function persAutRemover(i) { if (usosAutoridade(persEd.dados.autoridades[i].nome)) return; persEd.dados.autoridades.splice(i, 1); persMarcar(); renderAdmin(); }
 function persDescartar() { persEd.dados = null; admEstado.pers = null; renderAdmin(); }
 async function persSalvar() {
   const d = persEd.dados;
@@ -6749,6 +6776,9 @@ async function persSalvar() {
   if (new Set(siglas).size !== siglas.length) return toast('Há siglas repetidas.', 'fa-triangle-exclamation');
   if (!d.secretarias.some(s => s.ativa)) return toast('Deixe pelo menos uma secretaria ativa.', 'fa-triangle-exclamation');
   d.unidades = ($('pers-unid') ? $('pers-unid').value : d.unidades.join('\n')).split('\n').map(x => x.trim()).filter(Boolean);
+  d.autoridades = (d.autoridades || []).map(a => ({ nome: String(a.nome || '').trim(), cargo: String(a.cargo || '').trim(), ativa: a.ativa !== false })).filter(a => a.nome);
+  const nomesAut = d.autoridades.map(a => Utils_norm(a.nome));
+  if (new Set(nomesAut).size !== nomesAut.length) return toast('Há autoridades com o mesmo nome.', 'fa-triangle-exclamation');
   // Aplica na hora na tela e grava em segundo plano (o andamento aparece no canto)
   const envio = JSON.parse(JSON.stringify(d));
   aplicarPersonalizacao(envio);
@@ -6785,7 +6815,7 @@ function renderPersonalizacao(c) {
         <button class="btn btn-pri" id="pers-salvar" onclick="persSalvar()" ${persEd.salvando ? 'disabled' : ''}><i class="fa-solid fa-check"></i>Salvar personalização</button></div>
     </div>
 
-    <div class="ag-seg mb-4 pers-sub" role="tablist" aria-label="Partes da personalização">${[['nomes', 'Nomes e ações', 'fa-tags'], ['secretarias', 'Secretarias adjuntas', 'fa-sitemap'], ['unidades', 'Unidades de origem', 'fa-building-columns']].map(([k, r, i]) => `<button type="button" role="tab" aria-selected="${persEd.sub === k}" class="${persEd.sub === k ? 'on' : ''}" onclick="persEd.sub='${k}';renderAdmin()"><i class="fa-solid ${i}"></i><span>${r}</span></button>`).join('')}</div>
+    <div class="ag-seg mb-4 pers-sub" role="tablist" aria-label="Partes da personalização">${[['nomes', 'Nomes e ações', 'fa-tags'], ['secretarias', 'Secretarias adjuntas', 'fa-sitemap'], ['unidades', 'Unidades de origem', 'fa-building-columns'], ['autoridades', 'Autoridades', 'fa-user-shield']].map(([k, r, i]) => `<button type="button" role="tab" aria-selected="${persEd.sub === k}" class="${persEd.sub === k ? 'on' : ''}" onclick="persEd.sub='${k}';renderAdmin()"><i class="fa-solid ${i}"></i><span>${r}</span></button>`).join('')}</div>
 ${persEd.sub === 'nomes' ? `
     <div class="dv-card">
       <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#c026d3"><i class="fa-solid fa-tags"></i></span>Nomes das situações, ações e filtros</h3><p>Troque, por exemplo, "Em tramitação" por "Em andamento" ou "Assinados" por "Concluídos". Os dados gravados não mudam, só o nome exibido.</p></div></div>
@@ -6828,6 +6858,24 @@ ${persEd.sub === 'nomes' ? `
     <div class="dv-card">
       <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#0d9488"><i class="fa-solid fa-building-columns"></i></span>Unidades de origem sugeridas</h3><p>Lista que aparece ao digitar a unidade de origem ou o interessado. Uma por linha.</p></div></div>
       <textarea class="campo w-full !h-auto py-2 font-mono text-[12.5px]" rows="8" id="pers-unid" oninput="persEd.dados.unidades=this.value.split('\n');persMarcar()">${esc(d.unidades.join('\n'))}</textarea>
+    </div>` : ''}${persEd.sub === 'autoridades' ? `
+    <div class="dv-card">
+      <div class="min-w-0 mb-3"><h3 class="text-[17px] font-extrabold flex items-center gap-2"><span class="dv-ico" style="--c:#4f46e5"><i class="fa-solid fa-user-shield"></i></span>Autoridades autorizadoras</h3>
+        <p class="text-[12.5px] text-ink3 mt-0.5 leading-relaxed">Opções do campo <b>Autoridade Autorizadora</b> nos processos e documentos para assinatura (cadastro, planilhas e relatórios).<br>Desativar tira das escolhas sem mudar os registros que já usam aquela autoridade.</p></div>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-pri !h-10" onclick="persAutNova()"><i class="fa-solid fa-plus"></i>Nova autoridade</button>
+      </div>
+      <div class="space-y-2">
+        ${(d.autoridades || []).length ? d.autoridades.map((a, i) => { const n = usosAutoridade(a.nome); return `<div class="sec-linha ${a.ativa !== false ? '' : 'inativa'}">
+          <div class="sec-ordem"><button type="button" title="Subir" onclick="persAutMover(${i},-1)" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-up"></i></button><button type="button" title="Descer" onclick="persAutMover(${i},1)" ${i === d.autoridades.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-down"></i></button></div>
+          <span class="sec-icone" style="--c:#4f46e5;cursor:default"><i class="fa-solid fa-user-shield"></i></span>
+          <label class="sec-campo flex-1 min-w-[180px]"><span>Nome</span><input class="campo w-full" data-aut-nome="${i}" value="${esc(a.nome)}" placeholder="Ex.: Dra. Maria Souza" oninput="persAut(${i},'nome',this.value)"></label>
+          <label class="sec-campo flex-1 min-w-[160px]"><span>Cargo / função</span><input class="campo w-full" value="${esc(a.cargo || '')}" placeholder="Ex.: Secretária de Educação" oninput="persAut(${i},'cargo',this.value)"></label>
+          <span class="sec-uso" title="${n ? 'Registros que usam esta autoridade' : 'Nenhum registro usa esta autoridade'}" ${n ? '' : 'disabled'}><b>${n}</b> em uso</span>
+          <label class="pers-switch" title="${a.ativa !== false ? 'Ativa' : 'Inativa'}"><input type="checkbox" ${a.ativa !== false ? 'checked' : ''} onchange="persAut(${i},'ativa',this.checked);this.closest('.sec-linha').classList.toggle('inativa',!this.checked)" aria-label="Ativa"><span></span></label>
+          <button type="button" class="sec-lixo" ${n ? 'disabled' : ''} title="${n ? `Em uso por ${n} registro(s): desative em vez de remover` : 'Remover'}" onclick="persAutRemover(${i})"><i class="fa-solid fa-trash"></i></button>
+        </div>`; }).join('') : '<p class="text-[13px] text-ink3 py-4">Nenhuma autoridade cadastrada. Use "Nova autoridade".</p>'}
+      </div>
     </div>` : ''}`;
 }
 /* ----- Administração › Usuários › Perfis e permissões ----- */
