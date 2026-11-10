@@ -762,6 +762,30 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .gs-acoes-in { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
   .gs-acao { height: 24px; padding: 0 8px; border-radius: 7px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; color: #fff; background: var(--c); margin-right: auto; white-space: nowrap; transition: filter .15s; }
   .gs-acao:hover { filter: brightness(1.1); }
+  /* Portarias: link e arquivo dentro da célula */
+  .pt-arq { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .pt-arq > .truncate { flex: 1; min-width: 0; font-size: 12.5px; }
+  .gs-cel-bt { cursor: pointer; }
+  .pt-dl { --c: #2563eb; flex: none; width: 26px; height: 24px; border-radius: 7px; display: inline-grid; place-items: center; font-size: 12px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); transition: .15s; }
+  .pt-dl:hover { background: var(--c); color: #fff; }
+  .pt-dl:disabled { opacity: .6; }
+  .pt-anexar { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #d97706; padding: 2px 9px; border-radius: 999px; border: 1px dashed color-mix(in srgb, #d97706 55%, transparent); background: color-mix(in srgb, #d97706 7%, var(--card)); }
+  .pt-anexar:hover { background: color-mix(in srgb, #d97706 16%, var(--card)); }
+  .pt-link { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; font-size: 12.5px; font-weight: 600; color: color-mix(in srgb, #4f46e5 70%, var(--ink)); text-decoration: none; }
+  .pt-link:hover span { text-decoration: underline; }
+  .pt-link i { font-size: 10px; }
+  .gs-compacto .pt-ab-x { display: none; }
+  .pt-setor-chip { --c: #64748b; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); }
+  .pt-setor-chip:hover { background: var(--c); color: #fff; }
+  .pt-arq-card { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--card2, var(--card)); }
+  .pt-arq-card small { color: var(--ink3); font-size: 11.5px; }
+  .pt-arq-ico { --c: #2563eb; width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); flex: none; }
+  .pt-drop { display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 14px; border: 2px dashed var(--line); cursor: pointer; color: var(--ink2); transition: .15s; }
+  .pt-drop i { font-size: 24px; color: #4f46e5; }
+  .pt-drop small { display: block; color: var(--ink3); font-size: 11.5px; }
+  .pt-drop:hover, .pt-drop.sobre { border-color: #4f46e5; background: color-mix(in srgb, #4f46e5 6%, transparent); }
+  .pt-drop.mini { padding: 10px 14px; }
+  .pt-drop.mini i { font-size: 18px; }
   .gs-acao-fim { margin-right: auto; font-size: 11.5px; font-weight: 700; color: var(--ok); display: inline-flex; align-items: center; gap: 5px; }
   .gs-ico { width: 26px; height: 24px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; color: var(--ink3); border: 1px solid var(--line); background: var(--card); }
   .gs-ico:hover { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); }
@@ -1469,6 +1493,19 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="docs-corpo"></div></div>
     </section>
 
+    <section id="tab-portarias" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#1e1b4b">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-stamp text-indigo-300"></i> Portarias</h2>
+            <p class="text-indigo-100/70 text-xs mt-0.5 hidden sm:block">Processo, número da portaria, recebimento, assunto e setor, com o link do processo e o arquivo (Word) para baixar em Word ou PDF.</p>
+          </div>
+          <div class="flex items-center gap-3"><span class="text-xs text-indigo-100/80" id="port-resumo"></span><button onclick="abrirFormPortaria()" class="btn text-white" style="background:#4f46e5" id="btn-nova-port"><i class="fa-solid fa-plus"></i>Nova portaria</button></div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="port-corpo"></div></div>
+    </section>
+
     <section id="tab-mesa" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -1889,7 +1926,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], contratacoes: [], nomeacoes: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], contratacoes: [], nomeacoes: [], portarias: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 // Dois cadastros separados na mesma lista: o da Secretária (Store.sol, usado por todo o sistema)
 // e o do Chefe de Gabinete (Store.solChefe, só na seção dele). Store.solTodos tem os dois.
 const ehChefe = s => !!s && s.gabinete === 'chefe';
@@ -1965,7 +2002,7 @@ function pode(perm) {
 const podeGrade = id => { const a = Grades[id] && Grades[id].cfg && Grades[id].cfg.area; return a ? pode(a + ':2') : pode('gravar'); };
 /** Seção do menu → área de permissão. */
 function areaDaAba(tab) {
-  if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos'].includes(tab)) return 'sol';
+  if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos', 'portarias'].includes(tab)) return 'sol';
   if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
@@ -2030,6 +2067,10 @@ async function iniciarStore() {
       Store.nomeacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('portarias').onSnapshot(snap => {
+      Store.portarias = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('contratacoes').onSnapshot(snap => {
       Store.contratacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -2050,7 +2091,7 @@ async function iniciarStore() {
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
     Store.comunicados = ex.comunicados.map((e, i) => ({ id: 'cm' + i, ...e }));
-    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.contratacoes = exc.contratacoes; Store.nomeacoes = exc.nomeacoes; Store.chefe = exc.info;
+    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.contratacoes = exc.contratacoes; Store.nomeacoes = exc.nomeacoes; Store.chefe = exc.info; Store.portarias = exemplosPortarias();
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -2122,6 +2163,7 @@ function aplicarCarga(r) {
     Store.simec = r.simec || [];
     Store.contratacoes = r.contratacoes || [];
     Store.nomeacoes = r.nomeacoes || [];
+    Store.portarias = r.portarias || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
   if (r.personalizacao) aplicarPersonalizacao(r.personalizacao);
@@ -2762,6 +2804,7 @@ let abaAtual = 'painel';
 function irPara(tab) {
   if (tab === 'urgentes') tab = 'prazos';
   if (Store.modo === 'planilha' && Store.sessao && !abaPermitida(tab)) { toast('Seu perfil não tem acesso a esta seção.', 'fa-lock'); tab = primeiraAbaPermitida(); }
+  if (tab === 'doc:portaria') tab = 'portarias';
   if (String(tab).startsWith('doc:')) { const t = tab.slice(4); if (!SECOES_DOC.some(x => x.tipo === t)) tab = 'mesa'; else docTipo = t; }
   else if (!$('tab-' + tab)) tab = 'painel';
   abaAtual = tab;
@@ -2815,14 +2858,13 @@ function somarBadgesGrupos() {
 }
 /* ----- seções por tipo de documento (menu lateral) ----- */
 const SECOES_DOC = [
-  { tipo: 'portaria',  rot: 'Portarias',             desc: 'Todas as portarias em formato de planilha: elaboração, assinatura e publicação.' },
   { tipo: 'capturado', rot: 'Documentos capturados', desc: 'Documentos recebidos de fora e capturados no sistema para análise e assinatura.' },
   { tipo: 'oficio',    rot: 'Ofícios',               desc: 'Ofícios recebidos e expedidos pelo Gabinete.' },
   { tipo: 'despacho',  rot: 'Despachos',             desc: 'Despachos da Secretária em processos e solicitações.' },
   { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' }
 ];
-let docTipo = 'portaria';
-$('nav-docs').innerHTML = SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('') +
+let docTipo = 'capturado';
+$('nav-docs').innerHTML = `<button class="nav-btn" data-tab="portarias"><i class="ico fa-solid fa-stamp" style="color:#818cf8"></i><span>Portarias</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Portarias sem arquivo"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('') +
   `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
 document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => irPara(b.dataset.tab)));
@@ -2871,7 +2913,7 @@ async function sair() {
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
     Store.online = []; renderOnline(); fecharOnline();
-    Store.sessao = null; Store.sol = []; Store.simec = []; Store.contratacoes = []; Store.nomeacoes = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.simec = []; Store.contratacoes = []; Store.nomeacoes = []; Store.portarias = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -2913,7 +2955,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapaAdj, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { portarias: renderPortarias, nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapaAdj, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -2937,6 +2979,7 @@ function atualizarBadges() {
   set('bdg-urg', prazosAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
   SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
+  set('bdg-port', (Store.portarias || []).filter(x => !x.arquivoId).length);
   set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
@@ -4029,7 +4072,7 @@ function renderGrade(cont, cfg) {
     <div class="gs-status"><span>${L.length} de ${cfg.linhas.length} linha(s)</span><span id="gs-info-${cfg.id}" class="truncate"></span>${podeEditar ? '<span class="hidden lg:inline">Shift/arrastar seleciona várias · Enter edita · Ctrl+C / Ctrl+V</span>' : '<span>Somente leitura para o seu perfil</span>'}</div>`;
   const caixa = $('gs-' + cfg.id);
   caixa.addEventListener('mousedown', e => {
-    if (e.button !== 0 || e.target.closest('.gs-acoes, .gs-filtro, .gs-editor, thead')) return;
+    if (e.button !== 0 || e.target.closest('.gs-acoes, .gs-filtro, .gs-editor, thead, .gs-cel-bt')) return;
     const td = e.target.closest('td.gs-cel'), num = e.target.closest('td.gs-num');
     if (td) {
       const ri = +td.dataset.ri, ci = +td.dataset.ci;
@@ -4050,7 +4093,7 @@ function renderGrade(cont, cfg) {
     if (gradeArrastando.linhas) { const a = g.visiveis.findIndex(r => r.id === g.ativa.id); const ri = +td.dataset.ri; definirFaixa(cfg.id, Math.min(a, ri), 0, Math.max(a, ri), g.cols.length - 1); }
     else if (td.dataset.ci !== undefined) estenderFaixa(cfg.id, +td.dataset.ri, +td.dataset.ci);
   });
-  caixa.addEventListener('dblclick', e => { const td = e.target.closest('td.gs-cel'); if (td) editarCelula(cfg.id, +td.dataset.ri, +td.dataset.ci); });
+  caixa.addEventListener('dblclick', e => { if (e.target.closest('.gs-cel-bt')) return; const td = e.target.closest('td.gs-cel'); if (td) editarCelula(cfg.id, +td.dataset.ri, +td.dataset.ci); });
   caixa.addEventListener('click', e => { const td = e.target.closest('td.gs-check.ed'); if (td && !e.shiftKey && !temFaixaMultipla(cfg.id)) alternarChecks(cfg.id); });
   // restaura a seleção depois de redesenhar
   if (g.ativa) {
@@ -4541,6 +4584,268 @@ function renderDocs() {
     novaLinha: () => abrirForm(null, { tipo: d.tipo }), textoNovaLinha: `Novo registro em ${d.rot} (abre o formulário)`,
     textoVazio: `Nenhum registro em ${d.rot}.`,
     botaoNovo: `<button class="btn btn-pri !h-9" style="background:${t.cor};border-color:${t.cor}" onclick="${novo}"><i class="fa-solid fa-plus"></i>Novo</button>`
+  });
+}
+
+/* ----- Portarias: cadastro próprio com link do processo e arquivo (Word/PDF) ----- */
+const PORT_COR = '#4f46e5';
+const PORT_EXT = { doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', odt: 'application/vnd.oasis.opendocument.text', rtf: 'application/rtf', pdf: 'application/pdf' };
+const PORT_MAX = 20 * 1024 * 1024;
+const ArquivosLocais = {}; // modo demonstração/compartilhado: arquivo fica só nesta sessão
+const extArq = n => (String(n || '').toLowerCase().match(/\.([a-z0-9]{2,5})$/) || [])[1] || '';
+const ehPdfArq = n => extArq(n) === 'pdf';
+const tamArq = b => { b = Number(b) || 0; return b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : b ? Math.max(1, Math.round(b / 1024)) + ' KB' : ''; };
+const icoArq = n => ehPdfArq(n) ? ['fa-file-pdf', '#dc2626'] : ['fa-file-word', '#2563eb'];
+const portaria = id => (Store.portarias || []).find(x => x.id === id);
+const corSetor = s => ({ GS: '#0f172a', SAEX: '#7c3aed', SAGE: '#2563eb', SAGP: '#16a34a', SAIP: '#0891b2', SAGR: '#d97706', SARC: '#db2777', SAAS: '#ea580c' }[s] || corAvatar(s || '?'));
+const linkCurto = u => { try { const x = new URL(u); return x.hostname.replace(/^www\./, '') + (x.pathname.length > 1 ? x.pathname.slice(0, 18) + (x.pathname.length > 18 ? '…' : '') : ''); } catch (e) { return u; } };
+function normLink(v) {
+  let s = String(v || '').trim(); if (!s) return '';
+  if (!/^https?:\/\//i.test(s)) { if (/^[a-z][a-z0-9+.\-]*:/i.test(s)) return null; s = 'https://' + s; }
+  return /\s/.test(s) ? null : s;
+}
+function exemplosPortarias() {
+  const h = d => somaDias(d);
+  return [
+    { id: 'pt1', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', link: 'https://www.sigadoc.mt.gov.br/', arquivoNome: '', exemplo: true },
+    { id: 'pt2', processo: 'SEDUC-PRO-2026/30877', numero: 'Portaria nº 498/2026/GS/SEDUC-MT', recebimento: h(-6), assunto: 'Instituição de grupo de trabalho do novo ensino médio', setor: 'SAGE', link: '', arquivoNome: '', exemplo: true },
+    { id: 'pt3', processo: 'SEDUC-PRO-2026/29911', numero: 'Portaria nº 471/2026/GS/SEDUC-MT', recebimento: h(-15), assunto: 'Horário especial de funcionamento do Gabinete no recesso', setor: 'GS', link: 'https://www.sigadoc.mt.gov.br/', arquivoNome: '', exemplo: true },
+    { id: 'pt4', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', link: '', arquivoNome: '', exemplo: true }
+  ];
+}
+function lerBase64(file) {
+  return new Promise((ok, erro) => { const r = new FileReader(); r.onload = () => ok(String(r.result).replace(/^data:[^,]*,/, '')); r.onerror = () => erro(new Error('Não foi possível ler o arquivo.')); r.readAsDataURL(file); });
+}
+function validarArqPortaria(file) {
+  if (!file) return 'Escolha um arquivo.';
+  if (!PORT_EXT[extArq(file.name)]) return 'Envie um arquivo Word (.docx ou .doc), .odt, .rtf ou PDF.';
+  if (file.size > PORT_MAX) return 'O arquivo passa de 20 MB.';
+  if (!file.size) return 'O arquivo está vazio.';
+  return '';
+}
+/** Envia o arquivo (planilha: Google Drive, pasta "GABDoc - Portarias"). Devolve os campos para gravar na portaria. */
+async function enviarArqPortaria(file, rotulo) {
+  const e = validarArqPortaria(file); if (e) throw new Error(e);
+  const base64 = await lerBase64(file);
+  if (Store.modo === 'planilha') {
+    const r = await API.post('enviar_arquivo_portaria', { nome: file.name, base64, rotulo: rotulo || '' }, 240000);
+    return { arquivoId: r.arquivoId, arquivoNome: r.arquivoNome, arquivoTipo: r.arquivoTipo, arquivoTamanho: r.arquivoTamanho };
+  }
+  const id = novoIdLocal('A');
+  ArquivosLocais[id] = { nome: file.name, tipo: PORT_EXT[extArq(file.name)], base64 };
+  return { arquivoId: id, arquivoNome: file.name, arquivoTipo: PORT_EXT[extArq(file.name)], arquivoTamanho: String(file.size) };
+}
+function blobDeBase64(b64, tipo) { const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Blob([u], { type: tipo || 'application/octet-stream' }); }
+const baixandoPort = new Set();
+/** Baixa o arquivo da portaria: formato 'original' (Word) ou 'pdf' (convertido pelo Google Drive). */
+async function baixarArqPortaria(id, formato, btn) {
+  const x = portaria(id); if (!x || !x.arquivoId) { toast('Esta portaria ainda não tem arquivo.', 'fa-circle-info'); return; }
+  const chave = id + formato; if (baixandoPort.has(chave)) return;
+  const pdf = formato === 'pdf';
+  if (Store.modo !== 'planilha') {
+    const a = ArquivosLocais[x.arquivoId];
+    if (!a) { toast('Arquivo de exemplo: anexe um arquivo para testar o download.', 'fa-circle-info'); return; }
+    if (pdf && !ehPdfArq(a.nome)) { toast('A conversão de Word para PDF é feita pelo Google Drive: disponível com a planilha conectada.', 'fa-circle-info'); return; }
+    await salvarArquivo(blobDeBase64(a.base64, a.tipo), a.nome, 'Arquivo baixado: ' + a.nome, pdf ? 'fa-file-pdf' : 'fa-file-word');
+    return;
+  }
+  baixandoPort.add(chave);
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>' + (btn.dataset.rot ? (pdf ? 'Convertendo…' : 'Baixando…') : ''); }
+  if (pdf && !ehPdfArq(x.arquivoNome)) toast('Convertendo para PDF…', 'fa-file-pdf');
+  try {
+    const r = await API.post('baixar_arquivo_portaria', { id, formato: pdf ? 'pdf' : 'original', arquivoId: x.arquivoId, arquivoNome: x.arquivoNome }, 240000);
+    await salvarArquivo(blobDeBase64(r.base64, r.tipo), r.nome, (pdf ? 'PDF baixado: ' : 'Arquivo baixado: ') + r.nome, pdf ? 'fa-file-pdf' : 'fa-file-word');
+  } catch (e) { toast(e.message || 'Não foi possível baixar o arquivo.', 'fa-triangle-exclamation'); }
+  finally { baixandoPort.delete(chave); if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+/** Anexar/trocar o arquivo direto da planilha (sem abrir o formulário). */
+function anexarArqPortaria(id) {
+  if (!pode('sol:2')) { toast('Seu perfil só pode visualizar as portarias.', 'fa-lock'); return; }
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = Object.keys(PORT_EXT).map(e => '.' + e).join(',');
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0]; if (!f) return;
+    const x = portaria(id); if (!x) return;
+    const e = validarArqPortaria(f); if (e) { toast(e, 'fa-triangle-exclamation'); return; }
+    toast('Enviando ' + f.name + '…', 'fa-cloud-arrow-up');
+    try { const meta = await enviarArqPortaria(f, x.numero || x.processo); await editarPortCampos(portaria(id) || x, meta); toast('Arquivo anexado: ' + f.name, 'fa-paperclip'); }
+    catch (err) { toast(err.message || 'Não foi possível enviar o arquivo.', 'fa-triangle-exclamation'); }
+  };
+  inp.click();
+}
+async function salvarPortaria(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'pt' + Date.now();
+    trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  const antigo = novo ? null : portaria(id);
+  if (novo) id = novoIdLocal('P');
+  trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'portarias', idLocal: novo ? id : null, icone: 'fa-stamp',
+    rotulo: rotulo || (novo ? 'Nova portaria' : antigo && antigo.arquivoId !== dados.arquivoId ? 'Portaria · arquivo' : 'Portaria atualizada'),
+    detalhe: [dados.numero, dados.processo].filter(Boolean).join(' · ') || dados.assunto || '',
+    action: 'salvar_portaria', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('portarias').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirPortariaId(id) {
+  const x = portaria(id);
+  Store.portarias = Store.portarias.filter(r => r.id !== id); aoMudarDados();
+  toast('Portaria excluída.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de portaria', detalhe: x ? (x.numero || x.processo || '') : '',
+    action: 'excluir_portaria', payload: { id }, nuvem: () => Store.db.collection('portarias').doc(id).delete() });
+}
+async function editarPortCampos(x, campos) {
+  if ('link' in campos) { const l = normLink(campos.link); if (l === null) { toast('O link deve começar com http:// ou https://.', 'fa-triangle-exclamation'); return false; } campos.link = l; }
+  if ('setor' in campos) campos.setor = String(campos.setor || '').trim().toUpperCase();
+  const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarPortaria(x.id, d);
+}
+function celArquivo(x) {
+  if (!x.arquivoId) return pode('sol:2') ? `<button type="button" class="gs-cel-bt pt-anexar" onclick="anexarArqPortaria('${x.id}')"><i class="fa-solid fa-paperclip"></i>Anexar arquivo</button>` : '<span class="text-ink3">—</span>';
+  const [ico, cor] = icoArq(x.arquivoNome);
+  const pdf = ehPdfArq(x.arquivoNome);
+  return `<span class="pt-arq"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate" title="${esc(x.arquivoNome)}${x.arquivoTamanho ? ' · ' + tamArq(x.arquivoTamanho) : ''}">${esc(x.arquivoNome)}</span>
+    <button type="button" class="gs-cel-bt pt-dl" style="--c:${pdf ? '#dc2626' : '#2563eb'}" title="Baixar ${pdf ? 'o PDF' : 'em Word (original)'}" onclick="baixarArqPortaria('${x.id}','original',this)"><i class="fa-solid ${pdf ? 'fa-file-pdf' : 'fa-file-word'}"></i></button>
+    ${pdf ? '' : `<button type="button" class="gs-cel-bt pt-dl" style="--c:#dc2626" title="Baixar em PDF" onclick="baixarArqPortaria('${x.id}','pdf',this)"><i class="fa-solid fa-file-pdf"></i></button>`}</span>`;
+}
+function celLink(x) {
+  if (!x.link) return '';
+  return `<a class="gs-cel-bt pt-link" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" title="Abrir o processo: ${esc(x.link)}"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Abrir<span class="pt-ab-x"> processo</span></span></a>`;
+}
+function abrirFormPortaria(id, foco) {
+  const x = id ? portaria(id) : { recebimento: hojeISO() };
+  if (!x) return;
+  const pe = pode('sol:2');
+  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
+  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  FormPort.arquivo = null; FormPort.remover = false; FormPort.atual = x.arquivoId ? { arquivoId: x.arquivoId, arquivoNome: x.arquivoNome, arquivoTipo: x.arquivoTipo, arquivoTamanho: x.arquivoTamanho } : null;
+  abrirModal(`
+    <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 200px at 0% 0%, rgba(99,102,241,.4), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos"><span class="on" style="--c:${PORT_COR}"><i class="fa-solid fa-stamp"></i></span></div>
+        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">${id ? 'Editar' : 'Nova'} portaria</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${esc(x.numero || 'Portaria')}</h3></div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <form class="modal-corpo space-y-4" id="form-port" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        ${campo(1, '#64748b', 'Número do Processo', `<input class="campo w-full" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
+        ${campo(2, PORT_COR, 'Número da Portaria', `<input class="campo w-full" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Ex.: Portaria nº 000/2026/GS/SEDUC-MT">`)}
+        ${campo(3, '#0891b2', 'Data de recebimento', `<input type="date" class="campo w-full" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
+        ${campo(5, '#d97706', 'Setor', `<input class="campo w-full uppercase" id="pt-setor" list="lista-setor-port" value="${esc(x.setor || '')}" placeholder="SAGE, SAGP, SAAS…" autocomplete="off">
+          <div class="flex flex-wrap gap-1 mt-1.5">${SECRETARIAS.map(s => `<button type="button" class="pt-setor-chip" style="--c:${corSetor(s)}" onclick="$('pt-setor').value='${s}'">${s}</button>`).join('')}</div>`)}
+      </div>
+      ${campo(4, '#0f172a', 'Assunto', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Do que trata a portaria">${esc(x.assunto || '')}</textarea>`)}
+      ${campo(6, '#7c3aed', 'Link do processo', `<div class="flex gap-2"><input class="campo w-full" id="pt-link" type="url" inputmode="url" value="${esc(x.link || '')}" placeholder="https://… (SIGADOC ou outro sistema)"><button type="button" class="btn btn-sec !h-10 shrink-0" title="Testar o link" onclick="const l=normLink($('pt-link').value);if(l)window.open(l,'_blank','noopener');else toast('Informe um link válido (http:// ou https://).','fa-triangle-exclamation')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir</button></div>`)}
+      ${campo(7, '#2563eb', 'Arquivo <span class="font-normal text-ink3">(de preferência Word · baixa em Word ou PDF)</span>', `<div id="pt-arq-area"></div>`)}
+      <p id="pt-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+    </form>
+    <datalist id="lista-setor-port">${SECRETARIAS.map(m => `<option value="${esc(m)}">`).join('')}</datalist>
+    <div class="modal-rodape">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600 mr-auto" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>Salvar</button>` : ''}</div>`, 'portaria');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  FormPort.id = id || '';
+  renderArqForm();
+  if (!pe) document.querySelectorAll('#form-port input, #form-port textarea').forEach(el => el.readOnly = true);
+  setTimeout(() => { const f = $(foco ? 'pt-' + foco : 'pt-processo'); if (f) f.focus(); }, 120);
+}
+const FormPort = { id: '', arquivo: null, remover: false, atual: null };
+function renderArqForm() {
+  const el = $('pt-arq-area'); if (!el) return;
+  const pe = pode('sol:2');
+  const novo = FormPort.arquivo, atual = !FormPort.remover && FormPort.atual;
+  const cartao = (nome, tam, extra) => { const [ico, cor] = icoArq(nome); return `<div class="pt-arq-card"><span class="pt-arq-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 flex-1"><b class="block truncate">${esc(nome)}</b><small>${extra}${tam ? ' · ' + tamArq(tam) : ''}</small></span>`; };
+  let html = '';
+  if (novo) html = cartao(novo.name, novo.size, 'Novo arquivo · será enviado ao salvar') + (pe ? `<button type="button" class="btn btn-sec !h-9" onclick="FormPort.arquivo=null;renderArqForm()"><i class="fa-solid fa-xmark"></i>Desfazer</button>` : '') + '</div>';
+  else if (atual) {
+    const pdf = ehPdfArq(atual.arquivoNome);
+    html = cartao(atual.arquivoNome, atual.arquivoTamanho, 'Arquivo salvo') + `<div class="flex flex-wrap gap-1.5 justify-end">
+      ${FormPort.id ? `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','original',this)"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'Baixar PDF' : 'Baixar Word'}</button>
+      ${pdf ? '' : `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','pdf',this)"><i class="fa-solid fa-file-pdf text-red-600"></i>Baixar PDF</button>`}` : ''}
+      ${pe ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" title="Remover o arquivo" onclick="FormPort.remover=true;renderArqForm()"><i class="fa-solid fa-trash"></i></button>` : ''}</div></div>`;
+  }
+  const zona = pe ? `<label class="pt-drop ${novo || atual ? 'mini' : ''}" id="pt-drop" ondragover="event.preventDefault();this.classList.add('sobre')" ondragleave="this.classList.remove('sobre')" ondrop="event.preventDefault();this.classList.remove('sobre');escolherArqForm(event.dataTransfer.files[0])">
+      <input type="file" class="sr-only" id="pt-arquivo" accept="${Object.keys(PORT_EXT).map(e => '.' + e).join(',')}" onchange="escolherArqForm(this.files[0])">
+      <i class="fa-solid fa-cloud-arrow-up"></i><span><b>${novo || atual ? 'Trocar arquivo' : 'Escolher arquivo'}</b> ou arraste aqui<small>Word (.docx, .doc), .odt, .rtf ou PDF · até 20 MB</small></span></label>` : (!html ? '<p class="text-sm text-ink3">Sem arquivo.</p>' : '');
+  el.innerHTML = `<div class="space-y-2">${html}${FormPort.remover && FormPort.atual && !novo ? `<p class="text-[12.5px] text-red-600 font-semibold">O arquivo será removido ao salvar. <button type="button" class="underline" onclick="FormPort.remover=false;renderArqForm()">Desfazer</button></p>` : ''}${zona}</div>`;
+}
+function escolherArqForm(f) {
+  if (!f) return;
+  const e = validarArqPortaria(f);
+  const av = $('pt-aviso');
+  if (e) { av.textContent = e; av.classList.remove('hidden'); return; }
+  av.classList.add('hidden');
+  FormPort.arquivo = f; FormPort.remover = false; renderArqForm();
+}
+async function salvarFormPortaria(id) {
+  const v = k => $(k).value.trim();
+  const aviso = t => { const el = $('pt-aviso'); el.textContent = t; el.classList.remove('hidden'); };
+  if (!v('pt-processo') && !v('pt-numero') && !v('pt-assunto')) return aviso('Informe ao menos o número do processo, o número da portaria ou o assunto.');
+  const link = normLink(v('pt-link'));
+  if (link === null) return aviso('O link do processo deve começar com http:// ou https://.');
+  const antigo = id ? portaria(id) : null;
+  const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
+    processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), link, atualizadoEm: new Date().toISOString() };
+  const btn = $('btn-port-salvar'); btn.disabled = true;
+  try {
+    if (FormPort.arquivo) {
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Enviando arquivo…';
+      Object.assign(dados, await enviarArqPortaria(FormPort.arquivo, dados.numero || dados.processo));
+    } else if (FormPort.remover) Object.assign(dados, { arquivoId: '', arquivoNome: '', arquivoTipo: '', arquivoTamanho: '' });
+  } catch (e) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; return aviso(e.message || 'Não foi possível enviar o arquivo.'); }
+  if (await salvarPortaria(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Portaria registrada · salvando em segundo plano.' : 'Portaria salva.', 'fa-stamp'); if (abaAtual !== 'portarias') irPara('portarias'); }
+  else { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; }
+}
+/** Mais recentes primeiro (data de recebimento). */
+const ordemPort = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
+function renderPortarias() {
+  const cont = $('port-corpo');
+  const todas = Store.portarias || [];
+  $('port-resumo').textContent = todas.length ? `${todas.length} portaria(s) · ${todas.filter(x => x.arquivoId).length} com arquivo` : '';
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const mes = hojeISO().slice(0, 7);
+  const doMes = x => String(x.recebimento || '').slice(0, 7) === mes;
+  const setores = [...new Set(todas.map(x => x.setor).filter(Boolean))].sort();
+  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  renderGrade(cont, {
+    id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi(PORT_COR, 'fa-stamp', 'Portarias', todas.length, `${setores.length} setor(es)`, '')}
+      ${kpi('#0891b2', 'fa-calendar-day', 'Recebidas no mês', todas.filter(doMes).length, new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }), 'mes')}
+      ${kpi('#2563eb', 'fa-file-word', 'Com arquivo', todas.filter(x => x.arquivoId).length, 'baixe em Word ou PDF', 'arq')}
+      ${kpi('#d97706', 'fa-paperclip', 'Sem arquivo', todas.filter(x => !x.arquivoId).length, `${todas.filter(x => !x.link).length} sem link do processo`, 'semarq')}</div>`,
+    colunas: [
+      { key: 'processo', rot: 'Número do Processo', w: 195, wCompacta: 135, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número da Portaria', w: 210, wCompacta: 120, tipo: 'texto', editavel: true },
+      { key: 'recebimento', rot: 'Data de recebimento', w: 130, wCompacta: 100, tipo: 'data', editavel: true },
+      { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true },
+      { key: 'setor', rot: 'Setor', w: 95, wCompacta: 70, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
+        render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}">${esc(x.setor)}</span>` : '' },
+      { key: 'link', rot: 'Link do processo', w: 150, wCompacta: 90, tipo: 'texto', editavel: true, render: celLink, validar: v => normLink(v) === null ? 'O link deve começar com http:// ou https://.' : '' },
+      { key: 'arquivoNome', rot: 'Arquivo', w: 250, wCompacta: 172, tipo: 'texto', editavel: false, render: celArquivo }
+    ],
+    compactas: ['processo', 'numero', 'recebimento', 'assunto', 'setor', 'link', 'arquivoNome'],
+    // primeira vez: modo compacto, para caber link e arquivo na tela
+    estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
+    larguraAcoes: 76,
+    ordemPadrao: ordemPort,
+    chips: [['', L('filtro.todos'), () => true, PORT_COR], ['mes', 'Recebidas no mês', doMes, '#0891b2'], ['arq', 'Com arquivo', x => !!x.arquivoId, '#2563eb'], ['semarq', 'Sem arquivo', x => !x.arquivoId, '#d97706'], ['semlink', 'Sem link', x => !x.link, '#7c3aed']]
+      .concat(setores.slice(0, 8).map(s => ['set:' + s, s, x => x.setor === s, corSetor(s)])),
+    aoEditarCampos: editarPortCampos,
+    acoes: x => `<div class="gs-acoes-in"><button type="button" class="gs-ico" title="Abrir no formulário" onclick="abrirFormPortaria('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`,
+    tituloLinha: x => [x.numero, x.processo].filter(Boolean).join(' · ') || x.assunto || 'Portaria',
+    menuAcoes: x => [
+      x.link ? { rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') } : null,
+      x.arquivoId ? { rot: ehPdfArq(x.arquivoNome) ? 'Baixar o PDF' : 'Baixar em Word', ico: ehPdfArq(x.arquivoNome) ? 'fa-file-pdf' : 'fa-file-word', cor: '#2563eb', fn: () => baixarArqPortaria(x.id, 'original') } : null,
+      x.arquivoId && !ehPdfArq(x.arquivoNome) ? { rot: 'Baixar em PDF', ico: 'fa-file-pdf', cor: '#dc2626', fn: () => baixarArqPortaria(x.id, 'pdf') } : null,
+      pode('sol:2') ? { rot: x.arquivoId ? 'Trocar o arquivo' : 'Anexar arquivo', ico: 'fa-paperclip', cor: '#d97706', fn: () => anexarArqPortaria(x.id) } : null,
+      { sep: true }, { rot: 'Abrir no formulário', ico: 'fa-pen', cor: '#64748b', fn: () => abrirFormPortaria(x.id) },
+      pode('sol:3') ? { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirPortariaId(x.id) } : null].filter(Boolean),
+    novaLinha: () => abrirFormPortaria(), textoNovaLinha: 'Nova portaria (abre o formulário)',
+    textoVazio: 'Nenhuma portaria cadastrada.',
+    botaoNovo: `<button class="btn btn-pri !h-9" style="background:${PORT_COR};border-color:${PORT_COR}" onclick="abrirFormPortaria()"><i class="fa-solid fa-plus"></i>Nova portaria</button>`
   });
 }
 
@@ -7813,7 +8118,7 @@ const AREAS_PERFIL = [
   ['semana', 'Minha semana', 'fa-calendar-week', '#10b981', 'Resumo da semana, prazos e agenda'],
   ['painel', 'Painel', 'fa-chart-column', '#3b82f6', 'Gráficos e cruzamentos'],
   ['mapa', 'Mapa das Adjuntas', 'fa-sitemap', '#0891b2', 'Demandas por secretaria adjunta'],
-  ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos e seções por tipo'],
+  ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos, Portarias e seções por tipo'],
   ['casacivil', 'Casa Civil', 'fa-landmark', '#7c3aed', 'Trilha e etapas da Casa Civil'],
   ['correicao', 'Processos de Correição', 'fa-clipboard-check', '#d97706', 'Planilha da Correição'],
   ['chefe', 'Chefe de Gabinete', 'fa-user-tie', '#b45309', 'Processos, documentos e SIMEC do Chefe de Gabinete'],
