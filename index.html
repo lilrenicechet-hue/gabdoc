@@ -1517,7 +1517,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-id-card text-blue-300"></i> Nomeações e Exonerações</h2>
-            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Acompanhamento de nomeações e exonerações do Chefe de Gabinete: protocolo, ato, publicação no Diário Oficial e status.</p>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Acompanhamento de nomeações e exonerações do Chefe de Gabinete: protocolo, publicação no Diário Oficial, data de início e status.</p>
           </div>
           <div class="flex gap-2" data-requer="chefe:2">
             <button onclick="abrirFormNomeacao(null,{tipo:'Nomeação'})" class="btn bg-blue-600 hover:bg-blue-500 text-white"><i class="fa-solid fa-user-check"></i>Nova nomeação</button>
@@ -4680,9 +4680,9 @@ function exemplosChefe() {
       { id: 'kt4', nome: 'Roberto Lima', forma: 'Presencial', tipo: 'NOR', protocolo: h(-18), cargo: 'Assessor especial', processo: 'SEDUC-PRO-2026/49992', entrevista: '', status: 'Não Autorizado', inicio: '', lotacao: '', observacao: '', exemplo: true }
     ],
     nomeacoes: [
-      { id: 'nm1', nome: 'Paulo Roberto Arruda', tipo: 'Nomeação', cargo: 'Assessor Especial', simbolo: 'DGA-3', lotacao: 'Gabinete', processo: 'SEDUC-PRO-2026/51020', protocolo: h(-8), dataAto: '', ato: '', status: 'Aguardando publicação', observacao: '', exemplo: true },
-      { id: 'nm2', nome: 'Luciana Campos', tipo: 'Exoneração', cargo: 'Coordenadora', simbolo: 'DGA-5', lotacao: 'SAGE', processo: 'SEDUC-PRO-2026/51088', protocolo: h(-3), dataAto: '', ato: '', status: 'Em andamento', observacao: 'A pedido.', exemplo: true },
-      { id: 'nm3', nome: 'Marcos Vinícius Leite', tipo: 'Nomeação', cargo: 'Superintendente', simbolo: 'DGA-2', lotacao: 'SAGP', processo: 'SEDUC-PRO-2026/50644', protocolo: h(-25), dataAto: h(-10), ato: 'Ato nº 1.204/2026 · DOE nº 29.010', status: 'Publicado', observacao: '', exemplo: true }
+      { id: 'nm1', nome: 'Paulo Roberto Arruda', tipo: 'Nomeação', categoria: 'IN', cargo: 'Assessor Especial', simbolo: 'DGA-3', lotacao: 'Gabinete', processo: 'SEDUC-PRO-2026/51020', protocolo: h(-8), inicio: '', status: 'Aguardando publicação', observacao: '', exemplo: true },
+      { id: 'nm2', nome: 'Luciana Campos', tipo: 'Exoneração', categoria: 'NOR', cargo: 'Coordenadora', simbolo: 'DGA-5', lotacao: 'SAGE', processo: 'SEDUC-PRO-2026/51088', protocolo: h(-3), inicio: '', status: 'Em andamento', observacao: 'A pedido.', exemplo: true },
+      { id: 'nm3', nome: 'Marcos Vinícius Leite', tipo: 'Nomeação', categoria: 'NOR', cargo: 'Superintendente', simbolo: 'DGA-2', lotacao: 'SAGP', processo: 'SEDUC-PRO-2026/50644', protocolo: h(-25), inicio: h(-10), status: 'Publicado', observacao: '', exemplo: true }
     ],
     info: { nome: 'Chefe de Gabinete (exemplo)', cargo: 'Chefe de Gabinete', email: 'gabinete@seduc.mt.gov.br', telefone: '(65) 3613-0000', ramal: '0000', local: 'Gabinete da Secretária', obs: 'Dados de exemplo. Edite em "Editar dados".' }
   };
@@ -4899,16 +4899,16 @@ function abrirFormNomeacao(id, pre = {}) {
     </div>
     <form class="modal-corpo space-y-4" id="form-nom" onsubmit="event.preventDefault();salvarFormNomeacao('${id || ''}')">
       ${campo(1, '#2563eb', 'Tipo', `<div class="grid grid-cols-2 gap-2" id="nm-tipos">${Object.entries(TIPOS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${x.tipo === k ? 'ativo' : ''}" style="--c:${cor}" data-v="${k}" onclick="document.querySelectorAll('#nm-tipos .op-card').forEach(b=>b.classList.toggle('ativo',b===this))"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="font-bold text-[14px] text-ink">${k}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
-      ${campo(2, '#0f172a', 'Nome *', `<input class="campo campo-g w-full" id="nm-nome" required value="${esc(x.nome || '')}" placeholder="Nome completo">`)}
+      ${campo(2, '#7c3aed', 'Tipo (IN ou NOR)', `<div class="flex gap-2" id="nm-cats">${Object.entries(TIPOS_CONTR).map(([k, cor]) => `<button type="button" class="det-sit ${x.categoria === k ? 'atual' : ''}" style="--c:${cor}" data-v="${k}" onclick="const on=!this.classList.contains('atual');document.querySelectorAll('#nm-cats .det-sit').forEach(b=>b.classList.remove('atual'));this.classList.toggle('atual',on)">${k}</button>`).join('')}</div>`)}
+      ${campo(3, '#0f172a', 'Nome *', `<input class="campo campo-g w-full" id="nm-nome" required value="${esc(x.nome || '')}" placeholder="Nome completo">`)}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        ${campo(3, '#0d9488', 'Cargo', `<input class="campo w-full" id="nm-cargo" value="${esc(x.cargo || '')}" placeholder="Ex.: Assessor Especial">`)}
-        ${campo(4, '#7c3aed', 'Símbolo / DGA', `<input class="campo w-full" id="nm-simbolo" value="${esc(x.simbolo || '')}" placeholder="Ex.: DGA-3">`)}
-        ${campo(5, '#0891b2', 'Lotação', `<input class="campo w-full" id="nm-lotacao" value="${esc(x.lotacao || '')}" placeholder="Unidade">`)}
-        ${campo(6, '#64748b', 'Nº do processo', `<input class="campo w-full" id="nm-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
-        ${campo(7, '#0891b2', 'Data de protocolo', `<input type="date" class="campo w-full" id="nm-protocolo" value="${esc(x.protocolo || '')}">`)}
-        ${campo(8, '#16a34a', 'Data do ato', `<input type="date" class="campo w-full" id="nm-dataAto" value="${esc(x.dataAto || '')}">`)}
+        ${campo(4, '#0d9488', 'Cargo', `<input class="campo w-full" id="nm-cargo" value="${esc(x.cargo || '')}" placeholder="Ex.: Assessor Especial">`)}
+        ${campo(5, '#7c3aed', 'Símbolo / DGA', `<input class="campo w-full" id="nm-simbolo" value="${esc(x.simbolo || '')}" placeholder="Ex.: DGA-3">`)}
+        ${campo(6, '#0891b2', 'Lotação', `<input class="campo w-full" id="nm-lotacao" value="${esc(x.lotacao || '')}" placeholder="Unidade">`)}
+        ${campo(7, '#64748b', 'Nº do processo', `<input class="campo w-full" id="nm-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
+        ${campo(8, '#0891b2', 'Data de protocolo', `<input type="date" class="campo w-full" id="nm-protocolo" value="${esc(x.protocolo || '')}">`)}
+        ${campo(9, '#16a34a', 'Data de Início', `<input type="date" class="campo w-full" id="nm-inicio" value="${esc(x.inicio || '')}">`)}
       </div>
-      ${campo(9, '#16a34a', 'Nº do ato / DOE', `<input class="campo w-full" id="nm-ato" value="${esc(x.ato || '')}" placeholder="Ex.: Ato nº 1.234/2026 · DOE nº 29.001">`)}
       ${campo(10, '#d97706', 'Status', `<div class="flex flex-wrap gap-1.5" id="nm-sits">${Object.entries(STATUS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="det-sit ${k === (x.status || 'Em andamento') ? 'atual' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('#nm-sits .det-sit').forEach(b=>b.classList.toggle('atual',b===this))"><i class="fa-solid ${ico}"></i>${esc(k)}</button>`).join('')}</div>`)}
       ${campo(11, '#64748b', 'Observação', `<textarea class="campo w-full" rows="3" id="nm-obs">${esc(x.observacao || '')}</textarea>`)}
       <p id="nm-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
@@ -4921,12 +4921,12 @@ async function salvarFormNomeacao(id) {
   const v = k => $(k).value.trim();
   const aviso = t => { const el = $('nm-aviso'); el.textContent = t; el.classList.remove('hidden'); };
   if (!v('nm-nome')) return aviso('Informe o nome da pessoa.');
-  const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset, st = (document.querySelector('#nm-sits .det-sit.atual') || {}).dataset;
+  const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset, ct = (document.querySelector('#nm-cats .det-sit.atual') || {}).dataset, st = (document.querySelector('#nm-sits .det-sit.atual') || {}).dataset;
   if (!tp || !tp.v) return aviso('Escolha Nomeação ou Exoneração.');
   const antigo = id ? Store.nomeacoes.find(c => c.id === id) : null;
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
-    nome: v('nm-nome'), tipo: tp.v, cargo: v('nm-cargo'), simbolo: v('nm-simbolo'), lotacao: v('nm-lotacao'), processo: v('nm-processo'),
-    protocolo: v('nm-protocolo'), dataAto: v('nm-dataAto'), ato: v('nm-ato'), status: (st && st.v) || 'Em andamento', observacao: v('nm-obs'), atualizadoEm: new Date().toISOString() };
+    nome: v('nm-nome'), tipo: tp.v, categoria: (ct && ct.v) || '', cargo: v('nm-cargo'), simbolo: v('nm-simbolo'), lotacao: v('nm-lotacao'), processo: v('nm-processo'),
+    protocolo: v('nm-protocolo'), inicio: v('nm-inicio'), status: (st && st.v) || 'Em andamento', observacao: v('nm-obs'), atualizadoEm: new Date().toISOString() };
   const btn = $('btn-nom-salvar'); btn.disabled = true;
   if (await salvarNomeacao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? `${dados.tipo} registrada · salvando em segundo plano.` : `${dados.tipo} salva.`, 'fa-id-card'); if (abaAtual !== 'nomeacoes' && abaAtual !== 'chefe') irPara('nomeacoes'); }
   else btn.disabled = false;
@@ -4950,29 +4950,29 @@ function renderNomeacoes() {
     colunas: [
       { key: 'nome', rot: 'Nome', w: 230, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '' },
       { key: 'tipo', rot: 'Tipo', w: 135, wCompacta: 130, tipo: 'select', editavel: true, opcoes: () => Object.keys(TIPOS_NOM).map(k => [k, k]), render: x => x.tipo ? `<span class="gs-pill" style="--c:${(TIPOS_NOM[x.tipo] || ['#64748b'])[0]}"><i class="fa-solid ${(TIPOS_NOM[x.tipo] || [0, 'fa-circle'])[1]} text-[9px]"></i>${esc(x.tipo)}</span>` : '' },
+      { key: 'categoria', rot: 'Tipo (IN ou NOR)', w: 110, wCompacta: 90, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['IN', 'IN'], ['NOR', 'NOR']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
       { key: 'cargo', rot: 'Cargo', w: 200, wCompacta: 180, tipo: 'texto', editavel: true },
       { key: 'simbolo', rot: 'Símbolo / DGA', w: 120, tipo: 'texto', editavel: true },
       { key: 'lotacao', rot: 'Lotação', w: 190, tipo: 'texto', editavel: true },
       { key: 'processo', rot: 'Nº do processo', w: 200, tipo: 'texto', editavel: true },
       { key: 'protocolo', rot: 'Data de protocolo', w: 125, tipo: 'data', editavel: true },
-      { key: 'dataAto', rot: 'Data do ato', w: 115, tipo: 'data', editavel: true },
-      { key: 'ato', rot: 'Nº do ato / DOE', w: 180, tipo: 'texto', editavel: true },
+      { key: 'inicio', rot: 'Data de Início', w: 120, tipo: 'data', editavel: true },
       { key: 'status', rot: 'Status', w: 195, wCompacta: 190, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_NOM).concat(x.status && !STATUS_NOM[x.status] ? [x.status] : []).map(k => [k, k]),
         render: x => { if (!x.status) return ''; const [cor, ico] = corNom(x.status); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.status)}</span>`; } },
       { key: 'observacao', rot: 'Observação', w: 280, tipo: 'texto', editavel: true }
     ],
-    compactas: ['nome', 'tipo', 'cargo', 'protocolo', 'status'],
+    compactas: ['nome', 'tipo', 'categoria', 'cargo', 'protocolo', 'status'],
     larguraAcoes: 160,
     finalizado: nomFeita,
     ordemPadrao: ordemFinalizados(nomFeita, ordemNom, porFimRecente('atualizadoEm')),
     classeLinha: x => nomFeita(x) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, '#1e40af'], ['nom', 'Nomeações', x => x.tipo === 'Nomeação', '#2563eb'], ['exo', 'Exonerações', x => x.tipo === 'Exoneração', '#be123c'],
             ['and', 'Em andamento', x => x.status === 'Em andamento', '#2563eb'], ['aguard', 'Aguardando publicação', x => x.status === 'Aguardando publicação', '#d97706'],
-            ['pub', 'Publicados', x => x.status === 'Publicado', '#16a34a'], ['nao', 'Não autorizados', x => x.status === 'Não Autorizado', '#dc2626']],
+            ['pub', 'Publicados', x => x.status === 'Publicado', '#16a34a'], ['nao', 'Não autorizados', x => x.status === 'Não Autorizado', '#dc2626'], ['in', 'IN', x => x.categoria === 'IN', '#7c3aed'], ['nor', 'NOR', x => x.categoria === 'NOR', '#0d9488']],
     aoEditarCampos: editarNomCampos,
     acoes: x => {
       const btn = !pode('chefe:2') ? '' : x.status === 'Em andamento' ? `<button type="button" class="gs-acao" style="--c:#d97706" title="Marcar como Aguardando publicação" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'Aguardando publicação'})"><i class="fa-solid fa-newspaper"></i>Publicação</button>`
-        : x.status === 'Aguardando publicação' ? `<button type="button" class="gs-acao" style="--c:#16a34a" title="Marcar como publicado e informar o ato/DOE" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'Publicado'}).then(()=>abrirFormNomeacao('${x.id}'))"><i class="fa-solid fa-circle-check"></i>Publicado</button>`
+        : x.status === 'Aguardando publicação' ? `<button type="button" class="gs-acao" style="--c:#16a34a" title="Marcar como publicado e informar a data de início" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'Publicado'}).then(()=>abrirFormNomeacao('${x.id}'))"><i class="fa-solid fa-circle-check"></i>Publicado</button>`
         : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormNomeacao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('nomeacoes','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
@@ -6312,11 +6312,11 @@ function montarRelatorio() {
     case 'nomeacoes': {
       const l = (Store.nomeacoes || []).filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
       subtitulo = P.rot + ' (data de protocolo)';
-      add(kp([{ rot: 'Nomeações', val: l.filter(x => x.tipo === 'Nomeação').length, cor: '#2563eb' }, { rot: 'Exonerações', val: l.filter(x => x.tipo === 'Exoneração').length, cor: '#be123c' }]
+      add(kp([{ rot: 'Nomeações', val: l.filter(x => x.tipo === 'Nomeação').length, cor: '#2563eb' }, { rot: 'Exonerações', val: l.filter(x => x.tipo === 'Exoneração').length, cor: '#be123c' }, { rot: 'IN', val: l.filter(x => x.categoria === 'IN').length, cor: '#7c3aed' }, { rot: 'NOR', val: l.filter(x => x.categoria === 'NOR').length, cor: '#0d9488' }]
         .concat(Object.entries(STATUS_NOM).map(([k, [cor]]) => ({ rot: k, val: l.filter(x => x.status === k).length, cor })))));
       add(graf({ tipo: 'bar', titulo: 'Por status', labels: Object.keys(STATUS_NOM), series: [{ rot: 'Nomeações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Nomeação' && x.status === k).length), cor: '#2563eb' }, { rot: 'Exonerações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Exoneração' && x.status === k).length), cor: '#be123c' }] }));
-      const col = [{ rot: 'Nome', w: '*' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data do ato', w: 'auto' }, { rot: 'Ato / DOE', w: 'auto' }, { rot: 'Status', w: 'auto' }];
-      const lin = x => [x.nome, x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.dataAto ? fmt(x.dataAto) : '—', x.ato || '—', x.status || '—'];
+      const col = [{ rot: 'Nome', w: '*' }, { rot: 'IN/NOR', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const lin = x => [x.nome, x.categoria || '—', x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.inicio ? fmt(x.inicio) : '—', x.status || '—'];
       const ord = lista => lista.slice().sort((a, b) => (nomFeita(a) - nomFeita(b)) || ordemNom(a, b));
       add(tab('Nomeações', col, ord(l.filter(x => x.tipo === 'Nomeação')).map(lin), 'Nenhuma nomeação no período.'));
       add(tab('Exonerações', col, ord(l.filter(x => x.tipo === 'Exoneração')).map(lin), 'Nenhuma exoneração no período.'));
