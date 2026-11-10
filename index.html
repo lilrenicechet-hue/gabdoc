@@ -844,6 +844,34 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pt-anexar.pub { --cor: #16a34a; color: #16a34a; border-color: color-mix(in srgb, #16a34a 55%, transparent); background: color-mix(in srgb, #16a34a 7%, var(--card)); }
   .gs-compacto .pt-arq > .truncate { display: none; }
   .gs-compacto .pt-anexar span { display: none; }
+  /* Publicações: alerta de prazos */
+  .pub-alerta { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
+  .pa-bloco { --c: #dc2626; border-radius: 16px; padding: 10px 12px; background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); box-shadow: inset 4px 0 0 var(--c); min-width: 0; }
+  .pa-bloco.breve { --c: #ea580c; }
+  .pa-tit { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; font-size: 13.5px; color: color-mix(in srgb, var(--c) 75%, var(--ink)); }
+  .pa-tit b { font-size: 17px; font-weight: 900; }
+  .pa-ico { width: 30px; height: 30px; border-radius: 9px; flex: none; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 13px; }
+  .pa-bloco.venc .pa-ico { animation: pa-pulso 2s ease-in-out infinite; }
+  @keyframes pa-pulso { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--c) 22%, transparent); } }
+  @media (prefers-reduced-motion: reduce) { .pa-bloco.venc .pa-ico { animation: none; } }
+  .pa-lista { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pa-item { display: flex; flex-direction: column; align-items: flex-start; max-width: 100%; min-width: 0; padding: 5px 10px; border-radius: 10px; text-align: left; background: var(--card); border: 1px solid color-mix(in srgb, var(--c) 22%, var(--line)); transition: .15s; }
+  .pa-item:hover { border-color: var(--c); transform: translateY(-1px); }
+  .pa-item b { font-size: 12.5px; color: var(--ink); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pa-item span { font-size: 11.5px; font-weight: 700; color: var(--c); }
+  .pa-mais { font-size: 12px; font-weight: 800; color: var(--c); padding: 0 8px; }
+  .pt-sub { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin-bottom: 6px; }
+  .pt-sub > svg, .pt-sub > i { color: #0891b2; }
+  .gs-dias .pz-c { display: none; }
+  .gs-compacto .gs-dias .pz-l { display: none; }
+  .gs-compacto .gs-dias .pz-c { display: inline; }
+  .gs-compacto .pt-arq > :first-child { display: none; }
+  @media (max-width: 767px) {
+    .pub-alerta { display: flex; flex-direction: column; gap: 8px; }
+    .pa-bloco { padding: 8px 10px; }
+    .pa-lista { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .pa-item { flex: none; max-width: 230px; }
+  }
   /* Portarias: link e arquivo dentro da célula */
   .pt-arq { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .pt-arq > .truncate { flex: 1; min-width: 0; font-size: 12.5px; }
@@ -3064,6 +3092,7 @@ function atualizarBadges() {
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
   SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
   set('bdg-port', (Store.portarias || []).filter(x => !pubFeita(x)).length);
+  { const b = $('bdg-port'); if (b) { const v = (Store.portarias || []).some(pubVencida); b.classList.toggle('bg-red-600', v); b.classList.toggle('bg-indigo-600', !v); b.title = v ? 'Há publicações com prazo vencido' : 'Aguardando publicação ou devolvidas para correção'; } }
   set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
@@ -4684,6 +4713,32 @@ const tipoPub = t => PUB_TIPOS.find(x => Utils_norm(x[0]) === Utils_norm(t)) || 
 const PUB_STATUS = { 'Aguardando Publicação': ['#d97706', 'fa-hourglass-half'], 'Publicado': ['#16a34a', 'fa-circle-check'], 'Devolvido Para Correção': ['#dc2626', 'fa-rotate-left'] };
 const statusPub = x => (x && x.status && PUB_STATUS[x.status]) ? x.status : 'Aguardando Publicação';
 const pubFeita = x => statusPub(x) === 'Publicado';
+/** Prazo para publicação: alerta para as vencidas e as que vencem em até PUB_ALERTA dias (só as não publicadas). */
+const PUB_ALERTA = 5;
+const diasPub = x => (x && x.prazo && !pubFeita(x)) ? diasAte(x.prazo) : null;
+const pubVencida = x => { const d = diasPub(x); return d !== null && d < 0; };
+const pubAVencer = x => { const d = diasPub(x); return d !== null && d >= 0 && d <= PUB_ALERTA; };
+const txtDiasPub = d => d < 0 ? `venceu há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'vence hoje' : d === 1 ? 'vence amanhã' : `vence em ${d} dias`;
+function celPrazoPub(x) {
+  if (!x.prazo) return '<span class="gs-dias sem">Sem prazo</span>';
+  const dica = `Prazo para publicação: ${fmt(x.prazo)}`;
+  if (pubFeita(x)) return `<span class="gs-dias feito" title="${dica}"><i class="fa-solid fa-check"></i><span class="pz-l">Publicado · ${fmt(x.prazo).slice(0, 5)}</span><span class="pz-c">${fmt(x.prazo).slice(0, 5)}</span></span>`;
+  const d = diasAte(x.prazo), sit = d < 0 ? 'vencido' : d === 0 ? 'hoje' : d <= PUB_ALERTA ? 'proximo' : 'ok';
+  const longo = d < 0 ? `Vencido há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'Vence hoje' : d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`;
+  const curto = d < 0 ? `${d}d` : d === 0 ? 'Hoje' : `${d}d`;
+  return `<span class="gs-dias ${sit}" title="${dica} · ${longo}"><i class="fa-solid ${d < 0 ? 'fa-circle-exclamation' : d === 0 ? 'fa-hourglass-end' : 'fa-hourglass-half'}"></i><span class="pz-l">${longo} · ${fmt(x.prazo).slice(0, 5)}</span><span class="pz-c">${curto}</span></span>`;
+}
+/** Faixa de alerta acima da planilha: vencidas e que vencem em breve. */
+function alertaPrazosPub(todas) {
+  const venc = todas.filter(pubVencida).sort((a, b) => diasPub(a) - diasPub(b));
+  const breve = todas.filter(pubAVencer).sort((a, b) => diasPub(a) - diasPub(b));
+  if (!venc.length && !breve.length) return '';
+  const item = x => `<button type="button" class="pa-item" onclick="abrirFormPortaria('${x.id}')" title="${esc(x.assunto || '')}"><b>${esc(nomePub(x))}</b><span>${txtDiasPub(diasPub(x))} · ${fmt(x.prazo)}</span></button>`;
+  const bloco = (cls, ico, tit, lista, chip) => !lista.length ? '' : `<div class="pa-bloco ${cls}">
+      <button type="button" class="pa-tit" onclick="chipGrade('portarias','${chip}')"><span class="pa-ico"><i class="fa-solid ${ico}"></i></span><span><b>${lista.length}</b> ${tit}</span><i class="fa-solid fa-filter text-[11px] opacity-60"></i></button>
+      <div class="pa-lista">${lista.slice(0, 4).map(item).join('')}${lista.length > 4 ? `<button type="button" class="pa-mais" onclick="chipGrade('portarias','${chip}')">+${lista.length - 4} · ver todas</button>` : ''}</div></div>`;
+  return `<div class="pub-alerta" role="status">${bloco('venc', 'fa-triangle-exclamation', venc.length === 1 ? 'publicação vencida' : 'publicações vencidas', venc, 'venc')}${bloco('breve', 'fa-bell', `${breve.length === 1 ? 'vence' : 'vencem'} em até ${PUB_ALERTA} dias`, breve, 'breve')}</div>`;
+}
 /** Os dois arquivos de cada publicação e o prefixo dos seus campos. */
 const PUB_ARQS = { minuta: { p: 'arquivo', rot: 'Minuta', ico: 'fa-file-pen', cor: '#2563eb', dica: 'Texto minutado, de preferência Word' }, publicado: { p: 'pub', rot: 'Arquivo publicado', ico: 'fa-newspaper', cor: '#16a34a', dica: 'Como saiu publicado (ex.: Diário Oficial)' } };
 const arqDe = (x, q) => { const p = PUB_ARQS[q].p; return x && x[p + 'Id'] ? { id: x[p + 'Id'], nome: x[p + 'Nome'] || '', tipo: x[p + 'Tipo'] || '', tam: x[p + 'Tamanho'] || '' } : null; };
@@ -4704,10 +4759,10 @@ function normLink(v) {
 function exemplosPortarias() {
   const h = d => somaDias(d);
   return [
-    { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
+    { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), prazo: h(2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
     { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', link: '', exemplo: true },
-    { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
-    { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true }
+    { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), prazo: h(-3), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
+    { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), prazo: h(10), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true }
   ];
 }
 function lerBase64(file) {
@@ -4863,10 +4918,15 @@ function abrirFormPortaria(id, foco) {
         ${campo(2, '#64748b', 'fa-folder-open', 'Número do Processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
         ${campo(3, '#4338ca', 'fa-file-lines', 'Número do documento', 'Como sai no Diário Oficial', comIco('fa-file-lines', `<input class="campo campo-g w-full !pl-8" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Ex.: Portaria nº 000/2026/GS/SEDUC-MT" autocomplete="off">`))}
       </div>
-      ${campo(4, '#0891b2', 'fa-calendar-day', 'Data de recebimento', 'Quando o documento chegou ao Gabinete', `
-        <div class="flex flex-wrap items-center gap-2">
-          ${comIco('fa-calendar', `<input type="date" class="campo campo-g !pl-8" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
-          <div class="flex flex-wrap gap-1.5">${atalhosData.map(([r, d]) => `<button type="button" class="atalho" onclick="$('pt-recebimento').value=somaDias(${d});marcarCamposPort()">${r}</button>`).join('')}</div>
+      ${campo(4, '#0891b2', 'fa-calendar-day', 'Recebimento e prazo', 'Quando chegou ao Gabinete e até quando deve ser publicado', `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div><p class="pt-sub"><i class="fa-solid fa-inbox"></i>Data de recebimento</p>
+            ${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
+            <div class="flex flex-wrap gap-1.5 mt-2">${atalhosData.map(([r, d]) => `<button type="button" class="atalho" onclick="$('pt-recebimento').value=somaDias(${d});marcarCamposPort()">${r}</button>`).join('')}</div></div>
+          <div><p class="pt-sub"><i class="fa-solid fa-hourglass-half"></i>Prazo para publicação <span class="font-normal text-ink3">(se tiver)</span></p>
+            ${comIco('fa-flag-checkered', `<input type="date" class="campo campo-g w-full !pl-8" id="pt-prazo" value="${esc(x.prazo || '')}" oninput="infoPrazoPub()">`)}
+            <div class="flex flex-wrap gap-1.5 mt-2">${[3, 5, 10, 15, 30].map(d => `<button type="button" class="atalho" onclick="$('pt-prazo').value=somaDias(${d});infoPrazoPub();marcarCamposPort()">+${d} dias</button>`).join('')}<button type="button" class="atalho" onclick="$('pt-prazo').value='';infoPrazoPub();marcarCamposPort()">Sem prazo</button></div>
+            <p class="text-[12px] font-semibold mt-1.5" id="pt-prazo-info"></p></div>
         </div>`)}
       ${campo(5, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata o documento', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
       ${campo(6, '#d97706', 'fa-sitemap', 'Setor', 'Secretaria adjunta responsável: toque em uma', `
@@ -4886,10 +4946,18 @@ function abrirFormPortaria(id, foco) {
       <div class="flex gap-2">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar publicação'}</button>` : ''}</div>
     </div>`, 'portaria');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
-  renderArqForm('minuta'); renderArqForm('publicado');
+  renderArqForm('minuta'); renderArqForm('publicado'); infoPrazoPub();
   if (!pe) document.querySelectorAll('#form-port input, #form-port textarea, #form-port button').forEach(el => { el.readOnly = true; if (el.tagName === 'BUTTON' && !/baixar/i.test(el.getAttribute('onclick') || '')) el.disabled = true; });
   marcarCamposPort();
   setTimeout(() => { const f = $(foco ? 'pt-' + foco : 'pt-processo'); if (f) f.focus(); }, 120);
+}
+function infoPrazoPub() {
+  const el = $('pt-prazo-info'); if (!el) return;
+  const v = $('pt-prazo').value;
+  if (!v) { el.textContent = 'Sem prazo definido.'; el.style.color = 'var(--ink3)'; return; }
+  const d = diasAte(v);
+  el.innerHTML = `<i class="fa-solid ${d < 0 ? 'fa-triangle-exclamation' : 'fa-clock'} mr-1"></i>${txtDiasPub(d).replace(/^./, c => c.toUpperCase())}`;
+  el.style.color = d < 0 ? 'var(--urg)' : d <= PUB_ALERTA ? '#ea580c' : 'var(--ok)';
 }
 function escolherTipoPub(btn) {
   const on = !btn.classList.contains('ativo');
@@ -4971,7 +5039,7 @@ async function salvarFormPortaria(id) {
   if (link === null) return aviso('O link do processo deve começar com http:// ou https://.');
   const antigo = id ? portaria(id) : null;
   const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
-    tipoDoc: v('pt-tipo'), processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), status: statusFormPub(), link, atualizadoEm: new Date().toISOString() };
+    tipoDoc: v('pt-tipo'), processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), prazo: v('pt-prazo'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), status: statusFormPub(), link, atualizadoEm: new Date().toISOString() };
   const btn = $('btn-port-salvar'); btn.disabled = true;
   try {
     for (const q of Object.keys(PUB_ARQS)) {
@@ -4987,7 +5055,8 @@ async function salvarFormPortaria(id) {
   else { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; }
 }
 /** Abertas primeiro (mais recentes no topo); publicadas no fim. */
-const ordemPort = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
+const ordemPortRec = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
+const ordemPort = (a, b) => { const da = diasPub(a), db = diasPub(b); if (da !== null || db !== null) { if (da === null) return 1; if (db === null) return -1; if (da !== db) return da - db; } return ordemPortRec(a, b); };
 function renderPortarias() {
   const cont = $('port-corpo');
   const todas = Store.portarias || [];
@@ -4998,33 +5067,34 @@ function renderPortarias() {
   const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
   renderGrade(cont, {
     id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
-    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    topo: `${alertaPrazosPub(todas)}<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, `${tipos.length} tipo(s) de documento`, '')}
-      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), `${todas.filter(x => !pubFeita(x) && !x.arquivoId).length} sem minuta anexada`, 'agu')}
+      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), todas.some(pubVencida) ? `<span class="text-red-600 font-bold">${todas.filter(pubVencida).length} com prazo vencido</span>` : `${todas.filter(pubAVencer).length} vencem em até ${PUB_ALERTA} dias`, 'agu')}
       ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
       ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>`,
     colunas: [
-      { key: 'tipoDoc', rot: 'Tipo de documento', w: 165, wCompacta: 92, tipo: 'texto', editavel: true, lista: 'lista-tipos-pub', render: pillTipoPub },
+      { key: 'tipoDoc', rot: 'Tipo de documento', w: 165, wCompacta: 86, tipo: 'texto', editavel: true, lista: 'lista-tipos-pub', render: pillTipoPub },
       { key: 'processo', rot: 'Número do Processo', w: 195, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'numero', rot: 'Número do documento', w: 210, wCompacta: 110, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número do documento', w: 210, wCompacta: 100, tipo: 'texto', editavel: true, classe: 'gs-forte' },
       { key: 'recebimento', rot: 'Data de recebimento', w: 130, tipo: 'data', editavel: true },
+      { key: 'prazo', rot: 'Prazo para publicação', w: 200, wCompacta: 88, tipo: 'data', editavel: true, render: celPrazoPub },
       { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true },
       { key: 'setor', rot: 'Setor', w: 95, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
         render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}">${esc(x.setor)}</span>` : '' },
-      { key: 'status', rot: 'Status', w: 205, wCompacta: 132, tipo: 'select', editavel: true, opcoes: () => Object.keys(PUB_STATUS).map(k => [k, k]), valor: x => statusPub(x), render: pillStatusPub },
-      { key: 'link', rot: 'Link do processo', w: 150, wCompacta: 90, tipo: 'texto', editavel: true, render: celLink, validar: v => normLink(v) === null ? 'O link deve começar com http:// ou https://.' : '' },
-      { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 105, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
-      { key: 'pubNome', rot: 'Arquivo publicado', w: 230, wCompacta: 105, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') }
+      { key: 'status', rot: 'Status', w: 205, wCompacta: 118, tipo: 'select', editavel: true, opcoes: () => Object.keys(PUB_STATUS).map(k => [k, k]), valor: x => statusPub(x), render: pillStatusPub },
+      { key: 'link', rot: 'Link do processo', w: 150, wCompacta: 76, tipo: 'texto', editavel: true, render: celLink, validar: v => normLink(v) === null ? 'O link deve começar com http:// ou https://.' : '' },
+      { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
+      { key: 'pubNome', rot: 'Arquivo publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') }
     ],
-    compactas: ['tipoDoc', 'numero', 'assunto', 'status', 'link', 'arquivoNome', 'pubNome'],
+    compactas: ['tipoDoc', 'numero', 'prazo', 'assunto', 'status', 'link', 'arquivoNome', 'pubNome'],
     // primeira vez: modo compacto, para caber status, link e arquivos na tela
     estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
     larguraAcoes: 126,
     finalizado: pubFeita,
-    ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPort),
+    ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPortRec),
     classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, PORT_COR], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
-            ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']]
+            ['venc', 'Prazo vencido', pubVencida, '#dc2626'], ['breve', `Vencem em até ${PUB_ALERTA} dias`, pubAVencer, '#ea580c'], ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']]
       .concat(tipos.slice(0, 6).map(t => ['tipo:' + t, t, x => x.tipoDoc === t, tipoPub(t)[2]])),
     aoEditarCampos: editarPortCampos,
     acoes: x => {
