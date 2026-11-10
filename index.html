@@ -826,6 +826,24 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pt-prog { display: flex; gap: 5px; margin-top: 14px; }
   .pt-prog span { flex: 1; height: 5px; border-radius: 99px; background: rgba(255,255,255,.14); transition: background .25s; }
   .pt-prog span.on { background: linear-gradient(90deg, #818cf8, #60a5fa); }
+  .pt-tipos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .pt-tipos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .pt-tipo { --c: #4f46e5; display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 10px; border-radius: 12px; text-align: left; font-size: 13px; font-weight: 800; line-height: 1.15; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 5%, var(--card)); border: 1.5px solid color-mix(in srgb, var(--c) 28%, var(--line)); transition: background .15s, color .15s, transform .15s, box-shadow .15s; }
+  .pt-tipo:hover { transform: translateY(-1px); }
+  .pt-tipo-ico { width: 28px; height: 28px; border-radius: 8px; flex: none; display: grid; place-items: center; font-size: 13px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); }
+  .pt-tipo.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
+  .pt-tipo.ativo .pt-tipo-ico { background: rgba(255,255,255,.2); color: #fff; }
+  .pt-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .pt-status { grid-template-columns: minmax(0, 1fr); } }
+  .pt-status .op-card { padding: 9px 11px; gap: 10px; }
+  .pt-status .op-card .op-ico { width: 34px; height: 34px; font-size: 15px; }
+  .pt-arq-box { --c: #2563eb; border: 1px solid color-mix(in srgb, var(--c) 25%, var(--line)); border-radius: 14px; padding: 10px; background: color-mix(in srgb, var(--c) 3%, var(--card)); min-width: 0; }
+  .pt-arq-tit { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+  .pt-arq-tit > svg, .pt-arq-tit > i { color: var(--c); }
+  .pt-arq-tit small { flex-basis: 100%; font-size: 11.5px; font-weight: 500; color: var(--ink3); }
+  .pt-anexar.pub { --cor: #16a34a; color: #16a34a; border-color: color-mix(in srgb, #16a34a 55%, transparent); background: color-mix(in srgb, #16a34a 7%, var(--card)); }
+  .gs-compacto .pt-arq > .truncate { display: none; }
+  .gs-compacto .pt-anexar span { display: none; }
   /* Portarias: link e arquivo dentro da célula */
   .pt-arq { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .pt-arq > .truncate { flex: 1; min-width: 0; font-size: 12.5px; }
@@ -1562,10 +1580,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="faixa bg-education-pattern" style="background-color:#1e1b4b">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
-            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-stamp text-indigo-300"></i> Portarias</h2>
-            <p class="text-indigo-100/70 text-xs mt-0.5 hidden sm:block">Processo, número da portaria, recebimento, assunto e setor, com o link do processo e o arquivo (Word) para baixar em Word ou PDF.</p>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-newspaper text-indigo-300"></i> Publicações</h2>
+            <p class="text-indigo-100/70 text-xs mt-0.5 hidden sm:block">Portarias, editais, instruções normativas e demais atos para publicação: status, link do processo, a minuta e o arquivo publicado (baixe em Word ou PDF).</p>
           </div>
-          <div class="flex items-center gap-3"><span class="text-xs text-indigo-100/80" id="port-resumo"></span><button onclick="abrirFormPortaria()" class="btn text-white" style="background:#4f46e5" id="btn-nova-port"><i class="fa-solid fa-plus"></i>Nova portaria</button></div>
+          <div class="flex items-center gap-3"><span class="text-xs text-indigo-100/80" id="port-resumo"></span><button onclick="abrirFormPortaria()" class="btn text-white" style="background:#4f46e5" id="btn-nova-port"><i class="fa-solid fa-plus"></i>Nova publicação</button></div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="port-corpo"></div></div>
@@ -2929,7 +2947,7 @@ const SECOES_DOC = [
   { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' }
 ];
 let docTipo = 'capturado';
-$('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portarias"><i class="ico fa-solid fa-stamp" style="color:#818cf8"></i><span>Portarias</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Portarias sem arquivo"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn nav-sub" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('');
+$('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portarias"><i class="ico fa-solid fa-newspaper" style="color:#818cf8"></i><span>Publicações</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Aguardando publicação ou devolvidas para correção"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn nav-sub" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('');
 $('nav-docs').innerHTML =
   `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
@@ -3045,7 +3063,7 @@ function atualizarBadges() {
   set('bdg-urg', prazosAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
   SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
-  set('bdg-port', (Store.portarias || []).filter(x => !x.arquivoId).length);
+  set('bdg-port', (Store.portarias || []).filter(x => !pubFeita(x)).length);
   set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
@@ -4655,10 +4673,21 @@ function renderDocs() {
   });
 }
 
-/* ----- Portarias: cadastro próprio com link do processo e arquivo (Word/PDF) ----- */
+/* ----- Publicações (portarias, editais, instruções normativas…): minuta + arquivo publicado (Word/PDF) ----- */
+// (nomes internos "portaria/portarias" ficaram da primeira versão, quando a seção se chamava Portarias)
 const PORT_COR = '#4f46e5';
 const PORT_EXT = { doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', odt: 'application/vnd.oasis.opendocument.text', rtf: 'application/rtf', pdf: 'application/pdf' };
 const PORT_MAX = 20 * 1024 * 1024;
+const PUB_TIPOS = [['Portaria', 'fa-stamp', '#4f46e5'], ['Edital', 'fa-bullhorn', '#0891b2'], ['Instrução Normativa', 'fa-book', '#7c3aed'], ['Resolução', 'fa-gavel', '#be123c'],
+  ['Decreto', 'fa-landmark', '#334155'], ['Extrato', 'fa-file-contract', '#0d9488'], ['Aviso', 'fa-circle-exclamation', '#d97706'], ['Comunicado', 'fa-envelope-open-text', '#2563eb']];
+const tipoPub = t => PUB_TIPOS.find(x => Utils_norm(x[0]) === Utils_norm(t)) || [t || '', 'fa-file-lines', '#64748b'];
+const PUB_STATUS = { 'Aguardando Publicação': ['#d97706', 'fa-hourglass-half'], 'Publicado': ['#16a34a', 'fa-circle-check'], 'Devolvido Para Correção': ['#dc2626', 'fa-rotate-left'] };
+const statusPub = x => (x && x.status && PUB_STATUS[x.status]) ? x.status : 'Aguardando Publicação';
+const pubFeita = x => statusPub(x) === 'Publicado';
+/** Os dois arquivos de cada publicação e o prefixo dos seus campos. */
+const PUB_ARQS = { minuta: { p: 'arquivo', rot: 'Minuta', ico: 'fa-file-pen', cor: '#2563eb', dica: 'Texto minutado, de preferência Word' }, publicado: { p: 'pub', rot: 'Arquivo publicado', ico: 'fa-newspaper', cor: '#16a34a', dica: 'Como saiu publicado (ex.: Diário Oficial)' } };
+const arqDe = (x, q) => { const p = PUB_ARQS[q].p; return x && x[p + 'Id'] ? { id: x[p + 'Id'], nome: x[p + 'Nome'] || '', tipo: x[p + 'Tipo'] || '', tam: x[p + 'Tamanho'] || '' } : null; };
+const camposArq = (q, a) => { const p = PUB_ARQS[q].p; return { [p + 'Id']: a ? a.id : '', [p + 'Nome']: a ? a.nome : '', [p + 'Tipo']: a ? a.tipo : '', [p + 'Tamanho']: a ? String(a.tam || '') : '' }; };
 const ArquivosLocais = {}; // modo demonstração/compartilhado: arquivo fica só nesta sessão
 const extArq = n => (String(n || '').toLowerCase().match(/\.([a-z0-9]{2,5})$/) || [])[1] || '';
 const ehPdfArq = n => extArq(n) === 'pdf';
@@ -4666,7 +4695,7 @@ const tamArq = b => { b = Number(b) || 0; return b >= 1048576 ? (b / 1048576).to
 const icoArq = n => ehPdfArq(n) ? ['fa-file-pdf', '#dc2626'] : ['fa-file-word', '#2563eb'];
 const portaria = id => (Store.portarias || []).find(x => x.id === id);
 const corSetor = s => ({ GS: '#0f172a', SAEX: '#7c3aed', SAGE: '#2563eb', SAGP: '#16a34a', SAIP: '#0891b2', SAGR: '#d97706', SARC: '#db2777', SAAS: '#ea580c' }[s] || corAvatar(s || '?'));
-const linkCurto = u => { try { const x = new URL(u); return x.hostname.replace(/^www\./, '') + (x.pathname.length > 1 ? x.pathname.slice(0, 18) + (x.pathname.length > 18 ? '…' : '') : ''); } catch (e) { return u; } };
+const nomePub = x => [x.tipoDoc && !Utils_norm(x.numero).startsWith(Utils_norm(x.tipoDoc)) ? x.tipoDoc : '', x.numero].filter(Boolean).join(' ') || x.processo || x.assunto || 'Publicação';
 function normLink(v) {
   let s = String(v || '').trim(); if (!s) return '';
   if (!/^https?:\/\//i.test(s)) { if (/^[a-z][a-z0-9+.\-]*:/i.test(s)) return null; s = 'https://' + s; }
@@ -4675,10 +4704,10 @@ function normLink(v) {
 function exemplosPortarias() {
   const h = d => somaDias(d);
   return [
-    { id: 'pt1', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', link: 'https://www.sigadoc.mt.gov.br/', arquivoNome: '', exemplo: true },
-    { id: 'pt2', processo: 'SEDUC-PRO-2026/30877', numero: 'Portaria nº 498/2026/GS/SEDUC-MT', recebimento: h(-6), assunto: 'Instituição de grupo de trabalho do novo ensino médio', setor: 'SAGE', link: '', arquivoNome: '', exemplo: true },
-    { id: 'pt3', processo: 'SEDUC-PRO-2026/29911', numero: 'Portaria nº 471/2026/GS/SEDUC-MT', recebimento: h(-15), assunto: 'Horário especial de funcionamento do Gabinete no recesso', setor: 'GS', link: 'https://www.sigadoc.mt.gov.br/', arquivoNome: '', exemplo: true },
-    { id: 'pt4', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', link: '', arquivoNome: '', exemplo: true }
+    { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
+    { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', link: '', exemplo: true },
+    { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
+    { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true }
   ];
 }
 function lerBase64(file) {
@@ -4691,53 +4720,58 @@ function validarArqPortaria(file) {
   if (!file.size) return 'O arquivo está vazio.';
   return '';
 }
-/** Envia o arquivo (planilha: Google Drive, pasta "GABDoc - Portarias"). Devolve os campos para gravar na portaria. */
-async function enviarArqPortaria(file, rotulo) {
+/** Envia um arquivo (planilha: Google Drive). Devolve os campos (minuta ou publicado) para gravar na publicação. */
+async function enviarArqPortaria(file, rotulo, qual = 'minuta') {
   const e = validarArqPortaria(file); if (e) throw new Error(e);
   const base64 = await lerBase64(file);
   if (Store.modo === 'planilha') {
-    const r = await API.post('enviar_arquivo_portaria', { nome: file.name, base64, rotulo: rotulo || '' }, 240000);
-    return { arquivoId: r.arquivoId, arquivoNome: r.arquivoNome, arquivoTipo: r.arquivoTipo, arquivoTamanho: r.arquivoTamanho };
+    const r = await API.post('enviar_arquivo_portaria', { nome: file.name, base64, rotulo: rotulo || '', qual }, 240000);
+    return camposArq(qual, { id: r.arquivoId, nome: r.arquivoNome, tipo: r.arquivoTipo, tam: r.arquivoTamanho });
   }
   const id = novoIdLocal('A');
   ArquivosLocais[id] = { nome: file.name, tipo: PORT_EXT[extArq(file.name)], base64 };
-  return { arquivoId: id, arquivoNome: file.name, arquivoTipo: PORT_EXT[extArq(file.name)], arquivoTamanho: String(file.size) };
+  return camposArq(qual, { id, nome: file.name, tipo: PORT_EXT[extArq(file.name)], tam: file.size });
 }
 function blobDeBase64(b64, tipo) { const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Blob([u], { type: tipo || 'application/octet-stream' }); }
 const baixandoPort = new Set();
-/** Baixa o arquivo da portaria: formato 'original' (Word) ou 'pdf' (convertido pelo Google Drive). */
-async function baixarArqPortaria(id, formato, btn) {
-  const x = portaria(id); if (!x || !x.arquivoId) { toast('Esta portaria ainda não tem arquivo.', 'fa-circle-info'); return; }
-  const chave = id + formato; if (baixandoPort.has(chave)) return;
+/** Baixa a minuta ou o arquivo publicado: formato 'original' ou 'pdf' (Word convertido pelo Google Drive). */
+async function baixarArqPortaria(id, formato, btn, qual = 'minuta') {
+  const x = portaria(id), a = arqDe(x, qual);
+  if (!a) { toast(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.', 'fa-circle-info'); return; }
+  const chave = id + qual + formato; if (baixandoPort.has(chave)) return;
   const pdf = formato === 'pdf';
   if (Store.modo !== 'planilha') {
-    const a = ArquivosLocais[x.arquivoId];
-    if (!a) { toast('Arquivo de exemplo: anexe um arquivo para testar o download.', 'fa-circle-info'); return; }
-    if (pdf && !ehPdfArq(a.nome)) { toast('A conversão de Word para PDF é feita pelo Google Drive: disponível com a planilha conectada.', 'fa-circle-info'); return; }
-    await salvarArquivo(blobDeBase64(a.base64, a.tipo), a.nome, 'Arquivo baixado: ' + a.nome, pdf ? 'fa-file-pdf' : 'fa-file-word');
+    const l = ArquivosLocais[a.id];
+    if (!l) { toast('Arquivo de exemplo: anexe um arquivo para testar o download.', 'fa-circle-info'); return; }
+    if (pdf && !ehPdfArq(l.nome)) { toast('A conversão de Word para PDF é feita pelo Google Drive: disponível com a planilha conectada.', 'fa-circle-info'); return; }
+    await salvarArquivo(blobDeBase64(l.base64, l.tipo), l.nome, 'Arquivo baixado: ' + l.nome, pdf ? 'fa-file-pdf' : 'fa-file-word');
     return;
   }
   baixandoPort.add(chave);
   const orig = btn ? btn.innerHTML : '';
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>' + (btn.dataset.rot ? (pdf ? 'Convertendo…' : 'Baixando…') : ''); }
-  if (pdf && !ehPdfArq(x.arquivoNome)) toast('Convertendo para PDF…', 'fa-file-pdf');
+  if (pdf && !ehPdfArq(a.nome)) toast('Convertendo para PDF…', 'fa-file-pdf');
   try {
-    const r = await API.post('baixar_arquivo_portaria', { id, formato: pdf ? 'pdf' : 'original', arquivoId: x.arquivoId, arquivoNome: x.arquivoNome }, 240000);
+    const r = await API.post('baixar_arquivo_portaria', { id, qual, formato: pdf ? 'pdf' : 'original', arquivoId: a.id, arquivoNome: a.nome }, 240000);
     await salvarArquivo(blobDeBase64(r.base64, r.tipo), r.nome, (pdf ? 'PDF baixado: ' : 'Arquivo baixado: ') + r.nome, pdf ? 'fa-file-pdf' : 'fa-file-word');
   } catch (e) { toast(e.message || 'Não foi possível baixar o arquivo.', 'fa-triangle-exclamation'); }
   finally { baixandoPort.delete(chave); if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = orig; } }
 }
-/** Anexar/trocar o arquivo direto da planilha (sem abrir o formulário). */
-function anexarArqPortaria(id) {
-  if (!pode('sol:2')) { toast('Seu perfil só pode visualizar as portarias.', 'fa-lock'); return; }
+/** Anexar/trocar a minuta ou o arquivo publicado direto da planilha. Anexar o publicado marca a publicação como Publicado. */
+function anexarArqPortaria(id, qual = 'minuta') {
+  if (!pode('sol:2')) { toast('Seu perfil só pode visualizar as publicações.', 'fa-lock'); return; }
   const inp = document.createElement('input'); inp.type = 'file'; inp.accept = Object.keys(PORT_EXT).map(e => '.' + e).join(',');
   inp.onchange = async () => {
     const f = inp.files && inp.files[0]; if (!f) return;
     const x = portaria(id); if (!x) return;
     const e = validarArqPortaria(f); if (e) { toast(e, 'fa-triangle-exclamation'); return; }
     toast('Enviando ' + f.name + '…', 'fa-cloud-arrow-up');
-    try { const meta = await enviarArqPortaria(f, x.numero || x.processo); await editarPortCampos(portaria(id) || x, meta); toast('Arquivo anexado: ' + f.name, 'fa-paperclip'); }
-    catch (err) { toast(err.message || 'Não foi possível enviar o arquivo.', 'fa-triangle-exclamation'); }
+    try {
+      const meta = await enviarArqPortaria(f, nomePub(x), qual);
+      if (qual === 'publicado' && !pubFeita(x)) meta.status = 'Publicado';
+      await editarPortCampos(portaria(id) || x, meta);
+      toast((qual === 'publicado' ? 'Arquivo publicado anexado' + (meta.status ? ' · status: Publicado' : '') : 'Minuta anexada') + ': ' + f.name, 'fa-paperclip');
+    } catch (err) { toast(err.message || 'Não foi possível enviar o arquivo.', 'fa-triangle-exclamation'); }
   };
   inp.click();
 }
@@ -4751,9 +4785,9 @@ async function salvarPortaria(id, dados, rotulo) {
   if (novo) id = novoIdLocal('P');
   trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados();
   const ref = id;
-  enfileirar({ ref, colecao: 'portarias', idLocal: novo ? id : null, icone: 'fa-stamp',
-    rotulo: rotulo || (novo ? 'Nova portaria' : antigo && antigo.arquivoId !== dados.arquivoId ? 'Portaria · arquivo' : 'Portaria atualizada'),
-    detalhe: [dados.numero, dados.processo].filter(Boolean).join(' · ') || dados.assunto || '',
+  enfileirar({ ref, colecao: 'portarias', idLocal: novo ? id : null, icone: 'fa-newspaper',
+    rotulo: rotulo || (novo ? 'Nova publicação' : antigo && statusPub(antigo) !== statusPub(dados) ? 'Publicação · ' + statusPub(dados) : antigo && (antigo.arquivoId !== dados.arquivoId || antigo.pubId !== dados.pubId) ? 'Publicação · arquivo' : 'Publicação atualizada'),
+    detalhe: nomePub(dados),
     action: 'salvar_portaria', payload: { id, criarComId: novo, dados: semId(dados) },
     nuvem: () => Store.db.collection('portarias').doc(ref).set(semId(dados)) });
   return true;
@@ -4761,33 +4795,39 @@ async function salvarPortaria(id, dados, rotulo) {
 async function excluirPortariaId(id) {
   const x = portaria(id);
   Store.portarias = Store.portarias.filter(r => r.id !== id); aoMudarDados();
-  toast('Portaria excluída.');
+  toast('Publicação excluída.');
   if (!gravaEmFila()) return;
-  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de portaria', detalhe: x ? (x.numero || x.processo || '') : '',
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de publicação', detalhe: x ? nomePub(x) : '',
     action: 'excluir_portaria', payload: { id }, nuvem: () => Store.db.collection('portarias').doc(id).delete() });
 }
 async function editarPortCampos(x, campos) {
   if ('link' in campos) { const l = normLink(campos.link); if (l === null) { toast('O link deve começar com http:// ou https://.', 'fa-triangle-exclamation'); return false; } campos.link = l; }
   if ('setor' in campos) campos.setor = String(campos.setor || '').trim().toUpperCase();
+  if ('status' in campos && !PUB_STATUS[campos.status]) { toast('Status: ' + Object.keys(PUB_STATUS).join(', ') + '.', 'fa-triangle-exclamation'); return false; }
   const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarPortaria(x.id, d);
 }
-function celArquivo(x) {
-  if (!x.arquivoId) return pode('sol:2') ? `<button type="button" class="gs-cel-bt pt-anexar" onclick="anexarArqPortaria('${x.id}')"><i class="fa-solid fa-paperclip"></i>Anexar arquivo</button>` : '<span class="text-ink3">—</span>';
-  const [ico, cor] = icoArq(x.arquivoNome);
-  const pdf = ehPdfArq(x.arquivoNome);
-  return `<span class="pt-arq"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate" title="${esc(x.arquivoNome)}${x.arquivoTamanho ? ' · ' + tamArq(x.arquivoTamanho) : ''}">${esc(x.arquivoNome)}</span>
-    <button type="button" class="gs-cel-bt pt-dl" style="--c:${pdf ? '#dc2626' : '#2563eb'}" title="Baixar ${pdf ? 'o PDF' : 'em Word (original)'}" onclick="baixarArqPortaria('${x.id}','original',this)"><i class="fa-solid ${pdf ? 'fa-file-pdf' : 'fa-file-word'}"></i></button>
-    ${pdf ? '' : `<button type="button" class="gs-cel-bt pt-dl" style="--c:#dc2626" title="Baixar em PDF" onclick="baixarArqPortaria('${x.id}','pdf',this)"><i class="fa-solid fa-file-pdf"></i></button>`}</span>`;
+function celArquivo(x, qual = 'minuta') {
+  const a = arqDe(x, qual), q = PUB_ARQS[qual];
+  if (!a) return pode('sol:2') ? `<button type="button" class="gs-cel-bt pt-anexar ${qual === 'publicado' ? 'pub' : ''}" title="Anexar ${q.rot.toLowerCase()}" onclick="anexarArqPortaria('${x.id}','${qual}')"><i class="fa-solid fa-paperclip"></i><span>Anexar</span></button>` : '<span class="text-ink3">—</span>';
+  const [ico, cor] = icoArq(a.nome);
+  const pdf = ehPdfArq(a.nome);
+  return `<span class="pt-arq"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate" title="${esc(a.nome)}${a.tam ? ' · ' + tamArq(a.tam) : ''}">${esc(a.nome)}</span>
+    <button type="button" class="gs-cel-bt pt-dl" style="--c:${pdf ? '#dc2626' : '#2563eb'}" title="${q.rot}: baixar ${pdf ? 'o PDF' : 'em Word (original)'}" onclick="baixarArqPortaria('${x.id}','original',this,'${qual}')"><i class="fa-solid ${pdf ? 'fa-file-pdf' : 'fa-file-word'}"></i></button>
+    ${pdf ? '' : `<button type="button" class="gs-cel-bt pt-dl" style="--c:#dc2626" title="${q.rot}: baixar em PDF" onclick="baixarArqPortaria('${x.id}','pdf',this,'${qual}')"><i class="fa-solid fa-file-pdf"></i></button>`}</span>`;
 }
 function celLink(x) {
   if (!x.link) return '';
   return `<a class="gs-cel-bt pt-link" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" title="Abrir o processo: ${esc(x.link)}"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Abrir<span class="pt-ab-x"> processo</span></span></a>`;
 }
+const pillStatusPub = x => { const st = statusPub(x), [cor, ico] = PUB_STATUS[st]; return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(st)}</span>`; };
+const pillTipoPub = x => { if (!x.tipoDoc) return ''; const [t, ico, cor] = tipoPub(x.tipoDoc); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(t)}</span>`; };
+
+const FormPort = { id: '', arqs: { minuta: {}, publicado: {} } };
 function abrirFormPortaria(id, foco) {
-  const x = id ? portaria(id) : { recebimento: hojeISO() };
+  const x = id ? portaria(id) : { recebimento: hojeISO(), status: 'Aguardando Publicação', tipoDoc: 'Portaria' };
   if (!x) return;
   const pe = pode('sol:2');
-  // 7 preenchimentos, cada um num cartão com número, ícone e indicação de preenchido (mesmo padrão do formulário de solicitações)
+  // 9 preenchimentos, cada um num cartão com número, ícone e indicação de preenchido (mesmo padrão do formulário de solicitações)
   const campo = (n, cor, ico, rot, dica, corpo, cls = '') => `
     <section class="passo pt-passo ${cls}" style="--c:${cor}" data-pt="${n}">
       <header class="passo-topo"><span class="passo-num">${n}</span><span class="pt-ico-campo"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><h4>${rot}</h4><p>${dica}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
@@ -4797,51 +4837,77 @@ function abrirFormPortaria(id, foco) {
   const setorAtual = String(x.setor || '').toUpperCase();
   const siglas = botoesSiglas(setorAtual ? [setorAtual] : []);
   const atalhosData = [['Hoje', 0], ['Ontem', -1], ['Há 2 dias', -2], ['Há 1 semana', -7]];
-  FormPort.arquivo = null; FormPort.remover = false; FormPort.atual = x.arquivoId ? { arquivoId: x.arquivoId, arquivoNome: x.arquivoNome, arquivoTipo: x.arquivoTipo, arquivoTamanho: x.arquivoTamanho } : null;
+  const tipoAtual = x.tipoDoc || '', tipoLista = PUB_TIPOS.some(t => t[0] === tipoAtual);
+  const stAtual = statusPub(x);
+  FormPort.id = id || '';
+  FormPort.arqs = { minuta: { atual: arqDe(x, 'minuta') }, publicado: { atual: arqDe(x, 'publicado') } };
   abrirModal(`
-    <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 220px at 0% 0%, rgba(99,102,241,.45), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(37,99,235,.25), transparent 70%)">
+    <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 220px at 0% 0%, rgba(99,102,241,.45), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(22,163,74,.22), transparent 70%)">
       <div class="flex items-start gap-3">
-        <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${PORT_COR}"><i class="fa-solid fa-stamp"></i></span><span class="on" style="--c:#2563eb"><i class="fa-solid fa-file-word"></i></span></div>
+        <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${PORT_COR}"><i class="fa-solid fa-newspaper"></i></span><span class="on" style="--c:#2563eb"><i class="fa-solid fa-file-word"></i></span></div>
         <div class="min-w-0 flex-1">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">${id ? 'Editar portaria' : 'Nova portaria'}</p>
-          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${esc(x.numero || 'Portaria')}</h3>
-          <p class="text-[12.5px] text-indigo-100/70 mt-1">Sete campos: identificação, setor, link do processo e o arquivo da portaria.</p>
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">${id ? 'Editar publicação' : 'Nova publicação'}</p>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5" id="pt-titulo">${esc(id ? nomePub(x) : 'Publicação')}</h3>
+          <p class="text-[12.5px] text-indigo-100/70 mt-1">Portaria, edital, instrução normativa… com a minuta e, depois, o arquivo publicado.</p>
         </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7].map(n => `<span data-n="${n}"></span>`).join('')}</div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
     <form class="modal-corpo space-y-3" id="form-port" oninput="marcarCamposPort()" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
+      ${campo(1, PORT_COR, 'fa-layer-group', 'Tipo de documento', 'O que vai ser publicado: toque em um', `
+        <div class="pt-tipos" id="pt-tipos">${PUB_TIPOS.map(([t, ico, cor]) => `<button type="button" class="pt-tipo ${t === tipoAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(t)}" aria-pressed="${t === tipoAtual}" onclick="escolherTipoPub(this)"><span class="pt-tipo-ico"><i class="fa-solid ${ico}"></i></span>${esc(t)}</button>`).join('')}</div>
+        <input type="hidden" id="pt-tipo" value="${esc(tipoAtual)}">
+        ${comIco('fa-pen', `<input class="campo w-full !pl-8" id="pt-tipo-outro" value="${esc(tipoLista ? '' : tipoAtual)}" placeholder="Outro tipo? Ex.: Termo de cooperação, Ato declaratório…" autocomplete="off" oninput="sincTipoPub()" aria-label="Outro tipo de documento">`)}`)}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        ${campo(1, '#64748b', 'fa-folder-open', 'Número do Processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
-        ${campo(2, PORT_COR, 'fa-stamp', 'Número da Portaria', 'Como sai no Diário Oficial', comIco('fa-file-lines', `<input class="campo campo-g w-full !pl-8" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Portaria nº 000/2026/GS/SEDUC-MT" autocomplete="off">`))}
+        ${campo(2, '#64748b', 'fa-folder-open', 'Número do Processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
+        ${campo(3, '#4338ca', 'fa-file-lines', 'Número do documento', 'Como sai no Diário Oficial', comIco('fa-file-lines', `<input class="campo campo-g w-full !pl-8" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Ex.: Portaria nº 000/2026/GS/SEDUC-MT" autocomplete="off">`))}
       </div>
-      ${campo(3, '#0891b2', 'fa-calendar-day', 'Data de recebimento', 'Quando a portaria chegou ao Gabinete', `
+      ${campo(4, '#0891b2', 'fa-calendar-day', 'Data de recebimento', 'Quando o documento chegou ao Gabinete', `
         <div class="flex flex-wrap items-center gap-2">
           ${comIco('fa-calendar', `<input type="date" class="campo campo-g !pl-8" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
           <div class="flex flex-wrap gap-1.5">${atalhosData.map(([r, d]) => `<button type="button" class="atalho" onclick="$('pt-recebimento').value=somaDias(${d});marcarCamposPort()">${r}</button>`).join('')}</div>
         </div>`)}
-      ${campo(4, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata a portaria', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
-      ${campo(5, '#d97706', 'fa-sitemap', 'Setor', 'Secretaria adjunta responsável: toque em uma', `
+      ${campo(5, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata o documento', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
+      ${campo(6, '#d97706', 'fa-sitemap', 'Setor', 'Secretaria adjunta responsável: toque em uma', `
         <div class="sec-grade" id="pt-setores">${siglas.map(sg => botaoSec(sg, sg === setorAtual, 'ptset').replace('onclick="alternarChip(this)"', 'onclick="escolherSetorPort(this)"')).join('')}</div>
         <input type="hidden" id="pt-setor" value="${esc(setorAtual)}">
         ${comIco('fa-pen', `<input class="campo w-full !pl-8 uppercase" id="pt-setor-outro" value="${esc(siglas.includes(setorAtual) ? '' : setorAtual)}" placeholder="Outro setor? Digite a sigla" autocomplete="off" oninput="sincSetorPort()" aria-label="Outro setor">`)}`)}
-      ${campo(6, '#7c3aed', 'fa-link', 'Link do processo', 'Endereço do processo no SIGADOC ou outro sistema', `
+      ${campo(7, '#16a34a', 'fa-signal', 'Status', 'Onde está a publicação', `
+        <div class="pt-status" id="pt-status">${Object.entries(PUB_STATUS).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === stAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === stAtual}" onclick="escolherStatusPub('${esc(k)}')"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 font-bold text-[13.5px] text-ink leading-tight">${esc(k)}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
+      ${campo(8, '#7c3aed', 'fa-link', 'Link do processo', 'Endereço do processo no SIGADOC ou outro sistema', `
         <div class="flex gap-2">${comIco('fa-globe', `<input class="campo campo-g w-full !pl-8" id="pt-link" type="url" inputmode="url" value="${esc(x.link || '')}" placeholder="https://…">`).replace('<div class="relative">', '<div class="relative flex-1 min-w-0">')}<button type="button" class="btn btn-sec !h-[42px] shrink-0" title="Testar o link" onclick="const l=normLink($('pt-link').value);if(l)window.open(l,'_blank','noopener');else toast('Informe um link válido (http:// ou https://).','fa-triangle-exclamation')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir</button></div>`)}
-      ${campo(7, '#2563eb', 'fa-file-word', 'Arquivo', 'De preferência Word · depois baixe em Word ou PDF', `<div id="pt-arq-area"></div>`)}
+      ${campo(9, '#2563eb', 'fa-paperclip', 'Arquivos', 'A minuta agora e, quando sair, o arquivo publicado · baixe em Word ou PDF', `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${Object.entries(PUB_ARQS).map(([q, a]) => `<div class="pt-arq-box" style="--c:${a.cor}"><p class="pt-arq-tit"><i class="fa-solid ${a.ico}"></i>${a.rot}<small>${a.dica}</small></p><div id="pt-arq-${q}"></div></div>`).join('')}</div>`)}
       <p id="pt-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
     <div class="modal-rodape !justify-between items-center">
       <span class="text-[12px] text-ink3" id="pt-resumo"></span>
-      <div class="flex gap-2">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar portaria'}</button>` : ''}</div>
+      <div class="flex gap-2">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar publicação'}</button>` : ''}</div>
     </div>`, 'portaria');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
-  FormPort.id = id || '';
-  renderArqForm();
-  if (!pe) document.querySelectorAll('#form-port input, #form-port textarea, #form-port .sec-btn, #form-port .atalho').forEach(el => { el.readOnly = true; if (el.tagName === 'BUTTON') el.disabled = true; });
+  renderArqForm('minuta'); renderArqForm('publicado');
+  if (!pe) document.querySelectorAll('#form-port input, #form-port textarea, #form-port button').forEach(el => { el.readOnly = true; if (el.tagName === 'BUTTON' && !/baixar/i.test(el.getAttribute('onclick') || '')) el.disabled = true; });
   marcarCamposPort();
   setTimeout(() => { const f = $(foco ? 'pt-' + foco : 'pt-processo'); if (f) f.focus(); }, 120);
 }
+function escolherTipoPub(btn) {
+  const on = !btn.classList.contains('ativo');
+  document.querySelectorAll('#pt-tipos .pt-tipo').forEach(b => { b.classList.toggle('ativo', on && b === btn); b.setAttribute('aria-pressed', on && b === btn); });
+  $('pt-tipo').value = on ? btn.dataset.v : ''; $('pt-tipo-outro').value = '';
+  marcarCamposPort();
+}
+function sincTipoPub() {
+  const v = $('pt-tipo-outro').value.trim();
+  const achado = PUB_TIPOS.find(t => Utils_norm(t[0]) === Utils_norm(v));
+  $('pt-tipo').value = achado ? achado[0] : v;
+  document.querySelectorAll('#pt-tipos .pt-tipo').forEach(b => { const on = !!achado && b.dataset.v === achado[0]; b.classList.toggle('ativo', on); b.setAttribute('aria-pressed', on); });
+}
+function escolherStatusPub(st) {
+  document.querySelectorAll('#pt-status .op-card').forEach(b => { const on = b.dataset.v === st; b.classList.toggle('ativo', on); b.setAttribute('aria-pressed', on); });
+  marcarCamposPort();
+}
+const statusFormPub = () => { const b = document.querySelector('#pt-status .op-card.ativo'); return b ? b.dataset.v : 'Aguardando Publicação'; };
 /** Setor: uma secretaria por vez (tocar de novo desmarca). */
 function escolherSetorPort(btn) {
   const on = !btn.classList.contains('ativo');
@@ -4855,112 +4921,141 @@ function sincSetorPort() {
   $('pt-setor').value = v;
   document.querySelectorAll('#pt-setores .sec-btn').forEach(b => { b.classList.toggle('ativo', b.dataset.v === v); b.setAttribute('aria-pressed', b.dataset.v === v); });
 }
+const temArqForm = q => { const a = FormPort.arqs[q]; return !!(a.novo || (a.atual && !a.remover)); };
 /** Marca os campos preenchidos (✓ no cartão e na barrinha do topo). */
 function marcarCamposPort() {
   if (!$('form-port')) return;
   const v = k => ($(k) ? $(k).value.trim() : '');
-  const ok = { 1: !!v('pt-processo'), 2: !!v('pt-numero'), 3: !!v('pt-recebimento'), 4: !!v('pt-assunto'), 5: !!v('pt-setor'), 6: normLink(v('pt-link')) ? true : false, 7: !!(FormPort.arquivo || (FormPort.atual && !FormPort.remover)) };
+  const ok = { 1: !!v('pt-tipo'), 2: !!v('pt-processo'), 3: !!v('pt-numero'), 4: !!v('pt-recebimento'), 5: !!v('pt-assunto'), 6: !!v('pt-setor'), 7: true, 8: !!normLink(v('pt-link')), 9: temArqForm('minuta') || temArqForm('publicado') };
   Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`.pt-passo[data-pt="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`.pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
   const n = Object.values(ok).filter(Boolean).length;
-  const r = $('pt-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 7 preenchidos`;
+  const r = $('pt-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 9 preenchidos`;
+  const t = $('pt-titulo'); if (t && !FormPort.id) t.textContent = (v('pt-tipo') || v('pt-numero')) ? nomePub({ tipoDoc: v('pt-tipo'), numero: v('pt-numero') }) : 'Publicação';
 }
-const FormPort = { id: '', arquivo: null, remover: false, atual: null };
-function renderArqForm() {
-  const el = $('pt-arq-area'); if (!el) return;
+function renderArqForm(q) {
+  const el = $('pt-arq-' + q); if (!el) return;
   const pe = pode('sol:2');
-  const novo = FormPort.arquivo, atual = !FormPort.remover && FormPort.atual;
+  const st = FormPort.arqs[q], novo = st.novo, atual = !st.remover && st.atual;
   const cartao = (nome, tam, extra) => { const [ico, cor] = icoArq(nome); return `<div class="pt-arq-card"><span class="pt-arq-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 flex-1"><b class="block truncate">${esc(nome)}</b><small>${extra}${tam ? ' · ' + tamArq(tam) : ''}</small></span>`; };
   let html = '';
-  if (novo) html = cartao(novo.name, novo.size, 'Novo arquivo · será enviado ao salvar') + (pe ? `<button type="button" class="btn btn-sec !h-9" onclick="FormPort.arquivo=null;renderArqForm()"><i class="fa-solid fa-xmark"></i>Desfazer</button>` : '') + '</div>';
+  if (novo) html = cartao(novo.name, novo.size, 'Novo · enviado ao salvar') + (pe ? `<button type="button" class="btn btn-sec !h-9" onclick="FormPort.arqs.${q}.novo=null;renderArqForm('${q}')"><i class="fa-solid fa-xmark"></i>Desfazer</button>` : '') + '</div>';
   else if (atual) {
-    const pdf = ehPdfArq(atual.arquivoNome);
-    html = cartao(atual.arquivoNome, atual.arquivoTamanho, 'Arquivo salvo') + `<div class="flex flex-wrap gap-1.5 justify-end">
-      ${FormPort.id ? `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','original',this)"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'Baixar PDF' : 'Baixar Word'}</button>
-      ${pdf ? '' : `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','pdf',this)"><i class="fa-solid fa-file-pdf text-red-600"></i>Baixar PDF</button>`}` : ''}
-      ${pe ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" title="Remover o arquivo" onclick="FormPort.remover=true;renderArqForm()"><i class="fa-solid fa-trash"></i></button>` : ''}</div></div>`;
+    const pdf = ehPdfArq(atual.nome);
+    html = cartao(atual.nome, atual.tam, 'Arquivo salvo') + `<div class="flex flex-wrap gap-1.5 justify-end">
+      ${FormPort.id ? `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','original',this,'${q}')"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'PDF' : 'Word'}</button>
+      ${pdf ? '' : `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','pdf',this,'${q}')"><i class="fa-solid fa-file-pdf text-red-600"></i>PDF</button>`}` : ''}
+      ${pe ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" title="Remover o arquivo" onclick="FormPort.arqs.${q}.remover=true;renderArqForm('${q}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div></div>`;
   }
-  const zona = pe ? `<label class="pt-drop ${novo || atual ? 'mini' : ''}" id="pt-drop" ondragover="event.preventDefault();this.classList.add('sobre')" ondragleave="this.classList.remove('sobre')" ondrop="event.preventDefault();this.classList.remove('sobre');escolherArqForm(event.dataTransfer.files[0])">
-      <input type="file" class="sr-only" id="pt-arquivo" accept="${Object.keys(PORT_EXT).map(e => '.' + e).join(',')}" onchange="escolherArqForm(this.files[0])">
-      <i class="fa-solid fa-cloud-arrow-up"></i><span><b>${novo || atual ? 'Trocar arquivo' : 'Escolher arquivo'}</b> ou arraste aqui<small>Word (.docx, .doc), .odt, .rtf ou PDF · até 20 MB</small></span></label>` : (!html ? '<p class="text-sm text-ink3">Sem arquivo.</p>' : '');
-  el.innerHTML = `<div class="space-y-2">${html}${FormPort.remover && FormPort.atual && !novo ? `<p class="text-[12.5px] text-red-600 font-semibold">O arquivo será removido ao salvar. <button type="button" class="underline" onclick="FormPort.remover=false;renderArqForm()">Desfazer</button></p>` : ''}${zona}</div>`;
+  const zona = pe ? `<label class="pt-drop ${novo || atual ? 'mini' : ''}" ondragover="event.preventDefault();this.classList.add('sobre')" ondragleave="this.classList.remove('sobre')" ondrop="event.preventDefault();this.classList.remove('sobre');escolherArqForm(event.dataTransfer.files[0],'${q}')">
+      <input type="file" class="sr-only" id="pt-arquivo-${q}" accept="${Object.keys(PORT_EXT).map(e => '.' + e).join(',')}" onchange="escolherArqForm(this.files[0],'${q}')">
+      <i class="fa-solid fa-cloud-arrow-up"></i><span><b>${novo || atual ? 'Trocar' : 'Escolher arquivo'}</b> ou arraste aqui<small>Word, .odt, .rtf ou PDF · até 20 MB</small></span></label>` : (!html ? '<p class="text-sm text-ink3">Sem arquivo.</p>' : '');
+  el.innerHTML = `<div class="space-y-2">${html}${st.remover && st.atual && !novo ? `<p class="text-[12.5px] text-red-600 font-semibold">Será removido ao salvar. <button type="button" class="underline" onclick="FormPort.arqs.${q}.remover=false;renderArqForm('${q}')">Desfazer</button></p>` : ''}${zona}</div>`;
   marcarCamposPort();
 }
-function escolherArqForm(f) {
+function escolherArqForm(f, q = 'minuta') {
   if (!f) return;
   const e = validarArqPortaria(f);
   const av = $('pt-aviso');
   if (e) { av.textContent = e; av.classList.remove('hidden'); return; }
   av.classList.add('hidden');
-  FormPort.arquivo = f; FormPort.remover = false; renderArqForm();
+  FormPort.arqs[q].novo = f; FormPort.arqs[q].remover = false;
+  // anexou o arquivo publicado: o status passa para Publicado (dá para mudar antes de salvar)
+  if (q === 'publicado' && statusFormPub() !== 'Publicado') { escolherStatusPub('Publicado'); toast('Status alterado para Publicado.', 'fa-circle-check'); }
+  renderArqForm(q);
 }
 async function salvarFormPortaria(id) {
   const v = k => $(k).value.trim();
-  const aviso = t => { const el = $('pt-aviso'); el.textContent = t; el.classList.remove('hidden'); };
-  if (!v('pt-processo') && !v('pt-numero') && !v('pt-assunto')) return aviso('Informe ao menos o número do processo, o número da portaria ou o assunto.');
+  const aviso = t => { const el = $('pt-aviso'); el.textContent = t; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest' }); };
+  if (!v('pt-processo') && !v('pt-numero') && !v('pt-assunto')) return aviso('Informe ao menos o número do processo, o número do documento ou o assunto.');
   const link = normLink(v('pt-link'));
   if (link === null) return aviso('O link do processo deve começar com http:// ou https://.');
   const antigo = id ? portaria(id) : null;
   const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
-    processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), link, atualizadoEm: new Date().toISOString() };
+    tipoDoc: v('pt-tipo'), processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), status: statusFormPub(), link, atualizadoEm: new Date().toISOString() };
   const btn = $('btn-port-salvar'); btn.disabled = true;
   try {
-    if (FormPort.arquivo) {
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Enviando arquivo…';
-      Object.assign(dados, await enviarArqPortaria(FormPort.arquivo, dados.numero || dados.processo));
-    } else if (FormPort.remover) Object.assign(dados, { arquivoId: '', arquivoNome: '', arquivoTipo: '', arquivoTamanho: '' });
+    for (const q of Object.keys(PUB_ARQS)) {
+      const st = FormPort.arqs[q];
+      if (st.novo) {
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>Enviando ${q === 'publicado' ? 'o publicado' : 'a minuta'}…`;
+        Object.assign(dados, await enviarArqPortaria(st.novo, nomePub(dados), q));
+        st.atual = arqDe(dados, q); st.novo = null; // não reenvia se outro envio falhar
+      } else if (st.remover) Object.assign(dados, camposArq(q, null));
+    }
   } catch (e) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; return aviso(e.message || 'Não foi possível enviar o arquivo.'); }
-  if (await salvarPortaria(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Portaria registrada · salvando em segundo plano.' : 'Portaria salva.', 'fa-stamp'); if (abaAtual !== 'portarias') irPara('portarias'); }
+  if (await salvarPortaria(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Publicação registrada · salvando em segundo plano.' : 'Publicação salva.', 'fa-newspaper'); if (abaAtual !== 'portarias') irPara('portarias'); }
   else { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; }
 }
-/** Mais recentes primeiro (data de recebimento). */
+/** Abertas primeiro (mais recentes no topo); publicadas no fim. */
 const ordemPort = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
 function renderPortarias() {
   const cont = $('port-corpo');
   const todas = Store.portarias || [];
-  $('port-resumo').textContent = todas.length ? `${todas.length} portaria(s) · ${todas.filter(x => x.arquivoId).length} com arquivo` : '';
+  $('port-resumo').textContent = todas.length ? `${todas.length} publicação(ões) · ${todas.filter(pubFeita).length} publicada(s)` : '';
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
-  const mes = hojeISO().slice(0, 7);
-  const doMes = x => String(x.recebimento || '').slice(0, 7) === mes;
-  const setores = [...new Set(todas.map(x => x.setor).filter(Boolean))].sort();
+  const conta = st => todas.filter(x => statusPub(x) === st).length;
+  const tipos = [...new Set(todas.map(x => x.tipoDoc).filter(Boolean))].sort();
   const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
   renderGrade(cont, {
     id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
     topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      ${kpi(PORT_COR, 'fa-stamp', 'Portarias', todas.length, `${setores.length} setor(es)`, '')}
-      ${kpi('#0891b2', 'fa-calendar-day', 'Recebidas no mês', todas.filter(doMes).length, new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }), 'mes')}
-      ${kpi('#2563eb', 'fa-file-word', 'Com arquivo', todas.filter(x => x.arquivoId).length, 'baixe em Word ou PDF', 'arq')}
-      ${kpi('#d97706', 'fa-paperclip', 'Sem arquivo', todas.filter(x => !x.arquivoId).length, `${todas.filter(x => !x.link).length} sem link do processo`, 'semarq')}</div>`,
+      ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, `${tipos.length} tipo(s) de documento`, '')}
+      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), `${todas.filter(x => !pubFeita(x) && !x.arquivoId).length} sem minuta anexada`, 'agu')}
+      ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
+      ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>`,
     colunas: [
-      { key: 'processo', rot: 'Número do Processo', w: 195, wCompacta: 135, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'numero', rot: 'Número da Portaria', w: 210, wCompacta: 120, tipo: 'texto', editavel: true },
-      { key: 'recebimento', rot: 'Data de recebimento', w: 130, wCompacta: 100, tipo: 'data', editavel: true },
+      { key: 'tipoDoc', rot: 'Tipo de documento', w: 165, wCompacta: 92, tipo: 'texto', editavel: true, lista: 'lista-tipos-pub', render: pillTipoPub },
+      { key: 'processo', rot: 'Número do Processo', w: 195, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número do documento', w: 210, wCompacta: 110, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'recebimento', rot: 'Data de recebimento', w: 130, tipo: 'data', editavel: true },
       { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true },
-      { key: 'setor', rot: 'Setor', w: 95, wCompacta: 70, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
+      { key: 'setor', rot: 'Setor', w: 95, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
         render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}">${esc(x.setor)}</span>` : '' },
+      { key: 'status', rot: 'Status', w: 205, wCompacta: 132, tipo: 'select', editavel: true, opcoes: () => Object.keys(PUB_STATUS).map(k => [k, k]), valor: x => statusPub(x), render: pillStatusPub },
       { key: 'link', rot: 'Link do processo', w: 150, wCompacta: 90, tipo: 'texto', editavel: true, render: celLink, validar: v => normLink(v) === null ? 'O link deve começar com http:// ou https://.' : '' },
-      { key: 'arquivoNome', rot: 'Arquivo', w: 250, wCompacta: 172, tipo: 'texto', editavel: false, render: celArquivo }
+      { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 105, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
+      { key: 'pubNome', rot: 'Arquivo publicado', w: 230, wCompacta: 105, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') }
     ],
-    compactas: ['processo', 'numero', 'recebimento', 'assunto', 'setor', 'link', 'arquivoNome'],
-    // primeira vez: modo compacto, para caber link e arquivo na tela
+    compactas: ['tipoDoc', 'numero', 'assunto', 'status', 'link', 'arquivoNome', 'pubNome'],
+    // primeira vez: modo compacto, para caber status, link e arquivos na tela
     estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
-    larguraAcoes: 76,
-    ordemPadrao: ordemPort,
-    chips: [['', L('filtro.todos'), () => true, PORT_COR], ['mes', 'Recebidas no mês', doMes, '#0891b2'], ['arq', 'Com arquivo', x => !!x.arquivoId, '#2563eb'], ['semarq', 'Sem arquivo', x => !x.arquivoId, '#d97706'], ['semlink', 'Sem link', x => !x.link, '#7c3aed']]
-      .concat(setores.slice(0, 8).map(s => ['set:' + s, s, x => x.setor === s, corSetor(s)])),
+    larguraAcoes: 126,
+    finalizado: pubFeita,
+    ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPort),
+    classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
+    chips: [['', L('filtro.todos'), () => true, PORT_COR], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
+            ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']]
+      .concat(tipos.slice(0, 6).map(t => ['tipo:' + t, t, x => x.tipoDoc === t, tipoPub(t)[2]])),
     aoEditarCampos: editarPortCampos,
-    acoes: x => `<div class="gs-acoes-in"><button type="button" class="gs-ico" title="Abrir no formulário" onclick="abrirFormPortaria('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`,
-    tituloLinha: x => [x.numero, x.processo].filter(Boolean).join(' · ') || x.assunto || 'Portaria',
-    menuAcoes: x => [
-      x.link ? { rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') } : null,
-      x.arquivoId ? { rot: ehPdfArq(x.arquivoNome) ? 'Baixar o PDF' : 'Baixar em Word', ico: ehPdfArq(x.arquivoNome) ? 'fa-file-pdf' : 'fa-file-word', cor: '#2563eb', fn: () => baixarArqPortaria(x.id, 'original') } : null,
-      x.arquivoId && !ehPdfArq(x.arquivoNome) ? { rot: 'Baixar em PDF', ico: 'fa-file-pdf', cor: '#dc2626', fn: () => baixarArqPortaria(x.id, 'pdf') } : null,
-      pode('sol:2') ? { rot: x.arquivoId ? 'Trocar o arquivo' : 'Anexar arquivo', ico: 'fa-paperclip', cor: '#d97706', fn: () => anexarArqPortaria(x.id) } : null,
-      { sep: true }, { rot: 'Abrir no formulário', ico: 'fa-pen', cor: '#64748b', fn: () => abrirFormPortaria(x.id) },
-      pode('sol:3') ? { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirPortariaId(x.id) } : null].filter(Boolean),
-    novaLinha: () => abrirFormPortaria(), textoNovaLinha: 'Nova portaria (abre o formulário)',
-    textoVazio: 'Nenhuma portaria cadastrada.',
-    botaoNovo: `<button class="btn btn-pri !h-9" style="background:${PORT_COR};border-color:${PORT_COR}" onclick="abrirFormPortaria()"><i class="fa-solid fa-plus"></i>Nova portaria</button>`
+    acoes: x => {
+      const st = statusPub(x);
+      const btn = st === 'Aguardando Publicação' ? `<button type="button" class="gs-acao" style="--c:#16a34a" title="Marcar como Publicado" onclick="editarPortCampos(portaria('${x.id}'),{status:'Publicado'})"><i class="fa-solid fa-circle-check"></i>Publicado</button>`
+        : st === 'Devolvido Para Correção' ? `<button type="button" class="gs-acao" style="--c:#d97706" title="Corrigido: volta para Aguardando Publicação" onclick="editarPortCampos(portaria('${x.id}'),{status:'Aguardando Publicação'})"><i class="fa-solid fa-paper-plane"></i>Reenviar</button>`
+        : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    tituloLinha: x => nomePub(x),
+    menuAcoes: x => {
+      const itens = [{ titulo: 'Mudar o status para' }];
+      Object.keys(PUB_STATUS).filter(s => s !== statusPub(x)).forEach(s => itens.push({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => editarPortCampos(x, { status: s }) }));
+      itens.push({ sep: true });
+      if (x.link) itens.push({ rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') });
+      Object.entries(PUB_ARQS).forEach(([q, a]) => {
+        const f = arqDe(x, q);
+        if (f) itens.push({ rot: `${a.rot}: baixar ${ehPdfArq(f.nome) ? 'o PDF' : 'em Word'}`, ico: ehPdfArq(f.nome) ? 'fa-file-pdf' : 'fa-file-word', cor: '#2563eb', fn: () => baixarArqPortaria(x.id, 'original', null, q) });
+        if (f && !ehPdfArq(f.nome)) itens.push({ rot: `${a.rot}: baixar em PDF`, ico: 'fa-file-pdf', cor: '#dc2626', fn: () => baixarArqPortaria(x.id, 'pdf', null, q) });
+        if (pode('sol:2')) itens.push({ rot: (f ? 'Trocar ' : 'Anexar ') + a.rot.toLowerCase(), ico: a.ico, cor: a.cor, fn: () => anexarArqPortaria(x.id, q) });
+      });
+      itens.push({ sep: true }, { rot: 'Abrir no formulário', ico: 'fa-pen', cor: '#64748b', fn: () => abrirFormPortaria(x.id) });
+      if (pode('sol:3')) itens.push({ rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirPortariaId(x.id) });
+      return itens;
+    },
+    acoesLote: Object.keys(PUB_STATUS).map(s => ({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', campos: () => ({ status: s }) })),
+    novaLinha: () => abrirFormPortaria(), textoNovaLinha: 'Nova publicação (abre o formulário)',
+    textoVazio: 'Nenhuma publicação cadastrada.',
+    botaoNovo: `<button class="btn btn-pri !h-9" style="background:${PORT_COR};border-color:${PORT_COR}" onclick="abrirFormPortaria()"><i class="fa-solid fa-plus"></i>Nova publicação</button>`
   });
+  if (!$('lista-tipos-pub')) document.body.insertAdjacentHTML('beforeend', `<datalist id="lista-tipos-pub">${PUB_TIPOS.map(t => `<option value="${esc(t[0])}">`).join('')}</datalist>`);
 }
 
 /* ----- Casa Civil (somente as da Casa Civil) ----- */
@@ -8232,7 +8327,7 @@ const AREAS_PERFIL = [
   ['semana', 'Minha semana', 'fa-calendar-week', '#10b981', 'Resumo da semana, prazos e agenda'],
   ['painel', 'Painel', 'fa-chart-column', '#3b82f6', 'Gráficos e cruzamentos'],
   ['mapa', 'Mapa das Adjuntas', 'fa-sitemap', '#0891b2', 'Demandas por secretaria adjunta'],
-  ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos, Portarias e seções por tipo'],
+  ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos, Publicações e seções por tipo'],
   ['casacivil', 'Casa Civil', 'fa-landmark', '#7c3aed', 'Trilha e etapas da Casa Civil'],
   ['correicao', 'Processos de Correição', 'fa-clipboard-check', '#d97706', 'Planilha da Correição'],
   ['chefe', 'Chefe de Gabinete', 'fa-user-tie', '#b45309', 'Processos, documentos e SIMEC do Chefe de Gabinete'],
