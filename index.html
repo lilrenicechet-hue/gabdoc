@@ -762,6 +762,59 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .gs-acoes-in { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
   .gs-acao { height: 24px; padding: 0 8px; border-radius: 7px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; color: #fff; background: var(--c); margin-right: auto; white-space: nowrap; transition: filter .15s; }
   .gs-acao:hover { filter: brightness(1.1); }
+
+  /* ===== Celular: cabeçalhos compactos e planilha ocupando a tela ===== */
+  @media (max-width: 767px) {
+    .faixa { padding-top: 10px; padding-bottom: 28px; }
+    .faixa h2 { font-size: 16.5px !important; line-height: 1.25; }
+    .faixa h2 > span { display: none; }
+    .faixa > div { gap: 8px !important; }
+    .faixa .btn { height: 34px; padding: 0 11px; font-size: 12.5px; border-radius: 10px; }
+    .faixa .rel-sec-bts { height: 34px; }
+    .faixa .rel-sec-sub { display: none; }
+    .corpo { margin-top: -18px; padding-bottom: 8px; }
+    /* a página inteira rola: o cabeçalho sai de cena e a planilha fica com a tela quase toda */
+    .tab:has(.gs-caixa) { overflow-y: auto !important; overscroll-behavior-y: contain; }
+    .tab:has(.gs-caixa) > .corpo { flex: none; }
+    .tab:has(.gs-caixa) > .corpo > div { flex: none !important; min-height: 0; }
+    .tab:has(.gs-caixa) .gs-caixa { flex: none; height: calc(100dvh - 128px); min-height: 300px; }
+    /* indicadores: uma faixa que desliza para o lado */
+    .corpo .grid:has(> .dv-kpi) { display: flex !important; overflow-x: auto; gap: 8px; margin: 0 -16px; padding: 0 16px 2px; scrollbar-width: none; scroll-snap-type: x proximity; }
+    .corpo .grid:has(> .dv-kpi)::-webkit-scrollbar { display: none; }
+    .corpo .grid:has(> .dv-kpi) > .dv-kpi { flex: 0 0 auto; min-width: 118px; max-width: 168px; padding: 7px 11px; scroll-snap-align: start; }
+    .corpo .grid:has(> .dv-kpi) > .dv-kpi .val { font-size: 19px; margin-top: 0; }
+    .corpo .grid:has(> .dv-kpi) > .dv-kpi .rot { font-size: 11.5px; white-space: nowrap; }
+    .corpo .grid:has(> .dv-kpi) > .dv-kpi .sub { display: none; }
+    /* barra: busca + ícones numa linha, filtros rápidos deslizando na outra */
+    .gs-barra { padding: 6px; gap: 6px; }
+    .gs-busca { order: 1; flex: 1 1 110px !important; min-width: 0 !important; }
+    .gs-ferr { order: 2; margin-left: 0 !important; flex-wrap: nowrap !important; }
+    .gs-ferr .dv-seg { flex-wrap: nowrap; }
+    .gs-ferr .btn, .gs-ferr .dv-seg button { font-size: 0 !important; gap: 0 !important; padding: 0 9px !important; height: 36px !important; }
+    .gs-ferr .btn svg, .gs-ferr .btn i, .gs-ferr .dv-seg button svg, .gs-ferr .dv-seg button i { font-size: 13.5px; margin: 0 !important; }
+    .gs-chips { order: 3; flex: 1 1 100%; flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; margin: 0 -6px; padding: 0 6px 1px; }
+    .gs-chips::-webkit-scrollbar { display: none; }
+    .gs-chips .chip-f { flex: none; height: 30px !important; }
+    /* planilha: sem a linha de letras, numeração estreita e ações só com ícones */
+    table.gs thead tr.gs-letras { display: none; }
+    table.gs thead tr:nth-child(2) th { top: 0; }
+    table.gs thead tr.gs-filtros th { top: 32px; }
+    table.gs col:first-child { width: 30px !important; }
+    table.gs:has(th.gs-acoes) col:last-child { width: 72px !important; }
+    table.gs .gs-acoes { padding: 0 4px; }
+    table.gs .gs-acoes-cab { font-size: 0 !important; }
+    table.gs .gs-acoes-cab svg, table.gs .gs-acoes-cab i { font-size: 11px; margin: 0 !important; }
+    .gs-acoes-in .gs-ico:not(.gs-mais) { display: none; }
+    .gs-acoes-in .gs-acao { font-size: 0; gap: 0; padding: 0 7px; margin-right: 0; }
+    .gs-acoes-in .gs-acao svg, .gs-acoes-in .gs-acao i { font-size: 12px; }
+    .gs-acoes-in .gs-acao-fim { font-size: 0; margin-right: 0; }
+    .gs-acoes-in .gs-acao-fim svg, .gs-acoes-in .gs-acao-fim i { font-size: 13px; }
+    .gs-status > span:last-child { display: none; }
+    .nom-ctrl-l { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .nom-ctrl-l::-webkit-scrollbar { display: none; }
+    .nom-ctrl-l > * { flex: none; }
+    .nom-ctrl-r { width: 100%; }
+  }
   /* formulário de Portarias: 7 cartões */
   .pt-passo .passo-topo { padding: 10px 14px; gap: 10px; }
   .pt-passo .passo-num { width: 28px; height: 28px; font-size: 13.5px; border-radius: 9px; }
@@ -1375,6 +1428,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn" data-tab="mesa"><i class="ico fa-solid fa-table-cells"></i><span>Gestão de Processos</span><span id="bdg-mesa" class="nav-badge bg-indigo-500 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="processos"><i class="ico fa-solid fa-folder-open" style="color:#2dd4bf"></i><span>Processos</span><span id="bdg-proc" class="nav-badge bg-teal-600 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="assinaturas"><i class="ico fa-solid fa-file-signature" style="color:#60a5fa"></i><span>Documentos para assinatura</span><span id="bdg-ass" class="nav-badge bg-blue-600 hidden"></span></button>
+            <div class="space-y-1" id="nav-docs-gp"></div>
             <button class="nav-btn" data-tab="fila"><i class="ico fa-solid fa-folder-open"></i><span>Solicitações</span><span id="bdg-fila" class="nav-badge bg-slate-600 hidden"></span></button>
             <button class="nav-btn" data-tab="prazos"><i class="ico fa-solid fa-hourglass-half text-orange-400"></i><span class="text-orange-300 font-bold">Prazos</span><span id="bdg-urg" class="nav-badge bg-red-600 hidden"></span></button>
             <button class="nav-btn" data-tab="casacivil"><i class="ico fa-solid fa-landmark text-violet-400"></i><span class="text-violet-300 font-semibold">Casa Civil</span><span id="bdg-cc" class="nav-badge bg-violet-600 hidden"></span></button>
@@ -1396,7 +1450,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
           </div></div>
         </div>
         <div class="nav-grupo" data-g="docs">
-          <button type="button" class="nav-titulo" onclick="alternarGrupo('docs')" aria-expanded="true"><i class="fa-solid fa-folder-tree nav-titulo-ico"></i><span class="nav-titulo-txt">Documentos e eventos</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
+          <button type="button" class="nav-titulo" onclick="alternarGrupo('docs')" aria-expanded="true"><i class="fa-solid fa-bullhorn nav-titulo-ico"></i><span class="nav-titulo-txt">Comunicados e eventos</span><span class="nav-titulo-bdg hidden"></span><i class="fa-solid fa-chevron-down nav-titulo-seta"></i></button>
           <div class="nav-grupo-corpo"><div class="nav-grupo-in">
           <div class="space-y-1" id="nav-docs"></div>
           </div></div>
@@ -2870,12 +2924,13 @@ function somarBadgesGrupos() {
 /* ----- seções por tipo de documento (menu lateral) ----- */
 const SECOES_DOC = [
   { tipo: 'capturado', rot: 'Documentos capturados', desc: 'Documentos recebidos de fora e capturados no sistema para análise e assinatura.' },
-  { tipo: 'oficio',    rot: 'Ofícios',               desc: 'Ofícios recebidos e expedidos pelo Gabinete.' },
   { tipo: 'despacho',  rot: 'Despachos',             desc: 'Despachos da Secretária em processos e solicitações.' },
+  { tipo: 'oficio',    rot: 'Ofícios',               desc: 'Ofícios recebidos e expedidos pelo Gabinete.' },
   { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' }
 ];
 let docTipo = 'capturado';
-$('nav-docs').innerHTML = `<button class="nav-btn" data-tab="portarias"><i class="ico fa-solid fa-stamp" style="color:#818cf8"></i><span>Portarias</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Portarias sem arquivo"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('') +
+$('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portarias"><i class="ico fa-solid fa-stamp" style="color:#818cf8"></i><span>Portarias</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Portarias sem arquivo"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn nav-sub" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('');
+$('nav-docs').innerHTML =
   `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
 document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => irPara(b.dataset.tab)));
@@ -3991,7 +4046,8 @@ const TRANSICOES_APP = Object.fromEntries(['recebido', 'analise', 'assinado', 'a
 function letraCol(n) { let s = ''; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 function estadoGrade(id, padrao) {
   if (!Grades[id]) {
-    let modo = ''; try { modo = localStorage.getItem('gabdoc_compacto_' + id) || ''; } catch (e) {}
+    let modo = null; try { modo = localStorage.getItem('gabdoc_compacto_' + id); } catch (e) {}
+    if (modo === null) modo = window.innerWidth < 768 ? '1' : '';
     // compacto: só as colunas essenciais · leitura: as mesmas colunas, com o texto inteiro (linhas mais altas)
     const leitura = modo === 'L', compacto = modo === '1' || leitura;
     Grades[id] = Object.assign({ busca: '', ordem: null, dir: 1, filtros: {}, mostrarFiltros: false, ativa: null, faixa: null, chip: '', compacto, leitura }, padrao || {});
@@ -4042,7 +4098,8 @@ function renderGrade(cont, cfg) {
   const larguraAcoes = cfg.acoes ? (cfg.larguraAcoes || 178) : 0;
   // No modo compacto a coluna principal (assunto/objeto) ocupa o espaço que sobrar, para caber na tela
   const flexivel = st.compacto ? cols.find(c => c.flex) : null;
-  const largura = 46 + cols.reduce((a, c) => a + (c === flexivel ? 200 : (c.w || 140)), 0) + larguraAcoes;
+  const celular = window.innerWidth < 768;
+  const largura = (celular ? 30 : 46) + cols.reduce((a, c) => a + (c === flexivel ? (celular ? 150 : 200) : (c.w || 140)), 0) + (celular && larguraAcoes ? 72 : larguraAcoes);
   const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${c.w || 140}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
   const padraoCol = !st.ordem && cfg.ordemColuna;
   const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key || padraoCol === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="${padraoCol === c.key ? 'Ordenado por prazo: vencidos e mais apertados primeiro' : 'Ordenar por ' + esc(c.rot)}">
@@ -4062,10 +4119,10 @@ function renderGrade(cont, cfg) {
   cont.innerHTML = `
     ${cfg.topo || ''}
     <div class="gs-barra">
-      <div class="relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i>
+      <div class="gs-busca relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i>
         <input class="campo w-full !pl-8 !h-9" id="gs-busca-${cfg.id}" value="${esc(st.busca)}" placeholder="Buscar em todas as colunas" oninput="buscarGrade('${cfg.id}', this)" aria-label="Buscar"></div>
-      ${cfg.chips ? `<div class="flex flex-wrap gap-1.5">${cfg.chips.map(([k, rot, , cor]) => `<button type="button" class="chip-f !h-8 ${st.chip === k ? 'ativo' : ''}" style="--c:${cor || 'var(--brand)'}" onclick="chipGrade('${cfg.id}','${k}')">${rot}<b>${k ? cfg.linhas.filter(cfg.chips.find(c => c[0] === k)[2]).length : cfg.linhas.length}</b></button>`).join('')}</div>` : ''}
-      <div class="flex flex-wrap gap-1.5 ml-auto">
+      ${cfg.chips ? `<div class="gs-chips flex flex-wrap gap-1.5">${cfg.chips.map(([k, rot, , cor]) => `<button type="button" class="chip-f !h-8 ${st.chip === k ? 'ativo' : ''}" style="--c:${cor || 'var(--brand)'}" onclick="chipGrade('${cfg.id}','${k}')">${rot}<b>${k ? cfg.linhas.filter(cfg.chips.find(c => c[0] === k)[2]).length : cfg.linhas.length}</b></button>`).join('')}</div>` : ''}
+      <div class="gs-ferr flex flex-wrap gap-1.5 ml-auto">
         ${cfg.compactas ? `<div class="dv-seg" role="group" aria-label="Modo de visualização"><button type="button" class="${st.compacto ? '' : 'ativo'}" aria-pressed="${!st.compacto}" onclick="modoGrade('${cfg.id}', false)" title="Todas as colunas"><i class="fa-solid fa-table-cells mr-1"></i>Completo</button><button type="button" class="${st.compacto && !st.leitura ? 'ativo' : ''}" aria-pressed="${st.compacto && !st.leitura}" onclick="modoGrade('${cfg.id}', true)" title="Só o essencial"><i class="fa-solid fa-table-list mr-1"></i>Compacto</button><button type="button" class="${st.leitura ? 'ativo' : ''}" aria-pressed="${!!st.leitura}" onclick="modoGrade('${cfg.id}', true, true)" title="Mostra o assunto e o nº do processo inteiros, mesmo que a linha fique mais alta"><i class="fa-solid fa-align-left mr-1"></i>Texto completo</button></div>` : ''}
         <button type="button" class="btn btn-sec !h-9 ${st.mostrarFiltros ? '!border-blue-500' : ''}" onclick="alternarFiltrosGrade('${cfg.id}')"><i class="fa-solid fa-filter"></i>Filtros</button>
         <button type="button" class="btn btn-sec !h-9" onclick="exportarGrade('${cfg.id}')"><i class="fa-solid fa-file-csv"></i>CSV</button>
@@ -5464,7 +5521,7 @@ async function salvarFormNomeacao(id) {
 const ordemNom = (a, b) => String(a.protocolo || '9999').localeCompare(String(b.protocolo || '9999')) || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
 /* ----- Nomeações e Exonerações: controles, painéis e quadro ----- */
 const NOM_UI_PADRAO = { vista: 'planilha', tipo: '', cat: '', st: '', periodo: 'tudo', busca: '', paineis: true };
-const nomUI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_nom_ui') || '{}'); } catch (e) {} return Object.assign({}, NOM_UI_PADRAO, s, { busca: '' }); })();
+const nomUI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_nom_ui') || '{}'); } catch (e) {} return Object.assign({}, NOM_UI_PADRAO, window.innerWidth < 768 ? { paineis: false } : {}, s, { busca: '' }); })();
 function nomSet(k, v, render = true) {
   nomUI[k] = v;
   try { const { busca, ...resto } = nomUI; localStorage.setItem('gabdoc_nom_ui', JSON.stringify(resto)); } catch (e) {}
