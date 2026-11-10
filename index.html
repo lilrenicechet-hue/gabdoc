@@ -214,6 +214,91 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .chefe-obs { margin-top: 10px; font-size: 12.5px; color: var(--ink2); padding: 8px 10px; border-radius: 10px; background: var(--card2); border: 1px dashed var(--line); white-space: pre-line; }
   @media (max-width: 640px) { .chefe-cartao { grid-template-columns: auto minmax(0, 1fr); } .chefe-cartao > .chefe-edit { grid-column: 1 / -1; } }
   .dv-tit { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 10px; flex-wrap: wrap; }
+  /* capa do relatório (prévia) e botões de relatório das seções */
+  .rp-capa { padding: 0 !important; overflow: hidden; display: grid; grid-template-columns: 36% 1fr; margin-bottom: 14px; background: #fff; min-height: 420px; }
+  .rp-capa.paisagem { grid-template-columns: 32% 1fr; }
+  .rp-capa-painel { background: #0b1f3a; color: #fff; padding: 22px 18px; border-right: 5px solid #0a0a0a; display: flex; flex-direction: column; }
+  .rp-capa-gov { font-size: 7px; font-weight: 800; letter-spacing: .18em; color: #9fb2cc; margin-top: 12px; line-height: 1.35; }
+  .rp-capa-painel > i { display: block; width: 20px; height: 2px; background: #fff; margin: 8px 0; }
+  .rp-capa-org { font-size: 11px; font-weight: 800; line-height: 1.2; }
+  .rp-capa-uni { font-size: 9px; color: #9fb2cc; margin-top: 3px; }
+  .rp-capa-rot { font-size: 6.5px; font-weight: 800; letter-spacing: .2em; color: #9fb2cc; margin: auto 0 6px; padding-top: 18px; }
+  .rp-capa-kpis div { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-top: 1px solid #27446d; }
+  .rp-capa-kpis b { font-size: 20px; font-weight: 900; }
+  .rp-capa-kpis span { font-size: 6.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #9fb2cc; }
+  .rp-capa-area { position: relative; display: flex; flex-direction: column; padding: 22px 22px 0 26px; color: #0a0a0a; }
+  .rp-capa-tag { align-self: flex-end; font-size: 6.5px; font-weight: 800; letter-spacing: .13em; border: 1px solid #0a0a0a; padding: 4px 8px; }
+  .rp-capa-tit { position: relative; margin-top: 46px; padding-left: 16px; }
+  .rp-capa-tit::before { content: ''; position: absolute; left: 0; top: 2px; width: 7px; height: 7px; background: #0a0a0a; }
+  .rp-capa-tit p { font-size: 8px; font-weight: 800; letter-spacing: .36em; color: #0b1f3a; }
+  .rp-capa-tit h3 { font-size: 26px; font-weight: 900; line-height: 1.05; margin: 8px 0 10px; }
+  .rp-capa-tit > i { display: block; width: 44px; height: 3px; background: #0b1f3a; box-shadow: 52px 0 0 -0px #0a0a0a; margin-bottom: 10px; position: relative; }
+  .rp-capa-tit > i::after { content: ''; position: absolute; left: 48px; top: 0; width: 10px; height: 3px; background: #0a0a0a; }
+  .rp-capa-tit span { display: block; font-size: 10.5px; color: #5b6472; }
+  .rp-capa-tit small { display: block; margin-top: 8px; font-size: 7px; font-weight: 800; letter-spacing: .12em; color: #5b6472; } .rp-capa-tit small b { color: #0a0a0a; }
+  .rp-capa-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; border-top: 2px solid #0a0a0a; padding: 8px 0 12px; }
+  .rp-capa-info span { font-size: 10.5px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rp-capa-info small { display: block; font-size: 6.5px; letter-spacing: .1em; color: #0b1f3a; font-weight: 800; }
+  .rp-capa-barra { margin: 0 -22px 0 -26px; background: #0a0a0a; color: #fff; font-size: 7px; font-weight: 800; letter-spacing: .1em; padding: 9px 26px; }
+  .rel-sec-bts { display: inline-flex; align-items: center; height: 40px; border-radius: 12px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); overflow: hidden; }
+  .rel-sec-bts > span { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.75); }
+  .rel-sec-bts button { display: inline-flex; align-items: center; gap: 6px; height: 100%; padding: 0 12px; font-size: 12.5px; font-weight: 800; color: #fff; border-left: 1px solid rgba(255,255,255,.15); transition: background .15s; }
+  .rel-sec-bts button:hover { background: rgba(255,255,255,.14); }
+  .rel-sec-bts button:disabled { opacity: .6; }
+  /* Mapa das Adjuntas */
+  .madj-grade { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 12px; align-items: start; }
+  @media (max-width: 1180px) { .madj-grade { grid-template-columns: minmax(0, 1fr); } }
+  .madj-topo { display: flex; justify-content: center; }
+  .madj-raiz { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 14px; color: #fff; background: linear-gradient(135deg, #1e3a8a, #1d4ed8); box-shadow: 0 10px 24px -14px #1e3a8a; }
+  .madj-raiz > i, .madj-raiz > svg { font-size: 18px; color: #bfdbfe; }
+  .madj-raiz b { display: block; font-size: 13.5px; }
+  .madj-raiz small { display: block; font-size: 11px; color: #bfdbfe; }
+  .madj-tronco { width: 2px; height: 18px; margin: 0 auto; background: var(--line); }
+  .madj-nos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 12px; border: 2px solid var(--line); border-radius: 16px; background: var(--card2); }
+  .madj-no { --c: #64748b; --t: .1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px 10px; border-radius: 14px; text-align: center;
+    background: color-mix(in srgb, var(--c) calc(var(--t) * 100%), var(--card)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); transition: transform .12s, box-shadow .15s; }
+  .madj-no:hover { transform: translateY(-2px); box-shadow: var(--sombra); }
+  .madj-no.sel { outline: 3px solid var(--c); outline-offset: 1px; }
+  .madj-no.zero { opacity: .72; }
+  .madj-rank { position: absolute; top: 7px; left: 9px; font-size: 10.5px; font-weight: 900; color: var(--ink3); }
+  .madj-ico { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c, #64748b); font-size: 13px; flex: none; }
+  .madj-sg { font-size: 15px; font-weight: 900; color: var(--ink); margin-top: 4px; }
+  .madj-nome { font-size: 10.5px; color: var(--ink3); line-height: 1.25; min-height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .madj-val { font-size: 28px; font-weight: 900; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .madj-met { font-size: 10.5px; font-weight: 700; color: var(--ink3); }
+  .madj-barra { display: flex; width: 100%; height: 6px; border-radius: 99px; overflow: hidden; gap: 1px; margin-top: 7px; background: var(--card2); }
+  .madj-barra span { display: block; height: 100%; }
+  .madj-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; min-height: 20px; margin-top: 6px; }
+  .madj-tag { --c: #64748b; display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 99px; font-size: 10.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .madj-tag i, .madj-tag svg { font-size: 9px; }
+  .madj-leg { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 11px; color: var(--ink3); }
+  .madj-leg > span { display: inline-flex; align-items: center; gap: 5px; }
+  .madj-leg > span > i:not([class]) { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .madj-tm { position: relative; width: 100%; height: 240px; border-radius: 12px; overflow: hidden; }
+  .madj-tm-b { --c: #64748b; position: absolute; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 1px; padding: 8px 10px; color: #fff; text-align: left; overflow: hidden;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 82%, #fff), var(--c)); border: 2px solid var(--card); border-radius: 10px; transition: filter .15s; }
+  .madj-tm-b:hover { filter: brightness(1.08) saturate(1.1); }
+  .madj-tm-b.sel { box-shadow: inset 0 0 0 3px #fff; }
+  .madj-tm-b b { font-size: 14px; font-weight: 900; line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .madj-tm-b span { font-size: 11px; font-weight: 700; opacity: .92; }
+  .madj-rk { display: flex; flex-direction: column; }
+  .madj-rk-l { --c: #64748b; display: grid; grid-template-columns: 22px auto minmax(0, 1fr) 70px 30px; gap: 9px; align-items: center; padding: 7px 4px; border-radius: 10px; text-align: left; }
+  .madj-rk-l:hover { background: var(--card2); }
+  .madj-rk-l .madj-ico { background: var(--c); }
+  .madj-rk-n { font-size: 12px; font-weight: 900; color: var(--ink3); text-align: center; }
+  .madj-rk-l b { display: block; font-size: 13px; color: var(--ink); }
+  .madj-rk-l small { display: block; font-size: 10.5px; color: var(--ink3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .madj-rk-t { height: 7px; border-radius: 99px; background: var(--card2); overflow: hidden; }
+  .madj-rk-t span { display: block; height: 100%; border-radius: 99px; background: var(--c); }
+  .madj-det { border-top: 4px solid var(--c); }
+  .madj-det .madj-ico { background: var(--c); }
+  .madj-det-topo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .madj-minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .madj-mini { --c: #64748b; display: flex; flex-direction: column; align-items: center; padding: 8px 4px; border-radius: 10px; background: color-mix(in srgb, var(--c) 9%, var(--card)); }
+  .madj-mini i, .madj-mini svg { color: var(--c); font-size: 11px; }
+  .madj-mini b { font-size: 19px; font-weight: 900; color: var(--ink); line-height: 1.15; }
+  .madj-mini small { font-size: 10.5px; color: var(--ink3); }
+  .madj-h4 { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); margin: 14px 0 6px; }
   /* Nomeações e Exonerações: controles, painéis e quadro */
   .nom-ctrl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sombra); }
   .nom-ctrl-l, .nom-ctrl-r { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -1219,7 +1304,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
           <div class="space-y-1">
             <button class="nav-btn" data-tab="semana"><i class="ico fa-solid fa-calendar-week" style="color:#34d399"></i><span>Minha semana</span><span id="bdg-sem" class="nav-badge bg-emerald-600 hidden"></span></button>
             <button class="nav-btn" data-tab="painel"><i class="ico fa-solid fa-chart-column" style="color:#60a5fa"></i><span>Painel</span></button>
-            <button class="nav-btn" data-tab="mapa"><i class="ico fa-solid fa-map-location-dot"></i><span>Mapa de MT</span></button>
+            <button class="nav-btn" data-tab="mapa"><i class="ico fa-solid fa-sitemap"></i><span>Mapa das Adjuntas</span></button>
           </div>
           </div></div>
         </div>
@@ -1482,31 +1567,13 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="faixa bg-education-pattern">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
-            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-sky-300"></i> Mapa de Mato Grosso</h2>
-            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">De onde vêm as demandas do Gabinete nos 142 municípios, onde há pendências e onde a agenda da Secretária passa.</p>
+            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-sitemap text-sky-300"></i> Mapa das Adjuntas</h2>
+            <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Como as demandas do Gabinete se distribuem entre as secretarias adjuntas: o que está em aberto, vencido, com prioridade ou na Casa Civil.</p>
           </div>
-          <div class="text-xs text-blue-100/80" id="mapa-resumo"></div>
+          <div class="text-xs text-blue-100/80" id="madj-resumo"></div>
         </div>
       </div>
-      <div class="corpo">
-        <div class="flex-1 overflow-y-auto scrollbar-thin space-y-4 pb-2">
-          <div class="dv-card !p-3 flex flex-wrap items-center gap-3">
-            <span class="text-[12.5px] font-semibold text-ink2">Mostrar</span>
-            <div class="dv-seg" id="mapa-metrica">
-              <button data-m="total">Solicitações</button><button data-m="pendentes">Pendentes</button><button data-m="urgentes">Prioridades</button><button data-m="cc">Casa Civil</button><button data-m="agenda">Agenda</button>
-            </div>
-            <select id="mapa-tipo" class="campo ml-auto" aria-label="Tipo de documento"></select>
-          </div>
-          <div class="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4 items-start">
-            <div class="mapa-card">
-              <div class="mapa-svg-box" id="mapa-svg-box"></div>
-              <div class="flex flex-wrap items-center gap-3 mt-2 text-[11.5px] text-ink2" id="mapa-legenda"></div>
-              <div id="mapa-tip" class="mapa-tip hidden" role="tooltip"></div>
-            </div>
-            <div id="mapa-painel" class="space-y-4"></div>
-          </div>
-        </div>
-      </div>
+      <div class="corpo"><div class="flex-1 overflow-y-auto scrollbar-thin pb-2" id="madj-corpo"></div></div>
     </section>
 
     <!-- AGENDA -->
@@ -1583,7 +1650,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-user-plus text-orange-300"></i> Contratações de pessoal <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-orange-200"><i class="fa-solid fa-lock text-[9px] mr-1"></i>exclusivo do Chefe de Gabinete</span></h2>
             <p class="text-orange-100/70 text-xs mt-0.5 hidden sm:block">Contratação de pessoal: protocolo, entrevista, status e lotação. Somente o perfil Chefe de Gabinete vê, edita e gera relatórios desta seção; nenhum outro perfil recebe estes dados, nem o Administrador.</p>
           </div>
-          <button onclick="abrirFormContratacao()" class="btn bg-orange-700 hover:bg-orange-600 text-white" id="btn-nova-contr"><i class="fa-solid fa-plus"></i>Nova contratação</button>
+          <div class="flex flex-wrap gap-2">
+            <div class="rel-sec-bts" role="group" aria-label="Relatório"><span><i class="fa-solid fa-file-lines"></i>Relatório</span><button type="button" onclick="relatorioSecao('contratacoes','pdf',this)" title="PDF com capa"><i class="fa-solid fa-file-pdf"></i>PDF</button><button type="button" onclick="relatorioSecao('contratacoes','xlsx',this)" title="Planilha Excel com capa"><i class="fa-solid fa-file-excel"></i>Excel</button></div>
+            <button onclick="abrirFormContratacao()" class="btn bg-orange-700 hover:bg-orange-600 text-white" id="btn-nova-contr"><i class="fa-solid fa-plus"></i>Nova contratação</button>
+          </div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="contr-corpo"></div></div>
@@ -1595,9 +1665,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-id-card text-blue-300"></i> Nomeações e Exonerações</h2>
             <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Acompanhamento de nomeações e exonerações do Chefe de Gabinete: protocolo, publicação no Diário Oficial, data de início e status.</p>
           </div>
+          <div class="flex flex-wrap gap-2">
+          <div class="rel-sec-bts" role="group" aria-label="Relatório"><span><i class="fa-solid fa-file-lines"></i>Relatório</span><button type="button" onclick="relatorioSecao('nomeacoes','pdf',this)" title="PDF com capa"><i class="fa-solid fa-file-pdf"></i>PDF</button><button type="button" onclick="relatorioSecao('nomeacoes','xlsx',this)" title="Planilha Excel com capa"><i class="fa-solid fa-file-excel"></i>Excel</button></div>
           <div class="flex gap-2" data-requer="chefe:2">
             <button onclick="abrirFormNomeacao(null,{tipo:'Nomeação'})" class="btn bg-blue-600 hover:bg-blue-500 text-white"><i class="fa-solid fa-user-check"></i>Nova nomeação</button>
             <button onclick="abrirFormNomeacao(null,{tipo:'Exoneração'})" class="btn bg-rose-700 hover:bg-rose-600 text-white"><i class="fa-solid fa-user-xmark"></i>Nova exoneração</button>
+          </div>
           </div>
         </div>
       </div>
@@ -2819,7 +2892,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapa, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapaAdj, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -2900,15 +2973,12 @@ function prepararFiltros() {
   $('f-sec').innerHTML = '<option value="">Todas as secretarias</option>' + SECRETARIAS.map(s => `<option>${s}</option>`).join('');
   $('f-sec').addEventListener('change', e => { filtro.sec = e.target.value; renderFila(); });
   $('f-mun').innerHTML = '<option value="">Todos os municípios</option>' + MT_NOMES.map(n => `<option>${esc(n)}</option>`).join('');
-  $('mapa-tipo').innerHTML = '<option value="">Todos os tipos</option>' + Object.entries(TIPOS).map(([k, v]) => `<option value="${k}">${v.rot}</option>`).join('');
   $('f-busca').addEventListener('input', e => { filtro.busca = e.target.value; renderFila(); });
   $('f-status').addEventListener('change', e => { filtro.status = e.target.value; renderFila(); });
   $('f-mun').addEventListener('change', e => { filtro.mun = e.target.value; renderFila(); });
   $('f-ordem').addEventListener('change', e => { filtro.ordem = e.target.value; renderFila(); });
   ['urg', 'cc', 'concl'].forEach(k => $('f-' + k).addEventListener('change', e => { filtro[k] = e.target.checked; renderFila(); }));
   document.querySelectorAll('#fila-vista button').forEach(b => b.addEventListener('click', () => { filtro.vista = b.dataset.v; ls.set('gabdoc_vista', b.dataset.v); renderFila(); }));
-  document.querySelectorAll('#mapa-metrica button').forEach(b => b.addEventListener('click', () => { mapaEstado.metrica = b.dataset.m; renderMapa(); }));
-  $('mapa-tipo').addEventListener('change', renderMapa);
 }
 function filtrar(ignorarTipo) {
   const q = filtro.busca.trim().toLowerCase();
@@ -5252,6 +5322,120 @@ function salvarFormChefe() {
   else if (Store.modo === 'nuvem' && Store.db) Store.db.collection('chefe').doc('info').set(Store.chefe).catch(() => toast('Não foi possível salvar os dados do Chefe.', 'fa-triangle-exclamation'));
 }
 
+/* ========================= Mapa das Adjuntas ========================= */
+// Visão das secretarias adjuntas pelas demandas do cadastro da Secretária (processos e documentos para assinatura).
+const MADJ_PADRAO = { met: 'abertos', nat: '', periodo: 'tudo', sel: '' };
+const mapaAdj = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_mapa_adj') || '{}'); } catch (e) {} return Object.assign({}, MADJ_PADRAO, s); })();
+function madjSet(k, v) { mapaAdj[k] = v; try { localStorage.setItem('gabdoc_mapa_adj', JSON.stringify(mapaAdj)); } catch (e) {} renderMapaAdj(); }
+const MADJ_METRICAS = {
+  abertos:  ['Em aberto', 'fa-folder-open', '#2563eb', s => !FEITO(s)],
+  vencidos: ['Vencidos', 'fa-circle-exclamation', '#dc2626', s => situacao(s) === 'vencido'],
+  prio:     ['Prioridades', 'fa-flag', '#ea580c', s => s.urgente && !FEITO(s)],
+  cc:       ['Casa Civil', 'fa-landmark', '#7c3aed', s => s.casaCivil && !FEITO(s)],
+  total:    ['Total', 'fa-layer-group', '#0f766e', () => true]
+};
+/** Divide um retângulo em blocos com área proporcional ao valor (treemap "squarified"). */
+function treemapRet(itens, W, H) {
+  const tot = itens.reduce((t, i) => t + i.v, 0); if (!tot) return [];
+  const nos = itens.map(i => ({ ...i, a: i.v / tot * W * H }));
+  const out = []; let x = 0, y = 0, w = W, h = H, linha = [];
+  const pior = (l, lado) => { const s = l.reduce((t, r) => t + r.a, 0), mx = Math.max(...l.map(r => r.a)), mn = Math.min(...l.map(r => r.a)); return Math.max(lado * lado * mx / (s * s), s * s / (lado * lado * mn)); };
+  const assentar = l => { const s = l.reduce((t, r) => t + r.a, 0);
+    if (w >= h) { const lw = s / h; let yy = y; l.forEach(r => { const rh = r.a / lw; out.push({ ...r, x, y: yy, w: lw, h: rh }); yy += rh; }); x += lw; w -= lw; }
+    else { const lh = s / w; let xx = x; l.forEach(r => { const rw = r.a / lh; out.push({ ...r, x: xx, y, w: rw, h: lh }); xx += rw; }); y += lh; h -= lh; } };
+  nos.forEach(n => { const lado = Math.min(w, h); if (!linha.length || pior(linha.concat([n]), lado) <= pior(linha, lado)) linha.push(n); else { assentar(linha); linha = [n]; } });
+  if (linha.length) assentar(linha);
+  return out;
+}
+function madjBase() {
+  const ini = { '30': somaDias(-30), '90': somaDias(-90), ano: hojeISO().slice(0, 4) + '-01-01' }[mapaAdj.periodo] || '';
+  return Store.sol.filter(s => (!mapaAdj.nat || (mapaAdj.nat === 'processo' ? ehProcesso(s) : ehAssinatura(s))) && (!ini || String(s.recebidoEm || '') >= ini));
+}
+function madjDados(base) {
+  const met = MADJ_METRICAS[mapaAdj.met] || MADJ_METRICAS.abertos;
+  const linha = (sg, lista) => ({ sg, lista, total: lista.length, abertos: lista.filter(s => !FEITO(s)).length, vencidos: lista.filter(s => situacao(s) === 'vencido').length,
+    prio: lista.filter(s => s.urgente && !FEITO(s)).length, cc: lista.filter(s => s.casaCivil && !FEITO(s)).length, assinados: lista.filter(s => s.status === 'assinado').length,
+    devolvidos: lista.filter(s => s.status === 'ajuste').length, v: lista.filter(met[3]).length,
+    st: Object.keys(STATUS).map(k => [k, lista.filter(s => s.status === k).length]) });
+  const adj = SECRETARIAS.map(sg => linha(sg, base.filter(s => secDe(s).includes(sg))));
+  const sem = base.filter(s => !secDe(s).some(x => SECRETARIAS.includes(x)));
+  return { adj, sem: linha('', sem), met };
+}
+function renderMapaAdj() {
+  const c = $('madj-corpo'); if (!c) return;
+  if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
+  const base = madjBase(), { adj, sem, met } = madjDados(base);
+  const max = Math.max(1, ...adj.map(a => a.v));
+  const ordem = adj.slice().sort((a, b) => b.v - a.v || b.total - a.total);
+  const rank = {}; ordem.forEach((a, i) => { rank[a.sg] = i + 1; });
+  const tot = { abertos: base.filter(s => !FEITO(s)).length, vencidos: base.filter(s => situacao(s) === 'vencido').length, prio: base.filter(s => s.urgente && !FEITO(s)).length };
+  $('madj-resumo').textContent = `${SECRETARIAS.length} adjuntas · ${tot.abertos} demanda(s) em aberto · ${tot.vencidos} vencida(s)`;
+  const seg = (k, ops) => `<div class="dv-seg nom-seg" role="group">${ops.map(([v, rot, ico, cor]) => `<button type="button" class="${mapaAdj[k] === v ? 'ativo' : ''}" aria-pressed="${mapaAdj[k] === v}" ${cor ? `style="--c:${cor}"` : ''} onclick="madjSet('${k}','${v}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${rot}</button>`).join('')}</div>`;
+  const controles = `<div class="nom-ctrl"><div class="nom-ctrl-l">
+      <span class="text-[12px] font-bold text-ink3 uppercase tracking-wider">Medir por</span>
+      ${seg('met', Object.entries(MADJ_METRICAS).map(([k, [rot, ico, cor]]) => [k, rot, ico, cor]))}
+      <span class="nom-div"></span>
+      ${seg('nat', [['', 'Tudo'], ['processo', 'Processos', 'fa-folder-open'], ['assinatura', 'Documentos', 'fa-file-signature']])}
+      <label class="nom-periodo"><i class="fa-solid fa-calendar-days"></i><select onchange="madjSet('periodo',this.value)" aria-label="Período de recebimento">${[['tudo', 'Todo o período'], ['30', 'Recebidos: 30 dias'], ['90', 'Recebidos: 90 dias'], ['ano', 'Recebidos: este ano']].map(([v, r]) => `<option value="${v}" ${mapaAdj.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
+    </div></div>`;
+  // ----- organograma com calor -----
+  const no = a => {
+    const cor = COR_SEC[a.sg] || '#64748b', t = a.v / max, sel = mapaAdj.sel === a.sg;
+    const barra = a.total ? a.st.filter(([, n]) => n).map(([k, n]) => `<span style="width:${n / a.total * 100}%;background:${STATUS[k].cor}" title="${STATUS[k].rot}: ${n}"></span>`).join('') : '';
+    return `<button type="button" class="madj-no ${sel ? 'sel' : ''} ${a.v ? '' : 'zero'}" style="--c:${cor};--t:${(0.06 + t * 0.30).toFixed(3)}" onclick="madjSet('sel','${sel ? '' : a.sg}')" aria-pressed="${sel}" title="${esc(a.sg + (NOME_SEC[a.sg] ? ' · ' + NOME_SEC[a.sg] : ''))}">
+      <span class="madj-rank">${a.v ? rank[a.sg] + 'º' : '—'}</span>
+      <span class="madj-ico"><i class="fa-solid ${icoSec(a.sg)}"></i></span>
+      <b class="madj-sg">${esc(a.sg)}</b>
+      <small class="madj-nome">${esc(NOME_SEC[a.sg] || '')}</small>
+      <span class="madj-val" style="color:${met[2]}">${a.v}</span>
+      <small class="madj-met">${met[0].toLowerCase()}</small>
+      <span class="madj-barra">${barra || '<span style="width:100%;background:var(--line)"></span>'}</span>
+      <span class="madj-tags">${a.vencidos ? `<span class="madj-tag" style="--c:#dc2626"><i class="fa-solid fa-circle-exclamation"></i>${a.vencidos}</span>` : ''}${a.prio ? `<span class="madj-tag" style="--c:#ea580c"><i class="fa-solid fa-flag"></i>${a.prio}</span>` : ''}${a.cc ? `<span class="madj-tag" style="--c:#7c3aed"><i class="fa-solid fa-landmark"></i>${a.cc}</span>` : ''}</span>
+    </button>`;
+  };
+  const org = `<section class="nom-painel madj-org">
+    <h3><i class="fa-solid fa-sitemap" style="color:#2563eb"></i>Mapa das Adjuntas <span class="text-ink3 font-normal text-[12px]">· cor mais forte = mais ${esc(met[0].toLowerCase())} · clique para detalhar</span></h3>
+    <div class="madj-topo"><span class="madj-raiz"><i class="fa-solid fa-landmark-dome"></i><span><b>Secretaria de Estado de Educação</b><small>${tot.abertos} em aberto · ${tot.vencidos} vencidos · ${tot.prio} prioridades</small></span></span></div>
+    <div class="madj-tronco"></div>
+    <div class="madj-nos">${adj.map(no).join('')}</div>
+    ${sem.total ? `<p class="nom-nota"><i class="fa-solid fa-circle-question"></i>${sem.total} demanda(s) sem secretaria adjunta informada</p>` : ''}
+    <div class="madj-leg"><span>Status:</span>${Object.values(STATUS).map(x => `<span><i style="background:${x.cor}"></i>${esc(x.rot)}</span>`).join('')}<span class="ml-auto"><i class="fa-solid fa-circle-exclamation" style="color:#dc2626"></i> vencidos <i class="fa-solid fa-flag ml-2" style="color:#ea580c"></i> prioridades <i class="fa-solid fa-landmark ml-2" style="color:#7c3aed"></i> Casa Civil</span></div>
+  </section>`;
+  // ----- distribuição (treemap) -----
+  const itensTm = ordem.filter(a => a.v).map(a => ({ k: a.sg, v: a.v }));
+  const rets = treemapRet(itensTm, 100, 100), somaTm = itensTm.reduce((t, i) => t + i.v, 0);
+  const tm = `<section class="nom-painel"><h3><i class="fa-solid fa-table-cells-large" style="color:#0f766e"></i>Distribuição · ${esc(met[0])}</h3>
+    ${rets.length ? `<div class="madj-tm">${rets.map(r => `<button type="button" class="madj-tm-b ${mapaAdj.sel === r.k ? 'sel' : ''}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;--c:${COR_SEC[r.k] || '#64748b'}" onclick="madjSet('sel','${mapaAdj.sel === r.k ? '' : r.k}')" title="${esc(r.k)}: ${r.v} (${Math.round(r.v / somaTm * 100)}%)">${r.w * r.h > 90 ? `<b>${esc(r.k)}</b><span>${r.v} · ${Math.round(r.v / somaTm * 100)}%</span>` : r.w * r.h > 30 ? `<b>${esc(r.k)}</b>` : ''}</button>`).join('')}</div>`
+      : `<p class="nom-vazio"><i class="fa-solid fa-circle-check text-emerald-500"></i>Nenhuma demanda nessa medida.</p>`}
+  </section>`;
+  // ----- painel lateral: adjunta escolhida ou ranking -----
+  const a = adj.find(x => x.sg === mapaAdj.sel);
+  let lado;
+  if (a) {
+    const cor = COR_SEC[a.sg] || '#64748b';
+    const atencao = a.lista.filter(s => !FEITO(s)).sort((x, y) => (situacao(x) === 'vencido' ? 0 : 1) - (situacao(y) === 'vencido' ? 0 : 1) || String(x.prazo || '9999').localeCompare(String(y.prazo || '9999')) || (!!y.urgente - !!x.urgente)).slice(0, 8);
+    const porTipo = {}; a.lista.forEach(s => { const t = (TIPOS[s.tipo] || TIPOS.outro).rot; porTipo[t] = (porTipo[t] || 0) + 1; });
+    const tipos = Object.entries(porTipo).sort((x, y) => y[1] - x[1]).slice(0, 5);
+    const mini = (cor2, ico, rot, n) => `<div class="madj-mini" style="--c:${cor2}"><i class="fa-solid ${ico}"></i><b>${n}</b><small>${rot}</small></div>`;
+    lado = `<section class="nom-painel madj-det" style="--c:${cor}">
+      <div class="madj-det-topo"><span class="madj-ico !w-11 !h-11 !text-[17px]"><i class="fa-solid ${icoSec(a.sg)}"></i></span><div class="min-w-0 flex-1"><b class="text-[18px] font-black">${esc(a.sg)}</b><p class="text-[12.5px] text-ink3 truncate">${esc(NOME_SEC[a.sg] || 'Secretaria adjunta')}</p></div><button type="button" class="nom-card-btn" title="Fechar" onclick="madjSet('sel','')"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="madj-minis">${mini('#2563eb', 'fa-folder-open', 'em aberto', a.abertos)}${mini('#dc2626', 'fa-circle-exclamation', 'vencidos', a.vencidos)}${mini('#ea580c', 'fa-flag', 'prioridades', a.prio)}${mini('#16a34a', 'fa-signature', 'assinados', a.assinados)}${mini('#db2777', 'fa-rotate-left', 'devolvidos', a.devolvidos)}${mini('#7c3aed', 'fa-landmark', 'Casa Civil', a.cc)}</div>
+      <h4 class="madj-h4">Por situação</h4>
+      ${barraHtml(a.st.filter(([, n]) => n).map(([k, n]) => ({ rot: STATUS[k].rot, n, cor: STATUS[k].cor })), a.total) || ''}
+      ${tipos.length ? `<h4 class="madj-h4">Tipos de documento</h4>${barraHtml(tipos.map(([t, n]) => ({ rot: t, n, cor: cor })), a.total, { pct: false })}` : ''}
+      <h4 class="madj-h4">Precisam de atenção</h4>
+      ${atencao.length ? `<div class="nom-lista">${atencao.map(s => `<button type="button" class="nom-item" onclick="abrirDetalhe('${s.id}')"><span class="nom-av" style="--c:${s.urgente ? '#dc2626' : cor}"><i class="fa-solid ${s.urgente ? 'fa-flag' : ehProcesso(s) ? 'fa-folder-open' : 'fa-file-signature'}"></i></span><span class="min-w-0"><b>${esc(s.assunto || '—')}</b><small>${esc([s.numero, STATUS[s.status] ? STATUS[s.status].rot : ''].filter(Boolean).join(' · '))}</small></span>${s.prazo ? celPrazoData(s) : '<span class="gs-dias sem !text-[11px]">Sem prazo</span>'}</button>`).join('')}</div>`
+        : '<p class="nom-vazio"><i class="fa-solid fa-circle-check text-emerald-500"></i>Nada em aberto.</p>'}
+      <div class="flex flex-wrap gap-2 mt-3"><button type="button" class="btn btn-sec !h-9" onclick="irPara('relatorios');relSet('tema','secretaria',false);relSet('secretaria','${a.sg}')"><i class="fa-solid fa-file-pdf"></i>Relatório da ${esc(a.sg)}</button></div>
+    </section>`;
+  } else {
+    lado = `<section class="nom-painel"><h3><i class="fa-solid fa-ranking-star" style="color:#d97706"></i>Ranking · ${esc(met[0])}</h3>
+      <div class="madj-rk">${ordem.map((x, i) => `<button type="button" class="madj-rk-l" style="--c:${COR_SEC[x.sg] || '#64748b'}" onclick="madjSet('sel','${x.sg}')"><span class="madj-rk-n">${x.v ? i + 1 : '—'}</span><span class="madj-ico !w-7 !h-7 !text-[11px]"><i class="fa-solid ${icoSec(x.sg)}"></i></span><span class="min-w-0"><b>${esc(x.sg)}</b><small>${esc(NOME_SEC[x.sg] || '')}</small></span><span class="madj-rk-t"><span style="width:${x.v / max * 100}%"></span></span><b class="tabular-nums">${x.v}</b></button>`).join('')}</div>
+      <p class="nom-nota"><i class="fa-solid fa-hand-pointer"></i>Clique numa adjunta para ver os detalhes e o que precisa de atenção.</p></section>`;
+  }
+  c.innerHTML = `<div class="flex flex-col gap-3">${controles}<div class="madj-grade"><div class="flex flex-col gap-3 min-w-0">${org}${tm}</div><div class="min-w-0">${lado}</div></div></div>`;
+}
+
 /* ========================= Eventos da SEDUC-MT ========================= */
 const SITUACOES_EV = {
   'Planejamento':  { cor: '#2563eb', ico: 'fa-lightbulb' },
@@ -5918,7 +6102,7 @@ function renderPainel() {
   const porTipo = Object.keys(TIPOS).map(k => ({ rot: TIPOS[k].curto, n: recebidos.filter(s => s.tipo === k).length, cor: TIPOS[k].cor, ico: TIPOS[k].ico, acao: `filtro.tipo='${k}';irPara('fila')` })).filter(x => x.n).sort((a, b) => b.n - a.n);
   // municípios
   const contMun = {}; pend.forEach(s => { if (s.municipio) contMun[s.municipio] = (contMun[s.municipio] || 0) + 1; });
-  const topMun = Object.entries(contMun).sort((a, b) => b[1] - a[1]).slice(0, 7).map(([m, n]) => ({ rot: m, n, cor: '#0891b2', ico: 'fa-location-dot', acao: `irPara('mapa')` }));
+  const topMun = Object.entries(contMun).sort((a, b) => b[1] - a[1]).slice(0, 7).map(([m, n]) => ({ rot: m, n, cor: '#0891b2', ico: 'fa-location-dot', acao: `irPara('relatorios');relSet('tema','municipio',false);relSet('municipio',${esc(JSON.stringify(m))})` }));
   // casa civil (funil)
   const cc = sols.filter(s => s.casaCivil);
   const funil = Object.entries(ETAPAS_CC).map(([k, e]) => ({ k, e, n: cc.filter(s => (s.ccEtapa || 'preparo') === k).length }));
@@ -6196,6 +6380,7 @@ const TEMAS_REL = [
   { k: 'correicao', rot: 'Processos de Correição', ico: 'fa-clipboard-check', cor: '#d97706', desc: 'Situação de cada processo' },
   { k: 'chefe', rot: 'Chefe de Gabinete', ico: 'fa-user-tie', cor: '#b45309', desc: 'Processos, documentos para assinatura e SIMEC do Chefe' },
   { k: 'nomeacoes', rot: 'Nomeações e Exonerações', ico: 'fa-id-card', cor: '#1e40af', desc: 'Status, atos e publicações do período' },
+  { k: 'innor', rot: 'IN e NOR', ico: 'fa-people-arrows', cor: '#7c3aed', desc: 'Contratações e nomeações/exonerações juntas, separadas por IN e NOR' },
   { k: 'contratacoes', rot: 'Contratações de pessoal', ico: 'fa-user-plus', cor: '#c2410c', desc: 'Exclusivo do Chefe de Gabinete · status, entrevistas e lotação' },
   { k: 'eventos', rot: 'Eventos', ico: 'fa-calendar-check', cor: '#c026d3', desc: 'Agenda de eventos da SEDUC-MT' },
   { k: 'comunicados', rot: 'Comunicados importantes', ico: 'fa-bullhorn', cor: '#0284c7', desc: 'Mural vigente com o texto completo' },
@@ -6212,7 +6397,7 @@ const ESTILOS_REL = {
 const relEstado = (() => {
   let salvo = {}; try { salvo = JSON.parse(localStorage.getItem('gabdoc_rel') || '{}'); } catch (e) { salvo = {}; }
   return Object.assign({ tema: 'geral', periodo: '90', secretaria: '', municipio: '', estilo: 'azul', orientacao: 'retrato',
-    resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
+    capa: true, resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
     cols: ['numero', 'assunto', 'natureza', 'secretaria', 'status', 'prazo', 'andamento'], ordem: 'prazo', agrupar: '', tituloPers: '', cenario: '' }, salvo, { f: Object.assign(relFiltroPadrao(), salvo.f || {}) });
 })();
 function relFiltroPadrao() { return { nat: [], st: [], tipos: [], secs: [], mun: '', aut: '', prio: '', cc: '', prazo: '', ref: 'recebidoEm', busca: '' }; }
@@ -6245,6 +6430,18 @@ function kpisSol(lista, P) {
   ];
 }
 function graficoStatus(lista) { const ks = Object.keys(STATUS).filter(k => lista.some(s => s.status === k)); return { tipo: 'hbar', titulo: 'Registros por situação', labels: ks.map(k => STATUS[k].rot), series: [{ rot: 'Registros', dados: ks.map(k => lista.filter(s => s.status === k).length), cores: ks.map(k => STATUS[k].cor) }] }; }
+/** Gráfico mensal (últimos 6 meses) pela data de protocolo, com uma série por grupo. */
+function graficoMesesRel(lista, titulo, grupos, n = 6) {
+  const meses = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); meses.push(iso(d).slice(0, 7)); }
+  const nm = m => ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(m.slice(5)) - 1] + '/' + m.slice(2, 4);
+  return { tipo: 'bar', titulo, labels: meses.map(nm), series: grupos.map(([rot, cor, f]) => ({ rot, cor, dados: meses.map(m => lista.filter(x => String(x.protocolo || '').slice(0, 7) === m && f(x)).length) })) };
+}
+/** Tabela-resumo (como "Por secretaria adjunta" do relatório geral): grupo × IN × NOR × total. */
+function tabResumoRel(titulo, rot, lista, grupo, cat) {
+  const m = new Map(); lista.forEach(x => { const g = grupo(x) || 'Não informado'; if (!m.has(g)) m.set(g, []); m.get(g).push(x); });
+  const linhas = [...m.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'pt-BR')).map(([g, l]) => [g, l.filter(x => cat(x) === 'IN').length, l.filter(x => cat(x) === 'NOR').length, l.length]);
+  return { t: 'tabela', titulo, colunas: [{ rot, w: '*' }, { rot: 'IN', w: 'auto', n: 1 }, { rot: 'NOR', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }], linhas, vazio: 'Sem registros no período.' };
+}
 function graficoMeses(lista, n = 6) {
   const meses = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); meses.push(iso(d).slice(0, 7)); }
   const nm = m => ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(m.slice(5)) - 1] + '/' + m.slice(2, 4);
@@ -6481,12 +6678,49 @@ function montarRelatorio() {
       subtitulo = 'Situação em ' + fmt(hojeISO());
       break;
     }
+    case 'innor': {
+      const comContr = podeContratacoes(), comNom = nivelArea('chefe') >= 1;
+      const noPer = x => !P.ini || !x.protocolo || P.dentro(x.protocolo);
+      const reg = [].concat(
+        comContr ? (Store.contratacoes || []).filter(noPer).map(x => ({ origem: 'Contratação', cat: x.tipo, feito: contrFeita(x), x })) : [],
+        comNom ? (Store.nomeacoes || []).filter(noPer).map(x => ({ origem: x.tipo || 'Nomeação', cat: x.categoria, feito: nomFeita(x), x })) : []);
+      subtitulo = [P.rot + ' (data de protocolo)', [comContr ? 'Contratações' : '', comNom ? 'Nomeações e Exonerações' : ''].filter(Boolean).join(' + ')].join(' · ');
+      const origens = (comContr ? ['Contratação'] : []).concat(comNom ? ['Nomeação', 'Exoneração'] : []);
+      const conta = (cat, org) => reg.filter(r => r.cat === cat && (!org || r.origem === org)).length;
+      const nIN = conta('IN'), nNOR = conta('NOR'), sem = reg.filter(r => !r.cat);
+      add(kp([{ rot: 'Registros', val: reg.length, cor: '#475569' }, { rot: 'IN', val: nIN, cor: '#7c3aed' }, { rot: 'NOR', val: nNOR, cor: '#0d9488' },
+        { rot: 'Em aberto', val: reg.filter(r => !r.feito).length, cor: '#2563eb' }, { rot: 'Concluídos / publicados', val: reg.filter(r => r.feito).length, cor: '#16a34a' }]));
+      const maior = origens.map(o => [o, reg.filter(r => r.origem === o).length]).sort((a, b) => b[1] - a[1])[0];
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocolados ${reg.length} registro(s) de ${origens.map(o => o.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' e $1')}: ${nIN} IN (${reg.length ? Math.round(nIN / reg.length * 100) : 0}%) e ${nNOR} NOR (${reg.length ? Math.round(nNOR / reg.length * 100) : 0}%)${sem.length ? `, além de ${sem.length} sem o tipo informado` : ''}. ` +
+        `Estão em aberto ${reg.filter(r => !r.feito).length} e foram concluídos ou publicados ${reg.filter(r => r.feito).length}.` + (maior && maior[1] ? ` A origem com mais registros é ${maior[0].toLowerCase()}, com ${maior[1]}.` : '')] });
+      add(graf(graficoMesesRel(reg.map(r => r.x), 'Protocolados por mês: IN e NOR', [['IN', '#7c3aed', x => (x.categoria || x.tipo) === 'IN'], ['NOR', '#0d9488', x => (x.categoria || x.tipo) === 'NOR']])));
+      add(graf({ tipo: 'bar', titulo: 'IN e NOR por origem', labels: origens, series: [{ rot: 'IN', dados: origens.map(o => conta('IN', o)), cor: '#7c3aed' }, { rot: 'NOR', dados: origens.map(o => conta('NOR', o)), cor: '#0d9488' }] }));
+      add(tab('Resumo por origem', [{ rot: 'Origem', w: '*' }, { rot: 'IN', w: 'auto', n: 1 }, { rot: 'NOR', w: 'auto', n: 1 }, { rot: 'Sem tipo', w: 'auto', n: 1 }, { rot: 'Em aberto', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
+        origens.map(o => { const l = reg.filter(r => r.origem === o); return [o, l.filter(r => r.cat === 'IN').length, l.filter(r => r.cat === 'NOR').length, l.filter(r => !r.cat).length, l.filter(r => !r.feito).length, l.length]; })));
+      add(e.tabela && tabResumoRel('Por lotação', 'Lotação', reg.map(r => r.x), x => x.lotacao, x => (x.categoria || x.tipo)));
+      const col = [{ rot: 'Origem', w: 'auto' }, { rot: 'Nome', w: '*' }, { rot: 'Cargo', w: '*' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const lin = r => [r.origem, r.x.nome || '—', r.x.cargo || '—', r.x.lotacao || '—', r.x.processo || '—', r.x.protocolo ? fmt(r.x.protocolo) : '—', r.x.inicio ? fmt(r.x.inicio) : '—', r.x.status || '—'];
+      const ord = l => l.slice().sort((a, b) => origens.indexOf(a.origem) - origens.indexOf(b.origem) || String(a.x.protocolo || '9999').localeCompare(String(b.x.protocolo || '9999')) || String(a.x.nome || '').localeCompare(String(b.x.nome || ''), 'pt-BR'));
+      add(tab('Registros IN', col, ord(reg.filter(r => r.cat === 'IN')).map(lin), 'Nenhum registro IN no período.'));
+      add(tab('Registros NOR', col, ord(reg.filter(r => r.cat === 'NOR')).map(lin), 'Nenhum registro NOR no período.'));
+      if (sem.length) add(tab('Sem IN/NOR informado', col, ord(sem).map(lin)));
+      break;
+    }
     case 'nomeacoes': {
       const l = (Store.nomeacoes || []).filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
       subtitulo = P.rot + ' (data de protocolo)';
-      add(kp([{ rot: 'Nomeações', val: l.filter(x => x.tipo === 'Nomeação').length, cor: '#2563eb' }, { rot: 'Exonerações', val: l.filter(x => x.tipo === 'Exoneração').length, cor: '#be123c' }, { rot: 'IN', val: l.filter(x => x.categoria === 'IN').length, cor: '#7c3aed' }, { rot: 'NOR', val: l.filter(x => x.categoria === 'NOR').length, cor: '#0d9488' }]
-        .concat(Object.entries(STATUS_NOM).map(([k, [cor]]) => ({ rot: k, val: l.filter(x => x.status === k).length, cor })))));
+      const nN = l.filter(x => x.tipo === 'Nomeação').length, nE = l.filter(x => x.tipo === 'Exoneração').length, ab = l.filter(x => !nomFeita(x));
+      add(kp([{ rot: 'Nomeações', val: nN, cor: '#2563eb' }, { rot: 'Exonerações', val: nE, cor: '#be123c' }, { rot: 'Em andamento', val: l.filter(x => x.status === 'Em andamento').length, cor: corNom('Em andamento')[0] },
+        { rot: 'Aguardando publicação', val: l.filter(x => x.status === 'Aguardando publicação').length, cor: corNom('Aguardando publicação')[0] }, { rot: 'Publicados', val: l.filter(x => x.status === 'Publicado').length, cor: corNom('Publicado')[0] }]));
+      const velho = ab.filter(x => x.protocolo).sort(ordemNom)[0];
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${nN} nomeação(ões) e ${nE} exoneração(ões), sendo ${l.filter(x => x.categoria === 'IN').length} IN e ${l.filter(x => x.categoria === 'NOR').length} NOR. ` +
+        `Foram publicados ${l.filter(x => x.status === 'Publicado').length}, ${l.filter(x => x.status === 'Aguardando publicação').length} aguardam publicação, ${l.filter(x => x.status === 'Em andamento').length} estão em andamento e ${l.filter(x => x.status === 'Não Autorizado').length} não foram autorizados.` +
+        (velho ? ` O registro em aberto há mais tempo é de ${velho.nome}, protocolado há ${diasDesde(velho.protocolo)} dia(s).` : '')] });
+      add(graf(graficoMesesRel(l, 'Protocolados por mês', [['Nomeações', '#2563eb', x => x.tipo === 'Nomeação'], ['Exonerações', '#be123c', x => x.tipo === 'Exoneração']])));
       add(graf({ tipo: 'bar', titulo: 'Por status', labels: Object.keys(STATUS_NOM), series: [{ rot: 'Nomeações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Nomeação' && x.status === k).length), cor: '#2563eb' }, { rot: 'Exonerações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Exoneração' && x.status === k).length), cor: '#be123c' }] }));
+      add(tab('Por tipo (IN ou NOR)', [{ rot: 'Tipo', w: '*' }, { rot: 'Nomeações', w: 'auto', n: 1 }, { rot: 'Exonerações', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
+        [['IN', 'IN'], ['NOR', 'NOR'], ['', 'Sem tipo informado']].map(([k, r]) => [r, l.filter(x => (x.categoria || '') === k && x.tipo === 'Nomeação').length, l.filter(x => (x.categoria || '') === k && x.tipo === 'Exoneração').length, l.filter(x => (x.categoria || '') === k).length]).filter((row, i) => i < 2 || row[3])));
+      add(e.tabela && tabResumoRel('Por lotação', 'Lotação', l, x => x.lotacao, x => x.categoria));
       const col = [{ rot: 'Nome', w: '*' }, { rot: 'IN/NOR', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
       const lin = x => [x.nome, x.categoria || '—', x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.inicio ? fmt(x.inicio) : '—', x.status || '—'];
       const ord = lista => lista.slice().sort((a, b) => (nomFeita(a) - nomFeita(b)) || ordemNom(a, b));
@@ -6498,12 +6732,19 @@ function montarRelatorio() {
     }
     case 'contratacoes': {
       if (!podeContratacoes()) { add({ t: 'texto', titulo: 'Acesso restrito', paragrafos: ['Relatório exclusivo do Chefe de Gabinete.'] }); break; }
-      const todas = Store.contratacoes || [];
-      const l = todas.filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
+      const l = (Store.contratacoes || []).filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
       subtitulo = P.rot + ' (data de protocolo)';
-      add(kp([{ rot: 'Total', val: l.length, cor: '#c2410c' }].concat(Object.entries(STATUS_CONTR).map(([k, [cor]]) => ({ rot: k, val: l.filter(x => x.status === k).length, cor })))));
-      add(graf({ tipo: 'hbar', titulo: 'Contratações por status', labels: Object.keys(STATUS_CONTR), series: [{ rot: 'Pessoas', dados: Object.keys(STATUS_CONTR).map(k => l.filter(x => x.status === k).length), cores: Object.values(STATUS_CONTR).map(v => v[0]) }] }));
-      add(graf({ tipo: 'bar', titulo: 'Por tipo (IN ou NOR)', labels: ['IN', 'NOR', 'Sem tipo'], series: [{ rot: 'Pessoas', dados: [l.filter(x => x.tipo === 'IN').length, l.filter(x => x.tipo === 'NOR').length, l.filter(x => !x.tipo).length], cores: ['#7c3aed', '#0d9488', '#94a3b8'] }] }));
+      const n = st => l.filter(x => x.status === st).length;
+      add(kp([{ rot: 'Total', val: l.length, cor: '#c2410c' }].concat(Object.entries(STATUS_CONTR).map(([k, [cor]]) => ({ rot: k, val: n(k), cor })))));
+      const prox = l.filter(x => x.status === 'Aguardando Entrevista' && x.entrevista && diasAte(x.entrevista) >= 0).sort((a, b) => a.entrevista.localeCompare(b.entrevista))[0];
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${l.length} contratação(ões) de pessoal: ${l.filter(x => x.tipo === 'IN').length} IN e ${l.filter(x => x.tipo === 'NOR').length} NOR. ` +
+        `${n('Concluído')} foram concluídas, ${n('Aguardando Entrevista')} aguardam entrevista, ${n('Em andamento')} estão em andamento e ${n('Não Autorizado')} não foram autorizadas.` +
+        (prox ? ` A próxima entrevista é de ${prox.nome}, em ${fmt(prox.entrevista)}.` : '')] });
+      add(graf(graficoMesesRel(l, 'Protocoladas por mês', [['IN', '#7c3aed', x => x.tipo === 'IN'], ['NOR', '#0d9488', x => x.tipo === 'NOR']])));
+      add(graf({ tipo: 'hbar', titulo: 'Contratações por status', labels: Object.keys(STATUS_CONTR), series: [{ rot: 'Pessoas', dados: Object.keys(STATUS_CONTR).map(k => n(k)), cores: Object.values(STATUS_CONTR).map(v => v[0]) }] }));
+      add(tab('Por tipo (IN ou NOR)', [{ rot: 'Tipo', w: '*' }].concat(Object.keys(STATUS_CONTR).map(k => ({ rot: k, w: 'auto', n: 1 }))).concat([{ rot: 'Total', w: 'auto', n: 1 }]),
+        [['IN', 'IN'], ['NOR', 'NOR'], ['', 'Sem tipo informado']].map(([k, r]) => [r].concat(Object.keys(STATUS_CONTR).map(st => l.filter(x => (x.tipo || '') === k && x.status === st).length)).concat([l.filter(x => (x.tipo || '') === k).length])).filter((row, i) => i < 2 || row[row.length - 1])));
+      add(e.tabela && tabResumoRel('Por lotação', 'Lotação', l, x => x.lotacao, x => x.tipo));
       const col = [{ rot: 'Nome', w: '*' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Cargo pretendido', w: '*' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Entrevista', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Lotação', w: 'auto' }];
       const lin = x => [x.nome, x.tipo || '—', x.cargo || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.entrevista ? fmt(x.entrevista) : '—', x.inicio ? fmt(x.inicio) : '—', x.lotacao || '—'];
       Object.keys(STATUS_CONTR).forEach(k => { const g = l.filter(x => x.status === k).sort(ordemContr); if (g.length) add(tab(k, col, g.map(lin))); });
@@ -6607,7 +6848,7 @@ function montarRelatorio() {
   const agora = new Date();
   const autor = (Store.sessao && Store.sessao.usuario) || (Store.eu && Store.eu.name) || 'Assessoria';
   const modelo = { titulo: tituloRel(), subtitulo, orgao, unidade, autor, emitidoEm: agora, blocos: B, estilo: ESTILOS_REL[e.estilo] || ESTILOS_REL.azul, paisagem: e.orientacao === 'paisagem',
-    assinatura: e.assinatura ? { nome: e.responsavel || autor, cargo: e.cargo || '' } : null };
+    assinatura: e.assinatura ? { nome: e.responsavel || autor, cargo: e.cargo || '' } : null, capa: e.capa !== false };
   modelo.codigo = codigoVerificacao(modelo);
   return modelo;
 }
@@ -6699,7 +6940,16 @@ function previaHTML(m) {
     if (b.t === 'comunicado') return `<div class="rp-com" style="--c:${b.cor}"><b>${esc(b.titulo)}</b><small>${esc(b.meta)}</small><p>${esc(b.texto.slice(0, 260))}${b.texto.length > 260 ? '…' : ''}</p></div>`;
     return '';
   }).join('');
-  return `<div class="rp-folha ${m.paisagem ? 'paisagem' : ''}">
+ const kpC = (m.blocos.find(b => b.t === 'kpis') || { itens: [] }).itens.slice(0, m.paisagem ? 6 : 5);
+  const capa = m.capa ? `<div class="rp-folha rp-capa ${m.paisagem ? 'paisagem' : ''}">
+    <aside class="rp-capa-painel"><div class="rp-capa-selo">${seloSVG(CAPA.navy, 46)}</div><p class="rp-capa-gov">GOVERNO DO ESTADO<br>DE MATO GROSSO</p><i></i><p class="rp-capa-org">${esc(m.orgao)}</p><p class="rp-capa-uni">${esc(m.unidade)}</p>
+      ${kpC.length ? `<p class="rp-capa-rot">INDICADORES-CHAVE</p><div class="rp-capa-kpis">${kpC.map(i => `<div><b>${esc(String(i.val))}</b><span>${esc(i.rot)}</span></div>`).join('')}</div>` : ''}</aside>
+    <div class="rp-capa-area"><span class="rp-capa-tag">USO INTERNO · GABINETE</span>
+      <div class="rp-capa-tit"><p>RELATÓRIO EXECUTIVO</p><h3>${esc(m.titulo)}</h3><i></i><span>${esc(m.subtitulo)}</span><small>REF. <b>${m.codigo}</b></small></div>
+      <div class="rp-capa-info"><span><small>EMITIDO POR</small>${esc(m.autor)}</span><span><small>DATA DE EMISSÃO</small>${fmtHora(m.emitidoEm.toISOString())}</span></div>
+      <div class="rp-capa-barra">GABDoc · Gabinete da Secretária · SEDUC-MT</div></div>
+  </div>` : '';
+  return capa + `<div class="rp-folha ${m.paisagem ? 'paisagem' : ''}">
     <div class="rp-cab" style="border-color:${st.sec}"><div class="rp-selo-mini">${seloSVG(st.pri, 46)}</div><div class="min-w-0 flex-1"><p class="rp-gov">GOVERNO DO ESTADO DE MATO GROSSO</p><p class="rp-org" style="color:${st.pri}">${esc(m.orgao)}</p><p class="rp-uni">${esc(m.unidade)}</p></div><div class="rp-marca" style="color:${st.pri}">GAB<span style="color:${st.sec}">Doc</span></div></div>
     <div class="rp-titulo" style="background:${st.claro};border-color:${st.borda}"><p style="color:${st.sec}">RELATÓRIO</p><h3 style="color:${st.pri}">${esc(m.titulo)}</h3><span>${esc(m.subtitulo)}</span></div>
     ${bl || '<p class="rp-p rp-vazio">Escolha ao menos um conteúdo (resumo, gráficos ou tabelas).</p>'}
@@ -6709,6 +6959,206 @@ function previaHTML(m) {
       ${m.assinatura ? `<div class="rp-ass"><span></span><b>${esc(m.assinatura.nome)}</b><small>${esc(m.assinatura.cargo || '')}</small></div>` : ''}
     </div>
   </div>`;
+}
+
+/* ----- capa do PDF: executiva assimétrica (painel azul-marinho, área branca, detalhes em preto) ----- */
+const CAPA = { navy: '#0b1f3a', preto: '#0a0a0a', branco: '#ffffff', mudo: '#9fb2cc', painelLinha: '#27446d', cinza: '#5b6472', linha: '#d5dbe3', fundo: '#0b1f3a', painel: '#12294a', acento: '#c9d6ea', claro: '#9fb2cc' };
+function capaGeom(m) {
+  const W = m.paisagem ? 842 : 595, H = m.paisagem ? 595 : 842, P = m.paisagem ? 270 : 214;
+  return { W, H, P, x0: P + 38, larg: W - P - 38 - 40, barra: 30,
+    titY: m.paisagem ? 104 : 176, idxY: m.paisagem ? 262 : 436, infoY: H - (m.paisagem ? 128 : 150), kpiY: m.paisagem ? 196 : 300 };
+}
+function capaPDF(m) {
+  const g = capaGeom(m), C = CAPA;
+  const kp = (m.blocos.find(b => b.t === 'kpis') || { itens: [] }).itens.slice(0, m.paisagem ? 5 : 6);
+  const indice = [];
+  m.blocos.forEach(b => { if (b.t === 'tabela') indice.push([b.titulo, `${b.linhas.length} reg.`]); else if (b.t === 'grafico') indice.push([b.titulo, 'gráfico']); else if (b.t === 'texto') indice.push([b.titulo, 'análise']); });
+  const maxInd = m.paisagem ? 5 : 9, ind = indice.slice(0, maxInd);
+  if (indice.length > maxInd) ind.push([`e mais ${indice.length - maxInd} item(ns)`, '']);
+  const pw = g.P - 64;
+  const info = [['EMITIDO POR', m.autor], ['DATA DE EMISSÃO', fmtHora(m.emitidoEm.toISOString())], ['PERÍODO DE REFERÊNCIA', m.subtitulo || '—'], ['CÓDIGO DE VERIFICAÇÃO', m.codigo]];
+  const caixa = (x, y, w, conteudo, layout) => ({ absolutePosition: { x, y }, table: { widths: [w], body: [[conteudo]] }, layout: layout || 'noBorders' });
+  return [
+    // ----- painel azul-marinho -----
+    { svg: seloSVG(C.navy, m.paisagem ? 58 : 62), absolutePosition: { x: 32, y: 40 } },
+    caixa(32, m.paisagem ? 110 : 118, pw, { stack: [
+      { text: 'GOVERNO DO ESTADO\nDE MATO GROSSO', fontSize: 7, bold: true, color: C.mudo, characterSpacing: 1.8, lineHeight: 1.25 },
+      { canvas: [{ type: 'rect', x: 0, y: 0, w: 22, h: 2, color: C.branco }], margin: [0, 8, 0, 8] },
+      { text: m.orgao, fontSize: 10.5, bold: true, color: C.branco, lineHeight: 1.15 },
+      { text: m.unidade, fontSize: 8.5, color: C.mudo, margin: [0, 4, 0, 0] }] }),
+    kp.length ? caixa(32, g.kpiY + (m.paisagem ? 40 : 60), pw, { stack: [
+      { text: 'INDICADORES-CHAVE', fontSize: 6.5, bold: true, color: C.mudo, characterSpacing: 2, margin: [0, 0, 0, 6] },
+      { table: { widths: ['*'], body: kp.map(i => [{ columns: [{ text: String(i.val), width: 'auto', fontSize: m.paisagem ? 20 : 24, bold: true, color: C.branco }, { text: i.rot.toUpperCase(), width: '*', fontSize: 6.5, bold: true, color: C.mudo, characterSpacing: 0.5, margin: [10, m.paisagem ? 6 : 8, 0, 0] }], margin: [0, 5, 0, 5] }]) },
+        layout: { hLineWidth: (k, nd) => (k === nd.table.body.length ? 0 : 0.6), hLineColor: () => C.painelLinha, vLineWidth: () => 0, paddingLeft: () => 0, paddingRight: () => 0 } }] }) : { text: '' },
+    // ----- área branca -----
+    caixa(g.W - 40 - 128, 40, 128, { text: 'USO INTERNO · GABINETE', fontSize: 6.5, bold: true, color: C.preto, characterSpacing: 1.3, alignment: 'center', margin: [0, 4, 0, 4] },
+      { hLineWidth: () => 0.8, vLineWidth: () => 0.8, hLineColor: () => C.preto, vLineColor: () => C.preto }),
+    caixa(g.x0 + 20, g.titY, g.larg - 20, { stack: [
+      { text: 'RELATÓRIO EXECUTIVO', fontSize: 8.5, bold: true, color: C.navy, characterSpacing: 4 },
+      { text: m.titulo, fontSize: m.titulo.length > 26 ? (m.paisagem ? 30 : 27) : (m.paisagem ? 36 : 34), bold: true, color: C.preto, margin: [0, 10, 0, 12], lineHeight: 1.02 },
+      { canvas: [{ type: 'rect', x: 0, y: 0, w: 44, h: 3, color: C.navy }, { type: 'rect', x: 48, y: 0, w: 10, h: 3, color: C.preto }], margin: [0, 0, 0, 12] },
+      { text: m.subtitulo, fontSize: 10.5, color: C.cinza },
+      { text: [{ text: 'REF. ', color: C.cinza }, { text: m.codigo, color: C.preto }], fontSize: 7, bold: true, characterSpacing: 1.2, margin: [0, 8, 0, 0] }] }),
+    ind.length ? caixa(g.x0, g.idxY, g.larg, { stack: [
+      { text: [{ text: '■  ', color: C.navy }, { text: 'ESTRUTURA DO RELATÓRIO', color: C.preto }], fontSize: 7.5, bold: true, characterSpacing: 2.2, margin: [0, 0, 0, 8] },
+      { table: { widths: [24, '*', 'auto'], body: ind.map(([t, n], k) => [{ text: n ? String(k + 1).padStart(2, '0') : '', fontSize: 8.5, bold: true, color: C.navy }, { text: t, fontSize: 9.5, color: C.preto }, { text: n.toUpperCase(), fontSize: 6.5, bold: true, color: C.cinza, characterSpacing: 0.6, alignment: 'right', margin: [0, 2, 0, 0] }]) },
+        layout: { hLineWidth: (k, nd) => (k === 0 ? 1.2 : 0.5), hLineColor: k => (k === 0 ? C.preto : C.linha), vLineWidth: () => 0, paddingTop: () => 5, paddingBottom: () => 5, paddingLeft: () => 0 } }] }) : { text: '' },
+    caixa(g.x0, g.infoY, g.larg, { table: { widths: ['*', '*'], body: [[info[0], info[1]], [info[2], info[3]]].map(l => l.map(([r, v]) => ({ stack: [{ text: r, fontSize: 6, bold: true, color: C.navy, characterSpacing: 1.1 }, { text: v, fontSize: 8.5, bold: true, color: C.preto, margin: [0, 3, 0, 0] }], margin: [0, 6, 10, 6] }))) },
+      layout: { hLineWidth: (k) => (k === 0 ? 1.2 : 0.5), hLineColor: k => (k === 0 ? C.preto : C.linha), vLineWidth: () => 0, paddingLeft: () => 0 } }),
+    { text: '', pageBreak: 'after' }
+  ];
+}
+function fundoCapaPDF(m) {
+  const g = capaGeom(m), C = CAPA;
+  // tudo termina 2 pt antes da borda: se o desenho encostar no fim da página, o pdfmake descarta o fundo inteiro
+  return { canvas: [
+    { type: 'rect', x: 0, y: 0, w: g.P, h: g.H - 2, color: C.navy },
+    { type: 'rect', x: g.P, y: 0, w: 6, h: g.H - 2, color: C.preto },
+    { type: 'line', x1: 32, y1: g.kpiY + (m.paisagem ? 28 : 46), x2: g.P - 32, y2: g.kpiY + (m.paisagem ? 28 : 46), lineWidth: 0.6, lineColor: C.painelLinha },
+    { type: 'rect', x: g.x0, y: g.titY + 2, w: 8, h: 8, color: C.preto },
+    { type: 'rect', x: g.P + 6, y: g.H - g.barra - 2, w: g.W - g.P - 6, h: g.barra, color: C.preto }
+  ] };
+}
+
+/* ----- Excel (ExcelJS) ----- */
+let excelPronto = null;
+function carregarExcelJS() {
+  if (window.ExcelJS) return Promise.resolve();
+  if (excelPronto) return excelPronto;
+  excelPronto = new Promise((ok, erro) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'; s.onload = ok; s.onerror = () => { excelPronto = null; erro(new Error('Não foi possível carregar o gerador de Excel. Verifique a internet.')); }; document.head.appendChild(s); });
+  return excelPronto;
+}
+const argb = h => 'FF' + String(h || '#000000').replace('#', '').slice(0, 6).toUpperCase();
+/** Planilha Excel do relatório: capa + uma aba por tabela + gráficos. */
+async function montarExcel(m) {
+  await carregarExcelJS();
+  const st = m.estilo, wb = new ExcelJS.Workbook();
+  wb.creator = m.autor; wb.created = m.emitidoEm; wb.title = m.titulo; wb.company = m.orgao;
+  const fundo = c => ({ type: 'pattern', pattern: 'solid', fgColor: { argb: argb(c) } });
+  const fina = { style: 'thin', color: { argb: 'FFE2E8F0' } };
+  const usados = new Set();
+  const nomeAba = t => { let b = String(t).replace(/[\\/?*[\]:]/g, ' ').trim().slice(0, 28) || 'Tabela', n = b, i = 2; while (usados.has(n.toLowerCase())) n = b.slice(0, 25) + ' ' + i++; usados.add(n.toLowerCase()); return n; };
+  // ----- capa -----
+  const capa = wb.addWorksheet(nomeAba('Capa'), { views: [{ showGridLines: false }], properties: { tabColor: { argb: argb(CAPA.navy) } }, pageSetup: { orientation: 'landscape', fitToPage: true } });
+  capa.columns = [{ width: 3 }, { width: 30 }, { width: 22 }, { width: 22 }, { width: 22 }, { width: 22 }, { width: 3 }];
+  // painel azul-marinho à esquerda (colunas A–B), filete preto (C), área branca à direita (E–G)
+  capa.columns = [{ width: 2 }, { width: 30 }, { width: 1.2 }, { width: 3 }, { width: 34 }, { width: 22 }, { width: 22 }, { width: 2 }];
+  const NAV = CAPA.navy, BR = 'FFFFFFFF', MUD = argb(CAPA.mudo), PRE = argb(CAPA.preto), CIN = argb(CAPA.cinza), LIN = argb(CAPA.linha), PL = argb(CAPA.painelLinha);
+  const tabelas = m.blocos.filter(b => b.t === 'tabela'), graficos = m.blocos.filter(b => b.t === 'grafico');
+  const kp = (m.blocos.find(b => b.t === 'kpis') || { itens: [] }).itens;
+  const fim = Math.max(30, 14 + kp.length * 2 + 2, 16 + tabelas.length + 10);
+  for (let rr = 1; rr <= fim; rr++) { capa.getCell(rr, 1).fill = fundo(NAV); capa.getCell(rr, 2).fill = fundo(NAV); capa.getCell(rr, 3).fill = fundo(CAPA.preto); }
+  for (let c = 4; c <= 8; c++) capa.getCell(fim, c).fill = fundo(CAPA.preto);
+  const pc = (r, txt, font, h) => { const c = capa.getCell(r, 2); c.value = txt; c.font = Object.assign({ name: 'Calibri', color: { argb: BR } }, font); c.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true }; if (h) capa.getRow(r).height = h; };
+  pc(3, 'GOVERNO DO ESTADO DE MATO GROSSO', { size: 8, bold: true, color: { argb: MUD } }, 16);
+  pc(4, m.orgao, { size: 11, bold: true }, 30);
+  pc(5, m.unidade, { size: 9, color: { argb: MUD } }, 16);
+  let rk = 9;
+  if (kp.length) {
+    pc(rk++, 'INDICADORES-CHAVE', { size: 8, bold: true, color: { argb: MUD } }, 16);
+    kp.forEach(k => {
+      pc(rk, k.val, { size: 20, bold: true }, 26); capa.getCell(rk, 2).border = { top: { style: 'thin', color: { argb: PL } } }; rk++;
+      pc(rk, String(k.rot).toUpperCase(), { size: 8, bold: true, color: { argb: MUD } }, 14); rk++;
+    });
+  }
+  const ac = (r, txt, font, h, al) => { capa.mergeCells(r, 5, r, 7); const c = capa.getCell(r, 5); c.value = txt; c.font = Object.assign({ name: 'Calibri', color: { argb: PRE } }, font); c.alignment = al || { vertical: 'middle', wrapText: true }; if (h) capa.getRow(r).height = h; };
+  const tag = capa.getCell(2, 7); tag.value = 'USO INTERNO · GABINETE'; tag.font = { size: 8, bold: true, color: { argb: PRE } }; tag.alignment = { horizontal: 'center' };
+  tag.border = { top: { style: 'thin', color: { argb: PRE } }, bottom: { style: 'thin', color: { argb: PRE } }, left: { style: 'thin', color: { argb: PRE } }, right: { style: 'thin', color: { argb: PRE } } };
+  ac(5, '■  RELATÓRIO EXECUTIVO', { size: 9, bold: true, color: { argb: argb(NAV) } }, 18);
+  ac(6, m.titulo, { size: 26, bold: true }, 40);
+  for (let c = 5; c <= 5; c++) capa.getCell(7, c).border = { top: { style: 'thick', color: { argb: argb(NAV) } } };
+  capa.getRow(7).height = 6;
+  ac(8, m.subtitulo, { size: 11, color: { argb: CIN } }, 20);
+  ac(9, 'REF. ' + m.codigo, { size: 8, bold: true, color: { argb: CIN } }, 14);
+  let r = 12;
+  ac(r, '■  ESTRUTURA DO RELATÓRIO', { size: 9, bold: true }, 18);
+  for (let c = 5; c <= 7; c++) capa.getCell(r, c).border = { bottom: { style: 'medium', color: { argb: PRE } } };
+  r++;
+  const abasTab = tabelas.map(b => nomeAba(b.titulo));
+  abasTab.forEach((n, i) => {
+    const c = capa.getCell(r, 5); c.value = String(i + 1).padStart(2, '0') + '   ' + tabelas[i].titulo; c.font = { size: 10, color: { argb: PRE } };
+    const q = capa.getCell(r, 7); q.value = `${tabelas[i].linhas.length} REGISTRO(S)`; q.font = { size: 8, bold: true, color: { argb: CIN } }; q.alignment = { horizontal: 'right' };
+    for (let cc = 5; cc <= 7; cc++) capa.getCell(r, cc).border = { bottom: { style: 'thin', color: { argb: LIN } } };
+    r++;
+  });
+  if (graficos.length) { const c = capa.getCell(r, 5); c.value = String(abasTab.length + 1).padStart(2, '0') + '   Gráficos'; c.font = { size: 10, color: { argb: PRE } }; r++; }
+  r = Math.max(r + 2, fim - 5);
+  for (let c = 5; c <= 7; c++) capa.getCell(r, c).border = { top: { style: 'medium', color: { argb: PRE } } };
+  [['EMITIDO POR', m.autor], ['DATA DE EMISSÃO', fmtHora(m.emitidoEm.toISOString())], ['CÓDIGO DE VERIFICAÇÃO', m.codigo]].forEach(([a, b]) => {
+    const l = capa.getCell(r, 5); l.value = a; l.font = { size: 8, bold: true, color: { argb: argb(NAV) } };
+    capa.mergeCells(r, 6, r, 7); const v = capa.getCell(r, 6); v.value = b; v.font = { size: 10, bold: true, color: { argb: PRE } }; capa.getRow(r).height = 18; r++;
+  });
+  // ----- uma aba por tabela -----
+  tabelas.forEach((b, i) => {
+    const ws = wb.addWorksheet(abasTab[i], { views: [{ state: 'frozen', ySplit: 4, showGridLines: false }], properties: { tabColor: { argb: argb(st.sec) } }, pageSetup: { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+    const nc = Math.max(1, b.colunas.length);
+    ws.mergeCells(1, 1, 1, nc); ws.getCell(1, 1).value = b.titulo; ws.getCell(1, 1).font = { size: 15, bold: true, color: { argb: argb(st.pri) } }; ws.getRow(1).height = 24;
+    ws.mergeCells(2, 1, 2, nc); ws.getCell(2, 1).value = `${m.titulo} · ${m.subtitulo} · ${b.linhas.length} registro(s)`; ws.getCell(2, 1).font = { size: 9, color: { argb: 'FF64748B' } };
+    const cab = ws.getRow(4);
+    b.colunas.forEach((c, j) => { const cel = cab.getCell(j + 1); cel.value = c.rot; cel.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 }; cel.fill = fundo(st.pri); cel.alignment = { vertical: 'middle', wrapText: true }; cel.border = { bottom: { style: 'medium', color: { argb: argb(st.sec) } } }; });
+    cab.height = 22;
+    b.linhas.forEach((linha, k) => {
+      const row = ws.getRow(5 + k);
+      linha.forEach((v, j) => {
+        const cel = row.getCell(j + 1), txt = v == null ? '' : String(v);
+        const data = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(txt);
+        cel.value = data ? new Date(Date.UTC(+data[3], +data[2] - 1, +data[1], 12)) : (/^-?\d+([.,]\d+)?$/.test(txt) && b.colunas[j] && b.colunas[j].n ? Number(txt.replace(',', '.')) : txt);
+        if (data) cel.numFmt = 'dd/mm/yyyy';
+        cel.alignment = { vertical: 'top', wrapText: true }; cel.font = { size: 10, color: { argb: 'FF0F172A' } };
+        cel.border = { bottom: fina }; if (k % 2) cel.fill = fundo('#F8FAFC');
+      });
+    });
+    if (!b.linhas.length) { ws.mergeCells(5, 1, 5, nc); ws.getCell(5, 1).value = b.vazio || 'Nenhum registro.'; ws.getCell(5, 1).font = { italic: true, color: { argb: 'FF64748B' } }; }
+    else ws.autoFilter = { from: { row: 4, column: 1 }, to: { row: 4 + b.linhas.length, column: nc } };
+    b.colunas.forEach((c, j) => { const maior = Math.max(String(c.rot).length, ...b.linhas.slice(0, 300).map(l => String(l[j] ?? '').length)); ws.getColumn(j + 1).width = Math.max(10, Math.min(c.w === '*' ? 60 : 38, maior + 3)); });
+  });
+  // ----- gráficos como imagem -----
+  if (graficos.length) {
+    const ws = wb.addWorksheet(nomeAba('Gráficos'), { views: [{ showGridLines: false }], properties: { tabColor: { argb: argb('#64748b') } } });
+    let lin = 1;
+    graficos.forEach(g => {
+      const img = graficoImagem(g, 900, 380); if (!img) return;
+      ws.getCell(lin, 1).value = g.titulo; ws.getCell(lin, 1).font = { size: 13, bold: true, color: { argb: argb(st.pri) } };
+      const id = wb.addImage({ base64: img, extension: 'png' });
+      ws.addImage(id, { tl: { col: 0, row: lin }, ext: { width: 720, height: 304 } });
+      lin += 18;
+    });
+  }
+  const buf = await wb.xlsx.writeBuffer();
+  return new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+async function salvarArquivo(blob, nome, msg, icone) {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) {
+    try { await dl.save({ filename: nome, data: blob }); toast(msg, icone); }
+    catch (e) { if (e && e.code !== 'declined') toast('Não foi possível salvar: ' + (e.message || e.code), 'fa-triangle-exclamation'); }
+    return;
+  }
+  if (NO_CLAUDE) { toast('Download indisponível nesta visualização.', 'fa-circle-info'); return; }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+  toast(msg, icone);
+}
+async function gerarExcel(btn) {
+  const m = montarRelatorio();
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Gerando…'; }
+  try {
+    const blob = await montarExcel(m);
+    window.__ultimoXlsx = { blob, nome: nomeArquivoRel(m).replace(/\.pdf$/, '.xlsx'), m };
+    await salvarArquivo(blob, nomeArquivoRel(m).replace(/\.pdf$/, '.xlsx'), `Planilha Excel gerada · código ${m.codigo}`, 'fa-file-excel');
+  } catch (e) { toast(e.message || 'Não foi possível gerar o Excel.', 'fa-triangle-exclamation'); }
+  finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+/** Relatório pronto (com capa) direto das seções Contratações e Nomeações e Exonerações. */
+async function relatorioSecao(tema, formato, btn) {
+  const antes = JSON.parse(JSON.stringify(relEstado));
+  // mesmo formato do relatório geral: usa a orientação, o estilo, a assinatura e as observações escolhidos em Relatórios
+  Object.assign(relEstado, { tema, periodo: 'tudo', capa: true, resumo: true, graficos: true, tabela: true, anexoEventos: false, anexoComunicados: false, anexoMapa: false });
+  try { if (formato === 'xlsx') await gerarExcel(btn); else await gerarPDF('baixar', btn); }
+  finally { Object.keys(relEstado).forEach(k => delete relEstado[k]); Object.assign(relEstado, antes); }
 }
 
 /* ----- PDF (pdfmake) ----- */
@@ -6722,7 +7172,7 @@ function carregarPdfMake() {
 }
 function definicaoPDF(m) {
   const st = m.estilo, larg = m.paisagem ? 762 : 515;
-  const conteudo = [];
+  const conteudo = m.capa ? capaPDF(m) : [];
   conteudo.push({ table: { widths: ['*'], body: [[{ stack: [
     { text: 'RELATÓRIO', fontSize: 8, bold: true, color: st.sec, characterSpacing: 2 },
     { text: m.titulo, fontSize: 18, bold: true, color: st.pri, margin: [0, 2, 0, 2] },
@@ -6798,7 +7248,8 @@ function definicaoPDF(m) {
     pageSize: 'A4', pageOrientation: m.paisagem ? 'landscape' : 'portrait', pageMargins: [40, 88, 40, 52],
     info: { title: `${m.titulo} · GABDoc`, author: m.autor, subject: m.subtitulo, creator: 'GABDoc', producer: 'GABDoc · SEDUC-MT', keywords: m.codigo },
     defaultStyle: { font: 'Roboto', fontSize: 9 },
-    header: (pag) => ({ margin: [40, 22, 40, 0], stack: [{ columns: [
+    background: (pag) => (m.capa && pag === 1 ? fundoCapaPDF(m) : null),
+    header: (pag) => (m.capa && pag === 1 ? null : { margin: [40, 22, 40, 0], stack: [{ columns: [
       { svg: seloSVG(st.pri, 46), width: 46 },
       { width: '*', margin: [10, 4, 0, 0], stack: [
         { text: 'GOVERNO DO ESTADO DE MATO GROSSO', fontSize: 7, bold: true, color: '#64748b', characterSpacing: 1 },
@@ -6806,7 +7257,7 @@ function definicaoPDF(m) {
         { text: m.unidade, fontSize: 8, color: '#475569' }] },
       { width: 'auto', margin: [0, 10, 0, 0], text: [{ text: 'GAB', color: st.pri }, { text: 'Doc', color: st.sec }], fontSize: 16, bold: true }] },
       { canvas: [{ type: 'line', x1: 0, y1: 8, x2: larg, y2: 8, lineWidth: 2, lineColor: st.sec }] }] }),
-    footer: (pag, total) => ({ margin: [40, 14, 40, 0], columns: [
+    footer: (pag, total) => (m.capa && pag === 1 ? { columns: [{ width: 'auto', text: 'GABDoc · Gabinete da Secretária · SEDUC-MT', fontSize: 6.5, bold: true, color: '#ffffff', characterSpacing: 0.6 }, { width: '*', text: 'USO INTERNO', fontSize: 6.5, bold: true, color: CAPA.mudo, characterSpacing: 1.4, alignment: 'right' }], margin: [capaGeom(m).x0, 27, 40, 0] } : { margin: [40, 14, 40, 0], columns: [
       { text: `${m.titulo} · ${m.subtitulo}`, fontSize: 7, color: '#64748b' },
       { text: `Código ${m.codigo}`, fontSize: 7, color: '#64748b', alignment: 'center' },
       { text: `Página ${pag} de ${total}`, fontSize: 7, color: '#64748b', alignment: 'right' }] }),
@@ -6846,9 +7297,9 @@ function renderRelatorios() {
   destruirGraficos();
   if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
   const e = relEstado;
-  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); const a = { nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
+  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); if (t.k === 'innor') return podeContratacoes() || nivelArea('chefe') >= 1; const a = { nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
   if (!temas.some(t => t.k === e.tema)) e.tema = (temas[0] || TEMAS_REL[0]).k;
-  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe', 'contratacoes', 'nomeacoes'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
+  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe', 'contratacoes', 'nomeacoes', 'innor'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
   const ehSol = SOL_TEMAS_REL.includes(e.tema), pers = e.tema === 'personalizado', f = e.f;
   const chipF = (k, v, rot, ico, cor) => `<button type="button" class="rel-fchip ${f[k].includes(v) ? 'ativo' : ''}" ${cor ? `style="--c:${cor}"` : ''} aria-pressed="${f[k].includes(v)}" onclick="relAlternar('${k}','${esc(v)}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${esc(rot)}</button>`;
   const selF = (k, lista, rot) => `<label class="block"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="relFiltro('${k}',this.value)">${lista.map(([v, r]) => `<option value="${esc(v)}" ${String(f[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`;
@@ -6907,7 +7358,7 @@ function renderRelatorios() {
         ${(() => { const ax = anexosPermitidos(); const itens = [ax.eventos && e.tema !== 'eventos' ? chk('anexoEventos', 'Eventos', 'fa-calendar-check') : '', ax.comunicados && e.tema !== 'comunicados' ? chk('anexoComunicados', 'Comunicados importantes', 'fa-bullhorn') : '', ax.mapa ? chk('anexoMapa', 'Mapa de MT', 'fa-map-location-dot') : ''].filter(Boolean);
           return itens.length ? `<div><span class="rotulo">Incluir também no relatório</span><div class="flex flex-wrap gap-2">${itens.join('')}</div>
             ${e.anexoMapa && ax.mapa ? `<label class="block mt-2 max-w-xs"><span class="rotulo">O que o mapa mostra</span><select class="campo w-full" onchange="relSet('mapaMetrica',this.value)">${opc('mapaMetrica', Object.entries(METRICAS_MAPA).map(([k, v]) => [k, v[0]]))}</select></label>` : ''}</div>` : ''; })()}
-        <div><span class="rotulo">Conteúdo do tema</span><div class="flex flex-wrap gap-2">${chk('resumo', 'Resumo em números', 'fa-hashtag')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabela', 'Tabelas detalhadas', 'fa-table')}${chk('assinatura', 'Campo de assinatura', 'fa-signature')}</div></div>
+        <div><span class="rotulo">Conteúdo do tema</span><div class="flex flex-wrap gap-2">${chk('capa', 'Capa', 'fa-book-open')}${chk('resumo', 'Resumo em números', 'fa-hashtag')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabela', 'Tabelas detalhadas', 'fa-table')}${chk('assinatura', 'Campo de assinatura', 'fa-signature')}</div></div>
       </div>
       <div class="dv-card space-y-3">
         <p class="rel-passo"><span>3</span>Aparência e assinatura</p>
@@ -6921,6 +7372,7 @@ function renderRelatorios() {
       <div class="rel-acoes">
         <button class="btn btn-pri !h-11 !px-5" onclick="gerarPDF('baixar', this)"><i class="fa-solid fa-file-pdf"></i>Gerar PDF</button>
         <button class="btn btn-sec !h-11" onclick="gerarPDF('imprimir', this)"><i class="fa-solid fa-print"></i>Imprimir</button>
+        <button class="btn btn-sec !h-11" onclick="gerarExcel(this)"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i>Excel</button>
         <button class="btn btn-sec !h-11" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i>Planilha CSV</button>
         ${Store.modo === 'nuvem' && (Store.sol.some(s => s.exemplo) || Store.agenda.some(x => x.exemplo)) ? `<button class="btn btn-perigo !h-11" onclick="removerExemplos(this)"><i class="fa-solid fa-trash"></i>Remover exemplos</button>` : ''}
       </div>
@@ -7240,7 +7692,7 @@ ${persEd.sub === 'nomes' ? `
 const AREAS_PERFIL = [
   ['semana', 'Minha semana', 'fa-calendar-week', '#10b981', 'Resumo da semana, prazos e agenda'],
   ['painel', 'Painel', 'fa-chart-column', '#3b82f6', 'Gráficos e cruzamentos'],
-  ['mapa', 'Mapa de MT', 'fa-map-location-dot', '#0891b2', 'Demandas por município'],
+  ['mapa', 'Mapa das Adjuntas', 'fa-sitemap', '#0891b2', 'Demandas por secretaria adjunta'],
   ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos e seções por tipo'],
   ['casacivil', 'Casa Civil', 'fa-landmark', '#7c3aed', 'Trilha e etapas da Casa Civil'],
   ['correicao', 'Processos de Correição', 'fa-clipboard-check', '#d97706', 'Planilha da Correição'],
