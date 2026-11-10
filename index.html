@@ -245,6 +245,27 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .rel-sec-bts button { display: inline-flex; align-items: center; gap: 6px; height: 100%; padding: 0 12px; font-size: 12.5px; font-weight: 800; color: #fff; border-left: 1px solid rgba(255,255,255,.15); transition: background .15s; }
   .rel-sec-bts button:hover { background: rgba(255,255,255,.14); }
   .rel-sec-bts button:disabled { opacity: .6; }
+  /* Configurador do relatório */
+  .modal.modal-xl { max-width: min(1280px, 96vw); height: 92vh; max-height: 92vh; overflow: hidden; }
+  .rcfg-cab { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .rcfg-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: #0b1f3a; }
+  .rcfg { flex: 1; min-height: 0; display: grid; grid-template-columns: 360px minmax(0, 1fr); }
+  @media (max-width: 900px) { .rcfg { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); overflow-y: auto; } .rcfg-op { max-height: none !important; border-right: 0 !important; border-bottom: 1px solid var(--line); } .rcfg-prev { min-height: 70vh; } }
+  .rcfg-op { overflow-y: auto; padding: 14px 16px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+  .rcfg-bl { padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); }
+  .rcfg-bl h4 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+  .rcfg-bl h4 span { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; color: #fff; background: #0b1f3a; }
+  .rcfg-prev { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--card2); }
+  .rcfg-abas { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .rcfg-abas button { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 10px; font-size: 12.5px; font-weight: 800; color: var(--ink3); border: 1px solid transparent; }
+  .rcfg-abas button.ativo { color: var(--ink); background: var(--card); border-color: var(--line); box-shadow: var(--sombra); }
+  .rcfg-info { margin-left: auto; font-size: 11.5px; color: var(--ink3); }
+  .rcfg-palco { flex: 1; min-height: 0; overflow: auto; padding: 16px; }
+  .rcfg-folhas { max-width: 720px; margin: 0 auto; }
+  .rcfg-pdf { width: 100%; height: 100%; min-height: 60vh; border: 0; border-radius: 10px; background: #fff; }
+  .rcfg-palco:has(.rcfg-pdf) { padding: 0; overflow: hidden; }
+  .rcfg-carregando { height: 100%; min-height: 240px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--ink3); font-size: 13px; }
+  .rel-sec-sub { font-size: 10.5px; font-weight: 700; opacity: .7; margin-left: 4px; }
   /* Mapa das Adjuntas */
   .madj-grade { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 12px; align-items: start; }
   @media (max-width: 1180px) { .madj-grade { grid-template-columns: minmax(0, 1fr); } }
@@ -1651,7 +1672,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <p class="text-orange-100/70 text-xs mt-0.5 hidden sm:block">Contratação de pessoal: protocolo, entrevista, status e lotação. Somente o perfil Chefe de Gabinete vê, edita e gera relatórios desta seção; nenhum outro perfil recebe estes dados, nem o Administrador.</p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <div class="rel-sec-bts" role="group" aria-label="Relatório"><span><i class="fa-solid fa-file-lines"></i>Relatório</span><button type="button" onclick="relatorioSecao('contratacoes','pdf',this)" title="PDF com capa"><i class="fa-solid fa-file-pdf"></i>PDF</button><button type="button" onclick="relatorioSecao('contratacoes','xlsx',this)" title="Planilha Excel com capa"><i class="fa-solid fa-file-excel"></i>Excel</button></div>
+            <div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('contratacoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div>
             <button onclick="abrirFormContratacao()" class="btn bg-orange-700 hover:bg-orange-600 text-white" id="btn-nova-contr"><i class="fa-solid fa-plus"></i>Nova contratação</button>
           </div>
         </div>
@@ -1666,7 +1687,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Acompanhamento de nomeações e exonerações do Chefe de Gabinete: protocolo, publicação no Diário Oficial, data de início e status.</p>
           </div>
           <div class="flex flex-wrap gap-2">
-          <div class="rel-sec-bts" role="group" aria-label="Relatório"><span><i class="fa-solid fa-file-lines"></i>Relatório</span><button type="button" onclick="relatorioSecao('nomeacoes','pdf',this)" title="PDF com capa"><i class="fa-solid fa-file-pdf"></i>PDF</button><button type="button" onclick="relatorioSecao('nomeacoes','xlsx',this)" title="Planilha Excel com capa"><i class="fa-solid fa-file-excel"></i>Excel</button></div>
+          <div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('nomeacoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div>
           <div class="flex gap-2" data-requer="chefe:2">
             <button onclick="abrirFormNomeacao(null,{tipo:'Nomeação'})" class="btn bg-blue-600 hover:bg-blue-500 text-white"><i class="fa-solid fa-user-check"></i>Nova nomeação</button>
             <button onclick="abrirFormNomeacao(null,{tipo:'Exoneração'})" class="btn bg-rose-700 hover:bg-rose-600 text-white"><i class="fa-solid fa-user-xmark"></i>Nova exoneração</button>
@@ -6397,7 +6418,7 @@ const ESTILOS_REL = {
 const relEstado = (() => {
   let salvo = {}; try { salvo = JSON.parse(localStorage.getItem('gabdoc_rel') || '{}'); } catch (e) { salvo = {}; }
   return Object.assign({ tema: 'geral', periodo: '90', secretaria: '', municipio: '', estilo: 'azul', orientacao: 'retrato',
-    capa: true, resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
+    capa: true, sintese: true, tabResumo: true, listas: true, obsTab: true, tituloDoc: '', fsec: {}, resumo: true, graficos: true, tabela: true, assinatura: true, obs: '', responsavel: '', cargo: '', anexoEventos: false, anexoComunicados: false, anexoMapa: false, mapaMetrica: 'pendentes',
     cols: ['numero', 'assunto', 'natureza', 'secretaria', 'status', 'prazo', 'andamento'], ordem: 'prazo', agrupar: '', tituloPers: '', cenario: '' }, salvo, { f: Object.assign(relFiltroPadrao(), salvo.f || {}) });
 })();
 function relFiltroPadrao() { return { nat: [], st: [], tipos: [], secs: [], mun: '', aut: '', prio: '', cc: '', prazo: '', ref: 'recebidoEm', busca: '' }; }
@@ -6571,6 +6592,7 @@ function relCenario(k) {
 }
 function relLimparFiltros() { relEstado.f = relFiltroPadrao(); relEstado.cenario = ''; guardarRel(); renderRelatorios(); }
 function tituloRel() {
+  if (relEstado.tituloDoc && String(relEstado.tituloDoc).trim()) return String(relEstado.tituloDoc).trim();
   if (relEstado.tema !== 'personalizado') return nomeTema(relEstado.tema);
   if (relEstado.tituloPers.trim()) return relEstado.tituloPers.trim();
   const c = CENARIOS_REL.find(x => x.k === relEstado.cenario);
@@ -6679,13 +6701,14 @@ function montarRelatorio() {
       break;
     }
     case 'innor': {
-      const comContr = podeContratacoes(), comNom = nivelArea('chefe') >= 1;
+      const fs = e.fsec || {};
+      const comContr = podeContratacoes() && (!fs.orig || fs.orig === 'Contratação'), comNom = nivelArea('chefe') >= 1 && fs.orig !== 'Contratação';
       const noPer = x => !P.ini || !x.protocolo || P.dentro(x.protocolo);
       const reg = [].concat(
         comContr ? (Store.contratacoes || []).filter(noPer).map(x => ({ origem: 'Contratação', cat: x.tipo, feito: contrFeita(x), x })) : [],
-        comNom ? (Store.nomeacoes || []).filter(noPer).map(x => ({ origem: x.tipo || 'Nomeação', cat: x.categoria, feito: nomFeita(x), x })) : []);
+        comNom ? (Store.nomeacoes || []).filter(noPer).filter(x => !fs.orig || x.tipo === fs.orig).map(x => ({ origem: x.tipo || 'Nomeação', cat: x.categoria, feito: nomFeita(x), x })) : []);
       subtitulo = [P.rot + ' (data de protocolo)', [comContr ? 'Contratações' : '', comNom ? 'Nomeações e Exonerações' : ''].filter(Boolean).join(' + ')].join(' · ');
-      const origens = (comContr ? ['Contratação'] : []).concat(comNom ? ['Nomeação', 'Exoneração'] : []);
+      const origens = (comContr ? ['Contratação'] : []).concat(comNom ? ['Nomeação', 'Exoneração'].filter(o => !fs.orig || o === fs.orig) : []);
       const conta = (cat, org) => reg.filter(r => r.cat === cat && (!org || r.origem === org)).length;
       const nIN = conta('IN'), nNOR = conta('NOR'), sem = reg.filter(r => !r.cat);
       add(kp([{ rot: 'Registros', val: reg.length, cor: '#475569' }, { rot: 'IN', val: nIN, cor: '#7c3aed' }, { rot: 'NOR', val: nNOR, cor: '#0d9488' },
@@ -6707,8 +6730,9 @@ function montarRelatorio() {
       break;
     }
     case 'nomeacoes': {
-      const l = (Store.nomeacoes || []).filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
-      subtitulo = P.rot + ' (data de protocolo)';
+      const fs = e.fsec || {};
+      const l = (Store.nomeacoes || []).filter(x => (!P.ini || !x.protocolo || P.dentro(x.protocolo)) && (!fs.tipo || x.tipo === fs.tipo) && (!fs.cat || x.categoria === fs.cat) && (!fs.st || x.status === fs.st));
+      subtitulo = [P.rot + ' (data de protocolo)', fs.tipo, fs.cat, fs.st].filter(Boolean).join(' · ');
       const nN = l.filter(x => x.tipo === 'Nomeação').length, nE = l.filter(x => x.tipo === 'Exoneração').length, ab = l.filter(x => !nomFeita(x));
       add(kp([{ rot: 'Nomeações', val: nN, cor: '#2563eb' }, { rot: 'Exonerações', val: nE, cor: '#be123c' }, { rot: 'Em andamento', val: l.filter(x => x.status === 'Em andamento').length, cor: corNom('Em andamento')[0] },
         { rot: 'Aguardando publicação', val: l.filter(x => x.status === 'Aguardando publicação').length, cor: corNom('Aguardando publicação')[0] }, { rot: 'Publicados', val: l.filter(x => x.status === 'Publicado').length, cor: corNom('Publicado')[0] }]));
@@ -6732,8 +6756,9 @@ function montarRelatorio() {
     }
     case 'contratacoes': {
       if (!podeContratacoes()) { add({ t: 'texto', titulo: 'Acesso restrito', paragrafos: ['Relatório exclusivo do Chefe de Gabinete.'] }); break; }
-      const l = (Store.contratacoes || []).filter(x => !P.ini || !x.protocolo || P.dentro(x.protocolo));
-      subtitulo = P.rot + ' (data de protocolo)';
+      const fs = e.fsec || {};
+      const l = (Store.contratacoes || []).filter(x => (!P.ini || !x.protocolo || P.dentro(x.protocolo)) && (!fs.cat || x.tipo === fs.cat) && (!fs.st || x.status === fs.st));
+      subtitulo = [P.rot + ' (data de protocolo)', fs.cat, fs.st].filter(Boolean).join(' · ');
       const n = st => l.filter(x => x.status === st).length;
       add(kp([{ rot: 'Total', val: l.length, cor: '#c2410c' }].concat(Object.entries(STATUS_CONTR).map(([k, [cor]]) => ({ rot: k, val: n(k), cor })))));
       const prox = l.filter(x => x.status === 'Aguardando Entrevista' && x.entrevista && diasAte(x.entrevista) >= 0).sort((a, b) => a.entrevista.localeCompare(b.entrevista))[0];
@@ -6842,7 +6867,13 @@ function montarRelatorio() {
     if (!l.length) add({ t: 'texto', titulo: 'Comunicados vigentes', paragrafos: ['Nenhum comunicado vigente.'] });
     l.forEach(x => add({ t: 'comunicado', titulo: x.titulo, meta: [rotCat(x.categoria), rotPri(x.prioridade), x.secretaria, 'Publicado em ' + fmt(x.publicadoEm), x.validoAte ? 'válido até ' + fmt(x.validoAte) : 'sem validade'].filter(Boolean).join(' · '), texto: x.conteudo || '', ref: x.referencia || '', cor: (PRIORIDADES_COM[x.prioridade] || PRIORIDADES_COM.Normal).cor }));
   }
-  if (e.obs.trim()) add({ t: 'texto', titulo: 'Observações', paragrafos: e.obs.trim().split(/\n{2,}/) });
+  if (e.obs.trim()) add({ t: 'texto', titulo: 'Observações', paragrafos: e.obs.trim().split(/\n{2,}/), grupo: 'obsLivre' });
+  // partes que o usuário pode ligar e desligar (configurador do relatório)
+  const RESUMOS = ['Por tipo (IN ou NOR)', 'Resumo por origem', 'Por lotação', 'Por secretaria adjunta', 'Por tipo de documento', 'Casa Civil por etapa'];
+  for (let k = B.length - 1; k >= 0; k--) {
+    const b = B[k], g = b.grupo || (b.t === 'tabela' ? (RESUMOS.includes(b.titulo) ? 'resumo' : b.titulo === 'Observações' ? 'obs' : 'lista') : b.t === 'texto' && b.titulo === 'Síntese' ? 'sintese' : '');
+    if ((g === 'sintese' && e.sintese === false) || (g === 'resumo' && e.tabResumo === false) || (g === 'lista' && e.listas === false) || (g === 'obs' && e.obsTab === false)) B.splice(k, 1);
+  }
   const orgao = (Store.config && Store.config.orgao) || 'Secretaria de Estado de Educação de Mato Grosso';
   const unidade = (Store.config && Store.config.unidade) || 'Gabinete da Secretária · Assessoria';
   const agora = new Date();
@@ -7152,6 +7183,94 @@ async function gerarExcel(btn) {
   } catch (e) { toast(e.message || 'Não foi possível gerar o Excel.', 'fa-triangle-exclamation'); }
   finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
 }
+/* ----- Configurador do relatório: opções + prévia antes de gerar ----- */
+const RCFG_TEMAS = {
+  contratacoes: { filtros: [['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_CONTR).map(k => [k, k]))]] },
+  nomeacoes: { filtros: [['tipo', 'Registros', [['', 'Nomeações e exonerações'], ['Nomeação', 'Só nomeações'], ['Exoneração', 'Só exonerações']]], ['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_NOM).map(k => [k, k]))]] },
+  innor: { filtros: [['orig', 'Origem', [['', 'Todas as origens'], ['Contratação', 'Contratações'], ['Nomeação', 'Nomeações'], ['Exoneração', 'Exonerações']]]] }
+};
+let rcfg = null, rcfgPdfUrl = null, rcfgTimer = null;
+/** Executa fn com o estado do relatório trocado por cfg e devolve o estado original no fim. */
+async function comEstadoRel(cfg, fn) {
+  const antes = JSON.parse(JSON.stringify(relEstado));
+  Object.assign(relEstado, JSON.parse(JSON.stringify(cfg)), { anexoEventos: false, anexoComunicados: false, anexoMapa: false });
+  try { return await fn(); } finally { Object.keys(relEstado).forEach(k => delete relEstado[k]); Object.assign(relEstado, antes); }
+}
+function rcfgSalvar() { try { localStorage.setItem('gabdoc_rcfg_' + rcfg.tema, JSON.stringify(rcfg)); } catch (e) {} }
+function abrirConfigRelatorio(tema) {
+  if (tema === 'contratacoes' && !podeContratacoes()) return;
+  let salvo = {}; try { salvo = JSON.parse(localStorage.getItem('gabdoc_rcfg_' + tema) || '{}'); } catch (e) {}
+  const base = relEstado;
+  rcfg = Object.assign({ tema, periodo: 'tudo', orientacao: base.orientacao || 'retrato', estilo: base.estilo || 'azul', capa: true, resumo: true, sintese: true, graficos: true, tabela: true, tabResumo: true, listas: true, obsTab: true,
+    assinatura: base.assinatura !== false, responsavel: base.responsavel || '', cargo: base.cargo || '', obs: '', tituloDoc: '', fsec: {}, vista: 'rapida' }, salvo, { tema });
+  rcfg.fsec = rcfg.fsec || {};
+  abrirModal(`
+    <div class="rcfg-cab"><span class="rcfg-ico"><i class="fa-solid fa-sliders"></i></span><div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink3">Configurar relatório</p><h3 class="text-[18px] font-black text-ink leading-tight">${esc(nomeTema(tema))}</h3></div>
+      <button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button></div>
+    <div class="rcfg"><div class="rcfg-op scrollbar-thin" id="rcfg-op"></div><div class="rcfg-prev"><div class="rcfg-abas" role="tablist">
+        <button type="button" data-v="rapida" onclick="rcfgVista('rapida')"><i class="fa-solid fa-eye"></i>Prévia rápida</button>
+        <button type="button" data-v="pdf" onclick="rcfgVista('pdf')"><i class="fa-solid fa-file-pdf"></i>PDF real</button>
+        <span class="rcfg-info" id="rcfg-info"></span></div>
+      <div class="rcfg-palco scrollbar-thin" id="rcfg-palco"></div></div></div>
+    <div class="modal-rodape"><button class="btn btn-sec mr-auto" onclick="rcfgPadrao()" title="Voltar às opções padrão"><i class="fa-solid fa-rotate-left"></i>Restaurar padrão</button><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-sec !h-10" onclick="rcfgGerar('xlsx',this)"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i>Gerar Excel</button>
+      <button class="btn btn-sec !h-10" onclick="rcfgGerar('imprimir',this)"><i class="fa-solid fa-print"></i>Imprimir</button>
+      <button class="btn btn-pri !h-10 !px-5" onclick="rcfgGerar('pdf',this)"><i class="fa-solid fa-file-pdf"></i>Gerar PDF</button></div>`, 'rel-config');
+  const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-xl');
+  rcfgOpcoes(); rcfgVista(rcfg.vista || 'rapida');
+}
+function rcfgOpcoes() {
+  const c = rcfg, def = RCFG_TEMAS[c.tema] || { filtros: [] };
+  const seg = (k, ops) => `<div class="dv-seg nom-seg w-full" role="group">${ops.map(([v, r, ico]) => `<button type="button" class="flex-1 justify-center ${c[k] === v ? 'ativo' : ''}" onclick="rcfgSet('${k}','${v}',true)">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${r}</button>`).join('')}</div>`;
+  const chk = (k, rot, ico) => `<label class="rel-chk"><input type="checkbox" ${c[k] ? 'checked' : ''} onchange="rcfgSet('${k}',this.checked)"><span><i class="fa-solid ${ico}"></i>${rot}</span></label>`;
+  const bloco = (n, tit, html) => `<section class="rcfg-bl"><h4><span>${n}</span>${tit}</h4>${html}</section>`;
+  $('rcfg-op').innerHTML =
+    bloco(1, 'Documento', `<label class="block"><span class="rotulo">Título</span><input class="campo w-full" value="${esc(c.tituloDoc)}" placeholder="${esc(nomeTema(c.tema))}" oninput="rcfgSet('tituloDoc',this.value)"></label>
+      <label class="block mt-3"><span class="rotulo">Período (data de protocolo)</span><select class="campo w-full" onchange="rcfgSet('periodo',this.value)">${[['30', 'Últimos 30 dias'], ['90', 'Últimos 90 dias'], ['180', 'Últimos 6 meses'], ['365', 'Últimos 12 meses'], ['mes', 'Mês atual'], ['ano', 'Ano atual'], ['tudo', 'Todo o período']].map(([v, r]) => `<option value="${v}" ${c.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
+      ${def.filtros.map(([k, rot, ops]) => `<label class="block mt-3"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="rcfgFiltro('${k}',this.value)">${ops.map(([v, r]) => `<option value="${esc(v)}" ${(c.fsec[k] || '') === v ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`).join('')}`)
+    + bloco(2, 'Aparência', `<span class="rotulo">Orientação</span>${seg('orientacao', [['retrato', 'Retrato', 'fa-file'], ['paisagem', 'Paisagem', 'fa-file fa-rotate-90']])}
+      <span class="rotulo mt-3 block">Estilo das páginas internas</span><div class="flex flex-wrap gap-2">${Object.entries(ESTILOS_REL).map(([k, x]) => `<button type="button" class="rel-estilo ${k === c.estilo ? 'ativo' : ''}" onclick="rcfgSet('estilo','${k}',true)"><span style="background:linear-gradient(135deg, ${x.pri} 50%, ${x.sec} 50%)"></span>${x.rot}</button>`).join('')}</div>`)
+    + bloco(3, 'O que entra', `<div class="flex flex-wrap gap-2">${chk('capa', 'Capa', 'fa-book-open')}${chk('resumo', 'Números', 'fa-hashtag')}${chk('sintese', 'Síntese', 'fa-align-left')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabResumo', 'Tabelas-resumo', 'fa-table-list')}${chk('listas', 'Listas detalhadas', 'fa-list')}${chk('obsTab', 'Observações dos registros', 'fa-comment')}</div>`)
+    + bloco(4, 'Fechamento', `<div class="flex flex-wrap gap-2">${chk('assinatura', 'Bloco de assinatura', 'fa-signature')}</div>
+      ${c.assinatura ? `<div class="grid grid-cols-2 gap-2 mt-3"><label class="block"><span class="rotulo">Responsável</span><input class="campo w-full" value="${esc(c.responsavel)}" placeholder="${esc((Store.sessao && Store.sessao.usuario) || '')}" oninput="rcfgSet('responsavel',this.value)"></label><label class="block"><span class="rotulo">Cargo</span><input class="campo w-full" value="${esc(c.cargo)}" oninput="rcfgSet('cargo',this.value)"></label></div>` : ''}
+      <label class="block mt-3"><span class="rotulo">Observações finais</span><textarea class="campo w-full" rows="3" placeholder="Texto que aparece no fim do relatório (opcional)" oninput="rcfgSet('obs',this.value)">${esc(c.obs)}</textarea></label>`);
+}
+function rcfgSet(k, v, redesenhar) {
+  rcfg[k] = v; rcfgSalvar();
+  if (redesenhar || k === 'assinatura') rcfgOpcoes();
+  rcfgAtualizar();
+}
+function rcfgFiltro(k, v) { rcfg.fsec = { ...rcfg.fsec, [k]: v }; rcfgSalvar(); rcfgAtualizar(); }
+function rcfgPadrao() { try { localStorage.removeItem('gabdoc_rcfg_' + rcfg.tema); } catch (e) {} const t = rcfg.tema; fecharModal(); abrirConfigRelatorio(t); }
+function rcfgVista(v) {
+  rcfg.vista = v; rcfgSalvar();
+  document.querySelectorAll('.rcfg-abas button').forEach(b => b.classList.toggle('ativo', b.dataset.v === v));
+  rcfgAtualizar(true);
+}
+function rcfgAtualizar(ja) {
+  clearTimeout(rcfgTimer);
+  rcfgTimer = setTimeout(async () => {
+    const palco = $('rcfg-palco'); if (!palco || !rcfg) return;
+    const m = await comEstadoRel(rcfg, () => montarRelatorio());
+    const nTab = m.blocos.filter(b => b.t === 'tabela').reduce((t, b) => t + b.linhas.length, 0);
+    $('rcfg-info').textContent = `${m.paisagem ? 'Paisagem' : 'Retrato'} · ${m.blocos.length} parte(s) · ${nTab} linha(s) de tabela`;
+    if (rcfg.vista !== 'pdf') { palco.innerHTML = `<div class="rcfg-folhas">${previaHTML(m)}</div>`; return; }
+    palco.innerHTML = '<div class="rcfg-carregando"><i class="fa-solid fa-circle-notch fa-spin"></i>Montando o PDF…</div>';
+    try {
+      await carregarPdfMake();
+      const blob = await comEstadoRel(rcfg, async () => { const mm = montarRelatorio(); return new Promise(ok => pdfMake.createPdf(definicaoPDF(mm)).getBlob(ok)); });
+      if (rcfgPdfUrl) URL.revokeObjectURL(rcfgPdfUrl);
+      rcfgPdfUrl = URL.createObjectURL(blob);
+      window.__rcfgPdf = blob;
+      if ($('rcfg-palco') && rcfg.vista === 'pdf') $('rcfg-palco').innerHTML = `<iframe class="rcfg-pdf" src="${rcfgPdfUrl}#view=FitH" title="Prévia do PDF"></iframe>`;
+    } catch (e) { palco.innerHTML = `<div class="rcfg-carregando"><i class="fa-solid fa-triangle-exclamation"></i>${esc(e.message || 'Não foi possível montar o PDF.')}</div>`; }
+  }, ja ? 0 : (rcfg && rcfg.vista === 'pdf' ? 700 : 200));
+}
+async function rcfgGerar(formato, btn) {
+  const cfg = JSON.parse(JSON.stringify(rcfg));
+  await comEstadoRel(cfg, () => formato === 'xlsx' ? gerarExcel(btn) : gerarPDF(formato === 'imprimir' ? 'imprimir' : 'baixar', btn));
+}
+
 /** Relatório pronto (com capa) direto das seções Contratações e Nomeações e Exonerações. */
 async function relatorioSecao(tema, formato, btn) {
   const antes = JSON.parse(JSON.stringify(relEstado));
@@ -7358,7 +7477,7 @@ function renderRelatorios() {
         ${(() => { const ax = anexosPermitidos(); const itens = [ax.eventos && e.tema !== 'eventos' ? chk('anexoEventos', 'Eventos', 'fa-calendar-check') : '', ax.comunicados && e.tema !== 'comunicados' ? chk('anexoComunicados', 'Comunicados importantes', 'fa-bullhorn') : '', ax.mapa ? chk('anexoMapa', 'Mapa de MT', 'fa-map-location-dot') : ''].filter(Boolean);
           return itens.length ? `<div><span class="rotulo">Incluir também no relatório</span><div class="flex flex-wrap gap-2">${itens.join('')}</div>
             ${e.anexoMapa && ax.mapa ? `<label class="block mt-2 max-w-xs"><span class="rotulo">O que o mapa mostra</span><select class="campo w-full" onchange="relSet('mapaMetrica',this.value)">${opc('mapaMetrica', Object.entries(METRICAS_MAPA).map(([k, v]) => [k, v[0]]))}</select></label>` : ''}</div>` : ''; })()}
-        <div><span class="rotulo">Conteúdo do tema</span><div class="flex flex-wrap gap-2">${chk('capa', 'Capa', 'fa-book-open')}${chk('resumo', 'Resumo em números', 'fa-hashtag')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabela', 'Tabelas detalhadas', 'fa-table')}${chk('assinatura', 'Campo de assinatura', 'fa-signature')}</div></div>
+        <div><span class="rotulo">Conteúdo do tema</span><div class="flex flex-wrap gap-2">${chk('capa', 'Capa', 'fa-book-open')}${chk('sintese', 'Síntese', 'fa-align-left')}${chk('tabResumo', 'Tabelas-resumo', 'fa-table-list')}${chk('listas', 'Listas detalhadas', 'fa-list')}${chk('resumo', 'Resumo em números', 'fa-hashtag')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabela', 'Tabelas detalhadas', 'fa-table')}${chk('assinatura', 'Campo de assinatura', 'fa-signature')}</div></div>
       </div>
       <div class="dv-card space-y-3">
         <p class="rel-passo"><span>3</span>Aparência e assinatura</p>
@@ -7372,6 +7491,7 @@ function renderRelatorios() {
       <div class="rel-acoes">
         <button class="btn btn-pri !h-11 !px-5" onclick="gerarPDF('baixar', this)"><i class="fa-solid fa-file-pdf"></i>Gerar PDF</button>
         <button class="btn btn-sec !h-11" onclick="gerarPDF('imprimir', this)"><i class="fa-solid fa-print"></i>Imprimir</button>
+        ${RCFG_TEMAS[e.tema] ? `<button class="btn btn-sec !h-11" onclick="abrirConfigRelatorio('${e.tema}')"><i class="fa-solid fa-sliders"></i>Configurar e visualizar</button>` : ''}
         <button class="btn btn-sec !h-11" onclick="gerarExcel(this)"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i>Excel</button>
         <button class="btn btn-sec !h-11" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i>Planilha CSV</button>
         ${Store.modo === 'nuvem' && (Store.sol.some(s => s.exemplo) || Store.agenda.some(x => x.exemplo)) ? `<button class="btn btn-perigo !h-11" onclick="removerExemplos(this)"><i class="fa-solid fa-trash"></i>Remover exemplos</button>` : ''}
