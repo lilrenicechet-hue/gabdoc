@@ -762,6 +762,17 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .gs-acoes-in { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
   .gs-acao { height: 24px; padding: 0 8px; border-radius: 7px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; color: #fff; background: var(--c); margin-right: auto; white-space: nowrap; transition: filter .15s; }
   .gs-acao:hover { filter: brightness(1.1); }
+  /* formulário de Portarias: 7 cartões */
+  .pt-passo .passo-topo { padding: 10px 14px; gap: 10px; }
+  .pt-passo .passo-num { width: 28px; height: 28px; font-size: 13.5px; border-radius: 9px; }
+  .pt-passo .passo-corpo { padding: 12px 14px 14px; gap: 10px; }
+  .pt-ico-campo { width: 30px; height: 30px; border-radius: 9px; display: inline-grid; place-items: center; font-size: 14px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 22%, transparent); flex: none; }
+  .pt-passo .passo-topo h4 { font-size: 13.5px; }
+  .pt-passo .passo-topo p { font-size: 11.5px; }
+  .pt-passo.feito { border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); }
+  .pt-prog { display: flex; gap: 5px; margin-top: 14px; }
+  .pt-prog span { flex: 1; height: 5px; border-radius: 99px; background: rgba(255,255,255,.14); transition: background .25s; }
+  .pt-prog span.on { background: linear-gradient(90deg, #818cf8, #60a5fa); }
   /* Portarias: link e arquivo dentro da célula */
   .pt-arq { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .pt-arq > .truncate { flex: 1; min-width: 0; font-size: 12.5px; }
@@ -4719,37 +4730,82 @@ function abrirFormPortaria(id, foco) {
   const x = id ? portaria(id) : { recebimento: hojeISO() };
   if (!x) return;
   const pe = pode('sol:2');
-  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
-  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  // 7 preenchimentos, cada um num cartão com número, ícone e indicação de preenchido (mesmo padrão do formulário de solicitações)
+  const campo = (n, cor, ico, rot, dica, corpo, cls = '') => `
+    <section class="passo pt-passo ${cls}" style="--c:${cor}" data-pt="${n}">
+      <header class="passo-topo"><span class="passo-num">${n}</span><span class="pt-ico-campo"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><h4>${rot}</h4><p>${dica}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
+      <div class="passo-corpo">${corpo}</div>
+    </section>`;
+  const comIco = (ico, html) => `<div class="relative"><i class="fa-solid ${ico} absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs pointer-events-none"></i>${html}</div>`;
+  const setorAtual = String(x.setor || '').toUpperCase();
+  const siglas = botoesSiglas(setorAtual ? [setorAtual] : []);
+  const atalhosData = [['Hoje', 0], ['Ontem', -1], ['Há 2 dias', -2], ['Há 1 semana', -7]];
   FormPort.arquivo = null; FormPort.remover = false; FormPort.atual = x.arquivoId ? { arquivoId: x.arquivoId, arquivoNome: x.arquivoNome, arquivoTipo: x.arquivoTipo, arquivoTamanho: x.arquivoTamanho } : null;
   abrirModal(`
-    <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 200px at 0% 0%, rgba(99,102,241,.4), transparent 70%)">
+    <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 220px at 0% 0%, rgba(99,102,241,.45), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(37,99,235,.25), transparent 70%)">
       <div class="flex items-start gap-3">
-        <div class="hero-icos"><span class="on" style="--c:${PORT_COR}"><i class="fa-solid fa-stamp"></i></span></div>
-        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">${id ? 'Editar' : 'Nova'} portaria</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${esc(x.numero || 'Portaria')}</h3></div>
+        <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${PORT_COR}"><i class="fa-solid fa-stamp"></i></span><span class="on" style="--c:#2563eb"><i class="fa-solid fa-file-word"></i></span></div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-300">${id ? 'Editar portaria' : 'Nova portaria'}</p>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${esc(x.numero || 'Portaria')}</h3>
+          <p class="text-[12.5px] text-indigo-100/70 mt-1">Sete campos: identificação, setor, link do processo e o arquivo da portaria.</p>
+        </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
-    <form class="modal-corpo space-y-4" id="form-port" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        ${campo(1, '#64748b', 'Número do Processo', `<input class="campo w-full" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
-        ${campo(2, PORT_COR, 'Número da Portaria', `<input class="campo w-full" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Ex.: Portaria nº 000/2026/GS/SEDUC-MT">`)}
-        ${campo(3, '#0891b2', 'Data de recebimento', `<input type="date" class="campo w-full" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
-        ${campo(5, '#d97706', 'Setor', `<input class="campo w-full uppercase" id="pt-setor" list="lista-setor-port" value="${esc(x.setor || '')}" placeholder="SAGE, SAGP, SAAS…" autocomplete="off">
-          <div class="flex flex-wrap gap-1 mt-1.5">${SECRETARIAS.map(s => `<button type="button" class="pt-setor-chip" style="--c:${corSetor(s)}" onclick="$('pt-setor').value='${s}'">${s}</button>`).join('')}</div>`)}
+    <form class="modal-corpo space-y-3" id="form-port" oninput="marcarCamposPort()" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        ${campo(1, '#64748b', 'fa-folder-open', 'Número do Processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
+        ${campo(2, PORT_COR, 'fa-stamp', 'Número da Portaria', 'Como sai no Diário Oficial', comIco('fa-file-lines', `<input class="campo campo-g w-full !pl-8" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Portaria nº 000/2026/GS/SEDUC-MT" autocomplete="off">`))}
       </div>
-      ${campo(4, '#0f172a', 'Assunto', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Do que trata a portaria">${esc(x.assunto || '')}</textarea>`)}
-      ${campo(6, '#7c3aed', 'Link do processo', `<div class="flex gap-2"><input class="campo w-full" id="pt-link" type="url" inputmode="url" value="${esc(x.link || '')}" placeholder="https://… (SIGADOC ou outro sistema)"><button type="button" class="btn btn-sec !h-10 shrink-0" title="Testar o link" onclick="const l=normLink($('pt-link').value);if(l)window.open(l,'_blank','noopener');else toast('Informe um link válido (http:// ou https://).','fa-triangle-exclamation')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir</button></div>`)}
-      ${campo(7, '#2563eb', 'Arquivo <span class="font-normal text-ink3">(de preferência Word · baixa em Word ou PDF)</span>', `<div id="pt-arq-area"></div>`)}
-      <p id="pt-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+      ${campo(3, '#0891b2', 'fa-calendar-day', 'Data de recebimento', 'Quando a portaria chegou ao Gabinete', `
+        <div class="flex flex-wrap items-center gap-2">
+          ${comIco('fa-calendar', `<input type="date" class="campo campo-g !pl-8" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
+          <div class="flex flex-wrap gap-1.5">${atalhosData.map(([r, d]) => `<button type="button" class="atalho" onclick="$('pt-recebimento').value=somaDias(${d});marcarCamposPort()">${r}</button>`).join('')}</div>
+        </div>`)}
+      ${campo(4, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata a portaria', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
+      ${campo(5, '#d97706', 'fa-sitemap', 'Setor', 'Secretaria adjunta responsável: toque em uma', `
+        <div class="sec-grade" id="pt-setores">${siglas.map(sg => botaoSec(sg, sg === setorAtual, 'ptset').replace('onclick="alternarChip(this)"', 'onclick="escolherSetorPort(this)"')).join('')}</div>
+        <input type="hidden" id="pt-setor" value="${esc(setorAtual)}">
+        ${comIco('fa-pen', `<input class="campo w-full !pl-8 uppercase" id="pt-setor-outro" value="${esc(siglas.includes(setorAtual) ? '' : setorAtual)}" placeholder="Outro setor? Digite a sigla" autocomplete="off" oninput="sincSetorPort()" aria-label="Outro setor">`)}`)}
+      ${campo(6, '#7c3aed', 'fa-link', 'Link do processo', 'Endereço do processo no SIGADOC ou outro sistema', `
+        <div class="flex gap-2">${comIco('fa-globe', `<input class="campo campo-g w-full !pl-8" id="pt-link" type="url" inputmode="url" value="${esc(x.link || '')}" placeholder="https://…">`).replace('<div class="relative">', '<div class="relative flex-1 min-w-0">')}<button type="button" class="btn btn-sec !h-[42px] shrink-0" title="Testar o link" onclick="const l=normLink($('pt-link').value);if(l)window.open(l,'_blank','noopener');else toast('Informe um link válido (http:// ou https://).','fa-triangle-exclamation')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir</button></div>`)}
+      ${campo(7, '#2563eb', 'fa-file-word', 'Arquivo', 'De preferência Word · depois baixe em Word ou PDF', `<div id="pt-arq-area"></div>`)}
+      <p id="pt-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
-    <datalist id="lista-setor-port">${SECRETARIAS.map(m => `<option value="${esc(m)}">`).join('')}</datalist>
-    <div class="modal-rodape">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600 mr-auto" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>Salvar</button>` : ''}</div>`, 'portaria');
+    <div class="modal-rodape !justify-between items-center">
+      <span class="text-[12px] text-ink3" id="pt-resumo"></span>
+      <div class="flex gap-2">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirPortariaId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${PORT_COR};border-color:${PORT_COR}" type="submit" form="form-port" id="btn-port-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar portaria'}</button>` : ''}</div>
+    </div>`, 'portaria');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   FormPort.id = id || '';
   renderArqForm();
-  if (!pe) document.querySelectorAll('#form-port input, #form-port textarea').forEach(el => el.readOnly = true);
+  if (!pe) document.querySelectorAll('#form-port input, #form-port textarea, #form-port .sec-btn, #form-port .atalho').forEach(el => { el.readOnly = true; if (el.tagName === 'BUTTON') el.disabled = true; });
+  marcarCamposPort();
   setTimeout(() => { const f = $(foco ? 'pt-' + foco : 'pt-processo'); if (f) f.focus(); }, 120);
+}
+/** Setor: uma secretaria por vez (tocar de novo desmarca). */
+function escolherSetorPort(btn) {
+  const on = !btn.classList.contains('ativo');
+  document.querySelectorAll('#pt-setores .sec-btn').forEach(b => { b.classList.toggle('ativo', on && b === btn); b.setAttribute('aria-pressed', on && b === btn); });
+  $('pt-setor').value = on ? btn.dataset.v : '';
+  $('pt-setor-outro').value = '';
+  marcarCamposPort();
+}
+function sincSetorPort() {
+  const v = $('pt-setor-outro').value.trim().toUpperCase();
+  $('pt-setor').value = v;
+  document.querySelectorAll('#pt-setores .sec-btn').forEach(b => { b.classList.toggle('ativo', b.dataset.v === v); b.setAttribute('aria-pressed', b.dataset.v === v); });
+}
+/** Marca os campos preenchidos (✓ no cartão e na barrinha do topo). */
+function marcarCamposPort() {
+  if (!$('form-port')) return;
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const ok = { 1: !!v('pt-processo'), 2: !!v('pt-numero'), 3: !!v('pt-recebimento'), 4: !!v('pt-assunto'), 5: !!v('pt-setor'), 6: normLink(v('pt-link')) ? true : false, 7: !!(FormPort.arquivo || (FormPort.atual && !FormPort.remover)) };
+  Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`.pt-passo[data-pt="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`.pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
+  const n = Object.values(ok).filter(Boolean).length;
+  const r = $('pt-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 7 preenchidos`;
 }
 const FormPort = { id: '', arquivo: null, remover: false, atual: null };
 function renderArqForm() {
@@ -4770,6 +4826,7 @@ function renderArqForm() {
       <input type="file" class="sr-only" id="pt-arquivo" accept="${Object.keys(PORT_EXT).map(e => '.' + e).join(',')}" onchange="escolherArqForm(this.files[0])">
       <i class="fa-solid fa-cloud-arrow-up"></i><span><b>${novo || atual ? 'Trocar arquivo' : 'Escolher arquivo'}</b> ou arraste aqui<small>Word (.docx, .doc), .odt, .rtf ou PDF · até 20 MB</small></span></label>` : (!html ? '<p class="text-sm text-ink3">Sem arquivo.</p>' : '');
   el.innerHTML = `<div class="space-y-2">${html}${FormPort.remover && FormPort.atual && !novo ? `<p class="text-[12.5px] text-red-600 font-semibold">O arquivo será removido ao salvar. <button type="button" class="underline" onclick="FormPort.remover=false;renderArqForm()">Desfazer</button></p>` : ''}${zona}</div>`;
+  marcarCamposPort();
 }
 function escolherArqForm(f) {
   if (!f) return;
