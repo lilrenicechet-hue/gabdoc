@@ -214,6 +214,82 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .chefe-obs { margin-top: 10px; font-size: 12.5px; color: var(--ink2); padding: 8px 10px; border-radius: 10px; background: var(--card2); border: 1px dashed var(--line); white-space: pre-line; }
   @media (max-width: 640px) { .chefe-cartao { grid-template-columns: auto minmax(0, 1fr); } .chefe-cartao > .chefe-edit { grid-column: 1 / -1; } }
   .dv-tit { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 10px; flex-wrap: wrap; }
+  /* Nomeações e Exonerações: controles, painéis e quadro */
+  .nom-ctrl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sombra); }
+  .nom-ctrl-l, .nom-ctrl-r { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .nom-ctrl-l { flex: 1 1 auto; min-width: 0; }
+  .nom-ctrl-r { flex: none; }
+  .nom-div { width: 1px; height: 24px; background: var(--line); }
+  .nom-seg button { --c: var(--brand); display: inline-flex; align-items: center; gap: 6px; }
+  .nom-seg button.ativo { color: var(--c); }
+  .nom-seg button i, .nom-seg button svg { font-size: 11px; }
+  .nom-periodo, .nom-busca { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card2); color: var(--ink3); font-size: 12.5px; }
+  .nom-periodo select { background: transparent; border: 0; outline: 0; color: var(--ink); font-weight: 700; font-size: 12.5px; cursor: pointer; }
+  .nom-busca input { background: transparent; border: 0; outline: 0; color: var(--ink); width: 190px; max-width: 46vw; font-size: 13px; }
+  .nom-periodo:focus-within, .nom-busca:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
+  .nom-kpi.ativo { outline: 2px solid var(--c); outline-offset: -2px; background: color-mix(in srgb, var(--c) 8%, var(--card)); }
+  .nom-kpi .sub i, .nom-kpi .sub svg { font-size: 10px; }
+  .nom-paineis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 1560px) { .nom-paineis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .nom-paineis { grid-template-columns: minmax(0, 1fr); } }
+  .nom-painel { padding: 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sombra); min-width: 0; }
+  .nom-painel h3 { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+  .nom-fluxo { display: flex; align-items: stretch; gap: 4px; }
+  .nom-seta { align-self: center; color: var(--ink3); font-size: 10px; flex: none; }
+  .nom-etapa { --c: var(--brand); flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--card2); transition: border-color .15s, transform .12s, background .15s; }
+  .nom-etapa:hover { border-color: var(--c); transform: translateY(-1px); }
+  .nom-etapa.ativo { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--card)); }
+  .nom-etapa-ico { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 12px; }
+  .nom-etapa b { font-size: 20px; font-weight: 900; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .nom-etapa small { font-size: 10.5px; font-weight: 700; color: var(--ink3); text-align: center; line-height: 1.2; }
+  .nom-etapa-barra { width: 80%; height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: 3px; }
+  .nom-etapa-barra span { display: block; height: 100%; background: var(--c); border-radius: 99px; transition: width .4s; }
+  .nom-nota { font-size: 11.5px; color: var(--ink3); margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+  .nom-vazio { font-size: 12.5px; color: var(--ink3); padding: 14px 0; display: flex; align-items: center; gap: 6px; justify-content: center; }
+  .nom-split + .nom-split { margin-top: 14px; }
+  .nom-split-rot { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: var(--ink3); margin-bottom: 5px; }
+  .nom-split-barra { display: flex; height: 10px; border-radius: 99px; overflow: hidden; gap: 2px; }
+  .nom-split-barra span { display: block; height: 100%; transition: width .4s; }
+  .nom-split-leg { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 12px; color: var(--ink2); }
+  .nom-split-leg span { display: inline-flex; align-items: center; gap: 5px; }
+  .nom-split-leg i, .nom-split-leg svg { font-size: 9px; }
+  .nom-lista { display: flex; flex-direction: column; }
+  .nom-item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 9px; align-items: center; padding: 7px 4px; border-radius: 9px; text-align: left; }
+  .nom-item:hover { background: var(--card2); }
+  .nom-item b { display: block; font-size: 12.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nom-item small { display: block; font-size: 11px; color: var(--ink3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nom-av, .nom-mini { --c: #64748b; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); flex: none; }
+  .nom-av { width: 30px; height: 30px; border-radius: 10px; font-size: 12px; }
+  .nom-mini { width: 22px; height: 22px; border-radius: 7px; font-size: 10px; }
+  .nom-barras { display: flex; flex-direction: column; gap: 8px; }
+  .nom-barra { display: grid; grid-template-columns: minmax(0, 1fr) 42% 24px; gap: 8px; align-items: center; font-size: 12px; color: var(--ink2); }
+  .nom-barra b { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .nom-barra-t { height: 8px; border-radius: 99px; background: var(--card2); overflow: hidden; }
+  .nom-barra-t span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #0891b2, #22d3ee); transition: width .4s; }
+  .nom-quadro { display: grid; grid-template-columns: repeat(4, minmax(250px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 6px; align-items: start; }
+  .nom-col { --c: var(--brand); border-radius: 14px; background: var(--card2); border: 1px solid var(--line); display: flex; flex-direction: column; min-height: 180px; transition: border-color .15s, background .15s; }
+  .nom-col.alvo { border-color: var(--c); border-style: dashed; background: color-mix(in srgb, var(--c) 7%, var(--card2)); }
+  .nom-col > header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 3px solid var(--c); font-size: 13px; color: var(--ink); position: sticky; top: 0; background: var(--card2); border-radius: 14px 14px 0 0; z-index: 1; }
+  .nom-col-ico { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 11px; }
+  .nom-col-n { margin-left: auto; min-width: 26px; padding: 1px 8px; border-radius: 99px; background: color-mix(in srgb, var(--c) 15%, var(--card)); color: var(--c); font-weight: 900; font-size: 12px; text-align: center; }
+  .nom-col-corpo { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+  .nom-col-vazio { font-size: 12px; color: var(--ink3); text-align: center; padding: 18px 6px; border: 1px dashed var(--line); border-radius: 10px; }
+  .nom-card { --c: #64748b; position: relative; padding: 10px 11px 9px 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(15,23,42,.05); transition: transform .12s, box-shadow .15s, opacity .15s; }
+  .nom-card::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 4px; border-radius: 0 4px 4px 0; background: var(--c); }
+  .nom-card[draggable="true"] { cursor: grab; }
+  .nom-card:hover { transform: translateY(-1px); box-shadow: var(--sombra); }
+  .nom-card.arrastando { opacity: .45; }
+  .nom-card header { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+  .nom-card-tipo { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--c); }
+  .nom-card-nome { display: block; font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+  .nom-card-l { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink2); margin-top: 3px; min-width: 0; }
+  .nom-card-l i, .nom-card-l svg { font-size: 10px; color: var(--ink3); width: 12px; flex: none; }
+  .nom-card footer { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); }
+  .nom-card-data { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--ink3); }
+  .nom-card-data i, .nom-card-data svg { font-size: 9px; }
+  .nom-card-btn { --c: var(--ink3); width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--c); border: 1px solid var(--line); background: var(--card2); font-size: 11px; transition: background .12s, border-color .12s; }
+  .nom-card-btn:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  @media (max-width: 640px) { .nom-div { display: none; } .nom-ctrl-r { width: 100%; } .nom-busca input { width: 100%; } .nom-busca { flex: 1; } }
   .chefe-atalhos { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .chefe-atalho { --c: #b45309; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); text-align: left; font-size: 13px; font-weight: 700; color: var(--ink); transition: border-color .15s, transform .12s; }
   .chefe-atalho:hover { border-color: var(--c); transform: translateY(-1px); }
@@ -4933,30 +5009,130 @@ async function salvarFormNomeacao(id) {
 }
 /** Abertos primeiro (protocolos mais antigos antes), depois os publicados/não autorizados. */
 const ordemNom = (a, b) => String(a.protocolo || '9999').localeCompare(String(b.protocolo || '9999')) || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+/* ----- Nomeações e Exonerações: controles, painéis e quadro ----- */
+const NOM_UI_PADRAO = { vista: 'planilha', tipo: '', cat: '', st: '', periodo: 'tudo', busca: '', paineis: true };
+const nomUI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_nom_ui') || '{}'); } catch (e) {} return Object.assign({}, NOM_UI_PADRAO, s, { busca: '' }); })();
+function nomSet(k, v, render = true) {
+  nomUI[k] = v;
+  try { const { busca, ...resto } = nomUI; localStorage.setItem('gabdoc_nom_ui', JSON.stringify(resto)); } catch (e) {}
+  if (render) renderNomeacoes();
+}
+function nomLimpar() { Object.assign(nomUI, { tipo: '', cat: '', st: '', periodo: 'tudo', busca: '' }); nomSet('periodo', 'tudo'); }
+const diasDesde = d => d ? -diasAte(String(d).slice(0, 10)) : null;
+/** Registros depois dos controles da página (tipo, IN/NOR, status, período do protocolo e busca do quadro). */
+function nomFiltrados() {
+  const ini = { '30': somaDias(-30), '90': somaDias(-90), ano: hojeISO().slice(0, 4) + '-01-01' }[nomUI.periodo] || '';
+  const b = Utils_norm(nomUI.busca || '').trim();
+  return (Store.nomeacoes || []).filter(x => (!nomUI.tipo || x.tipo === nomUI.tipo) && (!nomUI.cat || x.categoria === nomUI.cat) && (!nomUI.st || x.status === nomUI.st)
+    && (!ini || (x.protocolo && x.protocolo >= ini))
+    && (!b || Utils_norm([x.nome, x.cargo, x.simbolo, x.lotacao, x.processo, x.observacao].join(' ')).includes(b)));
+}
+function nomTopo(base, lst) {
+  const seg = (k, ops) => `<div class="dv-seg nom-seg" role="group">${ops.map(([v, rot, ico, cor]) => `<button type="button" class="${nomUI[k] === v ? 'ativo' : ''}" aria-pressed="${nomUI[k] === v}" ${cor ? `style="--c:${cor}"` : ''} onclick="nomSet('${k}','${v}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${rot}</button>`).join('')}</div>`;
+  const filtrando = nomUI.tipo || nomUI.cat || nomUI.st || nomUI.periodo !== 'tudo' || nomUI.busca;
+  const conta = (lista, st) => lista.filter(x => x.status === st).length;
+  // ----- controles -----
+  const controles = `<div class="nom-ctrl">
+    <div class="nom-ctrl-l">
+      ${seg('vista', [['planilha', 'Planilha', 'fa-table-cells'], ['quadro', 'Quadro', 'fa-table-columns']])}
+      <span class="nom-div"></span>
+      ${seg('tipo', [['', 'Todos'], ['Nomeação', 'Nomeações', 'fa-user-check', '#2563eb'], ['Exoneração', 'Exonerações', 'fa-user-xmark', '#be123c']])}
+      ${seg('cat', [['', 'IN e NOR'], ['IN', 'IN', '', '#7c3aed'], ['NOR', 'NOR', '', '#0d9488']])}
+      <label class="nom-periodo"><i class="fa-solid fa-calendar-days"></i><select onchange="nomSet('periodo',this.value)" aria-label="Período do protocolo">${[['tudo', 'Todo o período'], ['30', 'Protocolo: 30 dias'], ['90', 'Protocolo: 90 dias'], ['ano', 'Protocolo: este ano']].map(([v, r]) => `<option value="${v}" ${nomUI.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
+      ${nomUI.vista === 'quadro' ? `<label class="nom-busca"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar nome, cargo, lotação…" value="${esc(nomUI.busca)}" oninput="nomUI.busca=this.value;clearTimeout(window._nomBusca);window._nomBusca=setTimeout(()=>{renderNomeacoes();const i=document.querySelector('.nom-busca input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></label>` : ''}
+    </div>
+    <div class="nom-ctrl-r">
+      ${filtrando ? `<button type="button" class="btn btn-sec !h-9" onclick="nomLimpar()"><i class="fa-solid fa-filter-circle-xmark"></i>Limpar <b class="ml-1">${lst.length}/${base.length}</b></button>` : ''}
+      <button type="button" class="btn btn-sec !h-9" aria-pressed="${nomUI.paineis}" onclick="nomSet('paineis',${!nomUI.paineis})" title="${nomUI.paineis ? 'Esconder' : 'Mostrar'} os painéis"><i class="fa-solid ${nomUI.paineis ? 'fa-eye-slash' : 'fa-chart-simple'}"></i><span class="hidden 2xl:inline">${nomUI.paineis ? 'Esconder painéis' : 'Mostrar painéis'}</span><span class="2xl:hidden">Painéis</span></button>
+    </div>
+  </div>`;
+  // ----- números (clicáveis: filtram pelo status) -----
+  const baseKpi = nomUI.st ? nomFiltradosSem('st') : lst;
+  const kpis = `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    ${['Em andamento', 'Aguardando publicação', 'Publicado', 'Não Autorizado'].map(st => {
+      const [cor, ico] = corNom(st), n = conta(baseKpi, st), nN = baseKpi.filter(x => x.status === st && x.tipo === 'Nomeação').length;
+      return `<button type="button" class="dv-kpi nom-kpi ${nomUI.st === st ? 'ativo' : ''}" style="--c:${cor}" aria-pressed="${nomUI.st === st}" title="${nomUI.st === st ? 'Mostrar todos' : 'Filtrar por ' + st}" onclick="nomSet('st','${nomUI.st === st ? '' : st}')"><span class="rot"><i class="fa-solid ${ico}"></i>${st}</span><span class="val">${n}</span><span class="sub"><i class="fa-solid fa-user-check" style="color:#2563eb"></i> ${nN} · <i class="fa-solid fa-user-xmark" style="color:#be123c"></i> ${n - nN}</span></button>`;
+    }).join('')}
+  </div>`;
+  if (!nomUI.paineis) return controles + kpis;
+  // ----- painéis -----
+  const abertos = baseKpi.filter(x => !nomFeita(x));
+  const fluxo = ['Em andamento', 'Aguardando publicação', 'Publicado'];
+  const totFluxo = Math.max(1, fluxo.reduce((t, st) => t + conta(baseKpi, st), 0));
+  const pFluxo = `<section class="nom-painel"><h3><i class="fa-solid fa-route" style="color:#2563eb"></i>Fluxo até a publicação</h3>
+    <div class="nom-fluxo">${fluxo.map((st, i) => { const [cor, ico] = corNom(st), n = conta(baseKpi, st); return `${i ? '<i class="fa-solid fa-chevron-right nom-seta"></i>' : ''}<button type="button" class="nom-etapa ${nomUI.st === st ? 'ativo' : ''}" style="--c:${cor}" onclick="nomSet('st','${nomUI.st === st ? '' : st}')"><span class="nom-etapa-ico"><i class="fa-solid ${ico}"></i></span><b>${n}</b><small>${st}</small><span class="nom-etapa-barra"><span style="width:${Math.round(n / totFluxo * 100)}%"></span></span></button>`; }).join('')}</div>
+    ${conta(baseKpi, 'Não Autorizado') ? `<p class="nom-nota"><i class="fa-solid fa-ban" style="color:#dc2626"></i>${conta(baseKpi, 'Não Autorizado')} não autorizado(s) fora do fluxo</p>` : ''}</section>`;
+  const split = (rot, a, b, ca, cb, ia, ib) => { const t = a[1] + b[1], pa = t ? Math.round(a[1] / t * 100) : 0; return `<div class="nom-split"><div class="nom-split-rot"><span>${rot}</span><span>${t}</span></div>
+    <div class="nom-split-barra">${t ? `<span style="width:${pa}%;background:${ca}"></span><span style="width:${100 - pa}%;background:${cb}"></span>` : '<span style="width:100%;background:var(--line)"></span>'}</div>
+    <div class="nom-split-leg"><span><i class="fa-solid ${ia}" style="color:${ca}"></i>${a[0]} <b>${a[1]}</b>${t ? ` · ${pa}%` : ''}</span><span><i class="fa-solid ${ib}" style="color:${cb}"></i>${b[0]} <b>${b[1]}</b>${t ? ` · ${100 - pa}%` : ''}</span></div></div>`; };
+  const pComp = `<section class="nom-painel"><h3><i class="fa-solid fa-chart-pie" style="color:#7c3aed"></i>Composição</h3>
+    ${split('Nomeações × Exonerações', ['Nomeações', baseKpi.filter(x => x.tipo === 'Nomeação').length], ['Exonerações', baseKpi.filter(x => x.tipo === 'Exoneração').length], '#2563eb', '#be123c', 'fa-user-check', 'fa-user-xmark')}
+    ${split('IN × NOR', ['IN', baseKpi.filter(x => x.categoria === 'IN').length], ['NOR', baseKpi.filter(x => x.categoria === 'NOR').length], '#7c3aed', '#0d9488', 'fa-circle', 'fa-circle')}
+    ${baseKpi.filter(x => !x.categoria).length ? `<p class="nom-nota">${baseKpi.filter(x => !x.categoria).length} sem IN/NOR informado</p>` : ''}</section>`;
+  const antigos = abertos.filter(x => x.protocolo).sort(ordemNom).slice(0, 5);
+  const pAntigos = `<section class="nom-painel"><h3><i class="fa-solid fa-hourglass-half" style="color:#d97706"></i>Em aberto há mais tempo</h3>
+    ${antigos.length ? `<div class="nom-lista">${antigos.map(x => { const d = diasDesde(x.protocolo), [cor, ico] = TIPOS_NOM[x.tipo] || ['#64748b', 'fa-user']; return `<button type="button" class="nom-item" onclick="abrirFormNomeacao('${x.id}')"><span class="nom-av" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="min-w-0"><b>${esc(x.nome)}</b><small>${esc([x.cargo, x.status].filter(Boolean).join(' · '))}</small></span><span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !text-[11px]">${d === 0 ? 'hoje' : d + ' dia' + (d === 1 ? '' : 's')}</span></button>`; }).join('')}</div>`
+      : '<p class="nom-vazio"><i class="fa-solid fa-circle-check text-emerald-500"></i>Nada em aberto.</p>'}</section>`;
+  const porLot = {}; baseKpi.forEach(x => { const k = x.lotacao || 'Sem lotação'; porLot[k] = (porLot[k] || 0) + 1; });
+  const lots = Object.entries(porLot).sort((a, b) => b[1] - a[1]).slice(0, 5), maxLot = Math.max(1, ...lots.map(l => l[1]));
+  const pLot = `<section class="nom-painel"><h3><i class="fa-solid fa-building" style="color:#0891b2"></i>Por lotação</h3>
+    ${lots.length ? `<div class="nom-barras">${lots.map(([k, n]) => `<div class="nom-barra"><span class="truncate" title="${esc(k)}">${esc(k)}</span><span class="nom-barra-t"><span style="width:${Math.round(n / maxLot * 100)}%"></span></span><b>${n}</b></div>`).join('')}</div>` : '<p class="nom-vazio">Sem registros.</p>'}</section>`;
+  return controles + kpis + `<div class="nom-paineis">${pFluxo}${pComp}${pAntigos}${pLot}</div>`;
+}
+/** Mesmos filtros, sem um deles (para os números não zerarem quando o próprio filtro está ativo). */
+function nomFiltradosSem(k) { const v = nomUI[k]; nomUI[k] = ''; const l = nomFiltrados(); nomUI[k] = v; return l; }
+function nomQuadro(lst) {
+  const podeEd = pode('chefe:2');
+  const colunas = ['Em andamento', 'Aguardando publicação', 'Publicado', 'Não Autorizado'];
+  const prox = { 'Em andamento': 'Aguardando publicação', 'Aguardando publicação': 'Publicado' };
+  const card = x => {
+    const [cor, ico] = TIPOS_NOM[x.tipo] || ['#64748b', 'fa-user'], d = diasDesde(x.protocolo);
+    const p = prox[x.status];
+    return `<article class="nom-card" style="--c:${cor}" ${podeEd ? `draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${x.id}');this.classList.add('arrastando')" ondragend="this.classList.remove('arrastando')"` : ''}>
+      <header><span class="nom-card-tipo"><i class="fa-solid ${ico}"></i>${esc(x.tipo || '—')}</span>${x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : ''}</header>
+      <b class="nom-card-nome">${esc(x.nome)}</b>
+      ${x.cargo || x.simbolo ? `<p class="nom-card-l"><i class="fa-solid fa-briefcase"></i>${esc([x.cargo, x.simbolo].filter(Boolean).join(' · '))}</p>` : ''}
+      ${x.lotacao ? `<p class="nom-card-l"><i class="fa-solid fa-building"></i>${esc(x.lotacao)}</p>` : ''}
+      ${x.processo ? `<p class="nom-card-l"><i class="fa-solid fa-hashtag"></i>${esc(x.processo)}</p>` : ''}
+      <footer>
+        <span class="nom-card-data">${x.inicio ? `<i class="fa-solid fa-play"></i>Início ${fmt(x.inicio)}` : x.protocolo ? `<i class="fa-solid fa-inbox"></i>${!nomFeita(x) ? (d === 0 ? 'protocolado hoje' : `há ${d} dia${d === 1 ? '' : 's'}`) : 'Protocolo ' + fmt(x.protocolo)}` : ''}</span>
+        <span class="flex gap-1">${podeEd && p ? `<button type="button" class="nom-card-btn" style="--c:${corNom(p)[0]}" title="Mover para: ${p}" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'${p}'})${p === 'Publicado' ? `.then(()=>abrirFormNomeacao('${x.id}'))` : ''}"><i class="fa-solid ${corNom(p)[1]}"></i></button>` : ''}<button type="button" class="nom-card-btn" title="Abrir" onclick="abrirFormNomeacao('${x.id}')"><i class="fa-solid fa-pen"></i></button></span>
+      </footer>
+    </article>`;
+  };
+  return `<div class="nom-quadro scrollbar-thin">${colunas.map(st => {
+    const [cor, ico] = corNom(st), lista = lst.filter(x => x.status === st).sort(nomFeita({ status: st }) ? (a, b) => String(b.inicio || b.atualizadoEm || '').localeCompare(String(a.inicio || a.atualizadoEm || '')) : ordemNom);
+    const mostra = lista.slice(0, 40);
+    return `<section class="nom-col" style="--c:${cor}" ${podeEd ? `ondragover="event.preventDefault();this.classList.add('alvo')" ondragleave="this.classList.remove('alvo')" ondrop="event.preventDefault();this.classList.remove('alvo');const id=event.dataTransfer.getData('text/plain');const x=Store.nomeacoes.find(c=>c.id===id);if(x&&x.status!=='${st}')editarNomCampos(x,{status:'${st}'})"` : ''}>
+      <header><span class="nom-col-ico"><i class="fa-solid ${ico}"></i></span><b>${st}</b><span class="nom-col-n">${lista.length}</span></header>
+      <div class="nom-col-corpo">${mostra.map(card).join('') || `<p class="nom-col-vazio">${podeEd ? 'Arraste um card para cá' : 'Nenhum registro'}</p>`}${lista.length > mostra.length ? `<p class="nom-col-vazio">+ ${lista.length - mostra.length} — use a Planilha para ver todos</p>` : ''}</div>
+    </section>`;
+  }).join('')}</div>`;
+}
 function renderNomeacoes() {
   const cont = $('nom-corpo');
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
-  const todas = Store.nomeacoes || [];
-  const conta = st => todas.filter(x => x.status === st).length;
-  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('nomeacoes','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
-  const abertos = todas.filter(x => !nomFeita(x));
+  const base = Store.nomeacoes || [];
+  const filtrados = nomFiltrados();
+  const topo = nomTopo(base, filtrados);
+  if (nomUI.vista === 'quadro') {
+    cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${topo}${nomQuadro(filtrados)}</div>`;
+    return;
+  }
   renderGrade(cont, {
-    id: 'nomeacoes', area: 'chefe', linhas: todas, fonte: () => Store.nomeacoes,
-    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      ${kpi('#2563eb', 'fa-user-check', 'Nomeações em aberto', abertos.filter(x => x.tipo === 'Nomeação').length, `${todas.filter(x => x.tipo === 'Nomeação').length} no total`, 'nom')}
-      ${kpi('#be123c', 'fa-user-xmark', 'Exonerações em aberto', abertos.filter(x => x.tipo === 'Exoneração').length, `${todas.filter(x => x.tipo === 'Exoneração').length} no total`, 'exo')}
-      ${kpi('#d97706', 'fa-newspaper', 'Aguardando publicação', conta('Aguardando publicação'), 'no Diário Oficial', 'aguard')}
-      ${kpi('#16a34a', 'fa-circle-check', 'Publicados', conta('Publicado'), `${conta('Não Autorizado')} não autorizado(s)`, 'pub')}</div>`,
+    id: 'nomeacoes', area: 'chefe', linhas: filtrados, fonte: () => Store.nomeacoes,
+    topo,
     colunas: [
-      { key: 'nome', rot: 'Nome', w: 230, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '' },
+      { key: 'nome', rot: 'Nome', w: 240, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '',
+        render: x => { const [cor, ico] = TIPOS_NOM[x.tipo] || ['#94a3b8', 'fa-user']; return `<span class="inline-flex items-center gap-2 min-w-0"><span class="nom-mini" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="truncate">${esc(x.nome || '')}</span></span>`; } },
       { key: 'tipo', rot: 'Tipo', w: 135, wCompacta: 130, tipo: 'select', editavel: true, opcoes: () => Object.keys(TIPOS_NOM).map(k => [k, k]), render: x => x.tipo ? `<span class="gs-pill" style="--c:${(TIPOS_NOM[x.tipo] || ['#64748b'])[0]}"><i class="fa-solid ${(TIPOS_NOM[x.tipo] || [0, 'fa-circle'])[1]} text-[9px]"></i>${esc(x.tipo)}</span>` : '' },
       { key: 'categoria', rot: 'Tipo (IN ou NOR)', w: 110, wCompacta: 90, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['IN', 'IN'], ['NOR', 'NOR']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
       { key: 'cargo', rot: 'Cargo', w: 200, wCompacta: 180, tipo: 'texto', editavel: true },
       { key: 'simbolo', rot: 'Símbolo / DGA', w: 120, tipo: 'texto', editavel: true },
       { key: 'lotacao', rot: 'Lotação', w: 190, tipo: 'texto', editavel: true },
       { key: 'processo', rot: 'Nº do processo', w: 200, tipo: 'texto', editavel: true },
-      { key: 'protocolo', rot: 'Data de protocolo', w: 125, tipo: 'data', editavel: true },
-      { key: 'inicio', rot: 'Data de Início', w: 120, tipo: 'data', editavel: true },
+      { key: 'protocolo', rot: 'Data de protocolo', w: 170, tipo: 'data', editavel: true, render: x => { if (!x.protocolo) return ''; const d = diasDesde(x.protocolo); return `<span class="inline-flex items-center gap-1.5"><span class="tabular-nums">${fmt(x.protocolo)}</span>${nomFeita(x) ? '' : `<span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !py-0 !px-1.5 !text-[10.5px]">${d}d</span>`}</span>`; } },
+      { key: 'inicio', rot: 'Data de Início', w: 125, tipo: 'data', editavel: true, render: x => x.inicio ? `<span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-play text-[9px]" style="color:#16a34a"></i><span class="tabular-nums">${fmt(x.inicio)}</span></span>` : '' },
       { key: 'status', rot: 'Status', w: 195, wCompacta: 190, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_NOM).concat(x.status && !STATUS_NOM[x.status] ? [x.status] : []).map(k => [k, k]),
         render: x => { if (!x.status) return ''; const [cor, ico] = corNom(x.status); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.status)}</span>`; } },
       { key: 'observacao', rot: 'Observação', w: 280, tipo: 'texto', editavel: true }
@@ -4966,9 +5142,6 @@ function renderNomeacoes() {
     finalizado: nomFeita,
     ordemPadrao: ordemFinalizados(nomFeita, ordemNom, porFimRecente('atualizadoEm')),
     classeLinha: x => nomFeita(x) ? 'gs-feito' : '',
-    chips: [['', L('filtro.todos'), () => true, '#1e40af'], ['nom', 'Nomeações', x => x.tipo === 'Nomeação', '#2563eb'], ['exo', 'Exonerações', x => x.tipo === 'Exoneração', '#be123c'],
-            ['and', 'Em andamento', x => x.status === 'Em andamento', '#2563eb'], ['aguard', 'Aguardando publicação', x => x.status === 'Aguardando publicação', '#d97706'],
-            ['pub', 'Publicados', x => x.status === 'Publicado', '#16a34a'], ['nao', 'Não autorizados', x => x.status === 'Não Autorizado', '#dc2626'], ['in', 'IN', x => x.categoria === 'IN', '#7c3aed'], ['nor', 'NOR', x => x.categoria === 'NOR', '#0d9488']],
     aoEditarCampos: editarNomCampos,
     acoes: x => {
       const btn = !pode('chefe:2') ? '' : x.status === 'Em andamento' ? `<button type="button" class="gs-acao" style="--c:#d97706" title="Marcar como Aguardando publicação" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'Aguardando publicação'})"><i class="fa-solid fa-newspaper"></i>Publicação</button>`
@@ -4986,7 +5159,6 @@ function renderNomeacoes() {
     botaoNovo: `<div class="flex gap-1.5"><button class="btn !h-9 bg-blue-700 hover:bg-blue-600 text-white" onclick="abrirFormNomeacao(null,{tipo:'Nomeação'})"><i class="fa-solid fa-user-check"></i>Nomeação</button><button class="btn !h-9 bg-rose-700 hover:bg-rose-600 text-white" onclick="abrirFormNomeacao(null,{tipo:'Exoneração'})"><i class="fa-solid fa-user-xmark"></i>Exoneração</button></div>`
   });
 }
-
 /* ----- Painel do Chefe de Gabinete ----- */
 function renderChefe() {
   const c = $('chefe-corpo');
