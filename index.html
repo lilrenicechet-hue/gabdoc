@@ -844,6 +844,24 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pt-anexar.pub { --cor: #16a34a; color: #16a34a; border-color: color-mix(in srgb, #16a34a 55%, transparent); background: color-mix(in srgb, #16a34a 7%, var(--card)); }
   .gs-compacto .pt-arq > .truncate { display: none; }
   .gs-compacto .pt-anexar span { display: none; }
+  /* larguras ajustáveis */
+  table.gs th.gs-cab { position: sticky; }
+  .gs-redim { position: absolute; top: 0; right: 0; width: 9px; height: 100%; cursor: col-resize; z-index: 6; touch-action: none; }
+  .gs-redim::after { content: ""; position: absolute; top: 22%; bottom: 22%; right: 3px; width: 3px; border-radius: 2px; background: transparent; transition: background .15s; }
+  th.gs-cab:hover .gs-redim::after { background: color-mix(in srgb, var(--brand) 35%, transparent); }
+  .gs-redim:hover::after, .gs-redim.arrastando::after { background: var(--brand); top: 10%; bottom: 10%; }
+  .gs-redim.ajustada::after { background: color-mix(in srgb, var(--brand) 25%, transparent); }
+  body.gs-redimensionando, body.gs-redimensionando * { cursor: col-resize !important; user-select: none !important; }
+  /* Publicações: status e link em Ações; tipo junto do número */
+  .pub-st { --c: #d97706; height: 26px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 800; white-space: nowrap; color: color-mix(in srgb, var(--c) 82%, var(--ink)); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1.5px dashed color-mix(in srgb, var(--c) 60%, transparent); margin-right: auto; }
+  .pub-st:hover { background: color-mix(in srgb, var(--c) 18%, var(--card)); }
+  .pub-st.feito { border-style: solid; color: #fff; background: var(--c); border-color: var(--c); }
+  .pub-st .pub-st-seta { font-size: 8px; opacity: .7; }
+  .pub-link { color: #7c3aed !important; }
+  .pub-link.sem { color: var(--ink3) !important; opacity: .45; }
+  .pub-tipo { --c: #4f46e5; display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 6px; margin-right: 6px; border-radius: 6px; font-size: 10.5px; font-weight: 800; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 12%, var(--card)); vertical-align: middle; }
+  .gs-compacto .pub-tipo > span { display: none; }
+  @media (max-width: 767px) { .gs-acoes-in .pub-st span, .gs-acoes-in .pub-st .pub-st-seta { display: none; } .gs-acoes-in .pub-st { padding: 0 7px; margin-right: 0; } }
   /* Publicações: alerta de prazos */
   .pub-alerta { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
   .pa-bloco { --c: #dc2626; border-radius: 16px; padding: 10px 12px; background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); box-shadow: inset 4px 0 0 var(--c); min-width: 0; }
@@ -4127,7 +4145,7 @@ function linhasDaGrade(cfg, st) {
   return L;
 }
 function colunasVisiveis(cfg, st) {
-  if (!st.compacto || !cfg.compactas) return cfg.colunas;
+  if (!st.compacto || !cfg.compactas) return cfg.colunas.filter(c => !c.oculta);
   return cfg.compactas.map(k => cfg.colunas.find(c => c.key === k)).filter(Boolean).map(c => c.wCompacta ? { ...c, w: c.wCompacta } : c);
 }
 
@@ -4144,13 +4162,16 @@ function renderGrade(cont, cfg) {
   const podeEditar = podeGrade(cfg.id);
   const larguraAcoes = cfg.acoes ? (cfg.larguraAcoes || 178) : 0;
   // No modo compacto a coluna principal (assunto/objeto) ocupa o espaço que sobrar, para caber na tela
-  const flexivel = st.compacto ? cols.find(c => c.flex) : null;
+  // Larguras ajustadas pela pessoa (arrastando a borda do cabeçalho), guardadas por planilha e modo
+  const larg = cfg.redimensionar ? largurasGrade(cfg.id, st.compacto) : {};
+  const wCol = c => larg[c.key] || c.w || 140;
+  const flexivel = st.compacto ? cols.find(c => c.flex && !larg[c.key]) : null;
   const celular = window.innerWidth < 768;
-  const largura = (celular ? 30 : 46) + cols.reduce((a, c) => a + (c === flexivel ? (celular ? 150 : 200) : (c.w || 140)), 0) + (celular && larguraAcoes ? 72 : larguraAcoes);
-  const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${c.w || 140}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
+  const largura = (celular ? 30 : 46) + cols.reduce((a, c) => a + (c === flexivel ? (celular ? 150 : 200) : wCol(c)), 0) + (celular && larguraAcoes ? 72 : larguraAcoes);
+  const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${wCol(c)}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
   const padraoCol = !st.ordem && cfg.ordemColuna;
   const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key || padraoCol === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="${padraoCol === c.key ? 'Ordenado por prazo: vencidos e mais apertados primeiro' : 'Ordenar por ' + esc(c.rot)}">
-      <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : padraoCol === c.key ? '<i class="fa-solid fa-arrow-down-short-wide text-[10px]"></i>' : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}</th>`).join('');
+      <span class="truncate">${esc(c.rot)}</span>${st.ordem === c.key ? `<i class="fa-solid fa-arrow-${st.dir > 0 ? 'down-a-z' : 'up-z-a'} text-[10px]"></i>` : padraoCol === c.key ? '<i class="fa-solid fa-arrow-down-short-wide text-[10px]"></i>' : ''}${c.editavel && podeEditar ? '' : '<i class="fa-solid fa-lock text-[8px] opacity-40" title="Somente leitura"></i>'}${cfg.redimensionar ? `<span class="gs-redim${larg[c.key] ? ' ajustada' : ''}" data-k="${c.key}" data-ci="${i}" title="Arraste para aumentar ou diminuir · duplo clique volta ao tamanho padrão" onclick="event.stopPropagation()" ondblclick="event.stopPropagation();larguraPadrao('${cfg.id}','${c.key}')"></span>` : ''}</th>`).join('');
   const filtros = st.mostrarFiltros ? `<tr class="gs-filtros"><th class="gs-num"><i class="fa-solid fa-filter text-[10px]"></i></th>${cols.map(c => `<th><input class="gs-filtro" data-k="${c.key}" value="${esc(st.filtros[c.key] || '')}" placeholder="Filtrar…" oninput="filtrarGrade('${cfg.id}', this)" aria-label="Filtrar ${esc(c.rot)}"></th>`).join('')}${cfg.acoes ? '<th class="gs-acoes"></th>' : ''}</tr>` : '';
   const iniFim = cfg.finalizado ? L.findIndex(r => cfg.finalizado(r)) : -1;
   const corpo = L.map((r, ri) => `<tr data-ri="${ri}" data-id="${esc(r.id)}" class="${ri === iniFim && ri > 0 ? 'gs-ini-fim ' : ''}${cfg.classeLinha ? cfg.classeLinha(r) : ''}${Grav.pendente(r.id) ? ' gs-pend' : ''}">
@@ -4172,6 +4193,7 @@ function renderGrade(cont, cfg) {
       <div class="gs-ferr flex flex-wrap gap-1.5 ml-auto">
         ${cfg.compactas ? `<div class="dv-seg" role="group" aria-label="Modo de visualização"><button type="button" class="${st.compacto ? '' : 'ativo'}" aria-pressed="${!st.compacto}" onclick="modoGrade('${cfg.id}', false)" title="Todas as colunas"><i class="fa-solid fa-table-cells mr-1"></i>Completo</button><button type="button" class="${st.compacto && !st.leitura ? 'ativo' : ''}" aria-pressed="${st.compacto && !st.leitura}" onclick="modoGrade('${cfg.id}', true)" title="Só o essencial"><i class="fa-solid fa-table-list mr-1"></i>Compacto</button><button type="button" class="${st.leitura ? 'ativo' : ''}" aria-pressed="${!!st.leitura}" onclick="modoGrade('${cfg.id}', true, true)" title="Mostra o assunto e o nº do processo inteiros, mesmo que a linha fique mais alta"><i class="fa-solid fa-align-left mr-1"></i>Texto completo</button></div>` : ''}
         <button type="button" class="btn btn-sec !h-9 ${st.mostrarFiltros ? '!border-blue-500' : ''}" onclick="alternarFiltrosGrade('${cfg.id}')"><i class="fa-solid fa-filter"></i>Filtros</button>
+        ${cfg.redimensionar && Object.keys(larg).length ? `<button type="button" class="btn btn-sec !h-9" onclick="larguraPadrao('${cfg.id}')" title="Voltar todas as colunas ao tamanho padrão"><i class="fa-solid fa-arrows-left-right-to-line"></i>Larguras</button>` : ''}
         <button type="button" class="btn btn-sec !h-9" onclick="exportarGrade('${cfg.id}')"><i class="fa-solid fa-file-csv"></i>CSV</button>
         ${cfg.botaoNovo && podeEditar ? cfg.botaoNovo : ''}
       </div>
@@ -4186,6 +4208,7 @@ function renderGrade(cont, cfg) {
     </div>
     <div class="gs-status"><span>${L.length} de ${cfg.linhas.length} linha(s)</span><span id="gs-info-${cfg.id}" class="truncate"></span>${podeEditar ? '<span class="hidden lg:inline">Shift/arrastar seleciona várias · Enter edita · Ctrl+C / Ctrl+V</span>' : '<span>Somente leitura para o seu perfil</span>'}</div>`;
   const caixa = $('gs-' + cfg.id);
+  if (cfg.redimensionar) caixa.addEventListener('pointerdown', e => { const h = e.target.closest('.gs-redim'); if (h) iniciarRedim(e, cfg.id, h, st.compacto); });
   caixa.addEventListener('mousedown', e => {
     if (e.button !== 0 || e.target.closest('.gs-acoes, .gs-filtro, .gs-editor, thead, .gs-cel-bt')) return;
     const td = e.target.closest('td.gs-cel'), num = e.target.closest('td.gs-num');
@@ -4421,12 +4444,13 @@ async function aplicarMudancas(id, mudancas, origem) {
 
 /* ----- ações: coluna fixa, menu e lote ----- */
 let menuAtual = null;
-function abrirMenuAcoes(id, rowId, btn) {
+function abrirMenuAcoes(id, rowId, btn, qual) {
   const g = Grades[id], row = g.cfg.linhas.find(r => r.id === rowId); if (!row) return;
-  if (menuAtual && menuAtual.rowId === rowId && menuAtual.id === id) { fecharMenuAcoes(); return; }
+  if (menuAtual && menuAtual.rowId === rowId && menuAtual.id === id && menuAtual.qual === qual) { fecharMenuAcoes(); return; }
   fecharMenuAcoes();
-  const itens = (g.cfg.menuAcoes(row) || []).filter(x => x.sep || x.titulo || !x.perm || pode(x.perm));
-  menuAtual = { id, rowId, itens };
+  const fonte = qual === 'status' && g.cfg.menuStatus ? g.cfg.menuStatus : g.cfg.menuAcoes;
+  const itens = (fonte(row) || []).filter(x => x.sep || x.titulo || !x.perm || pode(x.perm));
+  menuAtual = { id, rowId, itens, qual };
   const m = document.createElement('div');
   m.id = 'menu-acoes'; m.className = 'menu-acoes';
   m.innerHTML = `<p class="menu-tit">${esc(g.cfg.tituloLinha ? g.cfg.tituloLinha(row) : '')}</p>` + itens.map((x, i) => x.sep ? '<hr>' : x.titulo ? `<p class="menu-sub">${esc(x.titulo)}</p>` :
@@ -4444,7 +4468,7 @@ async function executarAcaoMenu(i, btn) {
   fecharMenuAcoes();
   await item.fn();
 }
-document.addEventListener('mousedown', e => { if (menuAtual && !e.target.closest('#menu-acoes, .gs-mais')) fecharMenuAcoes(); });
+document.addEventListener('mousedown', e => { if (menuAtual && !e.target.closest('#menu-acoes, .gs-mais, .gs-menu-bt')) fecharMenuAcoes(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuAtual) fecharMenuAcoes(); });
 window.addEventListener('resize', fecharMenuAcoes);
 function atualizarLote(id) {
@@ -4472,6 +4496,39 @@ async function executarLote(id, i, btn) {
 }
 
 /* ----- utilidades da planilha ----- */
+/* ----- larguras de coluna ajustáveis (cfg.redimensionar) ----- */
+function largurasGrade(id, compacto) { try { return JSON.parse(localStorage.getItem('gabdoc_larg_' + id + (compacto ? '_c' : '')) || '{}') || {}; } catch (e) { return {}; } }
+function salvarLarguras(id, compacto, obj) { try { localStorage.setItem('gabdoc_larg_' + id + (compacto ? '_c' : ''), JSON.stringify(obj)); } catch (e) {} }
+function larguraPadrao(id, key) {
+  const st = Grades[id]; const larg = largurasGrade(id, st.compacto);
+  if (key) delete larg[key]; else Object.keys(larg).forEach(k => delete larg[k]);
+  salvarLarguras(id, st.compacto, larg); rerenderGrade(id);
+  toast(key ? 'Coluna no tamanho padrão.' : 'Colunas no tamanho padrão.', 'fa-arrows-left-right-to-line');
+}
+function iniciarRedim(e, id, alca, compacto) {
+  e.preventDefault(); e.stopPropagation();
+  const th = alca.closest('th'), tabela = th.closest('table');
+  const col = tabela.querySelectorAll('colgroup col')[+alca.dataset.ci + 1];
+  const x0 = e.clientX, w0 = th.getBoundingClientRect().width, t0 = tabela.getBoundingClientRect().width;
+  const flex = !!tabela.style.minWidth;
+  let nw = w0;
+  alca.classList.add('arrastando'); document.body.classList.add('gs-redimensionando');
+  try { alca.setPointerCapture(e.pointerId); } catch (err) {}
+  const mover = ev => {
+    nw = Math.round(Math.max(48, Math.min(900, w0 + ev.clientX - x0)));
+    col.style.width = nw + 'px';
+    const total = Math.round(t0 - w0 + nw) + 'px';
+    if (flex) tabela.style.minWidth = total; else tabela.style.width = `max(100%, ${total})`;
+  };
+  const soltar = () => {
+    alca.removeEventListener('pointermove', mover); alca.removeEventListener('pointerup', soltar); alca.removeEventListener('pointercancel', soltar);
+    alca.classList.remove('arrastando'); document.body.classList.remove('gs-redimensionando');
+    if (Math.abs(nw - w0) < 2) return;
+    const larg = largurasGrade(id, compacto); larg[alca.dataset.k] = nw; salvarLarguras(id, compacto, larg);
+    rerenderGrade(id);
+  };
+  alca.addEventListener('pointermove', mover); alca.addEventListener('pointerup', soltar); alca.addEventListener('pointercancel', soltar);
+}
 function rerenderGrade(id) { const g = Grades[id]; if (g && g.cfg) renderAba(); }
 function modoGrade(id, compacto, leitura) { const st = Grades[id]; st.compacto = !!(compacto || leitura); st.leitura = !!leitura; try { localStorage.setItem('gabdoc_compacto_' + id, leitura ? 'L' : compacto ? '1' : '0'); } catch (e) {} if (st.ativa) st.ativa.ci = 0; st.faixa = null; rerenderGrade(id); }
 function ordenarGrade(id, key) { const st = Grades[id]; if (st.ordem === key) { if (st.dir > 0) st.dir = -1; else { st.ordem = null; st.dir = 1; } } else { st.ordem = key; st.dir = 1; } rerenderGrade(id); }
@@ -4875,6 +4932,11 @@ function celLink(x) {
   return `<a class="gs-cel-bt pt-link" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" title="Abrir o processo: ${esc(x.link)}"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Abrir<span class="pt-ab-x"> processo</span></span></a>`;
 }
 const pillStatusPub = x => { const st = statusPub(x), [cor, ico] = PUB_STATUS[st]; return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(st)}</span>`; };
+function celNumeroPub(x) {
+  const [t, ico, cor] = tipoPub(x.tipoDoc);
+  const tipo = x.tipoDoc ? `<span class="pub-tipo" style="--c:${cor}" title="${esc(t)}"><i class="fa-solid ${ico}"></i><span>${esc(t)}</span></span>` : '';
+  return tipo + (x.numero ? esc(x.numero) : '<span class="text-ink3 font-normal">—</span>');
+}
 const pillTipoPub = x => { if (!x.tipoDoc) return ''; const [t, ico, cor] = tipoPub(x.tipoDoc); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(t)}</span>`; };
 
 const FormPort = { id: '', arqs: { minuta: {}, publicado: {} } };
@@ -5073,23 +5135,25 @@ function renderPortarias() {
       ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
       ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>`,
     colunas: [
-      { key: 'tipoDoc', rot: 'Tipo de documento', w: 165, wCompacta: 86, tipo: 'texto', editavel: true, lista: 'lista-tipos-pub', render: pillTipoPub },
-      { key: 'processo', rot: 'Número do Processo', w: 195, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'numero', rot: 'Número do documento', w: 210, wCompacta: 100, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'recebimento', rot: 'Data de recebimento', w: 130, tipo: 'data', editavel: true },
-      { key: 'prazo', rot: 'Prazo para publicação', w: 200, wCompacta: 88, tipo: 'data', editavel: true, render: celPrazoPub },
-      { key: 'assunto', rot: 'Assunto', w: 320, flex: true, tipo: 'texto', editavel: true },
-      { key: 'setor', rot: 'Setor', w: 95, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
-        render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}">${esc(x.setor)}</span>` : '' },
-      { key: 'status', rot: 'Status', w: 205, wCompacta: 118, tipo: 'select', editavel: true, opcoes: () => Object.keys(PUB_STATUS).map(k => [k, k]), valor: x => statusPub(x), render: pillStatusPub },
-      { key: 'link', rot: 'Link do processo', w: 150, wCompacta: 76, tipo: 'texto', editavel: true, render: celLink, validar: v => normLink(v) === null ? 'O link deve começar com http:// ou https://.' : '' },
+      // ordem pedida: Processo · Documento · Assunto · Prazo · Minuta · Arquivo publicado (o status e o link ficam em Ações)
+      { key: 'processo', rot: 'Número do Processo', w: 200, wCompacta: 150, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número do Documento', w: 250, wCompacta: 168, tipo: 'texto', editavel: true, classe: 'gs-forte', render: celNumeroPub },
+      { key: 'assunto', rot: 'Assunto', w: 340, flex: true, tipo: 'texto', editavel: true },
+      { key: 'prazo', rot: 'Prazo para Publicação', w: 200, wCompacta: 88, tipo: 'data', editavel: true, render: celPrazoPub },
       { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
-      { key: 'pubNome', rot: 'Arquivo publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') }
+      { key: 'pubNome', rot: 'Arquivo Publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') },
+      // fora da planilha (estão no formulário), mas vão no CSV
+      { key: 'tipoDoc', rot: 'Tipo de documento', oculta: true, tipo: 'texto' },
+      { key: 'recebimento', rot: 'Data de recebimento', oculta: true, tipo: 'data' },
+      { key: 'setor', rot: 'Setor', oculta: true, tipo: 'texto' },
+      { key: 'status', rot: 'Status', oculta: true, tipo: 'texto', valor: x => statusPub(x) },
+      { key: 'link', rot: 'Link do processo', oculta: true, tipo: 'texto' }
     ],
-    compactas: ['tipoDoc', 'numero', 'prazo', 'assunto', 'status', 'link', 'arquivoNome', 'pubNome'],
-    // primeira vez: modo compacto, para caber status, link e arquivos na tela
+    compactas: ['processo', 'numero', 'assunto', 'prazo', 'arquivoNome', 'pubNome'],
+    redimensionar: true,
+    // primeira vez: modo compacto, para caber tudo na tela
     estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
-    larguraAcoes: 126,
+    larguraAcoes: 182,
     finalizado: pubFeita,
     ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPortRec),
     classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
@@ -5097,13 +5161,15 @@ function renderPortarias() {
             ['venc', 'Prazo vencido', pubVencida, '#dc2626'], ['breve', `Vencem em até ${PUB_ALERTA} dias`, pubAVencer, '#ea580c'], ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']]
       .concat(tipos.slice(0, 6).map(t => ['tipo:' + t, t, x => x.tipoDoc === t, tipoPub(t)[2]])),
     aoEditarCampos: editarPortCampos,
+    // Ações: o STATUS atual (toque para mudar) · link do processo (ícone) · ⋮ demais ações
     acoes: x => {
-      const st = statusPub(x);
-      const btn = st === 'Aguardando Publicação' ? `<button type="button" class="gs-acao" style="--c:#16a34a" title="Marcar como Publicado" onclick="editarPortCampos(portaria('${x.id}'),{status:'Publicado'})"><i class="fa-solid fa-circle-check"></i>Publicado</button>`
-        : st === 'Devolvido Para Correção' ? `<button type="button" class="gs-acao" style="--c:#d97706" title="Corrigido: volta para Aguardando Publicação" onclick="editarPortCampos(portaria('${x.id}'),{status:'Aguardando Publicação'})"><i class="fa-solid fa-paper-plane"></i>Reenviar</button>`
-        : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(L('filtro.fim'))}</span>`;
-      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+      const st = statusPub(x), [cor, ico] = PUB_STATUS[st];
+      const curto = { 'Aguardando Publicação': 'Aguardando', 'Publicado': 'Publicado', 'Devolvido Para Correção': 'Devolvido' }[st];
+      const link = x.link ? `<a class="gs-ico pub-link" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" title="Abrir o processo: ${esc(x.link)}"><i class="fa-solid fa-link"></i></a>`
+        : pode('sol:2') ? `<button type="button" class="gs-ico pub-link sem" title="Sem link do processo · adicionar" onclick="abrirFormPortaria('${x.id}','link')"><i class="fa-solid fa-link-slash"></i></button>` : '<span class="gs-ico pub-link sem"><i class="fa-solid fa-link-slash"></i></span>';
+      return `<div class="gs-acoes-in"><button type="button" class="pub-st gs-menu-bt ${st === 'Publicado' ? 'feito' : ''}" style="--c:${cor}" title="Status: ${esc(st)}${pode('sol:2') ? ' · toque para mudar' : ''}" onclick="abrirMenuAcoes('portarias','${x.id}',this,'status')"><i class="fa-solid ${ico}"></i><span>${curto}</span><i class="fa-solid fa-chevron-down pub-st-seta"></i></button>${link}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
+    menuStatus: x => [{ titulo: 'Status · atual: ' + statusPub(x) }].concat(Object.keys(PUB_STATUS).map(s => ({ rot: s === statusPub(x) ? s + '  ✓' : s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => s === statusPub(x) ? null : editarPortCampos(x, { status: s }) }))),
     tituloLinha: x => nomePub(x),
     menuAcoes: x => {
       const itens = [{ titulo: 'Mudar o status para' }];
