@@ -47,12 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.50.1">
+<meta name="gabdoc-versao" content="1.51.0">
 <script type="application/json" id="gabdoc-novidades">[
+  "Publicações: atalhos para o IOMAT-MT, o Gmail e o SIGADOC no cabeçalho",
   "Publicações: os gráficos ficam ocultos e aparecem pelo botão “Gráficos”",
-  "Publicações: cabeçalho novo, com resumo rápido e números com ícones",
-  "Publicações: relatório personalizado em PDF ou Excel, com prévia",
-  "Publicações no Painel e na seção Relatórios"
+  "Publicações: relatório personalizado em PDF ou Excel, com prévia"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -932,6 +931,15 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pub-novo { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 8px 20px -10px #6366f1; }
   .pub-novo:hover { filter: brightness(1.08); }
   #btn-pub-paineis[aria-pressed="true"] { background: rgba(255,255,255,.16); }
+  .pub-links { display: flex; flex-wrap: nowrap; gap: 6px; justify-content: flex-end; }
+  .pub-links a { white-space: nowrap; }
+  .pub-links a { --c: #a5b4fc; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px 0 5px; border-radius: 12px; color: #fff; text-decoration: none; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); transition: background .15s, border-color .15s, transform .15s; }
+  .pub-links a:hover { background: color-mix(in srgb, var(--c) 18%, transparent); border-color: color-mix(in srgb, var(--c) 55%, transparent); transform: translateY(-1px); }
+  .pub-link-ico { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; color: #0f172a; background: var(--c); flex: none; }
+  .pub-links b { display: block; font-size: 12.5px; font-weight: 800; line-height: 1.1; }
+  .pub-links small { display: block; font-size: 10.5px; color: rgba(224,231,255,.7); line-height: 1.1; }
+  .pub-link-seta { font-size: 9px; opacity: .55; margin-left: 2px; }
+  @media (max-width: 767px) { .pub-links { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .pub-links a { flex: none; } .pub-links small { display: none; } }
   /* Publicações: números e painéis */
   .pub-kpi { position: relative; padding-left: 58px !important; min-height: 92px; }
   .pub-kpi-ico { position: absolute; left: 14px; top: 16px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 16px -8px var(--c); font-size: 14px; }
@@ -1728,9 +1736,16 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
               <div class="pub-pulso" id="port-resumo"></div>
             </div>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-col items-stretch md:items-end gap-2">
+            <nav class="pub-links" aria-label="Acesso rápido">
+              <a href="https://www.iomat.mt.gov.br/" target="_blank" rel="noopener noreferrer" style="--c:#38bdf8" title="Abrir o IOMAT-MT (Diário Oficial de Mato Grosso)"><span class="pub-link-ico"><i class="fa-solid fa-book-open"></i></span><span><b>IOMAT-MT</b><small>Diário Oficial</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+              <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" style="--c:#f87171" title="Abrir o Gmail"><span class="pub-link-ico"><i class="fa-solid fa-envelope"></i></span><span><b>Gmail</b><small>Caixa de entrada</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+              <a href="https://www.sigadoc.mt.gov.br/siga/app/principal" target="_blank" rel="noopener noreferrer" style="--c:#4ade80" title="Abrir o SIGADOC"><span class="pub-link-ico"><i class="fa-solid fa-folder-tree"></i></span><span><b>SIGADOC</b><small>Processos</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+            </nav>
+            <div class="flex flex-wrap items-center gap-2 md:justify-end">
             <div class="rel-sec-bts" role="group" aria-label="Relatório e gráficos"><button type="button" onclick="abrirConfigRelatorio('publicacoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button><button type="button" id="btn-pub-paineis" onclick="alternarPaineisPub()" title="Mostrar ou esconder os gráficos"><i class="fa-solid fa-chart-simple"></i><span>Gráficos</span></button></div>
             <button onclick="abrirFormPortaria()" class="btn text-white pub-novo" id="btn-nova-port" data-requer="sol:2"><i class="fa-solid fa-plus"></i>Nova publicação</button>
+            </div>
           </div>
         </div>
       </div>
