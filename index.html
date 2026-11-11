@@ -47,11 +47,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.49.0">
+<meta name="gabdoc-versao" content="1.50.1">
 <script type="application/json" id="gabdoc-novidades">[
-  "Publicações: nova coluna “Área Solicitante”, ao lado do prazo",
-  "Publicações: coluna do prazo mais estreita (dias que faltam ou vencidos)",
-  "Menu lateral recolhe sozinho ao abrir uma seção (passe o mouse para abrir)"
+  "Publicações: os gráficos ficam ocultos e aparecem pelo botão “Gráficos”",
+  "Publicações: cabeçalho novo, com resumo rápido e números com ícones",
+  "Publicações: relatório personalizado em PDF ou Excel, com prévia",
+  "Publicações no Painel e na seção Relatórios"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -917,6 +918,43 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pub-tipo { --c: #4f46e5; display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 6px; margin-right: 6px; border-radius: 6px; font-size: 10.5px; font-weight: 800; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 12%, var(--card)); vertical-align: middle; }
   .gs-compacto .pub-tipo > span { display: none; }
   @media (max-width: 767px) { .gs-acoes-in .pub-st span, .gs-acoes-in .pub-st .pub-st-seta { display: none; } .gs-acoes-in .pub-st { padding: 0 7px; margin-right: 0; } }
+  /* Publicações: cabeçalho */
+  .pub-faixa-ico { position: relative; flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; color: #fff; background: linear-gradient(135deg, #6366f1, #4338ca); box-shadow: 0 10px 24px -10px #6366f1, inset 0 1px 0 rgba(255,255,255,.25); }
+  .pub-faixa-mini { position: absolute; right: -6px; bottom: -6px; width: 22px; height: 22px; border-radius: 8px; display: grid !important; place-items: center; font-size: 10px; background: #16a34a; border: 2px solid #1e1b4b; }
+  svg.pub-faixa-mini { padding: 4px; }
+  .pub-faixa-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #c7d2fe; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(199,210,254,.2); }
+  .pub-pulso { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pub-pulso:empty { display: none; }
+  .pub-pulso-chip { --c: #a5b4fc; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; color: #e0e7ff; background: rgba(255,255,255,.07); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); transition: background .15s; }
+  button.pub-pulso-chip:hover { background: color-mix(in srgb, var(--c) 22%, transparent); }
+  .pub-pulso-chip > svg, .pub-pulso-chip > i { color: var(--c); font-size: 11px; }
+  .pub-pulso-chip b { color: #fff; font-weight: 900; }
+  .pub-novo { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 8px 20px -10px #6366f1; }
+  .pub-novo:hover { filter: brightness(1.08); }
+  #btn-pub-paineis[aria-pressed="true"] { background: rgba(255,255,255,.16); }
+  /* Publicações: números e painéis */
+  .pub-kpi { position: relative; padding-left: 58px !important; min-height: 92px; }
+  .pub-kpi-ico { position: absolute; left: 14px; top: 16px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 16px -8px var(--c); font-size: 14px; }
+  .pub-kpi .val small { font-size: 12px; font-weight: 800; color: var(--ink3); margin-left: 6px; }
+  .pub-kpi-barra { display: block; height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: 8px; }
+  .pub-kpi-barra span { display: block; height: 100%; background: var(--c); border-radius: 99px; transition: width .5s; }
+  .pub-prazos { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .pub-anel { --p: 0; --c: #16a34a; flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--c) calc(var(--p) * 1%), var(--line) 0); position: relative; }
+  .pub-anel::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: var(--card); }
+  .pub-anel b { position: relative; font-size: 12.5px; font-weight: 900; color: var(--ink); }
+  .pub-colunas { display: flex; align-items: flex-end; gap: 8px; height: 118px; padding-top: 6px; }
+  .pub-col { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .pub-col-barras { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; border-bottom: 1px solid var(--line); }
+  .pub-col-barras span { width: 40%; max-width: 16px; min-height: 2px; border-radius: 5px 5px 2px 2px; background: var(--c); transition: height .5s; }
+  .pub-col small { font-size: 10.5px; font-weight: 700; color: var(--ink3); }
+  .pub-leg { display: flex; gap: 14px; margin-top: 10px; font-size: 11.5px; color: var(--ink3); }
+  .pub-leg span { display: inline-flex; align-items: center; gap: 5px; }
+  .pub-leg i { width: 9px; height: 9px; border-radius: 3px; background: var(--c); display: inline-block; }
+  .pub-leg b { color: var(--ink); }
+  .pub-barra { width: 100%; text-align: left; border-radius: 8px; padding: 2px 4px; }
+  .pub-barra:hover { background: var(--card2); }
+  .pub-barra .truncate svg, .pub-barra .truncate i { margin-right: 6px; font-size: 11px; }
+  @media (max-width: 767px) { .pub-faixa-ico { width: 38px; height: 38px; font-size: 16px; } .pub-faixa-tag { display: none; } .pub-kpi { padding-left: 12px !important; min-height: 0; } .pub-kpi-ico, .pub-kpi-barra { display: none; } #btn-pub-paineis span { display: none; } }
   /* Publicações: alerta de prazos */
   .pub-alerta { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
   .pa-bloco { --c: #dc2626; border-radius: 16px; padding: 10px 12px; background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); box-shadow: inset 4px 0 0 var(--c); min-width: 0; }
@@ -1682,11 +1720,18 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     <section id="tab-portarias" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern" style="background-color:#1e1b4b">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-          <div>
-            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-newspaper text-indigo-300"></i> Publicações</h2>
-            <p class="text-indigo-100/70 text-xs mt-0.5 hidden sm:block">Portarias, editais, instruções normativas e demais atos para publicação: status, link do processo, a minuta e o arquivo publicado (baixe em Word ou PDF).</p>
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="pub-faixa-ico" aria-hidden="true"><i class="fa-solid fa-newspaper"></i></span>
+            <div class="min-w-0">
+              <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">Publicações <span class="pub-faixa-tag"><i class="fa-solid fa-scale-balanced"></i>Diário Oficial</span></h2>
+              <p class="text-indigo-100/70 text-xs mt-0.5 hidden sm:block">Portarias, editais, instruções normativas e demais atos: prazos, status, minuta e arquivo publicado.</p>
+              <div class="pub-pulso" id="port-resumo"></div>
+            </div>
           </div>
-          <div class="flex items-center gap-3"><span class="text-xs text-indigo-100/80" id="port-resumo"></span><button onclick="abrirFormPortaria()" class="btn text-white" style="background:#4f46e5" id="btn-nova-port"><i class="fa-solid fa-plus"></i>Nova publicação</button></div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="rel-sec-bts" role="group" aria-label="Relatório e gráficos"><button type="button" onclick="abrirConfigRelatorio('publicacoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button><button type="button" id="btn-pub-paineis" onclick="alternarPaineisPub()" title="Mostrar ou esconder os gráficos"><i class="fa-solid fa-chart-simple"></i><span>Gráficos</span></button></div>
+            <button onclick="abrirFormPortaria()" class="btn text-white pub-novo" id="btn-nova-port" data-requer="sol:2"><i class="fa-solid fa-plus"></i>Nova publicação</button>
+          </div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="port-corpo"></div></div>
@@ -4913,7 +4958,7 @@ function exemplosPortarias() {
   const h = d => somaDias(d);
   return [
     { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), prazo: h(2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
-    { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', link: '', exemplo: true },
+    { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', publicadoEm: h(-3), link: '', exemplo: true },
     { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), prazo: h(-3), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
     { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), prazo: h(10), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true }
   ];
@@ -4985,6 +5030,8 @@ function anexarArqPortaria(id, qual = 'minuta') {
 }
 async function salvarPortaria(id, dados, rotulo) {
   const novo = !id;
+  // data da publicação: preenchida sozinha ao marcar Publicado; some se voltar atrás
+  dados.publicadoEm = statusPub(dados) === 'Publicado' ? (dados.publicadoEm || hojeISO()) : '';
   if (!gravaEmFila()) {
     if (novo) id = 'pt' + Date.now();
     trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados(); return true;
@@ -5215,21 +5262,91 @@ async function salvarFormPortaria(id) {
 /** Abertas primeiro (mais recentes no topo); publicadas no fim. */
 const ordemPortRec = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
 const ordemPort = (a, b) => { const da = diasPub(a), db = diasPub(b); if (da !== null || db !== null) { if (da === null) return 1; if (db === null) return -1; if (da !== db) return da - db; } return ordemPortRec(a, b); };
+/* ----- Publicações: estatísticas, cabeçalho e painéis ----- */
+const mesesAte = n => { const m = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); m.push(iso(d).slice(0, 7)); } return m; };
+const MES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const rotMes = m => MES_CURTO[Number(m.slice(5)) - 1] + '/' + m.slice(2, 4);
+/** Números das publicações (para a seção, o Painel e os relatórios). */
+function statsPub(lista) {
+  const l = lista || [];
+  const pubs = l.filter(pubFeita), abertas = l.filter(x => !pubFeita(x));
+  const tempos = pubs.filter(x => x.recebimento && x.publicadoEm).map(x => Math.max(0, diasEntre(x.recebimento, x.publicadoEm)));
+  const comPrazo = pubs.filter(x => x.prazo && x.publicadoEm);
+  const noPrazo = comPrazo.filter(x => x.publicadoEm <= x.prazo).length;
+  const conta = f => { const m = {}; l.forEach(x => { const k = f(x) || ''; m[k] = (m[k] || 0) + 1; }); return m; };
+  return {
+    total: l.length, abertas: abertas.length, publicadas: pubs.length,
+    aguardando: l.filter(x => statusPub(x) === 'Aguardando Publicação').length, devolvidas: l.filter(x => statusPub(x) === 'Devolvido Para Correção').length,
+    vencidas: l.filter(pubVencida).length, aVencer: l.filter(pubAVencer).length,
+    semMinuta: abertas.filter(x => !x.arquivoId).length, semArqPub: pubs.filter(x => !x.pubId).length,
+    tempoMedio: tempos.length ? tempos.reduce((a, b) => a + b, 0) / tempos.length : null,
+    pctPrazo: comPrazo.length ? Math.round(noPrazo * 100 / comPrazo.length) : null, noPrazo, comPrazo: comPrazo.length,
+    porTipo: conta(x => x.tipoDoc), porArea: conta(x => x.setor),
+    noMes: l.filter(x => String(x.publicadoEm || '').slice(0, 7) === hojeISO().slice(0, 7)).length
+  };
+}
+function pulsoPub(todas) {
+  const el = $('port-resumo'); if (!el) return;
+  if (!todas.length) { el.innerHTML = ''; return; }
+  const st = statsPub(todas);
+  const chip = (cor, ico, txt, acao) => `<button type="button" class="pub-pulso-chip" style="--c:${cor}" onclick="${acao}"><i class="fa-solid ${ico}"></i>${txt}</button>`;
+  el.innerHTML = [
+    chip('#fbbf24', 'fa-hourglass-half', `<b>${st.abertas}</b> a publicar`, "chipGrade('portarias','agu')"),
+    st.vencidas ? chip('#f87171', 'fa-triangle-exclamation', `<b>${st.vencidas}</b> vencida${st.vencidas > 1 ? 's' : ''}`, "chipGrade('portarias','venc')") : '',
+    st.aVencer ? chip('#fb923c', 'fa-bell', `<b>${st.aVencer}</b> vence${st.aVencer > 1 ? 'm' : ''} em breve`, "chipGrade('portarias','breve')") : '',
+    chip('#4ade80', 'fa-circle-check', `<b>${st.noMes}</b> publicada${st.noMes === 1 ? '' : 's'} no mês`, "chipGrade('portarias','pub')"),
+    st.tempoMedio != null ? `<span class="pub-pulso-chip" style="--c:#a5b4fc" title="Do recebimento à publicação"><i class="fa-solid fa-stopwatch"></i><b>${st.tempoMedio.toFixed(1).replace('.', ',')}</b> dias em média</span>` : ''
+  ].join('');
+}
+// Gráficos começam ocultos: aparecem pelo botão "Gráficos" do cabeçalho (a escolha fica lembrada)
+const pubPaineisOn = () => ls.get('gabdoc_pub_graficos') === '1';
+function alternarPaineisPub() { ls.set('gabdoc_pub_graficos', pubPaineisOn() ? '0' : '1'); renderPortarias(); }
+function botaoPaineisPub() {
+  const b = $('btn-pub-paineis'); if (!b) return; const on = pubPaineisOn();
+  b.setAttribute('aria-pressed', String(on)); b.title = on ? 'Esconder os gráficos' : 'Mostrar os gráficos';
+  b.innerHTML = `<i class="fa-solid ${on ? 'fa-eye-slash' : 'fa-chart-simple'}"></i><span>${on ? 'Esconder gráficos' : 'Gráficos'}</span>`;
+}
+function paineisPub(todas) {
+  const st = statsPub(todas);
+  // 1. fluxo + prazos
+  const etapas = [['Aguardando Publicação', 'agu', st.aguardando], ['Devolvido Para Correção', 'dev', st.devolvidas], ['Publicado', 'pub', st.publicadas]];
+  const tot = Math.max(1, st.total);
+  const pFluxo = `<section class="nom-painel"><h3><i class="fa-solid fa-route" style="color:${PORT_COR}"></i>Fluxo da publicação</h3>
+    <div class="nom-fluxo">${etapas.map(([k, chip, n], i) => { const [cor, ico] = PUB_STATUS[k]; return `${i ? '<i class="fa-solid fa-chevron-right nom-seta"></i>' : ''}<button type="button" class="nom-etapa" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')"><span class="nom-etapa-ico"><i class="fa-solid ${ico}"></i></span><b>${n}</b><small>${k === 'Devolvido Para Correção' ? 'Devolvidas' : k === 'Publicado' ? 'Publicadas' : 'Aguardando'}</small><span class="nom-etapa-barra"><span style="width:${Math.round(n * 100 / tot)}%"></span></span></button>`; }).join('')}</div>
+    <div class="pub-prazos">
+      <span class="pub-anel" style="--p:${st.pctPrazo == null ? 0 : st.pctPrazo};--c:${st.pctPrazo == null ? '#94a3b8' : st.pctPrazo >= 80 ? '#16a34a' : st.pctPrazo >= 60 ? '#d97706' : '#dc2626'}"><b>${st.pctPrazo == null ? '—' : st.pctPrazo + '%'}</b></span>
+      <span class="min-w-0"><b class="block text-[12.5px] text-ink">Publicadas dentro do prazo</b><small class="text-[11.5px] text-ink3">${st.comPrazo ? `${st.noPrazo} de ${st.comPrazo} com prazo` : 'Ainda sem publicações com prazo'}${st.tempoMedio != null ? ` · média de ${st.tempoMedio.toFixed(1).replace('.', ',')} dias até publicar` : ''}</small></span>
+    </div></section>`;
+  // 2. ritmo mensal (recebidas × publicadas)
+  const meses = mesesAte(6);
+  const rec = meses.map(m => todas.filter(x => String(x.recebimento || '').slice(0, 7) === m).length), pub = meses.map(m => todas.filter(x => String(x.publicadoEm || '').slice(0, 7) === m).length);
+  const maxM = Math.max(1, ...rec, ...pub);
+  const pRitmo = `<section class="nom-painel"><h3><i class="fa-solid fa-chart-column" style="color:#0891b2"></i>Ritmo dos últimos 6 meses</h3>
+    <div class="pub-colunas">${meses.map((m, i) => `<div class="pub-col" title="${rotMes(m)}: ${rec[i]} recebida(s), ${pub[i]} publicada(s)"><div class="pub-col-barras"><span style="height:${Math.round(rec[i] * 100 / maxM)}%;--c:#6366f1"></span><span style="height:${Math.round(pub[i] * 100 / maxM)}%;--c:#16a34a"></span></div><small>${rotMes(m).slice(0, 3)}</small></div>`).join('')}</div>
+    <div class="pub-leg"><span><i style="--c:#6366f1"></i>Recebidas <b>${rec.reduce((a, b) => a + b, 0)}</b></span><span><i style="--c:#16a34a"></i>Publicadas <b>${pub.reduce((a, b) => a + b, 0)}</b></span></div></section>`;
+  // 3. por tipo · 4. por área
+  const barras = (obj, corDe, icoDe, chipDe, vazio) => { const it = Object.entries(obj).filter(([k]) => k).sort((a, b) => b[1] - a[1]).slice(0, 6), mx = Math.max(1, ...it.map(x => x[1]));
+    return it.length ? `<div class="nom-barras">${it.map(([k, n]) => `<button type="button" class="nom-barra pub-barra" onclick="${chipDe ? chipDe(k) : ''}" title="${esc(k)}: ${n}"><span class="truncate">${icoDe ? `<i class="fa-solid ${icoDe(k)}" style="color:${corDe(k)}"></i>` : ''}${esc(k)}</span><span class="nom-barra-t"><span style="width:${Math.round(n * 100 / mx)}%;background:${corDe(k)}"></span></span><b>${n}</b></button>`).join('')}</div>` : `<p class="nom-vazio">${vazio}</p>`; };
+  const pTipo = `<section class="nom-painel"><h3><i class="fa-solid fa-layer-group" style="color:#7c3aed"></i>Por tipo de documento</h3>${barras(st.porTipo, t => tipoPub(t)[2], t => tipoPub(t)[1], t => `chipGrade('portarias','tipo:${esc(t)}')`, 'Sem tipo informado.')}</section>`;
+  const pArea = `<section class="nom-painel"><h3><i class="fa-solid fa-sitemap" style="color:#d97706"></i>Por área solicitante</h3>${barras(st.porArea, corSetor, () => 'fa-circle', null, 'Sem área informada.')}</section>`;
+  return `<div class="nom-paineis pub-paineis">${pFluxo}${pRitmo}${pTipo}${pArea}</div>`;
+}
 function renderPortarias() {
   const cont = $('port-corpo');
   const todas = Store.portarias || [];
-  $('port-resumo').textContent = todas.length ? `${todas.length} publicação(ões) · ${todas.filter(pubFeita).length} publicada(s)` : '';
+  pulsoPub(todas); botaoPaineisPub();
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   const conta = st => todas.filter(x => statusPub(x) === st).length;
   const tipos = [...new Set(todas.map(x => x.tipoDoc).filter(Boolean))].sort();
-  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  const tot = Math.max(1, todas.length);
+  const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi pub-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')" title="Filtrar: ${esc(rot)}"><span class="pub-kpi-ico"><i class="fa-solid ${ico}"></i></span><span class="rot">${rot}</span><span class="val">${val}${chip && todas.length ? `<small>${Math.round(val * 100 / tot)}%</small>` : ''}</span><span class="sub">${sub}</span>${chip ? `<span class="pub-kpi-barra"><span style="width:${Math.round(val * 100 / tot)}%"></span></span>` : ''}</button>`;
   renderGrade(cont, {
     id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
     topo: `${alertaPrazosPub(todas)}<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, `${tipos.length} tipo(s) de documento`, '')}
       ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), todas.some(pubVencida) ? `<span class="text-red-600 font-bold">${todas.filter(pubVencida).length} com prazo vencido</span>` : `${todas.filter(pubAVencer).length} vencem em até ${PUB_ALERTA} dias`, 'agu')}
       ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
-      ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>`,
+      ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>${pubPaineisOn() ? paineisPub(todas) : ''}`,
     colunas: [
       // ordem pedida: Processo · Documento · Assunto · Prazo · Minuta · Arquivo publicado (o status e o link ficam em Ações)
       { key: 'processo', rot: 'Número do Processo', rotCompacto: 'Processo', w: 200, wCompacta: 130, tipo: 'texto', editavel: true, classe: 'gs-forte' },
@@ -6941,7 +7058,8 @@ function renderPainel() {
       ${cardInd('#c026d3', 'fa-calendar-check', 'Eventos e comunicados', 'Próximos 6 meses e mural vigente',
         `<div class="h-40"><canvas id="ind-ev" aria-label="Eventos por mês"></canvas></div>
          <div class="ind-com">${Object.entries(PRIORIDADES_COM).reverse().map(([k, v]) => `<button type="button" onclick="irPara('comunicados')"><i class="fa-solid ${v.ico}" style="color:${v.cor}"></i><b>${coms.filter(x => x.prioridade === k).length}</b><span>${esc(rotPri(k))}</span></button>`).join('')}</div>`)}
-    </div>`;
+    </div>
+    ${painelPubHtml(noPer)}`;
 
   // ----- gráficos (Chart.js) -----
   Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
@@ -6987,8 +7105,43 @@ function renderPainel() {
     { label: 'Prioridades', data: urgSec.map(x => x.u), backgroundColor: '#dc2626', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 },
     { label: 'Casa Civil', data: urgSec.map(x => x.cc), backgroundColor: '#7c3aed', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 }
   ] }, options: { maintainAspectRatio: false, interaction: tip, plugins: { legend: legenda, tooltip: tip }, scales: { y: eixoY, x: semEixoX } } });
+  if ($('pn-pub-mes')) {
+    const pubs = Store.portarias || [];
+    graficos.pnPub = new Chart($('pn-pub-mes'), { type: 'bar', data: { labels: meses12.map(m => nomeMes(m) + '/' + m.slice(2, 4)), datasets: [
+      { label: 'Recebidas', data: meses12.map(m => pubs.filter(x => String(x.recebimento || '').slice(0, 7) === m).length), backgroundColor: '#6366f1', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 },
+      { label: 'Publicadas', data: meses12.map(m => pubs.filter(x => String(x.publicadoEm || '').slice(0, 7) === m).length), backgroundColor: '#16a34a', borderRadius: 4, borderSkipped: false, maxBarThickness: 16 }
+    ] }, options: { maintainAspectRatio: false, interaction: tip, plugins: { legend: legenda, tooltip: tip }, scales: { y: eixoY, x: semEixoX }, onClick: () => irPara('portarias') } });
+  }
   graficos.indEv = new Chart($('ind-ev'), { type: 'bar', data: { labels: meses.map(nomeMes), datasets: [{ label: 'Eventos', data: meses.map(m => evs.filter(e => (e.dataInicio || '').slice(0, 7) === m).length), backgroundColor: '#c026d3', borderRadius: 4, borderSkipped: false, maxBarThickness: 26 }] },
     options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ...eixoY, ticks: { precision: 0, maxTicksLimit: 4 } }, x: semEixoX }, onClick: () => irPara('eventos') } });
+}
+/* ----- Painel: seção de Publicações ----- */
+function painelPubHtml(noPer) {
+  if (nivelArea('sol') < 1) return '';
+  const todas = Store.portarias || [];
+  const st = statsPub(todas);
+  const pubPer = todas.filter(x => pubFeita(x) && noPer(x.publicadoEm)).length, recPer = todas.filter(x => noPer(x.recebimento)).length;
+  const ir = chip => `irPara('portarias');setTimeout(()=>chipGrade('portarias','${chip}'),0)`;
+  const corPct = st.pctPrazo == null ? '#64748b' : st.pctPrazo >= 80 ? '#16a34a' : st.pctPrazo >= 60 ? '#d97706' : '#dc2626';
+  const lista = (obj, corDe, icoDe, acaoDe) => { const it = Object.entries(obj).filter(([k]) => k).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    return it.length ? barraHtml(it.map(([k, n]) => ({ rot: k, n, cor: corDe(k), ico: icoDe(k), acao: acaoDe ? acaoDe(k) : "irPara('portarias')" })), todas.length) : vazioMini('Sem dados ainda.'); };
+  return `
+    ${tituloSecao('pn-pub', 'fa-newspaper', 'Publicações', 'Portarias, editais e demais atos: o que falta publicar, prazos e ritmo de publicação')}
+    ${todas.length ? `<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
+      ${tileInd('#d97706', 'fa-hourglass-half', 'A publicar', st.abertas, `${st.aguardando} aguardando · ${st.devolvidas} devolvida(s)`, ir('agu'))}
+      ${tileInd(st.vencidas ? '#dc2626' : '#16a34a', 'fa-triangle-exclamation', 'Prazo vencido', st.vencidas, `${st.aVencer} vencem em até ${PUB_ALERTA} dias`, ir(st.vencidas ? 'venc' : 'breve'))}
+      ${tileInd('#16a34a', 'fa-circle-check', 'Publicadas no período', pubPer, `${recPer} recebida(s) no período`, ir('pub'))}
+      ${tileInd('#0d9488', 'fa-stopwatch', 'Tempo até publicar', st.tempoMedio == null ? '—' : st.tempoMedio.toFixed(1).replace('.', ',') + '<small class="text-[14px] font-bold text-ink3"> dias</small>', 'do recebimento à publicação')}
+      ${tileInd(corPct, 'fa-bullseye', 'Publicadas no prazo', st.pctPrazo == null ? '—' : st.pctPrazo + '%', st.comPrazo ? `${st.noPrazo} de ${st.comPrazo} com prazo` : 'sem publicações com prazo')}
+    </div>
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div class="xl:col-span-2">${cardInd('#4f46e5', 'fa-chart-column', 'Recebidas × publicadas por mês', 'Últimos 12 meses (data de recebimento e data de publicação)', '<div class="h-64"><canvas id="pn-pub-mes" aria-label="Publicações recebidas e publicadas por mês"></canvas></div>')}</div>
+      ${cardInd('#16a34a', 'fa-signal', 'Situação agora', 'Todas as publicações por status', barraHtml(Object.keys(PUB_STATUS).map(k => ({ rot: { 'Aguardando Publicação': 'Aguardando', 'Publicado': 'Publicadas', 'Devolvido Para Correção': 'Devolvidas' }[k], n: todas.filter(x => statusPub(x) === k).length, cor: PUB_STATUS[k][0], ico: PUB_STATUS[k][1], acao: ir(k === 'Publicado' ? 'pub' : k === 'Devolvido Para Correção' ? 'dev' : 'agu') })), todas.length))}
+    </div>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      ${cardInd('#7c3aed', 'fa-layer-group', 'Por tipo de documento', 'Todas as publicações', lista(st.porTipo, t => tipoPub(t)[2], t => tipoPub(t)[1], t => ir('tipo:' + t)))}
+      ${cardInd('#d97706', 'fa-sitemap', 'Por área solicitante', 'Todas as publicações', lista(st.porArea, corSetor, () => 'fa-circle'))}
+    </div>` : `<div class="dv-card">${vazioMini('Nenhuma publicação cadastrada ainda. <button type="button" class="underline font-bold" onclick="irPara(\'portarias\')">Ir para Publicações</button>')}</div>`}`;
 }
 const vazioMini = t => `<p class="text-[12.5px] text-ink3 py-6 text-center">${t}</p>`;
 /* ----- Painel: cruzamentos e rankings ----- */
@@ -7010,7 +7163,7 @@ function rankingTop(contagem, n, cor, ico, acao) {
   return itens.length ? barraHtml(itens.map(([k, v]) => ({ rot: k, n: v, cor, ico, acao: acao ? acao(k) : '' })), 0, { pct: false }) : vazioMini('Sem dados no período.');
 }
 function navPainel() {
-  const sec = [['pn-geral', 'Visão geral', 'fa-gauge-high'], ['pn-tempo', 'Prazos e tempo', 'fa-stopwatch'], ['pn-quem', 'Quem e onde', 'fa-users'], ['pn-cruz', 'Cruzamentos', 'fa-table-cells'], ['pn-mais', 'Casa Civil, eventos e comunicados', 'fa-landmark']];
+  const sec = [['pn-geral', 'Visão geral', 'fa-gauge-high'], ['pn-tempo', 'Prazos e tempo', 'fa-stopwatch'], ['pn-quem', 'Quem e onde', 'fa-users'], ['pn-cruz', 'Cruzamentos', 'fa-table-cells'], ['pn-mais', 'Casa Civil, eventos e comunicados', 'fa-landmark']].concat(nivelArea('sol') >= 1 ? [['pn-pub', 'Publicações', 'fa-newspaper']] : []);
   return `<div class="pn-nav">${sec.map(([id, r, ic]) => `<button type="button" onclick="$('${id}').scrollIntoView({behavior:'smooth',block:'start'})"><i class="fa-solid ${ic}"></i>${r}</button>`).join('')}</div>`;
 }
 const tituloSecao = (id, ico, titulo, sub) => `<div class="pn-sec" id="${id}"><span><i class="fa-solid ${ico}"></i></span><div><h3>${titulo}</h3><p>${sub}</p></div></div>`;
@@ -7147,6 +7300,7 @@ const TEMAS_REL = [
   { k: 'casacivil', rot: 'Casa Civil', ico: 'fa-landmark', cor: '#7c3aed', desc: 'Trilha e etapas na Casa Civil' },
   { k: 'correicao', rot: 'Processos de Correição', ico: 'fa-clipboard-check', cor: '#d97706', desc: 'Situação de cada processo' },
   { k: 'chefe', rot: 'Chefe de Gabinete', ico: 'fa-user-tie', cor: '#b45309', desc: 'Processos, documentos para assinatura e SIMEC do Chefe' },
+  { k: 'publicacoes', rot: 'Publicações', ico: 'fa-newspaper', cor: '#4f46e5', desc: 'Portarias, editais e demais atos: status, prazos, tipos e áreas' },
   { k: 'nomeacoes', rot: 'Nomeações e Exonerações', ico: 'fa-id-card', cor: '#1e40af', desc: 'Status, atos e publicações do período' },
   { k: 'innor', rot: 'IN e NOR', ico: 'fa-people-arrows', cor: '#7c3aed', desc: 'Contratações e nomeações/exonerações juntas, separadas por IN e NOR' },
   { k: 'contratacoes', rot: 'Contratações de pessoal', ico: 'fa-user-plus', cor: '#c2410c', desc: 'Exclusivo do Chefe de Gabinete · status, entrevistas e lotação' },
@@ -7202,7 +7356,7 @@ function graficoStatus(lista) { const ks = Object.keys(STATUS).filter(k => lista
 function graficoMesesRel(lista, titulo, grupos, n = 6) {
   const meses = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); meses.push(iso(d).slice(0, 7)); }
   const nm = m => ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(m.slice(5)) - 1] + '/' + m.slice(2, 4);
-  return { tipo: 'bar', titulo, labels: meses.map(nm), series: grupos.map(([rot, cor, f]) => ({ rot, cor, dados: meses.map(m => lista.filter(x => String(x.protocolo || '').slice(0, 7) === m && f(x)).length) })) };
+  return { tipo: 'bar', titulo, labels: meses.map(nm), series: grupos.map(([rot, cor, f, campo]) => ({ rot, cor, dados: meses.map(m => lista.filter(x => String(x[campo || 'protocolo'] || '').slice(0, 7) === m && f(x)).length) })) };
 }
 /** Tabela-resumo (como "Por secretaria adjunta" do relatório geral): grupo × IN × NOR × total. */
 function tabResumoRel(titulo, rot, lista, grupo, cat) {
@@ -7396,6 +7550,10 @@ function montarRelatorio() {
       add(tab('Por tipo de documento', [{ rot: 'Tipo', w: '*' }, { rot: 'Recebidos no período', w: 'auto', n: 1 }, { rot: L('filtro.pend'), w: 'auto', n: 1 }], porTipo));
       const cc = sols.filter(s => s.casaCivil);
       add(tab('Casa Civil por etapa', [{ rot: 'Etapa', w: '*' }, { rot: 'Quantidade', w: 'auto', n: 1 }], Object.entries(ETAPAS_CC).map(([k, x]) => [x.rot, cc.filter(s => (s.ccEtapa || 'preparo') === k).length])));
+      if (nivelArea('sol') >= 1 && (Store.portarias || []).length) {
+        const sp = statsPub(Store.portarias);
+        add(tab('Publicações por status', [{ rot: 'Situação', w: '*' }, { rot: 'Quantidade', w: 'auto', n: 1 }], [['Aguardando publicação', sp.aguardando], ['Devolvidas para correção', sp.devolvidas], ['Publicadas', sp.publicadas], ['Com prazo vencido (não publicadas)', sp.vencidas], [`Vencem em até ${PUB_ALERTA} dias`, sp.aVencer]]));
+      }
       break;
     }
     case 'mesa': {
@@ -7474,6 +7632,43 @@ function montarRelatorio() {
       add(tab('Registros IN', col, ord(reg.filter(r => r.cat === 'IN')).map(lin), 'Nenhum registro IN no período.'));
       add(tab('Registros NOR', col, ord(reg.filter(r => r.cat === 'NOR')).map(lin), 'Nenhum registro NOR no período.'));
       if (sem.length) add(tab('Sem IN/NOR informado', col, ord(sem).map(lin)));
+      break;
+    }
+    case 'publicacoes': {
+      const fs = e.fsec || {};
+      const l = (Store.portarias || []).filter(x => (!P.ini || !x.recebimento || P.dentro(x.recebimento)) && (!fs.tipo || x.tipoDoc === fs.tipo) && (!fs.st || statusPub(x) === fs.st) && (!fs.area || x.setor === fs.area)
+        && (!fs.prazo || (fs.prazo === 'venc' ? pubVencida(x) : fs.prazo === 'breve' ? pubAVencer(x) : fs.prazo === 'com' ? !!x.prazo : !x.prazo)));
+      const rotPrazo = { venc: 'prazo vencido', breve: `vencem em até ${PUB_ALERTA} dias`, com: 'com prazo', sem: 'sem prazo' }[fs.prazo];
+      subtitulo = [P.rot + ' (data de recebimento)', fs.tipo, fs.st, fs.area, rotPrazo].filter(Boolean).join(' · ');
+      const st = statsPub(l);
+      add(kp([{ rot: 'Publicações', val: st.total, cor: '#4f46e5' }, { rot: 'Aguardando publicação', val: st.aguardando, cor: '#d97706' }, { rot: 'Publicadas', val: st.publicadas, cor: '#16a34a' },
+        { rot: 'Devolvidas p/ correção', val: st.devolvidas, cor: '#dc2626' }, { rot: 'Prazo vencido', val: st.vencidas, cor: '#b91c1c' }]));
+      const tipoTop = Object.entries(st.porTipo).filter(([k]) => k).sort((a, b) => b[1] - a[1])[0], areaTop = Object.entries(st.porArea).filter(([k]) => k).sort((a, b) => b[1] - a[1])[0];
+      const maisVelha = l.filter(x => !pubFeita(x) && x.recebimento).sort((a, b) => a.recebimento.localeCompare(b.recebimento))[0];
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [
+        `No período (${P.rot.toLowerCase()}), foram recebidas ${st.total} publicação(ões): ${st.publicadas} já publicada(s), ${st.aguardando} aguardando publicação e ${st.devolvidas} devolvida(s) para correção.` +
+        (tipoTop ? ` O tipo mais frequente é ${tipoTop[0]} (${tipoTop[1]}).` : '') + (areaTop ? ` A área que mais solicitou foi ${areaTop[0]} (${areaTop[1]}).` : ''),
+        (st.vencidas || st.aVencer ? `Atenção: ${st.vencidas} com prazo vencido e ${st.aVencer} que vencem em até ${PUB_ALERTA} dias. ` : 'Nenhuma publicação com prazo vencido. ') +
+        (st.pctPrazo != null ? `${st.pctPrazo}% das publicadas com prazo saíram dentro do prazo (${st.noPrazo} de ${st.comPrazo}). ` : '') +
+        (st.tempoMedio != null ? `O tempo médio do recebimento à publicação foi de ${st.tempoMedio.toFixed(1).replace('.', ',')} dia(s).` : '') +
+        (maisVelha ? ` A publicação em aberto há mais tempo é ${nomePub(maisVelha)}, recebida há ${diasDesde(maisVelha.recebimento)} dia(s).` : '')] });
+      add(graf(graficoMesesRel(l, 'Recebidas e publicadas por mês', [['Recebidas', '#4f46e5', () => true, 'recebimento'], ['Publicadas', '#16a34a', pubFeita, 'publicadoEm']])));
+      add(graf({ tipo: 'hbar', titulo: 'Publicações por status', labels: Object.keys(PUB_STATUS), series: [{ rot: 'Publicações', dados: Object.keys(PUB_STATUS).map(k => l.filter(x => statusPub(x) === k).length), cores: Object.values(PUB_STATUS).map(v => v[0]) }] }));
+      const colSt = Object.keys(PUB_STATUS).map(k => ({ rot: k === 'Devolvido Para Correção' ? 'Devolvidas' : k === 'Publicado' ? 'Publicadas' : 'Aguardando', w: 'auto', n: 1 }));
+      const resumo = (titulo, rot, grupo) => { const m = new Map(); l.forEach(x => { const g = grupo(x) || 'Não informado'; if (!m.has(g)) m.set(g, []); m.get(g).push(x); });
+        return { t: 'tabela', titulo, colunas: [{ rot, w: '*' }].concat(colSt, [{ rot: 'Total', w: 'auto', n: 1 }]), vazio: 'Sem registros no período.',
+          linhas: [...m.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'pt-BR')).map(([g, lg]) => [g].concat(Object.keys(PUB_STATUS).map(k => lg.filter(x => statusPub(x) === k).length), [lg.length])) }; };
+      if (e.tabela) { add(resumo('Por tipo de documento', 'Tipo de documento', x => x.tipoDoc)); add(resumo('Por área solicitante', 'Área solicitante', x => x.setor)); }
+      const sitPrazo = x => !x.prazo ? 'Sem prazo' : pubFeita(x) ? (x.publicadoEm && x.publicadoEm <= x.prazo ? 'No prazo' : x.publicadoEm ? 'Fora do prazo' : 'Publicada') : (d => d < 0 ? `Vencida há ${-d}d` : d === 0 ? 'Vence hoje' : `Faltam ${d}d`)(diasAte(x.prazo));
+      const col = [{ rot: 'Tipo', w: 'auto' }, { rot: 'Nº do documento', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Assunto', w: '*' }, { rot: 'Área', w: 'auto' }, { rot: 'Recebido', w: 'auto' }, { rot: 'Prazo', w: 'auto' }, { rot: 'Situação do prazo', w: 'auto' }, { rot: 'Arquivos', w: 'auto' }];
+      const lin = x => [x.tipoDoc || '—', x.numero || '—', x.processo || '—', x.assunto || '—', x.setor || '—', x.recebimento ? fmt(x.recebimento) : '—', x.prazo ? fmt(x.prazo) : '—', sitPrazo(x), [x.arquivoId ? 'Minuta' : '', x.pubId ? 'Publicado' : ''].filter(Boolean).join(' + ') || '—'];
+      const atencao = l.filter(x => pubVencida(x) || pubAVencer(x)).sort((a, b) => diasPub(a) - diasPub(b));
+      if (atencao.length) add(tab('Vencidas e que vencem em breve', col, atencao.map(lin)));
+      [['Aguardando Publicação', 'Aguardando publicação'], ['Devolvido Para Correção', 'Devolvidas para correção'], ['Publicado', 'Publicadas']].forEach(([k, titulo]) => {
+        const g = l.filter(x => statusPub(x) === k).sort(k === 'Publicado' ? (a, b) => String(b.publicadoEm || '').localeCompare(String(a.publicadoEm || '')) : ordemPort);
+        if (g.length) add(tab(titulo, k === 'Publicado' ? col.slice(0, 7).concat([{ rot: 'Publicado em', w: 'auto' }, { rot: 'Situação do prazo', w: 'auto' }]) : col, g.map(x => k === 'Publicado' ? lin(x).slice(0, 7).concat([x.publicadoEm ? fmt(x.publicadoEm) : '—', sitPrazo(x)]) : lin(x))));
+      });
+      if (!l.length) add(tab('Publicações', col, [], 'Nenhuma publicação no período.'));
       break;
     }
     case 'nomeacoes': {
@@ -7616,7 +7811,7 @@ function montarRelatorio() {
   }
   if (e.obs.trim()) add({ t: 'texto', titulo: 'Observações', paragrafos: e.obs.trim().split(/\n{2,}/), grupo: 'obsLivre' });
   // partes que o usuário pode ligar e desligar (configurador do relatório)
-  const RESUMOS = ['Por tipo (IN ou NOR)', 'Resumo por origem', 'Por lotação', 'Por secretaria adjunta', 'Por tipo de documento', 'Casa Civil por etapa'];
+  const RESUMOS = ['Por tipo (IN ou NOR)', 'Resumo por origem', 'Por lotação', 'Por secretaria adjunta', 'Por tipo de documento', 'Casa Civil por etapa', 'Por área solicitante', 'Publicações por status'];
   for (let k = B.length - 1; k >= 0; k--) {
     const b = B[k], g = b.grupo || (b.t === 'tabela' ? (RESUMOS.includes(b.titulo) ? 'resumo' : b.titulo === 'Observações' ? 'obs' : 'lista') : b.t === 'texto' && b.titulo === 'Síntese' ? 'sintese' : '');
     if ((g === 'sintese' && e.sintese === false) || (g === 'resumo' && e.tabResumo === false) || (g === 'lista' && e.listas === false) || (g === 'obs' && e.obsTab === false)) B.splice(k, 1);
@@ -7934,6 +8129,9 @@ async function gerarExcel(btn) {
 const RCFG_TEMAS = {
   contratacoes: { filtros: [['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_CONTR).map(k => [k, k]))]] },
   nomeacoes: { filtros: [['tipo', 'Registros', [['', 'Nomeações e exonerações'], ['Nomeação', 'Só nomeações'], ['Exoneração', 'Só exonerações']]], ['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_NOM).map(k => [k, k]))]] },
+  publicacoes: { filtros: [['tipo', 'Tipo de documento', () => [['', 'Todos os tipos']].concat([...new Set(PUB_TIPOS.map(t => t[0]).concat((Store.portarias || []).map(x => x.tipoDoc).filter(Boolean)))].map(t => [t, t]))],
+    ['st', 'Status', [['', 'Todos']].concat(Object.keys(PUB_STATUS).map(k => [k, k]))], ['area', 'Área solicitante', () => [['', 'Todas as áreas']].concat(SECRETARIAS.map(s => [s, s]))],
+    ['prazo', 'Prazo', [['', 'Todos'], ['venc', 'Só vencidas'], ['breve', `Vencem em até ${PUB_ALERTA} dias`], ['com', 'Com prazo'], ['sem', 'Sem prazo']]]] },
   innor: { filtros: [['orig', 'Origem', [['', 'Todas as origens'], ['Contratação', 'Contratações'], ['Nomeação', 'Nomeações'], ['Exoneração', 'Exonerações']]]] }
 };
 let rcfg = null, rcfgPdfUrl = null, rcfgTimer = null;
@@ -7973,8 +8171,8 @@ function rcfgOpcoes() {
   const bloco = (n, tit, html) => `<section class="rcfg-bl"><h4><span>${n}</span>${tit}</h4>${html}</section>`;
   $('rcfg-op').innerHTML =
     bloco(1, 'Documento', `<label class="block"><span class="rotulo">Título</span><input class="campo w-full" value="${esc(c.tituloDoc)}" placeholder="${esc(nomeTema(c.tema))}" oninput="rcfgSet('tituloDoc',this.value)"></label>
-      <label class="block mt-3"><span class="rotulo">Período (data de protocolo)</span><select class="campo w-full" onchange="rcfgSet('periodo',this.value)">${[['30', 'Últimos 30 dias'], ['90', 'Últimos 90 dias'], ['180', 'Últimos 6 meses'], ['365', 'Últimos 12 meses'], ['mes', 'Mês atual'], ['ano', 'Ano atual'], ['tudo', 'Todo o período']].map(([v, r]) => `<option value="${v}" ${c.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
-      ${def.filtros.map(([k, rot, ops]) => `<label class="block mt-3"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="rcfgFiltro('${k}',this.value)">${ops.map(([v, r]) => `<option value="${esc(v)}" ${(c.fsec[k] || '') === v ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`).join('')}`)
+      <label class="block mt-3"><span class="rotulo">Período (data de ${c.tema === 'publicacoes' ? 'recebimento' : 'protocolo'})</span><select class="campo w-full" onchange="rcfgSet('periodo',this.value)">${[['30', 'Últimos 30 dias'], ['90', 'Últimos 90 dias'], ['180', 'Últimos 6 meses'], ['365', 'Últimos 12 meses'], ['mes', 'Mês atual'], ['ano', 'Ano atual'], ['tudo', 'Todo o período']].map(([v, r]) => `<option value="${v}" ${c.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
+      ${def.filtros.map(([k, rot, ops]) => `<label class="block mt-3"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="rcfgFiltro('${k}',this.value)">${(typeof ops === 'function' ? ops() : ops).map(([v, r]) => `<option value="${esc(v)}" ${(c.fsec[k] || '') === v ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`).join('')}`)
     + bloco(2, 'Aparência', `<span class="rotulo">Orientação</span>${seg('orientacao', [['retrato', 'Retrato', 'fa-file'], ['paisagem', 'Paisagem', 'fa-file fa-rotate-90']])}
       <span class="rotulo mt-3 block">Estilo das páginas internas</span><div class="flex flex-wrap gap-2">${Object.entries(ESTILOS_REL).map(([k, x]) => `<button type="button" class="rel-estilo ${k === c.estilo ? 'ativo' : ''}" onclick="rcfgSet('estilo','${k}',true)"><span style="background:linear-gradient(135deg, ${x.pri} 50%, ${x.sec} 50%)"></span>${x.rot}</button>`).join('')}</div>`)
     + bloco(3, 'O que entra', `<div class="flex flex-wrap gap-2">${chk('capa', 'Capa', 'fa-book-open')}${chk('resumo', 'Números', 'fa-hashtag')}${chk('sintese', 'Síntese', 'fa-align-left')}${chk('graficos', 'Gráficos', 'fa-chart-column')}${chk('tabResumo', 'Tabelas-resumo', 'fa-table-list')}${chk('listas', 'Listas detalhadas', 'fa-list')}${chk('obsTab', 'Observações dos registros', 'fa-comment')}</div>`)
@@ -8163,9 +8361,9 @@ function renderRelatorios() {
   destruirGraficos();
   if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
   const e = relEstado;
-  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); if (t.k === 'innor') return podeContratacoes() || nivelArea('chefe') >= 1; const a = { nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
+  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); if (t.k === 'innor') return podeContratacoes() || nivelArea('chefe') >= 1; const a = { publicacoes: 'sol', nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
   if (!temas.some(t => t.k === e.tema)) e.tema = (temas[0] || TEMAS_REL[0]).k;
-  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe', 'contratacoes', 'nomeacoes', 'innor'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
+  const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe', 'contratacoes', 'nomeacoes', 'innor', 'publicacoes'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
   const ehSol = SOL_TEMAS_REL.includes(e.tema), pers = e.tema === 'personalizado', f = e.f;
   const chipF = (k, v, rot, ico, cor) => `<button type="button" class="rel-fchip ${f[k].includes(v) ? 'ativo' : ''}" ${cor ? `style="--c:${cor}"` : ''} aria-pressed="${f[k].includes(v)}" onclick="relAlternar('${k}','${esc(v)}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${esc(rot)}</button>`;
   const selF = (k, lista, rot) => `<label class="block"><span class="rotulo">${rot}</span><select class="campo w-full" onchange="relFiltro('${k}',this.value)">${lista.map(([v, r]) => `<option value="${esc(v)}" ${String(f[k]) === String(v) ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></label>`;
