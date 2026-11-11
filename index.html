@@ -47,12 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.47.0">
+<meta name="gabdoc-versao" content="1.49.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Aviso de “Atualização disponível” sempre que sair uma versão nova",
-  "Publicações: arraste a borda do título para aumentar ou diminuir as colunas",
-  "Publicações: status e link do processo agora ficam em Ações",
-  "Publicações: prazo para publicação com alerta de vencidas e que vão vencer"
+  "Publicações: nova coluna “Área Solicitante”, ao lado do prazo",
+  "Publicações: coluna do prazo mais estreita (dias que faltam ou vencidos)",
+  "Menu lateral recolhe sozinho ao abrir uma seção (passe o mouse para abrir)"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -112,6 +111,18 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nav-badge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 800; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
   /* Menu lateral recolhido (só ícones) */
   .sb-recolher { position: absolute; top: 28px; right: -13px; z-index: 60; width: 26px; height: 26px; border-radius: 999px; align-items: center; justify-content: center; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; font-size: 11px; box-shadow: 0 4px 12px -4px rgba(0,0,0,.6); transition: background .15s, color .15s, transform .3s; }
+  .sb-fixar { position: absolute; top: 62px; right: -13px; z-index: 60; width: 26px; height: 26px; border-radius: 999px; align-items: center; justify-content: center; background: #1e293b; color: #64748b; border: 1px solid #475569; font-size: 10px; box-shadow: 0 4px 12px -4px rgba(0,0,0,.6); transition: background .15s, color .15s, transform .2s; transform: rotate(45deg); }
+  .sb-fixar:hover { color: #fff; background: #334155; }
+  .sb-fixar.on { color: #fff; background: #2563eb; border-color: #2563eb; transform: rotate(0); }
+  @media (min-width: 768px) {
+    html.sb-mini .sb-fixar { display: none; }
+    /* espiar: o menu recolhido abre por cima da página ao passar o mouse */
+    #sb-espaco { display: none; }
+    html.sb-espiar #sb-espaco { display: block; flex: none; width: 76px; }
+    html.sb-espiar #sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 70; box-shadow: 24px 0 50px -20px rgba(2, 6, 23, .7); }
+    html.sb-espiar .sb-recolher svg, html.sb-espiar .sb-recolher i { transform: rotate(180deg); }
+    html.sb-espiar .sb-fixar { display: none; }
+  }
   .sb-recolher:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
   .sb-dica { position: fixed; z-index: 130; pointer-events: none; background: #0f172a; color: #fff; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; box-shadow: 0 8px 20px -8px rgba(0,0,0,.6); border: 1px solid #334155; white-space: nowrap; transform: translateY(-50%); }
   @media (min-width: 768px) {
@@ -726,6 +737,8 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   table.gs thead tr.gs-filtros th { top: 54px; padding: 3px 4px; background: var(--card); }
   table.gs th.gs-cab > span { display: inline-block; max-width: calc(100% - 26px); vertical-align: middle; }
   table.gs th.gs-cab svg, table.gs th.gs-cab i { margin-left: 4px; vertical-align: middle; }
+  .gs-compacto table.gs th.gs-cab > span { max-width: calc(100% - 10px); }
+  .gs-compacto table.gs th.gs-cab > .fa-lock, .gs-compacto table.gs th.gs-cab > svg.fa-lock { display: none; }
   table.gs th.gs-cab:hover { background: color-mix(in srgb, var(--brand) 10%, var(--card2)); }
   table.gs th.ordenado { color: var(--brand); }
   .gs-filtro { width: 100%; height: 26px; border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; font-size: 12px; background: var(--card); color: var(--ink); }
@@ -1498,6 +1511,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   <aside id="sidebar" class="fixed inset-y-0 left-0 -translate-x-full md:relative md:translate-x-0 w-72 text-white flex flex-col transition-[transform,width] duration-300 z-50 flex-shrink-0 border-r border-slate-700 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)] h-full bg-education-pattern">
     <button onclick="menuMobile(false)" class="absolute top-5 right-4 text-gray-400 hover:text-white md:hidden p-2 z-50" aria-label="Fechar menu"><i class="fa-solid fa-xmark text-xl"></i></button>
     <button type="button" id="sb-recolher" onclick="alternarSidebar()" class="sb-recolher hidden md:flex" title="Recolher menu (mostrar só os ícones)" aria-label="Recolher menu lateral" aria-expanded="true"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" id="sb-fixar" onclick="alternarAutoSidebar()" class="sb-fixar hidden md:flex" aria-pressed="false"><i class="fa-solid fa-thumbtack"></i></button>
     <div class="h-20 flex items-center justify-center border-b border-gray-800 px-4">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-file-signature text-sm text-white"></i></div>
@@ -1600,6 +1614,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     </div>
   </aside>
 
+  <div id="sb-espaco" aria-hidden="true"></div>
   <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0" style="background: var(--ground)">
     <header class="h-14 bg-brand-dark flex items-center justify-between md:hidden z-30 flex-shrink-0 border-b border-slate-700" style="padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))">
       <div class="flex items-center gap-3">
@@ -3039,7 +3054,7 @@ $('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portaria
 $('nav-docs').innerHTML =
   `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
-document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => irPara(b.dataset.tab)));
+document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => { irPara(b.dataset.tab); recolherAoNavegar(); }));
 
 /* ----- menu lateral recolhível (só ícones) ----- */
 function aplicarSidebar(mini) {
@@ -3050,12 +3065,51 @@ function aplicarSidebar(mini) {
   b.setAttribute('aria-expanded', String(!mini));
 }
 function alternarSidebar() {
+  if (document.documentElement.classList.contains('sb-espiar')) { document.documentElement.classList.remove('sb-espiar'); aplicarSidebar(false); ls.set('gabdoc_sb_mini', '0'); setTimeout(() => { renderAba(); window.dispatchEvent(new Event('resize')); }, 320); return; }
   const mini = !document.documentElement.classList.contains('sb-mini');
-  aplicarSidebar(mini); ls.set('gabdoc_sb_mini', mini ? '1' : '0');
+  aplicarSidebar(mini); ls.set('gabdoc_sb_mini', mini ? '1' : '0'); ls.set('gabdoc_sb_mini_auto', '0'); // escolha da pessoa: sem abrir ao passar o mouse
   esconderDicaSb();
   setTimeout(() => { renderAba(); window.dispatchEvent(new Event('resize')); }, 320);
 }
 aplicarSidebar(ls.get('gabdoc_sb_mini') === '1');
+
+/* ----- recolher sozinho ao abrir uma seção (computador) ----- */
+// Ligado por padrão: tocou numa seção do menu, o menu vira só ícones. Passando o mouse sobre ele,
+// abre por cima da página (sem empurrar o conteúdo) e fecha de novo ao sair. O alfinete fixa o menu aberto.
+const sbAuto = () => ls.get('gabdoc_sb_auto') !== '0';
+function aplicarAutoSidebar() {
+  const b = $('sb-fixar'); if (!b) return;
+  const fixo = !sbAuto();
+  b.classList.toggle('on', fixo); b.setAttribute('aria-pressed', String(fixo));
+  b.title = fixo ? 'Menu fixo aberto · toque para voltar a recolher sozinho ao abrir uma seção' : 'Fixar o menu aberto (não recolher sozinho ao abrir uma seção)';
+  b.setAttribute('aria-label', b.title);
+}
+function alternarAutoSidebar() {
+  const auto = !sbAuto(); ls.set('gabdoc_sb_auto', auto ? '1' : '0'); aplicarAutoSidebar(); esconderDicaSb();
+  toast(auto ? 'O menu volta a se recolher sozinho ao abrir uma seção.' : 'Menu fixado: fica aberto ao abrir as seções.', 'fa-thumbtack');
+}
+function recolherAoNavegar() {
+  if (innerWidth < 768 || !sbAuto()) return;
+  const h = document.documentElement;
+  if (h.classList.contains('sb-espiar')) { fimEspiar(true); return; }
+  if (h.classList.contains('sb-mini')) return;
+  aplicarSidebar(true); ls.set('gabdoc_sb_mini', '1'); ls.set('gabdoc_sb_mini_auto', '1'); esconderDicaSb();
+  setTimeout(() => { renderAba(); window.dispatchEvent(new Event('resize')); }, 320);
+}
+let sbEspiarT = null;
+function inicioEspiar() {
+  const h = document.documentElement;
+  if (innerWidth < 768 || !sbAuto() || ls.get('gabdoc_sb_mini_auto') !== '1' || !h.classList.contains('sb-mini') || h.classList.contains('sb-espiar')) return;
+  h.classList.add('sb-espiar'); h.classList.remove('sb-mini'); esconderDicaSb();
+}
+function fimEspiar(agora) {
+  const h = document.documentElement; if (!h.classList.contains('sb-espiar')) return;
+  h.classList.add('sb-mini'); esconderDicaSb();
+  setTimeout(() => { if (h.classList.contains('sb-mini')) h.classList.remove('sb-espiar'); }, agora ? 0 : 300);
+}
+$('sidebar').addEventListener('mouseenter', () => { clearTimeout(sbEspiarT); sbEspiarT = setTimeout(inicioEspiar, 260); });
+$('sidebar').addEventListener('mouseleave', () => { clearTimeout(sbEspiarT); sbEspiarT = setTimeout(() => fimEspiar(), 350); });
+aplicarAutoSidebar();
 // Dica com o nome da seção quando o menu está recolhido
 function esconderDicaSb() { const d = $('sb-dica'); if (d) d.remove(); }
 $('sidebar').addEventListener('mouseover', e => {
@@ -4188,7 +4242,7 @@ function linhasDaGrade(cfg, st) {
 }
 function colunasVisiveis(cfg, st) {
   if (!st.compacto || !cfg.compactas) return cfg.colunas.filter(c => !c.oculta);
-  return cfg.compactas.map(k => cfg.colunas.find(c => c.key === k)).filter(Boolean).map(c => c.wCompacta ? { ...c, w: c.wCompacta } : c);
+  return cfg.compactas.map(k => cfg.colunas.find(c => c.key === k)).filter(Boolean).map(c => c.wCompacta || c.rotCompacto ? { ...c, w: c.wCompacta || c.w, rot: c.rotCompacto || c.rot } : c);
 }
 
 function renderGrade(cont, cfg) {
@@ -4819,13 +4873,13 @@ const pubVencida = x => { const d = diasPub(x); return d !== null && d < 0; };
 const pubAVencer = x => { const d = diasPub(x); return d !== null && d >= 0 && d <= PUB_ALERTA; };
 const txtDiasPub = d => d < 0 ? `venceu há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'vence hoje' : d === 1 ? 'vence amanhã' : `vence em ${d} dias`;
 function celPrazoPub(x) {
-  if (!x.prazo) return '<span class="gs-dias sem">Sem prazo</span>';
+  if (!x.prazo) return '<span class="gs-dias sem" title="Sem prazo"><span class="pz-l">Sem prazo</span><span class="pz-c">—</span></span>';
   const dica = `Prazo para publicação: ${fmt(x.prazo)}`;
-  if (pubFeita(x)) return `<span class="gs-dias feito" title="${dica}"><i class="fa-solid fa-check"></i><span class="pz-l">Publicado · ${fmt(x.prazo).slice(0, 5)}</span><span class="pz-c">${fmt(x.prazo).slice(0, 5)}</span></span>`;
+  if (pubFeita(x)) return `<span class="gs-dias feito" title="${dica}"><i class="fa-solid fa-check"></i><span class="pz-l">${fmt(x.prazo).slice(0, 5)}</span><span class="pz-c">${fmt(x.prazo).slice(0, 5)}</span></span>`;
   const d = diasAte(x.prazo), sit = d < 0 ? 'vencido' : d === 0 ? 'hoje' : d <= PUB_ALERTA ? 'proximo' : 'ok';
   const longo = d < 0 ? `Vencido há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'Vence hoje' : d === 1 ? 'Falta 1 dia' : `Faltam ${d} dias`;
   const curto = d < 0 ? `${d}d` : d === 0 ? 'Hoje' : `${d}d`;
-  return `<span class="gs-dias ${sit}" title="${dica} · ${longo}"><i class="fa-solid ${d < 0 ? 'fa-circle-exclamation' : d === 0 ? 'fa-hourglass-end' : 'fa-hourglass-half'}"></i><span class="pz-l">${longo} · ${fmt(x.prazo).slice(0, 5)}</span><span class="pz-c">${curto}</span></span>`;
+  return `<span class="gs-dias ${sit}" title="${dica} · ${longo}"><i class="fa-solid ${d < 0 ? 'fa-circle-exclamation' : d === 0 ? 'fa-hourglass-end' : 'fa-hourglass-half'}"></i><span class="pz-l">${d < 0 ? `Vencido ${-d}d` : d === 0 ? 'Hoje' : `${d} dia${d === 1 ? '' : 's'}`}</span><span class="pz-c">${curto}</span></span>`;
 }
 /** Faixa de alerta acima da planilha: vencidas e que vencem em breve. */
 function alertaPrazosPub(todas) {
@@ -5033,10 +5087,10 @@ function abrirFormPortaria(id, foco) {
             <p class="text-[12px] font-semibold mt-1.5" id="pt-prazo-info"></p></div>
         </div>`)}
       ${campo(5, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata o documento', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
-      ${campo(6, '#d97706', 'fa-sitemap', 'Setor', 'Secretaria adjunta responsável: toque em uma', `
+      ${campo(6, '#d97706', 'fa-sitemap', 'Área solicitante', 'Secretaria adjunta que pediu a publicação: toque em uma', `
         <div class="sec-grade" id="pt-setores">${siglas.map(sg => botaoSec(sg, sg === setorAtual, 'ptset').replace('onclick="alternarChip(this)"', 'onclick="escolherSetorPort(this)"')).join('')}</div>
         <input type="hidden" id="pt-setor" value="${esc(setorAtual)}">
-        ${comIco('fa-pen', `<input class="campo w-full !pl-8 uppercase" id="pt-setor-outro" value="${esc(siglas.includes(setorAtual) ? '' : setorAtual)}" placeholder="Outro setor? Digite a sigla" autocomplete="off" oninput="sincSetorPort()" aria-label="Outro setor">`)}`)}
+        ${comIco('fa-pen', `<input class="campo w-full !pl-8 uppercase" id="pt-setor-outro" value="${esc(siglas.includes(setorAtual) ? '' : setorAtual)}" placeholder="Outra área? Digite a sigla" autocomplete="off" oninput="sincSetorPort()" aria-label="Outra área solicitante">`)}`)}
       ${campo(7, '#16a34a', 'fa-signal', 'Status', 'Onde está a publicação', `
         <div class="pt-status" id="pt-status">${Object.entries(PUB_STATUS).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === stAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === stAtual}" onclick="escolherStatusPub('${esc(k)}')"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 font-bold text-[13.5px] text-ink leading-tight">${esc(k)}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
       ${campo(8, '#7c3aed', 'fa-link', 'Link do processo', 'Endereço do processo no SIGADOC ou outro sistema', `
@@ -5178,24 +5232,25 @@ function renderPortarias() {
       ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>`,
     colunas: [
       // ordem pedida: Processo · Documento · Assunto · Prazo · Minuta · Arquivo publicado (o status e o link ficam em Ações)
-      { key: 'processo', rot: 'Número do Processo', w: 200, wCompacta: 150, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'numero', rot: 'Número do Documento', w: 250, wCompacta: 168, tipo: 'texto', editavel: true, classe: 'gs-forte', render: celNumeroPub },
+      { key: 'processo', rot: 'Número do Processo', rotCompacto: 'Processo', w: 200, wCompacta: 130, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número do Documento', rotCompacto: 'Documento', w: 250, wCompacta: 140, tipo: 'texto', editavel: true, classe: 'gs-forte', render: celNumeroPub },
       { key: 'assunto', rot: 'Assunto', w: 340, flex: true, tipo: 'texto', editavel: true },
-      { key: 'prazo', rot: 'Prazo para Publicação', w: 200, wCompacta: 88, tipo: 'data', editavel: true, render: celPrazoPub },
+      { key: 'prazo', rot: 'Prazo', w: 112, wCompacta: 80, tipo: 'data', editavel: true, render: celPrazoPub },
+      { key: 'setor', rot: 'Área Solicitante', rotCompacto: 'Área', w: 130, wCompacta: 80, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
+        render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}" title="Área solicitante: ${esc(x.setor)}">${esc(x.setor)}</span>` : '<span class="text-ink3">—</span>' },
       { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
-      { key: 'pubNome', rot: 'Arquivo Publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') },
+      { key: 'pubNome', rot: 'Arquivo Publicado', rotCompacto: 'Publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') },
       // fora da planilha (estão no formulário), mas vão no CSV
       { key: 'tipoDoc', rot: 'Tipo de documento', oculta: true, tipo: 'texto' },
       { key: 'recebimento', rot: 'Data de recebimento', oculta: true, tipo: 'data' },
-      { key: 'setor', rot: 'Setor', oculta: true, tipo: 'texto' },
       { key: 'status', rot: 'Status', oculta: true, tipo: 'texto', valor: x => statusPub(x) },
       { key: 'link', rot: 'Link do processo', oculta: true, tipo: 'texto' }
     ],
-    compactas: ['processo', 'numero', 'assunto', 'prazo', 'arquivoNome', 'pubNome'],
+    compactas: ['processo', 'numero', 'assunto', 'prazo', 'setor', 'arquivoNome', 'pubNome'],
     redimensionar: true,
     // primeira vez: modo compacto, para caber tudo na tela
     estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
-    larguraAcoes: 182,
+    larguraAcoes: 164,
     finalizado: pubFeita,
     ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPortRec),
     classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
