@@ -47,11 +47,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.52.0">
+<meta name="gabdoc-versao" content="1.53.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Nova seção E-mails (Chefe de Gabinete): registre e-mails importantes encaminhados, com links",
-  "Publicações: veja a minuta e o arquivo publicado na tela, sem precisar baixar (👁)",
-  "Publicações: atalhos para o IOMAT-MT, o Gmail e o SIGADOC no cabeçalho"
+  "Administração: usuários em cartões, com busca, filtros e ativar/desativar num toque",
+  "Administração: ao criar um usuário, veja o que o perfil escolhido pode ver e fazer",
+  "Perfis e permissões: modelos prontos, explicação de cada nível e quem usa cada perfil",
+  "Auditoria: limpar o histórico (com backup antes) e exportar em CSV"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1115,6 +1116,63 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .perf-barra { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-start; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
   .perf-barra .pers-aviso { display: none; }
   .perf-barra[data-sujo] .pers-aviso { display: inline-flex; }
+  /* Administração › usuários e perfis */
+  .adm-ks { display: flex; flex-wrap: wrap; gap: 8px; }
+  .adm-k { --c: #64748b; display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); font-size: 12.5px; color: var(--ink2); transition: .15s; }
+  .adm-k svg, .adm-k i { color: var(--c); }
+  .adm-k b { font-size: 17px; font-weight: 900; color: var(--ink); }
+  .adm-k:hover, .adm-k.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 8%, var(--card)); }
+  .adm-us { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+  .adm-u { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); transition: box-shadow .15s, border-color .15s; }
+  .adm-u:hover { border-color: color-mix(in srgb, var(--brand) 30%, var(--line)); box-shadow: 0 10px 26px -18px rgba(15,23,42,.5); }
+  .adm-u.inativo { opacity: .72; background: repeating-linear-gradient(135deg, var(--card), var(--card) 10px, var(--card2) 10px, var(--card2) 20px); }
+  .adm-u-topo { display: flex; align-items: center; gap: 10px; }
+  .adm-u-av { --c: #4f46e5; position: relative; flex: none; width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff; background: var(--c); }
+  .adm-u-av.mini { width: 20px; height: 20px; border-radius: 7px; font-size: 9px; }
+  .adm-u-on { position: absolute; right: -2px; bottom: -2px; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; border: 2px solid var(--card); }
+  .adm-u-sw { flex: none; width: 40px; height: 22px; border-radius: 999px; background: var(--line); position: relative; transition: background .2s; }
+  .adm-u-sw span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: left .2s; }
+  .adm-u-sw.on { background: #16a34a; }
+  .adm-u-sw.on span { left: 21px; }
+  .adm-u-meio { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .adm-u-perfil { --c: #2563eb; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #fff; background: var(--c); }
+  .adm-u-areas { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .adm-u-area { --c: #2563eb; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-size: 10.5px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .adm-u-areas small { font-size: 11px; color: var(--ink3); margin-left: 4px; }
+  .adm-u-tudo { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #e11d48; }
+  .adm-u-acesso { font-size: 12px; color: var(--ink3); display: flex; align-items: center; gap: 6px; }
+  .adm-u-acoes { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: auto; }
+  .adm-pf-ops { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+  .adm-pf-op { --c: #2563eb; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); text-align: left; transition: .15s; }
+  .adm-pf-op > svg, .adm-pf-op > i { color: var(--c); font-size: 15px; flex: none; }
+  .adm-pf-op b { display: block; font-size: 13px; color: var(--ink); }
+  .adm-pf-op small { display: block; font-size: 11px; color: var(--ink3); }
+  .adm-pf-op.ativo { border-color: var(--c); background: color-mix(in srgb, var(--c) 9%, var(--card)); box-shadow: 0 6px 16px -10px var(--c); }
+  .adm-pv { padding: 12px; border-radius: 14px; background: var(--card2); border: 1px solid var(--line); display: grid; gap: 8px; }
+  .adm-pv-tit { font-size: 13px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .adm-pv-tit small { font-weight: 500; color: var(--ink3); }
+  .adm-pv-g { --c: #2563eb; }
+  .adm-pv-g > p { font-size: 11.5px; font-weight: 800; color: var(--c); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .adm-pv-g > div { display: flex; flex-wrap: wrap; gap: 5px; }
+  .adm-pv-g > div span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 8px; font-size: 11.5px; font-weight: 600; color: var(--ink2); background: var(--card); border: 1px solid color-mix(in srgb, var(--c) 25%, var(--line)); }
+  .adm-pv-g > div span svg, .adm-pv-g > div span i { color: var(--c); font-size: 10px; }
+  .adm-opt { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); cursor: pointer; }
+  .adm-opt input { width: 16px; height: 16px; margin-top: 2px; flex: none; }
+  .adm-opt b { display: block; font-size: 13px; color: var(--ink); }
+  .adm-opt small { display: block; font-size: 11.5px; color: var(--ink3); }
+  .perf-nivel-txt { font-size: 11px; font-weight: 700; }
+  .perf-resumo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px; margin-bottom: 12px; }
+  @media (max-width: 767px) { .perf-resumo { grid-template-columns: 1fr; } }
+  .perf-resumo-g, .perf-resumo-u { padding: 12px; border-radius: 14px; background: var(--card2); border: 1px solid var(--line); }
+  .perf-resumo-g p { font-size: 12.5px; color: var(--ink2); display: flex; align-items: center; gap: 8px; }
+  .perf-resumo-g p + p { margin-top: 5px; }
+  .perf-resumo-g p svg, .perf-resumo-g p i { width: 14px; color: var(--c); }
+  .perf-resumo-g b { color: var(--ink); }
+  .perf-u { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 3px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--card); border: 1px solid var(--line); }
+  .perf-chip-bt { cursor: pointer; transition: transform .1s; }
+  .perf-chip-bt:hover { transform: scale(1.05); }
+  .perf-col-sel { background: color-mix(in srgb, var(--brand) 6%, transparent); }
+  .adm-aud-topo { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
   .perf-abas { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
   .perf-aba { display: flex; align-items: center; gap: 10px; text-align: left; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); min-width: 170px; flex-shrink: 0; }
   .perf-aba > svg, .perf-aba > i { color: var(--ink3); }
@@ -8961,13 +9019,13 @@ function diaExtenso(d) {
 }
 
 /* ========================= Administração (modo planilha) ========================= */
-const admEstado = { aba: 'usuarios', usuarios: null, config: null, logs: null, logNivel: '', logBusca: '', resultados: {} };
+const admEstado = { aba: 'usuarios', usuarios: null, config: null, logs: null, logNivel: '', logBusca: '', resultados: {}, uBusca: '', uFiltro: '' };
 function ehAdmin() { return Store.modo === 'planilha' && Store.sessao && Store.sessao.admin; }
 function prepararAdmin() {
   document.querySelectorAll('#adm-abas button').forEach(b => b.addEventListener('click', () => { admEstado.aba = b.dataset.a; renderAdmin(); }));
 }
 async function admCarregar(chave, acao, payload, campo) {
-  try { const r = await API.post(acao, payload || {}); admEstado[chave] = campo ? r[campo] : r; }
+  try { const r = await API.post(acao, payload || {}); admEstado[chave] = campo ? r[campo] : r; if (r && r.total !== undefined) admEstado[chave + 'Total'] = r.total; }
   catch (e) { admEstado[chave] = { erro: e.message }; }
   if (abaAtual === 'admin') renderAdmin();
 }
@@ -9184,7 +9242,7 @@ const AREAS_PERFIL = [
   ['sol', 'Solicitações e processos', 'fa-table-cells', '#4f46e5', 'Gestão de Processos, Solicitações, Prazos, Publicações e seções por tipo'],
   ['casacivil', 'Casa Civil', 'fa-landmark', '#7c3aed', 'Trilha e etapas da Casa Civil'],
   ['correicao', 'Processos de Correição', 'fa-clipboard-check', '#d97706', 'Planilha da Correição'],
-  ['chefe', 'Chefe de Gabinete', 'fa-user-tie', '#b45309', 'Processos, documentos e SIMEC do Chefe de Gabinete'],
+  ['chefe', 'Chefe de Gabinete', 'fa-user-tie', '#b45309', 'Processos, documentos, SIMEC, Nomeações e E-mails do Chefe de Gabinete'],
   ['comunicados', 'Comunicados importantes', 'fa-bullhorn', '#0284c7', 'Mural da SEDUC-MT'],
   ['eventos', 'Eventos', 'fa-calendar-check', '#c026d3', 'Eventos da Secretaria'],
   ['agenda', 'Agenda e Prazos', 'fa-calendar-days', '#0d9488', 'Compromissos da Secretária'],
@@ -9255,17 +9313,24 @@ function htmlPerfis() {
       ${p.personalizado ? `<label class="sec-campo w-56"><span>Nome do perfil</span><input class="campo w-full perf-nome" value="${esc(p.nome)}" maxlength="40" oninput="perfCampo(${sel},'nome',this.value)" onchange="renderAdmin()"></label>` : `<div><p class="text-[11.5px] font-bold text-ink2">Perfil</p><p class="text-[17px] font-extrabold">${esc(p.nome)}</p></div>`}
       <label class="sec-campo flex-1 min-w-[220px]"><span>Descrição</span><input class="campo w-full" value="${esc(p.descricao || '')}" maxlength="160" placeholder="Para que serve este perfil" oninput="perfCampo(${sel},'descricao',this.value)"></label>
       <div class="flex gap-1.5 flex-wrap self-end">
-        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},1)" title="Todas as áreas só para visualizar"><i class="fa-solid fa-eye"></i>Só visualizar tudo</button>
-        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},3)" title="Todas as áreas com edição e exclusão"><i class="fa-solid fa-pen"></i>Liberar tudo</button>
+        <span class="text-[11.5px] font-bold text-ink3 self-center mr-1">Modelos:</span>
+        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},1)" title="Todas as áreas só para visualizar"><i class="fa-solid fa-eye" style="color:#2563eb"></i>Só visualizar</button>
+        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},2)" title="Vê, cadastra e altera em todas as áreas, sem excluir"><i class="fa-solid fa-pen" style="color:#16a34a"></i>Editar sem excluir</button>
+        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},3)" title="Todas as áreas com edição e exclusão"><i class="fa-solid fa-unlock" style="color:#d97706"></i>Liberar tudo</button>
+        <button class="btn btn-sec !h-9" onclick="perfTodos(${sel},0)" title="Esconde todas as áreas; depois libere só o que precisar"><i class="fa-solid fa-eye-slash" style="color:#94a3b8"></i>Bloquear tudo</button>
         <button class="btn btn-sec !h-9" onclick="perfDuplicar(${sel})"><i class="fa-solid fa-copy"></i>Duplicar</button>
         ${p.personalizado ? `<button class="btn btn-perigo !h-9" onclick="perfRemover(${sel})" ${p.usuarios ? `disabled title="Em uso por ${p.usuarios} usuário(s)"` : ''}><i class="fa-solid fa-trash"></i>Remover</button>` : ''}
       </div>
+    </div>
+    <div class="perf-resumo">
+      <div class="perf-resumo-g" style="--c:#16a34a"><p><i class="fa-solid fa-eye"></i>Vê <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) > 0).length}</b> de ${AREAS_PERFIL.length} áreas</p><p><i class="fa-solid fa-pen"></i>Altera em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}</b> · exclui em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 3).length}</b></p><p><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'}"></i>${p.assinar ? 'Assina documentos' : 'Não assina documentos'}</p></div>
+      <div class="perf-resumo-u"><p class="text-[11.5px] font-bold text-ink3 mb-1"><i class="fa-solid fa-users mr-1"></i>Quem usa este perfil (${(admEstado.usuarios || []).filter(u => u.perfil === p.nome).length})</p><div class="flex flex-wrap gap-1.5">${(admEstado.usuarios || []).filter(u => u.perfil === p.nome).map(u => `<span class="perf-u" title="${esc(u.email || '')}"><span class="adm-u-av mini" style="--c:${corAvatar(u.usuario)}">${esc(iniciais(u.usuario))}</span>${esc(u.usuario)}${u.ativo ? '' : ' <small>(inativo)</small>'}</span>`).join('') || '<span class="text-[12px] text-ink3">Ninguém ainda. Escolha este perfil ao criar ou editar um usuário.</span>'}</div></div>
     </div>
     <div class="perf-lista">
       ${AREAS_PERFIL.map(([a, rot, ic, cor, sub]) => { const max = d.areas[a] || 1, n = p.areas[a] ?? 1; return `<div class="perf-linha nivel-${n}">
         <span class="sec-icone" style="--c:${cor}"><i class="fa-solid ${ic}"></i></span>
         <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px]">${rot}</p><p class="text-[11.5px] text-ink3">${sub}${max === 1 ? ' · só leitura' : ''}</p></div>
-        ${seletorNivel(sel, a, max, n)}
+        <div class="flex flex-col items-end gap-1">${seletorNivel(sel, a, max, n)}<small class="perf-nivel-txt" style="color:${NIVEIS[n][1]}">${NIVEL_TXT[n]}</small></div>
       </div>`; }).join('')}
       <div class="perf-linha">
         <span class="sec-icone" style="--c:#16a34a"><i class="fa-solid fa-signature"></i></span>
@@ -9274,12 +9339,126 @@ function htmlPerfis() {
       </div>
     </div>
     <div class="perf-legenda">${NIVEIS.map(([r, cor, ic]) => `<span><i class="fa-solid ${ic}" style="color:${cor}"></i>${r}</span>`).join('')}<span class="text-ink3">· Sem acesso: a seção some do menu e os dados não são enviados a este perfil.</span></div>
-    <div class="mt-4"><p class="rotulo">Visão geral dos perfis</p>
+    <div class="mt-4"><p class="rotulo">Visão geral dos perfis <span class="font-normal text-ink3">· toque num nível para trocar</span></p>
       <div class="overflow-x-auto scrollbar-thin"><table class="tabela perf-matriz"><thead><tr><th>Área</th><th>Administrador</th>${d.perfis.map(x => `<th>${esc(x.nome)}</th>`).join('')}</tr></thead><tbody>
-        ${AREAS_PERFIL.map(([a, rot]) => `<tr><td class="font-semibold">${rot}</td><td><span class="perf-chip" style="--c:${NIVEIS[(d.areas[a] || 1)][1]}">${NIVEIS[(d.areas[a] || 1)][0]}</span></td>${d.perfis.map(x => { const n = x.areas[a] ?? 1; return `<td><span class="perf-chip" style="--c:${NIVEIS[n][1]}">${NIVEIS[n][0]}</span></td>`; }).join('')}</tr>`).join('')}
+        ${AREAS_PERFIL.map(([a, rot]) => `<tr><td class="font-semibold">${rot}</td><td><span class="perf-chip" style="--c:${NIVEIS[(d.areas[a] || 1)][1]}">${NIVEIS[(d.areas[a] || 1)][0]}</span></td>${d.perfis.map((x, pi) => { const n = x.areas[a] ?? 1, max = d.areas[a] || 1; return `<td class="${pi === sel ? 'perf-col-sel' : ''}"><button type="button" class="perf-chip perf-chip-bt" style="--c:${NIVEIS[n][1]}" title="Toque para trocar: ${esc(x.nome)} · ${esc(rot)}" onclick="perfNivel(${pi},'${a}',${(n + 1) % (max + 1)})"><i class="fa-solid ${NIVEIS[n][2]} mr-1 text-[9px]"></i>${NIVEIS[n][0]}</button></td>`; }).join('')}</tr>`).join('')}
         <tr><td class="font-semibold">Assinar documentos</td><td><span class="perf-chip" style="--c:#16a34a">Sim</span></td>${d.perfis.map(x => `<td><span class="perf-chip" style="--c:${x.assinar ? '#16a34a' : '#94a3b8'}">${x.assinar ? 'Sim' : 'Não'}</span></td>`).join('')}</tr>
       </tbody></table></div></div>
   </div>`;
+}
+/* ----- Administração › Usuários (cartões, busca e filtros) ----- */
+const NIVEL_TXT = ['Não vê esta área (some do menu)', 'Só vê, não altera nada', 'Vê, cadastra e altera (não exclui)', 'Pode tudo, inclusive excluir'];
+const perfilDe = nome => (admEstado.perfis && admEstado.perfis.perfis || []).find(p => p.nome === nome);
+const corPerfil = nome => Utils_norm(nome) === 'administrador' ? '#e11d48' : ({ assessor: '#2563eb', consulta: '#64748b', 'chefe de gabinete': '#b45309' }[Utils_norm(nome)] || corAvatar(nome || '?'));
+function tempoAtras(isoTxt) {
+  if (!isoTxt) return 'nunca entrou';
+  const min = Math.round((Date.now() - new Date(isoTxt).getTime()) / 60000);
+  if (!isFinite(min)) return '—';
+  if (min < 2) return 'agora há pouco'; if (min < 60) return `há ${min} min`;
+  const h = Math.round(min / 60); if (h < 24) return `há ${h} h`;
+  const d = Math.round(h / 24); return d < 30 ? `há ${d} dia${d > 1 ? 's' : ''}` : 'em ' + fmtHora(isoTxt).slice(0, 10);
+}
+/** Ícones das áreas que o perfil vê (cor do nível). */
+function miniAreasPerfil(nome) {
+  if (Utils_norm(nome) === 'administrador') return '<span class="adm-u-areas"><span class="adm-u-tudo"><i class="fa-solid fa-crown"></i>Acesso total, inclusive Administração</span></span>';
+  const p = perfilDe(nome); if (!p) return '';
+  const vis = AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) > 0);
+  return `<span class="adm-u-areas" title="Áreas que este perfil vê">${vis.map(([a, rot, ic]) => { const n = p.areas[a] ?? 1; return `<span class="adm-u-area" style="--c:${NIVEIS[n][1]}" title="${esc(rot)}: ${NIVEIS[n][0]}"><i class="fa-solid ${ic}"></i></span>`; }).join('')}<small>vê ${vis.length} · edita ${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}</small></span>`;
+}
+function htmlUsuarios() {
+  const us = admEstado.usuarios;
+  const pend = u => !u.temSenha || u.exigirTroca;
+  const filtros = [['', 'Todos', () => true], ['ativos', 'Ativos', u => u.ativo], ['inativos', 'Inativos', u => !u.ativo], ['online', 'Conectados', u => u.sessoesAtivas > 0], ['pend', 'Senha pendente', pend]];
+  const f = filtros.find(x => x[0] === admEstado.uFiltro) || filtros[0];
+  const b = Utils_norm(admEstado.uBusca || '');
+  const lista = us.map((u, i) => [u, i]).filter(([u]) => f[2](u) && (!b || Utils_norm([u.usuario, u.email, u.perfil].join(' ')).includes(b)));
+  const k = (cor, ico, rot, val, fil) => `<button type="button" class="adm-k ${admEstado.uFiltro === fil ? 'on' : ''}" style="--c:${cor}" onclick="admEstado.uFiltro='${fil}';renderAdmin()"><i class="fa-solid ${ico}"></i><b>${val}</b><span>${rot}</span></button>`;
+  const cartao = ([u, i]) => {
+    const cor = corPerfil(u.perfil);
+    const senha = !u.temSenha ? ['#dc2626', 'fa-key', 'Sem senha'] : u.exigirTroca ? ['#d97706', 'fa-rotate', 'Troca pendente'] : ['#16a34a', 'fa-shield-halved', 'Senha definida'];
+    return `<article class="adm-u ${u.ativo ? '' : 'inativo'}">
+      <div class="adm-u-topo">
+        <span class="adm-u-av" style="--c:${corAvatar(u.usuario)}">${esc(iniciais(u.usuario))}${u.sessoesAtivas ? '<i class="adm-u-on" title="Conectado agora"></i>' : ''}</span>
+        <div class="min-w-0 flex-1"><b class="block truncate text-[14.5px]">${esc(u.usuario)}</b><small class="block truncate text-ink3">${u.email ? esc(u.email) : 'sem e-mail'}</small></div>
+        <button type="button" class="adm-u-sw ${u.ativo ? 'on' : ''}" role="switch" aria-checked="${u.ativo}" title="${u.ativo ? 'Ativo · toque para desativar (não consegue entrar)' : 'Inativo · toque para ativar'}" onclick="admAlternarAtivo(${i})"><span></span></button>
+      </div>
+      <div class="adm-u-meio">
+        <span class="adm-u-perfil" style="--c:${cor}"><i class="fa-solid ${Utils_norm(u.perfil) === 'administrador' ? 'fa-crown' : 'fa-user-lock'}"></i>${esc(u.perfil)}</span>
+        <span class="chip" style="--c:${senha[0]}"><i class="fa-solid ${senha[1]} mr-1"></i>${senha[2]}</span>
+        ${u.ativo ? '' : '<span class="chip" style="--c:#dc2626">Inativo</span>'}
+      </div>
+      ${miniAreasPerfil(u.perfil)}
+      <p class="adm-u-acesso"><i class="fa-regular fa-clock"></i>Último acesso: ${tempoAtras(u.ultimoAcesso)}${u.sessoesAtivas ? ` · <b style="color:#16a34a">${u.sessoesAtivas} sessão(ões) ativa(s)</b>` : ''}</p>
+      <div class="adm-u-acoes">
+        <button class="btn btn-sec !h-8" onclick="admFormUsuario(${i})"><i class="fa-solid fa-pen"></i>Editar</button>
+        <button class="btn btn-sec !h-8" onclick="admResetar(${i}, this)"><i class="fa-solid fa-key"></i>Nova senha</button>
+        ${u.sessoesAtivas ? `<button class="btn btn-sec !h-8" onclick="admDesconectar(${i})"><i class="fa-solid fa-right-from-bracket"></i>Desconectar</button>` : ''}
+        <button class="btn btn-perigo !h-8 ml-auto" onclick="admExcluirUsuario(${i}, this)" title="Excluir usuário"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </article>`;
+  };
+  return `<div class="dv-card">
+    <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#e11d48"><i class="fa-solid fa-users"></i></span>Equipe do GABDoc</h3><p>Quem entra no sistema e com qual perfil. O perfil define o que cada pessoa vê e pode fazer (logo abaixo).</p></div>
+      <button class="btn btn-pri !h-9" onclick="admFormUsuario()"><i class="fa-solid fa-user-plus"></i>Novo usuário</button></div>
+    <div class="adm-ks">${k('#e11d48', 'fa-users', 'usuários', us.length, '')}${k('#16a34a', 'fa-circle-check', 'ativos', us.filter(u => u.ativo).length, 'ativos')}${k('#64748b', 'fa-circle-pause', 'inativos', us.filter(u => !u.ativo).length, 'inativos')}${k('#0891b2', 'fa-signal', 'conectados agora', us.filter(u => u.sessoesAtivas > 0).length, 'online')}${k('#d97706', 'fa-key', 'com senha pendente', us.filter(pend).length, 'pend')}</div>
+    <div class="flex flex-wrap gap-2 items-center my-3">
+      <div class="relative flex-1 min-w-[200px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo w-full !pl-8" id="adm-u-busca" placeholder="Buscar por nome, e-mail ou perfil" value="${esc(admEstado.uBusca || '')}" oninput="admEstado.uBusca=this.value;clearTimeout(window._admUB);window._admUB=setTimeout(()=>{renderAdmin();const e=$('adm-u-busca');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}},250)" aria-label="Buscar usuários"></div>
+      <div class="dv-seg">${filtros.map(([kf, rot]) => `<button type="button" class="${admEstado.uFiltro === kf ? 'ativo' : ''}" onclick="admEstado.uFiltro='${kf}';renderAdmin()">${rot}</button>`).join('')}</div>
+    </div>
+    ${lista.length ? `<div class="adm-us">${lista.map(cartao).join('')}</div>` : vazio('fa-user-slash', 'Ninguém encontrado', 'Mude a busca ou o filtro.')}
+  </div>`;
+}
+function admAlternarAtivo(i) {
+  const u = admEstado.usuarios[i];
+  if (Store.sessao && Utils_norm(Store.sessao.usuario) === Utils_norm(u.usuario) && u.ativo) { toast('Você não pode desativar o seu próprio usuário.', 'fa-triangle-exclamation'); return; }
+  const dados = { usuarioOriginal: u.usuario, usuario: u.usuario, perfil: u.perfil, email: u.email || '', senha: '', ativo: !u.ativo, exigirTroca: !!u.exigirTroca };
+  u.ativo = !u.ativo; renderAdmin();
+  tarefaGrav({ rotulo: dados.ativo ? 'Usuário ativado' : 'Usuário desativado', detalhe: u.usuario, icone: dados.ativo ? 'fa-user-check' : 'fa-user-slash',
+    executar: () => API.post('admin_salvar_usuario', dados, 60000),
+    aoOk: r => { admEstado.usuarios = r.usuarios; if (abaAtual === 'admin') renderAdmin(); },
+    aoErro: () => { u.ativo = !u.ativo; if (abaAtual === 'admin') renderAdmin(); } });
+}
+/** O que o perfil escolhido poderá ver e fazer (no formulário do usuário). */
+function resumoPerfilHtml(nome) {
+  if (Utils_norm(nome) === 'administrador') return `<div class="adm-pv"><p class="adm-pv-tit"><i class="fa-solid fa-crown" style="color:#e11d48"></i>Administrador: acesso total</p><p class="text-[12.5px] text-ink2">Vê e altera tudo, assina documentos e entra na Administração (usuários, perfis, configurações, auditoria e manutenção).</p></div>`;
+  const p = perfilDe(nome); if (!p) return '';
+  const grupo = n => AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) === n);
+  const bloco = (n, tit) => { const g = grupo(n); return g.length ? `<div class="adm-pv-g" style="--c:${NIVEIS[n][1]}"><p><i class="fa-solid ${NIVEIS[n][2]}"></i>${tit}</p><div>${g.map(([, rot, ic]) => `<span><i class="fa-solid ${ic}"></i>${esc(rot)}</span>`).join('')}</div></div>` : ''; };
+  return `<div class="adm-pv"><p class="adm-pv-tit"><i class="fa-solid fa-user-lock" style="color:${corPerfil(nome)}"></i>O que o perfil <b>${esc(nome)}</b> permite${p.descricao ? ` <small>· ${esc(p.descricao)}</small>` : ''}</p>
+    ${bloco(3, 'Pode tudo, inclusive excluir')}${bloco(2, 'Vê, cadastra e altera')}${bloco(1, 'Só visualiza')}${bloco(0, 'Não vê (some do menu)')}
+    <p class="text-[12px] mt-2 ${p.assinar ? 'text-green-700' : 'text-ink3'}"><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'} mr-1"></i>${p.assinar ? 'Pode assinar documentos e devolver para ajuste' : 'Não assina documentos'}</p></div>`;
+}
+function admExportarLogs() {
+  const l = admEstado.logs || []; if (!l.length) return;
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = '﻿' + ['Quando;Nível;Usuário;Ação;Detalhe'].concat(l.map(x => [fmtHora(x.dataHora), x.nivel, x.usuario, x.acao, x.detalhe].map(q).join(';'))).join('\r\n');
+  salvarArquivo(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `auditoria-gabdoc-${hojeISO()}.csv`, 'Auditoria exportada (CSV)', 'fa-file-csv');
+}
+function admLimparAuditoria() {
+  const tot = admEstado.logsTotal;
+  const op = (v, ico, cor, tit, sub) => `<button type="button" class="op-card ${v === 90 ? 'ativo' : ''}" style="--c:${cor}" data-v="${v}" onclick="document.querySelectorAll('#aud-ops .op-card').forEach(b=>b.classList.toggle('ativo',b===this));$('aud-conf').dataset.conf='';$('aud-conf').innerHTML='<i class=&quot;fa-solid fa-broom&quot;></i>Limpar'"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0"><b class="block text-[13.5px] text-ink">${tit}</b><small class="text-ink3 text-[12px]">${sub}</small></span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`;
+  abrirModal(`
+    <div class="modal-topo"><div><h3 class="text-[17px] font-bold flex items-center gap-2"><i class="fa-solid fa-broom text-red-600"></i>Limpar a auditoria</h3><p class="text-[12.5px] text-ink3">${tot !== undefined ? `Hoje há ${tot.toLocaleString('pt-BR')} registro(s) na aba _Logs. ` : ''}Os registros apagados não voltam (a não ser por um backup).</p></div><button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-corpo space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="aud-ops">
+        ${op(90, 'fa-calendar', '#2563eb', 'Manter os últimos 90 dias', 'Apaga o que for mais antigo')}
+        ${op(30, 'fa-calendar-week', '#0891b2', 'Manter os últimos 30 dias', 'Apaga o que for mais antigo')}
+        ${op(7, 'fa-calendar-day', '#d97706', 'Manter os últimos 7 dias', 'Apaga o que for mais antigo')}
+        ${op(0, 'fa-trash-can', '#dc2626', 'Apagar todo o histórico', 'Começa do zero')}
+      </div>
+      <label class="flex items-center gap-2 text-[13px] font-semibold text-ink2"><input type="checkbox" id="aud-backup" class="w-4 h-4" checked> Criar um backup da planilha no Google Drive antes (recomendado)</label>
+      <p class="text-[12px] text-ink3"><i class="fa-solid fa-circle-info mr-1"></i>A limpeza também fica registrada: quem limpou e quando.</p>
+    </div>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-perigo" id="aud-conf" onclick="admConfirmarLimpeza(this)"><i class="fa-solid fa-broom"></i>Limpar</button></div>`, 'auditoria');
+}
+function admConfirmarLimpeza(btn) {
+  const sel = document.querySelector('#aud-ops .op-card.ativo'); const dias = sel ? Number(sel.dataset.v) : 90;
+  if (!btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>Confirmar: ${dias ? `manter ${dias} dias` : 'apagar tudo'}`; return; }
+  const backup = $('aud-backup').checked;
+  fecharModal();
+  tarefaGrav({ rotulo: 'Limpeza da auditoria', detalhe: dias ? `Mantendo os últimos ${dias} dias` : 'Todo o histórico', icone: 'fa-broom',
+    executar: async () => { if (backup) await API.post('admin_backup', {}, 180000); return API.post('admin_limpar_auditoria', { dias, confirmar: 'LIMPAR' }, 120000); },
+    aoOk: r => { toast(`Auditoria limpa: ${r.apagados} registro(s) apagado(s)${backup ? ' · backup criado' : ''}.`, 'fa-broom'); admEstado.logs = null; admEstado.logsTotal = r.restantes; if (abaAtual === 'admin') renderAdmin(); } });
 }
 function renderAdmin() {
   const c = $('adm-corpo');
@@ -9290,27 +9469,7 @@ function renderAdmin() {
   if (admEstado.aba === 'usuarios') {
     if (!admEstado.usuarios) { c.innerHTML = carregando; admCarregar('usuarios', 'admin_usuarios', {}, 'usuarios'); return; }
     if (erro(admEstado.usuarios)) { c.innerHTML = erro(admEstado.usuarios); return; }
-    const chip = (cls, t) => `<span class="chip" style="--c:${cls}">${t}</span>`;
-    c.innerHTML = `
-      <div class="dv-card">
-        <div class="dv-card-topo"><div class="min-w-0"><h3><span class="dv-ico" style="--c:#e11d48"><i class="fa-solid fa-users"></i></span>Equipe do GABDoc</h3><p>Perfis: Administrador (tudo), Assessor (cadastra, tramita e assina), Consulta (leitura)</p></div>
-          <button class="btn btn-pri !h-9" onclick="admFormUsuario()"><i class="fa-solid fa-user-plus"></i>Novo usuário</button></div>
-        <div class="overflow-x-auto scrollbar-thin"><table class="tabela"><thead><tr><th>Usuário</th><th>Perfil</th><th>Situação</th><th>Senha</th><th>Último acesso</th><th class="n">Sessões</th><th></th></tr></thead><tbody>
-        ${admEstado.usuarios.map((u, i) => `<tr>
-          <td><b>${esc(u.usuario)}</b>${u.email ? `<div class="text-[11.5px] text-ink3">${esc(u.email)}</div>` : ''}</td>
-          <td>${esc(u.perfil)}</td>
-          <td>${u.ativo ? chip('#16a34a', 'Ativo') : chip('#dc2626', 'Inativo')}</td>
-          <td>${!u.temSenha ? chip('#dc2626', 'Sem senha') : (u.exigirTroca ? chip('#d97706', 'Troca pendente') : chip('#16a34a', 'Definida'))}</td>
-          <td class="text-[12px] text-ink3">${u.ultimoAcesso ? fmtHora(u.ultimoAcesso) : '—'}</td>
-          <td class="n">${u.sessoesAtivas}</td>
-          <td><div class="flex gap-1.5 justify-end flex-wrap">
-            <button class="btn btn-sec !h-8" onclick="admFormUsuario(${i})">Editar</button>
-            <button class="btn btn-sec !h-8" onclick="admResetar(${i}, this)">Nova senha</button>
-            ${u.sessoesAtivas ? `<button class="btn btn-sec !h-8" onclick="admDesconectar(${i})">Desconectar</button>` : ''}
-            <button class="btn btn-perigo !h-8" onclick="admExcluirUsuario(${i}, this)">Excluir</button>
-          </div></td></tr>`).join('')}
-        </tbody></table></div>
-      </div>`;
+    c.innerHTML = htmlUsuarios();
     c.insertAdjacentHTML('beforeend', htmlPerfis());
     return;
   }
@@ -9332,7 +9491,14 @@ function renderAdmin() {
     if (!admEstado.logs) { c.innerHTML = carregando; admCarregar('logs', 'admin_auditoria', { nivel: admEstado.logNivel, busca: admEstado.logBusca, limite: 400 }, 'logs'); return; }
     if (erro(admEstado.logs)) { c.innerHTML = erro(admEstado.logs); return; }
     const corNivel = { AUDIT: '#2563eb', INFO: '#64748b', WARN: '#d97706', ERROR: '#dc2626', FATAL: '#dc2626' };
-    c.innerHTML = `<div class="dv-card !p-3 flex flex-wrap gap-2 items-center">
+    const tot = admEstado.logsTotal;
+    c.innerHTML = `<div class="dv-card adm-aud-topo">
+        <span class="dv-ico" style="--c:#2563eb"><i class="fa-solid fa-clipboard-list"></i></span>
+        <div class="min-w-0 flex-1"><h3 class="text-[15px] font-extrabold">Auditoria</h3><p class="text-[12.5px] text-ink3">Tudo o que foi feito no sistema: quem, quando e o quê.${tot !== undefined ? ` <b class="text-ink">${tot.toLocaleString('pt-BR')}</b> registro(s) guardado(s) na aba _Logs.` : ''}</p></div>
+        <button class="btn btn-sec" onclick="admExportarLogs()" ${admEstado.logs.length ? '' : 'disabled'}><i class="fa-solid fa-file-csv"></i>Exportar CSV</button>
+        <button class="btn btn-perigo" onclick="admLimparAuditoria()"><i class="fa-solid fa-broom"></i>Limpar auditoria</button>
+      </div>
+      <div class="dv-card !p-3 flex flex-wrap gap-2 items-center">
         <select class="campo" id="adm-log-nivel" aria-label="Nível"><option value="">Todos os níveis</option>${['AUDIT', 'INFO', 'WARN', 'ERROR'].map(n => `<option ${n === admEstado.logNivel ? 'selected' : ''}>${n}</option>`).join('')}</select>
         <input class="campo flex-1 min-w-[200px]" id="adm-log-busca" placeholder="Buscar usuário, ação ou detalhe" value="${esc(admEstado.logBusca)}" aria-label="Buscar no log">
         <button class="btn btn-sec" onclick="admEstado.logNivel=$('adm-log-nivel').value;admEstado.logBusca=$('adm-log-busca').value;admEstado.logs=null;renderAdmin()"><i class="fa-solid fa-magnifying-glass"></i>Buscar</button>
@@ -9348,7 +9514,7 @@ function renderAdmin() {
     <div class="flex flex-wrap gap-2">${botoes}</div>${R[chave] ? `<div class="mt-3 text-[12.5px] text-ink2">${R[chave]}</div>` : ''}</div>`;
   c.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     ${card('#0d9488', 'fa-stethoscope', 'Integridade dos dados', 'IDs repetidos, situações inválidas, prazos incoerentes e usuários sem senha.',
-      '<button class="btn btn-sec" onclick="admManut(\'integridade\', this, false)">Verificar</button><button class="btn btn-pri" onclick="admManut(\'integridade\', this, true)">Verificar e corrigir</button>', 'integridade')}
+      '<button class="btn btn-sec" onclick="admManut(\'integridade\', this, false)">Verificar</button><button class="btn btn-pri" onclick="admManut(\'integridade\', this, true)">Verificar e corrigir</button><button class="btn btn-sec !text-ink3" title="Apaga os registros marcados como TESTE que tenham sido gerados em versões antigas" onclick="admManut(\'exemplos\', this, true)"><i class="fa-solid fa-broom"></i>Apagar dados de teste antigos</button>', 'integridade')}
     ${card('#2563eb', 'fa-box-archive', 'Backups no Google Drive', 'Cópia completa da planilha na pasta "GABDoc - Backups". Um backup automático é feito todo dia.',
       '<button class="btn btn-pri" onclick="admManut(\'backup\', this)">Criar backup agora</button><button class="btn btn-sec" onclick="admManut(\'backups\', this)">Ver backups</button>', 'backup')}
     ${card('#64748b', 'fa-folder-minus', 'Arquivamento', 'Move para a aba Arquivo as solicitações expedidas há mais dias que ARQUIVAR_APOS_DIAS.',
@@ -9359,8 +9525,6 @@ function renderAdmin() {
       '<input class="campo flex-1 min-w-[200px]" id="adm-email-teste" type="email" placeholder="E-mail de teste (opcional)" aria-label="E-mail de teste"><button class="btn btn-sec" onclick="admManut(\'resumo\', this)">Enviar</button>', 'resumo')}
     ${card('#e11d48', 'fa-right-from-bracket', 'Sessões', 'Encerrar todas obriga a equipe a entrar de novo (a sua sessão continua).',
       '<button class="btn btn-perigo" onclick="admManut(\'sessoes\', this)">Encerrar todas as sessões</button>', 'sessoes')}
-    ${card('#7c3aed', 'fa-flask', 'Dados de teste', 'Cria 50 solicitações variadas (com movimentações), 12 processos de correição e 10 compromissos, todos marcados com TESTE.',
-      '<button class="btn btn-pri" onclick="admManut(\'exemplos\', this, false)"><i class="fa-solid fa-flask"></i>Gerar 50 exemplos</button><button class="btn btn-perigo" onclick="admManut(\'exemplos\', this, true)"><i class="fa-solid fa-broom"></i>Remover exemplos</button>', 'exemplos')}
     ${card('#0f172a', 'fa-heart-pulse', 'Diagnóstico da instalação', 'Testa abas, gravação, cache, gatilhos e fuso horário.',
       '<button class="btn btn-sec" onclick="admManut(\'diagnostico\', this)">Executar diagnóstico</button><button class="btn btn-sec" onclick="admManut(\'estatisticas\', this)">Estatísticas</button>', 'diagnostico')}
   </div>`;
@@ -9372,7 +9536,7 @@ async function admManut(tipo, btn, flag) {
   const original = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Aguarde…';
   const ROT = { integridade: flag ? 'Corrigir integridade da planilha' : 'Verificar integridade', backup: 'Criar backup', backups: 'Listar backups', arquivar: flag ? 'Simular arquivamento' : 'Arquivar expedidas antigas',
     exemplos: flag ? 'Remover dados de teste' : 'Gerar dados de teste', painel: 'Atualizar painel da planilha', resumo: 'Enviar resumo de teste', sessoes: 'Encerrar todas as sessões', diagnostico: 'Diagnóstico', estatisticas: 'Estatísticas' };
-  const chaveR = tipo === 'backups' ? 'backup' : tipo === 'estatisticas' ? 'diagnostico' : tipo;
+  const chaveR = tipo === 'backups' ? 'backup' : tipo === 'estatisticas' ? 'diagnostico' : tipo === 'exemplos' ? 'integridade' : tipo;
   const fim = () => { const b = document.querySelector(`[data-manut="${tipo}${flag ? '-1' : ''}"]`) || btn; b.disabled = false; b.innerHTML = original; delete b.dataset.conf; if (abaAtual === 'admin') renderAdmin(); };
   tarefaGrav({ rotulo: ROT[tipo] || 'Manutenção', detalhe: 'Administração › Manutenção', icone: 'fa-screwdriver-wrench',
     executar: async () => {
@@ -9391,7 +9555,7 @@ async function admManut(tipo, btn, flag) {
     } else if (tipo === 'exemplos') {
       const r = await API.post('admin_exemplos', { acao: flag ? 'remover' : 'gerar' }, 180000);
       const e = r.exemplos;
-      R.exemplos = `<span class="chip" style="--c:${flag ? '#64748b' : '#16a34a'}">${flag ? 'Removidos' : 'Criados'}: ${e.solicitacoes} solicitações · ${e.movimentacoes} movimentações · ${e.correicao} correições · ${e.agenda} compromissos${e.eventos != null ? ` · ${e.eventos} eventos` : ""}</span>`;
+      R.integridade = `<span class="chip" style="--c:${flag ? '#64748b' : '#16a34a'}">${flag ? 'Removidos' : 'Criados'}: ${e.solicitacoes} solicitações · ${e.movimentacoes} movimentações · ${e.correicao} correições · ${e.agenda} compromissos${e.eventos != null ? ` · ${e.eventos} eventos` : ""}</span>`;
       await sincronizar(true);
     } else if (tipo === 'painel') {
       await API.post('admin_atualizar_painel', {}, 120000); R.painel = 'Painel da planilha atualizado.';
@@ -9413,21 +9577,38 @@ async function admManut(tipo, btn, flag) {
 function admFormUsuario(i) {
   const u = i === undefined ? null : admEstado.usuarios[i];
   const perfis = ['Administrador'].concat(admEstado.perfis && admEstado.perfis.perfis ? admEstado.perfis.perfis.map(p => p.nome) : ['Assessor', 'Consulta']);
+  const atual = u ? u.perfil : (perfis.includes('Assessor') ? 'Assessor' : perfis[1] || perfis[0]);
   abrirModal(`
-    <div class="modal-topo"><div><h3 class="text-[17px] font-bold">${u ? 'Editar ' + esc(u.usuario) : 'Novo usuário'}</h3><p class="text-[12.5px] text-ink3">O nome aparece na tela de entrada e nas movimentações.</p></div><button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button></div>
-    <form class="modal-corpo grid grid-cols-1 sm:grid-cols-2 gap-3" id="form-usuario" onsubmit="event.preventDefault();admSalvarUsuario(${u ? i : -1})">
-      <label class="sm:col-span-2"><span class="rotulo">Nome *</span><input class="campo w-full" id="u-nome" required value="${esc(u ? u.usuario : '')}"></label>
-      <label><span class="rotulo">Perfil</span><select class="campo w-full" id="u-perfil">${perfis.map(p => `<option ${(u ? u.perfil : 'Assessor') === p ? 'selected' : ''}>${p}</option>`).join('')}</select></label>
-      <label><span class="rotulo">E-mail</span><input class="campo w-full" type="email" id="u-email" value="${esc(u ? u.email || '' : '')}"></label>
-      <label><span class="rotulo">${u ? 'Nova senha (deixe em branco para manter)' : 'Senha inicial'}</span><input class="campo w-full" type="password" id="u-senha" autocomplete="new-password" minlength="6"></label>
-      <label><span class="rotulo">Situação</span><select class="campo w-full" id="u-ativo"><option value="1" ${!u || u.ativo ? 'selected' : ''}>Ativo</option><option value="0" ${u && !u.ativo ? 'selected' : ''}>Inativo</option></select></label>
-      <label class="sm:col-span-2 flex items-center gap-2 text-[13px] font-semibold text-ink2"><input type="checkbox" id="u-troca" class="w-4 h-4" ${!u || u.exigirTroca ? 'checked' : ''}> Pedir uma senha nova no próximo acesso</label>
+    <div class="modal-topo"><div class="flex items-center gap-3"><span class="adm-u-av" style="--c:${corAvatar(u ? u.usuario : 'Novo')}">${u ? esc(iniciais(u.usuario)) : '<i class="fa-solid fa-user-plus"></i>'}</span><div><h3 class="text-[17px] font-bold">${u ? 'Editar ' + esc(u.usuario) : 'Novo usuário'}</h3><p class="text-[12.5px] text-ink3">O nome aparece na tela de entrada e nas movimentações.</p></div></div><button class="text-ink3 hover:text-ink p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button></div>
+    <form class="modal-corpo space-y-4" id="form-usuario" novalidate onsubmit="event.preventDefault();admSalvarUsuario(${u ? i : -1})">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="sm:col-span-2"><span class="rotulo">Nome *</span><div class="relative"><i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo w-full !pl-8" id="u-nome" required value="${esc(u ? u.usuario : '')}" placeholder="Como a pessoa vai entrar"></div></label>
+        <label><span class="rotulo">E-mail</span><div class="relative"><i class="fa-solid fa-at absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo w-full !pl-8" type="email" id="u-email" value="${esc(u ? u.email || '' : '')}" placeholder="opcional"></div></label>
+        <label><span class="rotulo">${u ? 'Nova senha (em branco mantém)' : 'Senha inicial'}</span><div class="relative"><i class="fa-solid fa-key absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input class="campo w-full !pl-8" type="password" id="u-senha" autocomplete="new-password" minlength="6" placeholder="mínimo 6 caracteres"></div></label>
+      </div>
+      <div><p class="rotulo">Perfil: o que esta pessoa vê e pode fazer</p>
+        <div class="adm-pf-ops" id="u-perfis">${perfis.map(pn => { const pf = perfilDe(pn), adm = pn === 'Administrador'; const vis = adm ? AREAS_PERFIL.length : pf ? AREAS_PERFIL.filter(([a]) => (pf.areas[a] ?? 1) > 0).length : 0, ed = adm ? AREAS_PERFIL.length : pf ? AREAS_PERFIL.filter(([a]) => (pf.areas[a] ?? 1) >= 2).length : 0;
+          return `<button type="button" class="adm-pf-op ${pn === atual ? 'ativo' : ''}" style="--c:${corPerfil(pn)}" data-v="${esc(pn)}" onclick="admEscolherPerfil(this)"><i class="fa-solid ${adm ? 'fa-crown' : 'fa-user-lock'}"></i><span class="min-w-0"><b>${esc(pn)}</b><small>${adm ? 'acesso total' : `vê ${vis} · edita ${ed} áreas`}</small></span></button>`; }).join('')}</div>
+        <input type="hidden" id="u-perfil" value="${esc(atual)}">
+        <div id="u-perfil-resumo" class="mt-2">${resumoPerfilHtml(atual)}</div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="adm-opt"><input type="checkbox" id="u-ativo" ${!u || u.ativo ? 'checked' : ''}><span><b>Usuário ativo</b><small>Desmarque para bloquear a entrada sem excluir</small></span></label>
+        <label class="adm-opt"><input type="checkbox" id="u-troca" ${!u || u.exigirTroca ? 'checked' : ''}><span><b>Pedir senha nova no próximo acesso</b><small>A pessoa cria a própria senha</small></span></label>
+      </div>
     </form>
     <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri" type="submit" form="form-usuario" id="btn-u-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'usuario');
+  const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-largo');
+}
+function admEscolherPerfil(btn) {
+  document.querySelectorAll('#u-perfis .adm-pf-op').forEach(b => b.classList.toggle('ativo', b === btn));
+  $('u-perfil').value = btn.dataset.v; $('u-perfil-resumo').innerHTML = resumoPerfilHtml(btn.dataset.v);
 }
 async function admSalvarUsuario(i) {
   const u = i >= 0 ? admEstado.usuarios[i] : null;
-  const dados = { usuarioOriginal: u ? u.usuario : '', usuario: $('u-nome').value.trim(), perfil: $('u-perfil').value, email: $('u-email').value.trim(), senha: $('u-senha').value, ativo: $('u-ativo').value === '1', exigirTroca: $('u-troca').checked };
+  const dados = { usuarioOriginal: u ? u.usuario : '', usuario: $('u-nome').value.trim(), perfil: $('u-perfil').value, email: $('u-email').value.trim(), senha: $('u-senha').value, ativo: $('u-ativo').checked, exigirTroca: $('u-troca').checked };
+  if (!dados.usuario) { toast('Informe o nome do usuário.', 'fa-triangle-exclamation'); return; }
+  if (dados.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) { toast('E-mail inválido.', 'fa-triangle-exclamation'); return; }
   if (dados.senha && dados.senha.length < 6) { toast('A senha precisa ter pelo menos 6 caracteres.', 'fa-triangle-exclamation'); return; }
   fecharModal();
   tarefaGrav({ rotulo: u ? 'Usuário atualizado' : 'Novo usuário', detalhe: `${dados.usuario} · ${dados.perfil}`, icone: 'fa-user-pen',
