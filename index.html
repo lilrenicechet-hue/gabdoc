@@ -47,11 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.51.0">
+<meta name="gabdoc-versao" content="1.52.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Publicações: atalhos para o IOMAT-MT, o Gmail e o SIGADOC no cabeçalho",
-  "Publicações: os gráficos ficam ocultos e aparecem pelo botão “Gráficos”",
-  "Publicações: relatório personalizado em PDF ou Excel, com prévia"
+  "Nova seção E-mails (Chefe de Gabinete): registre e-mails importantes encaminhados, com links",
+  "Publicações: veja a minuta e o arquivo publicado na tela, sem precisar baixar (👁)",
+  "Publicações: atalhos para o IOMAT-MT, o Gmail e o SIGADOC no cabeçalho"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -940,6 +940,43 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pub-links small { display: block; font-size: 10.5px; color: rgba(224,231,255,.7); line-height: 1.1; }
   .pub-link-seta { font-size: 9px; opacity: .55; margin-left: 2px; }
   @media (max-width: 767px) { .pub-links { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .pub-links a { flex: none; } .pub-links small { display: none; } }
+  /* visualizador de arquivos */
+  .modal.modal-vis { display: flex; flex-direction: column; }
+  .vis-topo { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--card); }
+  .vis-ico { --c: #2563eb; width: 40px; height: 40px; border-radius: 12px; flex: none; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 17px; }
+  .vis-sel { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vis-tit { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .vis-zoom { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: var(--card2); border: 1px solid var(--line); }
+  .vis-zoom button { width: 32px; height: 30px; border-radius: 9px; color: var(--ink2); }
+  .vis-zoom button:hover { background: var(--card); color: var(--ink); }
+  .vis-zoom span { min-width: 46px; text-align: center; font-size: 12px; font-weight: 800; color: var(--ink2); }
+  .vis-x { width: 36px; height: 36px; border-radius: 11px; color: var(--ink3); flex: none; }
+  .vis-x:hover { background: var(--card2); color: var(--ink); }
+  .vis-palco { flex: 1; min-height: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px; background: color-mix(in srgb, var(--ink) 7%, var(--ground)); }
+  .vis-pag { display: block; background: #fff; border-radius: 4px; box-shadow: 0 10px 30px -12px rgba(15, 23, 42, .45); flex: none; }
+  .vis-frame { width: 100%; height: 100%; min-height: 60vh; border: 0; border-radius: 8px; background: #fff; }
+  .vis-carregando { margin: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; color: var(--ink2); max-width: 420px; padding: 24px; }
+  .vis-carregando > svg, .vis-carregando > i { font-size: 30px; color: #4f46e5; }
+  .vis-carregando.erro > svg, .vis-carregando.erro > i { color: #d97706; }
+  .vis-carregando small { color: var(--ink3); font-size: 12.5px; }
+  .vis-rodape { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); background: var(--card); }
+  .gs-compacto .pt-dl.conv { display: none; }
+  @media (max-width: 640px) { .modal.modal-vis { height: 100dvh; max-height: 100dvh; max-width: 100vw; border-radius: 0; } .vis-zoom span { display: none; } .vis-rodape .btn span { display: none; } .vis-palco { padding: 8px; } }
+  /* E-mails */
+  .em-faixa-ico { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 10px 24px -10px #ef4444, inset 0 1px 0 rgba(255,255,255,.25); }
+  .em-novo { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 8px 20px -10px #ef4444; }
+  .em-novo:hover { filter: brightness(1.08); }
+  .em-links { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; }
+  .em-link { --c: #7c3aed; flex: none; max-width: 120px; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 8px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); transition: .15s; }
+  .em-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .em-link svg, .em-link i { color: var(--c); font-size: 10.5px; flex: none; }
+  .em-link:hover { background: var(--c); color: #fff; }
+  .em-link:hover svg, .em-link:hover i { color: #fff; }
+  .em-link.mais { --c: #64748b; }
+  .gs-compacto .em-link { max-width: 92px; }
+  .em-link-ln { --c: #7c3aed; display: flex; align-items: center; gap: 6px; }
+  .em-link-ico { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); font-size: 13px; }
+  @media (max-width: 640px) { .em-link-ln { flex-wrap: wrap; } .em-link-ln input[data-k="rot"] { width: calc(100% - 40px) !important; } }
   /* Publicações: números e painéis */
   .pub-kpi { position: relative; padding-left: 58px !important; min-height: 92px; }
   .pub-kpi-ico { position: absolute; left: 14px; top: 16px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 16px -8px var(--c); font-size: 14px; }
@@ -1611,6 +1648,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn nav-sub" data-tab="chefe-ass"><i class="ico fa-solid fa-file-signature" style="color:#fcd34d"></i><span>Documentos para assinatura</span><span id="bdg-chefe-ass" class="nav-badge bg-amber-600 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="contratacoes" title="Exclusivo do Chefe de Gabinete"><i class="ico fa-solid fa-user-plus" style="color:#fdba74"></i><span>Contratações <i class="fa-solid fa-lock text-[9px] opacity-60"></i></span><span id="bdg-contr" class="nav-badge bg-orange-700 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="nomeacoes"><i class="ico fa-solid fa-id-card" style="color:#93c5fd"></i><span>Nomeações e Exonerações</span><span id="bdg-nom" class="nav-badge bg-blue-700 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="emails"><i class="ico fa-solid fa-envelope-open-text" style="color:#fca5a5"></i><span>E-mails</span><span id="bdg-email" class="nav-badge bg-red-600 hidden" title="Aguardando retorno"></span></button>
             <button class="nav-btn nav-sub" data-tab="simec"><i class="ico fa-solid fa-building-flag" style="color:#5eead4"></i><span>SIMEC</span><span id="bdg-simec" class="nav-badge bg-teal-600 hidden"></span></button>
           </div>
           </div></div>
@@ -1980,6 +2018,29 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="nom-corpo"></div></div>
     </section>
+    <section id="tab-emails" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
+      <div class="faixa bg-education-pattern" style="background-color:#2a0a0f">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="pub-faixa-ico em-faixa-ico" aria-hidden="true"><i class="fa-solid fa-envelope-open-text"></i></span>
+            <div class="min-w-0">
+              <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">E-mails <span class="pub-faixa-tag"><i class="fa-solid fa-user-tie"></i>Chefe de Gabinete</span></h2>
+              <p class="text-red-100/70 text-xs mt-0.5 hidden sm:block">Registro dos e-mails importantes encaminhados: para quem foi, a situação e os links para abrir com um clique.</p>
+              <div class="pub-pulso" id="email-resumo"></div>
+            </div>
+          </div>
+          <div class="flex flex-col items-stretch md:items-end gap-2">
+            <nav class="pub-links" aria-label="Acesso rápido">
+              <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" style="--c:#f87171" title="Abrir o Gmail"><span class="pub-link-ico"><i class="fa-solid fa-envelope"></i></span><span><b>Gmail</b><small>Caixa de entrada</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+              <a href="https://www.sigadoc.mt.gov.br/siga/app/principal" target="_blank" rel="noopener noreferrer" style="--c:#4ade80" title="Abrir o SIGADOC"><span class="pub-link-ico"><i class="fa-solid fa-folder-tree"></i></span><span><b>SIGADOC</b><small>Processos</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+            </nav>
+            <button onclick="abrirFormEmail()" data-requer="chefe:2" class="btn text-white em-novo"><i class="fa-solid fa-plus"></i>Novo e-mail</button>
+          </div>
+        </div>
+      </div>
+      <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="email-corpo"></div></div>
+    </section>
+
     <section id="tab-simec" class="tab hidden flex-col flex-1 min-h-0 overflow-hidden">
       <div class="faixa bg-education-pattern" style="background-color:#042f2e">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -2172,7 +2233,7 @@ function iniciais(nome) { return (nome || '?').split(/\s+/).filter(Boolean).slic
 //   planilha  → backend em Google Apps Script (aplicativo publicado no GitHub ou aberto pelo link)
 //   nuvem     → banco compartilhado do claude.ai (quando aberto como artifact)
 //   demo      → dados de exemplo em memória (nada é salvo)
-const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], contratacoes: [], nomeacoes: [], portarias: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
+const Store = { modo: 'conectando', _sol: [], agenda: [], correicao: [], eventos: [], comunicados: [], simec: [], contratacoes: [], nomeacoes: [], portarias: [], emails: [], chefe: null, db: null, user: null, eu: null, nomes: {}, pronto: false, versao: 0, sessao: null, unidades: null };
 // Dois cadastros separados na mesma lista: o da Secretária (Store.sol, usado por todo o sistema)
 // e o do Chefe de Gabinete (Store.solChefe, só na seção dele). Store.solTodos tem os dois.
 const ehChefe = s => !!s && s.gabinete === 'chefe';
@@ -2249,7 +2310,7 @@ const podeGrade = id => { const a = Grades[id] && Grades[id].cfg && Grades[id].c
 /** Seção do menu → área de permissão. */
 function areaDaAba(tab) {
   if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos', 'portarias'].includes(tab)) return 'sol';
-  if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes'].includes(tab)) return 'chefe';
+  if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes', 'emails'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
 function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
@@ -2305,6 +2366,10 @@ async function iniciarStore() {
       Store.eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
     }, () => {});
+    db.collection('emails').onSnapshot(snap => {
+      Store.emails = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      aoMudarDados();
+    }, () => {});
     db.collection('simec').onSnapshot(snap => {
       Store.simec = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       aoMudarDados();
@@ -2337,7 +2402,7 @@ async function iniciarStore() {
     Store.correicao = ex.correicao.map((c, i) => ({ id: 'co' + i, ...c }));
     Store.eventos = ex.eventos.map((e, i) => ({ id: 'ev' + i, ...e }));
     Store.comunicados = ex.comunicados.map((e, i) => ({ id: 'cm' + i, ...e }));
-    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.contratacoes = exc.contratacoes; Store.nomeacoes = exc.nomeacoes; Store.chefe = exc.info; Store.portarias = exemplosPortarias();
+    const exc = exemplosChefe(); Store._sol = Store._sol.concat(exc.sol); Store.simec = exc.simec; Store.contratacoes = exc.contratacoes; Store.nomeacoes = exc.nomeacoes; Store.chefe = exc.info; Store.portarias = exemplosPortarias(); Store.emails = exemplosEmails();
     Store.pronto = true;
   }
   atualizarIdentidade();
@@ -2407,6 +2472,7 @@ function aplicarCarga(r) {
     Store.eventos = r.eventos || [];
     Store.comunicados = r.comunicados || [];
     Store.simec = r.simec || [];
+    Store.emails = r.emails || [];
     Store.contratacoes = r.contratacoes || [];
     Store.nomeacoes = r.nomeacoes || [];
     Store.portarias = r.portarias || [];
@@ -3199,7 +3265,7 @@ async function sair() {
   if (Store.modo === 'planilha') {
     try { if (Store.sessao) await API.post('logout', {}, 10000); } catch (e) { /* sai mesmo sem resposta */ }
     Store.online = []; renderOnline(); fecharOnline();
-    Store.sessao = null; Store.sol = []; Store.simec = []; Store.contratacoes = []; Store.nomeacoes = []; Store.portarias = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
+    Store.sessao = null; Store.sol = []; Store.simec = []; Store.emails = []; Store.contratacoes = []; Store.nomeacoes = []; Store.portarias = []; Store.chefe = null; Store.agenda = []; Store.correicao = []; Store.eventos = []; Store.comunicados = []; Store.pronto = false; Store.versao = 0;
     try { localStorage.removeItem('gabdoc_sessao'); } catch (e) {}
     atualizarIdentidade(); aoMudarDados();
     carregarUsuariosPublicos();
@@ -3241,7 +3307,7 @@ function aoMudarDados() {
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
-  const r = { portarias: renderPortarias, nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapaAdj, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
+  const r = { emails: renderEmails, portarias: renderPortarias, nomeacoes: renderNomeacoes, contratacoes: renderContratacoes, chefe: renderChefe, 'chefe-proc': renderChefeProc, 'chefe-ass': renderChefeAss, simec: renderSimec, semana: renderSemana, comunicados: renderComunicados, eventos: renderEventos, correicao: renderCorreicao, painel: renderPainel, mesa: renderMesa, processos: renderProcessos, assinaturas: renderAssinaturas, fila: renderFila, prazos: renderPrazos, casacivil: renderCC, mapa: renderMapaAdj, agenda: renderAgenda, relatorios: renderRelatorios, movimentacoes: renderMovimentacoes, admin: renderAdmin }[abaAtual];
   if (r) r();
   aplicarPermissoes();
 }
@@ -3274,6 +3340,7 @@ function atualizarBadges() {
   const ch = Store.solChefe;
   set('bdg-chefe-proc', ch.filter(s => ehProcesso(s) && !FEITO(s)).length);
   set('bdg-chefe-ass', ch.filter(s => ehAssinatura(s) && !FEITO(s)).length);
+  set('bdg-email', (Store.emails || []).filter(x => sitEmail(x) === 'Aguardando retorno').length);
   set('bdg-simec', (Store.simec || []).filter(x => !simecFeito(x)).length);
   set('bdg-nom', (Store.nomeacoes || []).filter(x => !nomFeita(x)).length);
   set('bdg-contr', podeContratacoes() ? (Store.contratacoes || []).filter(x => !contrFeita(x)).length : 0);
@@ -4915,6 +4982,242 @@ function renderDocs() {
   });
 }
 
+/* ----- E-mails importantes encaminhados (área do Chefe de Gabinete) ----- */
+const EMAIL_COR = '#dc2626';
+const EMAIL_SIT = { 'Aguardando retorno': ['#d97706', 'fa-hourglass-half', 'Aguardando'], 'Respondido': ['#2563eb', 'fa-reply', 'Respondido'], 'Concluído': ['#16a34a', 'fa-circle-check', 'Concluído'] };
+const EMAIL_PRI = { 'Normal': ['#64748b', 'fa-envelope'], 'Importante': ['#d97706', 'fa-star'], 'Urgente': ['#dc2626', 'fa-bolt'] };
+const sitEmail = x => (x && EMAIL_SIT[x.situacao]) ? x.situacao : 'Aguardando retorno';
+const priEmail = x => (x && EMAIL_PRI[x.prioridade]) ? x.prioridade : 'Importante';
+const emailFeito = x => sitEmail(x) === 'Concluído';
+const emailReg = id => (Store.emails || []).find(x => x.id === id);
+/** "Rótulo | URL" por linha → [{rot, url}] */
+const linksEmail = x => String((x && x.links) || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^(.*?)\s*\|\s*(\S+)$/); return m ? { rot: m[1], url: m[2] } : { rot: '', url: l }; });
+const textoLinks = lista => lista.filter(l => l.url).map(l => (l.rot ? l.rot.replace(/\|/g, '/') + ' | ' : '') + l.url).join('\n');
+/** Ícone e nome curto do link, pelo endereço. */
+function tipoLink(url) {
+  const u = String(url || '').toLowerCase();
+  if (u.includes('mail.google.') || u.includes('gmail.')) return ['fa-envelope', '#ef4444', 'Gmail'];
+  if (u.includes('sigadoc')) return ['fa-folder-tree', '#16a34a', 'SIGADOC'];
+  if (u.includes('docs.google.') || u.includes('drive.google.')) return ['fa-file-lines', '#2563eb', 'Drive'];
+  if (u.includes('iomat')) return ['fa-book-open', '#0284c7', 'IOMAT'];
+  if (u.includes('outlook.') || u.includes('office.com')) return ['fa-envelope', '#0369a1', 'Outlook'];
+  let host = ''; try { host = new URL(url).hostname.replace(/^www\./, ''); } catch (e) { host = 'Link'; }
+  return ['fa-link', '#7c3aed', host];
+}
+function exemplosEmails() {
+  const h = d => somaDias(d);
+  return [
+    { id: 'em1', data: h(-1), assunto: 'Ofício do FNDE sobre atualização do PDDE Interativo', de: 'gabinete@fnde.gov.br', para: 'SAGE · Coordenadoria do PDDE', prioridade: 'Urgente', situacao: 'Aguardando retorno', processo: 'SEDUC-PRO-2026/31877', links: 'E-mail no Gmail | https://mail.google.com/\nProcesso | https://www.sigadoc.mt.gov.br/siga/app/principal', observacao: 'Pediram resposta até sexta.', exemplo: true },
+    { id: 'em2', data: h(-4), assunto: 'Convite da Assembleia Legislativa para audiência pública', de: 'cerimonial@al.mt.gov.br', para: 'Secretária · Agenda', prioridade: 'Importante', situacao: 'Respondido', processo: '', links: 'E-mail no Gmail | https://mail.google.com/', observacao: '', exemplo: true },
+    { id: 'em3', data: h(-12), assunto: 'Relatório mensal do transporte escolar (DRE Sinop)', de: 'dre.sinop@edu.mt.gov.br', para: 'SAGP', prioridade: 'Normal', situacao: 'Concluído', processo: '', links: '', observacao: 'Arquivado na pasta da DRE.', exemplo: true }
+  ];
+}
+async function salvarEmail(id, dados, rotulo) {
+  const novo = !id;
+  if (!gravaEmFila()) {
+    if (novo) id = 'em' + Date.now();
+    trocarNaLista(Store.emails, id, { ...dados, id }); aoMudarDados(); return true;
+  }
+  const antigo = novo ? null : emailReg(id);
+  if (novo) id = novoIdLocal('E');
+  trocarNaLista(Store.emails, id, { ...dados, id }); aoMudarDados();
+  const ref = id;
+  enfileirar({ ref, colecao: 'emails', idLocal: novo ? id : null, icone: 'fa-envelope-open-text',
+    rotulo: rotulo || (novo ? 'Novo e-mail registrado' : antigo && sitEmail(antigo) !== sitEmail(dados) ? 'E-mail · ' + sitEmail(dados) : 'E-mail atualizado'),
+    detalhe: dados.assunto || '', action: 'salvar_email', payload: { id, criarComId: novo, dados: semId(dados) },
+    nuvem: () => Store.db.collection('emails').doc(ref).set(semId(dados)) });
+  return true;
+}
+async function excluirEmailId(id) {
+  const x = emailReg(id);
+  Store.emails = Store.emails.filter(r => r.id !== id); aoMudarDados();
+  toast('Registro de e-mail excluído.');
+  if (!gravaEmFila()) return;
+  enfileirar({ ref: id, icone: 'fa-trash', rotulo: 'Exclusão de e-mail', detalhe: x ? x.assunto : '', action: 'excluir_email', payload: { id }, nuvem: () => Store.db.collection('emails').doc(id).delete() });
+}
+async function editarEmailCampos(x, campos) {
+  if ('situacao' in campos && !EMAIL_SIT[campos.situacao]) return false;
+  if ('prioridade' in campos && !EMAIL_PRI[campos.prioridade]) return false;
+  const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarEmail(x.id, d);
+}
+function celLinksEmail(x) {
+  const ls = linksEmail(x);
+  if (!ls.length) return pode('chefe:2') ? `<button type="button" class="gs-cel-bt pt-anexar" onclick="abrirFormEmail('${x.id}','links')"><i class="fa-solid fa-link"></i><span>Adicionar</span></button>` : '<span class="text-ink3">—</span>';
+  return `<span class="em-links">${ls.slice(0, 3).map(l => { const [ico, cor, nome] = tipoLink(l.url); return `<a class="gs-cel-bt em-link" style="--c:${cor}" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" title="${esc(l.rot || nome)}: ${esc(l.url)}"><i class="fa-solid ${ico}"></i><span>${esc(l.rot || nome)}</span></a>`; }).join('')}${ls.length > 3 ? `<button type="button" class="gs-cel-bt em-link mais" onclick="abrirFormEmail('${x.id}','links')" title="Ver todos os links">+${ls.length - 3}</button>` : ''}</span>`;
+}
+const pillPriEmail = x => { const p = priEmail(x), [cor, ico] = EMAIL_PRI[p]; return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${p}</span>`; };
+
+const FormEmail = { links: [] };
+function abrirFormEmail(id, foco) {
+  const x = id ? emailReg(id) : { data: hojeISO(), prioridade: 'Importante', situacao: 'Aguardando retorno', links: '' };
+  if (!x) return;
+  const pe = pode('chefe:2');
+  const campo = (n, cor, ico, rot, dica, corpo) => `
+    <section class="passo pt-passo" style="--c:${cor}" data-em="${n}">
+      <header class="passo-topo"><span class="passo-num">${n}</span><span class="pt-ico-campo"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><h4>${rot}</h4><p>${dica}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
+      <div class="passo-corpo">${corpo}</div></section>`;
+  const comIco = (ico, html) => `<div class="relative"><i class="fa-solid ${ico} absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs pointer-events-none"></i>${html}</div>`;
+  const ops = (grupo, mapa, atual) => `<div class="pt-status" id="em-${grupo}">${Object.entries(mapa).map(([k, v]) => `<button type="button" class="op-card ${k === atual ? 'ativo' : ''}" style="--c:${v[0]}" data-v="${esc(k)}" aria-pressed="${k === atual}" onclick="escolherOpEmail('${grupo}','${esc(k)}')"><span class="op-ico"><i class="fa-solid ${v[1]}"></i></span><span class="min-w-0 font-bold text-[13.5px] text-ink leading-tight">${esc(k)}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`;
+  FormEmail.links = linksEmail(x);
+  if (!id && !FormEmail.links.length) FormEmail.links = [{ rot: 'E-mail no Gmail', url: '' }];
+  abrirModal(`
+    <div class="form-hero" style="background-color:#3b0a0a;background-image:radial-gradient(600px 220px at 0% 0%, rgba(239,68,68,.4), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(37,99,235,.22), transparent 70%)">
+      <div class="flex items-start gap-3">
+        <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${EMAIL_COR}"><i class="fa-solid fa-envelope-open-text"></i></span><span class="on" style="--c:#2563eb"><i class="fa-solid fa-share"></i></span></div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-red-300">${id ? 'Editar registro' : 'Novo registro de e-mail'}</p>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5" id="em-titulo">${esc(id ? x.assunto : 'E-mail encaminhado')}</h3>
+          <p class="text-[12.5px] text-red-100/70 mt-1">Registre o e-mail importante, para quem foi encaminhado e os links para abrir depois.</p>
+        </div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8].map(n => `<span data-n="${n}"></span>`).join('')}</div>
+    </div>
+    <form class="modal-corpo space-y-3" id="form-email" novalidate oninput="marcarCamposEmail()" onsubmit="event.preventDefault();salvarFormEmail('${id || ''}')">
+      <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-3">
+        ${campo(1, '#0891b2', 'fa-calendar-day', 'Data', 'Quando foi encaminhado', `${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="em-data" value="${esc(x.data || '')}">`)}
+          <div class="flex flex-wrap gap-1.5">${[['Hoje', 0], ['Ontem', -1], ['Há 2 dias', -2]].map(([r, d]) => `<button type="button" class="atalho" onclick="$('em-data').value=somaDias(${d});marcarCamposEmail()">${r}</button>`).join('')}</div>`)}
+        ${campo(2, '#0f172a', 'fa-heading', 'Assunto', 'Como está no e-mail', `<textarea class="campo w-full" rows="2" id="em-assunto" placeholder="Ex.: Ofício do FNDE sobre o PDDE">${esc(x.assunto || '')}</textarea>`)}
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        ${campo(3, '#64748b', 'fa-at', 'Remetente (De)', 'Quem enviou', comIco('fa-user', `<input class="campo campo-g w-full !pl-8" id="em-de" value="${esc(x.de || '')}" placeholder="nome@orgao.gov.br" autocomplete="off">`))}
+        ${campo(4, '#2563eb', 'fa-share', 'Encaminhado para', 'Pessoas ou setores', comIco('fa-users', `<input class="campo campo-g w-full !pl-8" id="em-para" value="${esc(x.para || '')}" placeholder="Ex.: SAGE; Assessoria jurídica" autocomplete="off" list="lista-para-email">`))}
+      </div>
+      ${campo(5, '#d97706', 'fa-star', 'Importância', 'Quanto pesa este e-mail', ops('pri', EMAIL_PRI, priEmail(x)))}
+      ${campo(6, '#16a34a', 'fa-signal', 'Situação', 'Em que pé está', ops('sit', Object.fromEntries(Object.entries(EMAIL_SIT).map(([k, v]) => [k, v.slice(0, 2)])), sitEmail(x)))}
+      ${campo(7, '#7c3aed', 'fa-link', 'Links', 'Do e-mail no Gmail, do processo, de documentos… (abrem com um clique)', `
+        <div id="em-links" class="space-y-2"></div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" class="atalho" onclick="addLinkEmail('E-mail no Gmail')"><i class="fa-solid fa-envelope text-red-500 mr-1"></i>E-mail (Gmail)</button>
+          <button type="button" class="atalho" onclick="addLinkEmail('Processo no SIGADOC')"><i class="fa-solid fa-folder-tree text-green-600 mr-1"></i>Processo (SIGADOC)</button>
+          <button type="button" class="atalho" onclick="addLinkEmail('Documento')"><i class="fa-solid fa-file-lines text-blue-600 mr-1"></i>Documento</button>
+          <button type="button" class="atalho" onclick="addLinkEmail('')"><i class="fa-solid fa-plus mr-1"></i>Outro link</button>
+          <a class="atalho ml-auto" href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" title="Abra o e-mail no Gmail e copie o endereço da barra do navegador"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Abrir o Gmail</a>
+        </div>
+        <p class="text-[11.5px] text-ink3"><i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>Para o link do e-mail: abra a mensagem no Gmail e copie o endereço da barra do navegador.</p>`)}
+      ${campo(8, '#475569', 'fa-note-sticky', 'Processo e observação', 'Opcional', `${comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="em-processo" value="${esc(x.processo || '')}" placeholder="Nº do processo relacionado (se houver)" autocomplete="off">`)}
+        <textarea class="campo w-full" rows="2" id="em-observacao" placeholder="Anotações: prazo pedido, o que foi feito…">${esc(x.observacao || '')}</textarea>`)}
+      <p id="em-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
+    </form>
+    <datalist id="lista-para-email">${[...new Set(SECRETARIAS.concat((Store.emails || []).map(e => e.para).filter(Boolean)))].slice(0, 40).map(v => `<option value="${esc(v)}">`).join('')}</datalist>
+    <div class="modal-rodape !justify-between items-center">
+      <span class="text-[12px] text-ink3" id="em-resumo"></span>
+      <div class="flex gap-2">${id && pode('chefe:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirEmailId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button>${pe ? `<button class="btn btn-pri !h-10 !px-5" style="background:${EMAIL_COR};border-color:${EMAIL_COR}" type="submit" form="form-email" id="btn-email-salvar"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar e-mail'}</button>` : ''}</div>
+    </div>`, 'email');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  renderLinksEmail();
+  if (!pe) document.querySelectorAll('#form-email input, #form-email textarea, #form-email button').forEach(el => { el.readOnly = true; if (el.tagName === 'BUTTON') el.disabled = true; });
+  marcarCamposEmail();
+  setTimeout(() => { const f = foco === 'links' ? document.querySelector('#em-links input[data-k="url"]') : $('em-assunto'); if (f) f.focus(); }, 120);
+}
+function renderLinksEmail() {
+  const el = $('em-links'); if (!el) return;
+  el.innerHTML = FormEmail.links.length ? FormEmail.links.map((l, i) => { const [ico, cor] = tipoLink(l.url); return `<div class="em-link-ln" style="--c:${cor}">
+      <span class="em-link-ico"><i class="fa-solid ${ico}"></i></span>
+      <input class="campo !h-10 w-36 sm:w-44 shrink-0" data-i="${i}" data-k="rot" value="${esc(l.rot)}" placeholder="Rótulo" oninput="FormEmail.links[${i}].rot=this.value" aria-label="Rótulo do link ${i + 1}">
+      <input class="campo !h-10 flex-1 min-w-0" data-i="${i}" data-k="url" type="url" inputmode="url" value="${esc(l.url)}" placeholder="https://…" oninput="FormEmail.links[${i}].url=this.value.trim()" onchange="renderLinksEmail();marcarCamposEmail()" aria-label="Endereço do link ${i + 1}">
+      ${l.url ? `<a class="btn btn-sec !h-10 !px-3 shrink-0" href="${esc(normLink(l.url) || '#')}" target="_blank" rel="noopener noreferrer" title="Abrir"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+      <button type="button" class="btn btn-sec !h-10 !px-3 shrink-0 !text-red-600" title="Remover este link" onclick="FormEmail.links.splice(${i},1);renderLinksEmail();marcarCamposEmail()"><i class="fa-solid fa-xmark"></i></button></div>`; }).join('')
+    : '<p class="text-[12.5px] text-ink3">Nenhum link ainda. Use os botões abaixo.</p>';
+}
+function addLinkEmail(rot) {
+  FormEmail.links.push({ rot, url: '' }); renderLinksEmail();
+  const ins = document.querySelectorAll('#em-links input[data-k="url"]'); if (ins.length) ins[ins.length - 1].focus();
+}
+function escolherOpEmail(grupo, v) {
+  document.querySelectorAll(`#em-${grupo} .op-card`).forEach(b => { const on = b.dataset.v === v; b.classList.toggle('ativo', on); b.setAttribute('aria-pressed', on); });
+  marcarCamposEmail();
+}
+const opEmail = grupo => { const b = document.querySelector(`#em-${grupo} .op-card.ativo`); return b ? b.dataset.v : ''; };
+function marcarCamposEmail() {
+  if (!$('form-email')) return;
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const ok = { 1: !!v('em-data'), 2: !!v('em-assunto'), 3: !!v('em-de'), 4: !!v('em-para'), 5: true, 6: true, 7: FormEmail.links.some(l => normLink(l.url)), 8: !!(v('em-processo') || v('em-observacao')) };
+  Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`#form-email .pt-passo[data-em="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`.pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
+  const r = $('em-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${Object.values(ok).filter(Boolean).length} de 8 preenchidos`;
+}
+async function salvarFormEmail(id) {
+  const v = k => $(k).value.trim();
+  const aviso = t => { const el = $('em-aviso'); el.textContent = t; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest' }); };
+  if (!v('em-assunto')) return aviso('Informe o assunto do e-mail.');
+  const links = [];
+  for (const l of FormEmail.links) {
+    if (!l.url) continue;
+    const u = normLink(l.url); if (u === null) return aviso('Os links devem começar com http:// ou https://.');
+    links.push({ rot: (l.rot || '').trim(), url: u });
+  }
+  if (links.length > 12) return aviso('Use no máximo 12 links.');
+  const antigo = id ? emailReg(id) : null;
+  const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
+    data: v('em-data'), assunto: v('em-assunto'), de: v('em-de'), para: v('em-para'), prioridade: opEmail('pri') || 'Importante', situacao: opEmail('sit') || 'Aguardando retorno',
+    processo: v('em-processo'), observacao: v('em-observacao'), links: textoLinks(links), atualizadoEm: new Date().toISOString() };
+  const btn = $('btn-email-salvar'); btn.disabled = true;
+  if (await salvarEmail(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'E-mail registrado · salvando em segundo plano.' : 'E-mail salvo.', 'fa-envelope-open-text'); if (abaAtual !== 'emails') irPara('emails'); }
+  else btn.disabled = false;
+}
+function renderEmails() {
+  const cont = $('email-corpo');
+  const todos = Store.emails || [];
+  if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  const mes = hojeISO().slice(0, 7);
+  const aguard = todos.filter(x => sitEmail(x) === 'Aguardando retorno');
+  const urg = todos.filter(x => priEmail(x) === 'Urgente' && !emailFeito(x));
+  const tot = Math.max(1, todos.length);
+  const kpi = (cor, ico, rot, val, sub, chip, pct) => `<button type="button" class="dv-kpi pub-kpi" style="--c:${cor}" onclick="chipGrade('emails','${chip}')"><span class="pub-kpi-ico"><i class="fa-solid ${ico}"></i></span><span class="rot">${rot}</span><span class="val">${val}${pct && todos.length ? `<small>${Math.round(val * 100 / tot)}%</small>` : ''}</span><span class="sub">${sub}</span>${pct ? `<span class="pub-kpi-barra"><span style="width:${Math.round(val * 100 / tot)}%"></span></span>` : ''}</button>`;
+  const r = $('email-resumo'); if (r) r.innerHTML = todos.length ? [`<span class="pub-pulso-chip" style="--c:#fbbf24"><i class="fa-solid fa-hourglass-half"></i><b>${aguard.length}</b> aguardando retorno</span>`, urg.length ? `<span class="pub-pulso-chip" style="--c:#f87171"><i class="fa-solid fa-bolt"></i><b>${urg.length}</b> urgente${urg.length > 1 ? 's' : ''} em aberto</span>` : '', `<span class="pub-pulso-chip" style="--c:#a5b4fc"><i class="fa-solid fa-calendar-day"></i><b>${todos.filter(x => String(x.data || '').slice(0, 7) === mes).length}</b> no mês</span>`].join('') : '';
+  renderGrade(cont, {
+    id: 'emails', area: 'chefe', linhas: todos, fonte: () => Store.emails,
+    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      ${kpi(EMAIL_COR, 'fa-envelope-open-text', 'E-mails registrados', todos.length, `${todos.filter(x => linksEmail(x).length).length} com links`, '')}
+      ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando retorno', aguard.length, aguard.length ? `o mais antigo há ${Math.max(...aguard.map(x => x.data ? diasDesde(x.data) : 0))} dia(s)` : 'nada pendente', 'agu', true)}
+      ${kpi('#dc2626', 'fa-bolt', 'Urgentes em aberto', urg.length, 'importância urgente', 'urg', true)}
+      ${kpi('#16a34a', 'fa-circle-check', 'Concluídos', todos.filter(emailFeito).length, `${todos.filter(x => sitEmail(x) === 'Respondido').length} respondido(s)`, 'conc', true)}</div>`,
+    colunas: [
+      { key: 'data', rot: 'Data', w: 115, wCompacta: 100, tipo: 'data', editavel: true },
+      { key: 'assunto', rot: 'Assunto', w: 340, flex: true, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'de', rot: 'Remetente (De)', rotCompacto: 'De', w: 210, wCompacta: 130, tipo: 'texto', editavel: true },
+      { key: 'para', rot: 'Encaminhado para', rotCompacto: 'Para', w: 220, wCompacta: 130, tipo: 'texto', editavel: true },
+      { key: 'prioridade', rot: 'Importância', w: 125, wCompacta: 100, tipo: 'select', editavel: true, opcoes: () => Object.keys(EMAIL_PRI).map(k => [k, k]), valor: priEmail, render: pillPriEmail },
+      { key: 'links', rot: 'Links', w: 260, wCompacta: 150, tipo: 'texto', editavel: false, render: celLinksEmail },
+      { key: 'processo', rot: 'Nº do processo', w: 190, tipo: 'texto', editavel: true },
+      { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true },
+      { key: 'situacao', rot: 'Situação', oculta: true, tipo: 'texto', valor: sitEmail }
+    ],
+    compactas: ['data', 'assunto', 'de', 'para', 'prioridade', 'links'],
+    redimensionar: true,
+    estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_emails') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
+    larguraAcoes: 150,
+    finalizado: emailFeito,
+    ordemPadrao: ordemFinalizados(emailFeito, (a, b) => String(b.data || '').localeCompare(String(a.data || '')), (a, b) => String(b.data || '').localeCompare(String(a.data || ''))),
+    classeLinha: x => emailFeito(x) ? 'gs-feito' : '',
+    chips: [['', L('filtro.todos'), () => true, EMAIL_COR], ['agu', 'Aguardando retorno', x => sitEmail(x) === 'Aguardando retorno', '#d97706'], ['resp', 'Respondidos', x => sitEmail(x) === 'Respondido', '#2563eb'], ['conc', 'Concluídos', emailFeito, '#16a34a'],
+            ['urg', 'Urgentes em aberto', x => priEmail(x) === 'Urgente' && !emailFeito(x), '#dc2626'], ['mes', 'Deste mês', x => String(x.data || '').slice(0, 7) === mes, '#0891b2'], ['semlink', 'Sem link', x => !linksEmail(x).length, '#7c3aed']],
+    aoEditarCampos: editarEmailCampos,
+    acoes: x => {
+      const st = sitEmail(x), [cor, ico, curto] = EMAIL_SIT[st];
+      const l1 = linksEmail(x)[0];
+      const link = l1 ? (([lico, lcor]) => `<a class="gs-ico" style="color:${lcor}" href="${esc(l1.url)}" target="_blank" rel="noopener noreferrer" title="Abrir: ${esc(l1.rot || l1.url)}"><i class="fa-solid ${lico}"></i></a>`)(tipoLink(l1.url)) : '';
+      return `<div class="gs-acoes-in"><button type="button" class="pub-st gs-menu-bt ${st === 'Concluído' ? 'feito' : ''}" style="--c:${cor}" title="Situação: ${esc(st)}${pode('chefe:2') ? ' · toque para mudar' : ''}" onclick="abrirMenuAcoes('emails','${x.id}',this,'status')"><i class="fa-solid ${ico}"></i><span>${curto}</span><i class="fa-solid fa-chevron-down pub-st-seta"></i></button>${link}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('emails','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+    },
+    menuStatus: x => [{ titulo: 'Situação · atual: ' + sitEmail(x) }].concat(Object.keys(EMAIL_SIT).map(s => ({ rot: s === sitEmail(x) ? s + '  ✓' : s, ico: EMAIL_SIT[s][1], cor: EMAIL_SIT[s][0], perm: 'chefe:2', fn: () => s === sitEmail(x) ? null : editarEmailCampos(x, { situacao: s }) }))),
+    tituloLinha: x => x.assunto || 'E-mail',
+    menuAcoes: x => {
+      const itens = [{ titulo: 'Mudar a situação para' }];
+      Object.keys(EMAIL_SIT).filter(s => s !== sitEmail(x)).forEach(s => itens.push({ rot: s, ico: EMAIL_SIT[s][1], cor: EMAIL_SIT[s][0], perm: 'chefe:2', fn: () => editarEmailCampos(x, { situacao: s }) }));
+      const ls = linksEmail(x);
+      if (ls.length) { itens.push({ sep: true }, { titulo: 'Abrir link' }); ls.forEach(l => { const [ico, cor, nome] = tipoLink(l.url); itens.push({ rot: l.rot || nome, ico, cor, fn: () => window.open(l.url, '_blank', 'noopener') }); }); }
+      itens.push({ sep: true }, { rot: 'Abrir no formulário', ico: 'fa-pen', cor: '#64748b', fn: () => abrirFormEmail(x.id) });
+      if (pode('chefe:2')) itens.push({ rot: 'Adicionar link', ico: 'fa-link', cor: '#7c3aed', fn: () => abrirFormEmail(x.id, 'links') });
+      if (pode('chefe:3')) itens.push({ rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirEmailId(x.id) });
+      return itens;
+    },
+    acoesLote: Object.keys(EMAIL_SIT).map(s => ({ rot: s, ico: EMAIL_SIT[s][1], cor: EMAIL_SIT[s][0], perm: 'chefe:2', campos: () => ({ situacao: s }) })),
+    novaLinha: () => abrirFormEmail(), textoNovaLinha: 'Novo e-mail (abre o formulário)',
+    textoVazio: 'Nenhum e-mail registrado.',
+    botaoNovo: `<button class="btn btn-pri !h-9" style="background:${EMAIL_COR};border-color:${EMAIL_COR}" onclick="abrirFormEmail()" data-requer="chefe:2"><i class="fa-solid fa-plus"></i>Novo e-mail</button>`
+  });
+}
+
 /* ----- Publicações (portarias, editais, instruções normativas…): minuta + arquivo publicado (Word/PDF) ----- */
 // (nomes internos "portaria/portarias" ficaram da primeira versão, quando a seção se chamava Portarias)
 const PORT_COR = '#4f46e5';
@@ -5025,6 +5328,108 @@ async function baixarArqPortaria(id, formato, btn, qual = 'minuta') {
   } catch (e) { toast(e.message || 'Não foi possível baixar o arquivo.', 'fa-triangle-exclamation'); }
   finally { baixandoPort.delete(chave); if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = orig; } }
 }
+/* ----- Ver os arquivos (sem baixar): PDF desenhado na tela com pdf.js; Word convertido em PDF pelo Google Drive ----- */
+const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let pdfjsProm = null;
+function carregarPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (!pdfjsProm) pdfjsProm = new Promise((ok, erro) => {
+    const sc = document.createElement('script'); sc.src = PDFJS_URL; sc.async = true;
+    sc.onload = () => { try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER; ok(window.pdfjsLib); } catch (e) { erro(e); } };
+    sc.onerror = () => { pdfjsProm = null; erro(new Error('Não foi possível carregar o visualizador.')); };
+    document.head.appendChild(sc);
+  });
+  return pdfjsProm;
+}
+const CacheVis = new Map();
+const Vis = { id: '', qual: '', blob: null, url: '', escala: 1, doc: null, seq: 0 };
+async function pdfParaVer(id, qual) {
+  const x = portaria(id), a = arqDe(x, qual);
+  if (!a) throw new Error(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.');
+  if (CacheVis.has(a.id)) return CacheVis.get(a.id);
+  let blob;
+  if (Store.modo !== 'planilha') {
+    const l = ArquivosLocais[a.id];
+    if (!l) throw new Error('Arquivo de exemplo: anexe um arquivo para testar a visualização.');
+    if (!ehPdfArq(l.nome)) throw new Error('Para ver um arquivo Word aqui, o Google Drive converte em PDF: disponível com a planilha conectada. Por enquanto, baixe o arquivo.');
+    blob = blobDeBase64(l.base64, 'application/pdf');
+  } else {
+    const r = await API.post('baixar_arquivo_portaria', { id, qual, formato: 'pdf', arquivoId: a.id, arquivoNome: a.nome }, 240000);
+    blob = blobDeBase64(r.base64, 'application/pdf');
+  }
+  CacheVis.set(a.id, blob);
+  return blob;
+}
+async function verArqPortaria(id, qual = 'minuta') {
+  const x = portaria(id), a = arqDe(x, qual), q = PUB_ARQS[qual];
+  if (!a) { toast(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.', 'fa-circle-info'); return; }
+  if (Vis.url) { try { URL.revokeObjectURL(Vis.url); } catch (e) {} }
+  Object.assign(Vis, { id, qual, blob: null, url: '', escala: 1, doc: null, seq: Vis.seq + 1 });
+  const pdf = ehPdfArq(a.nome), [ico, cor] = icoArq(a.nome);
+  abrirModal(`
+    <div class="vis-topo">
+      <span class="vis-ico" style="--c:${q.cor}"><i class="fa-solid ${q.ico}"></i></span>
+      <div class="min-w-0 flex-1"><p class="vis-sel">${q.rot} · ${esc(nomePub(x))}</p><h3 class="vis-tit"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate">${esc(a.nome)}</span></h3></div>
+      <div class="vis-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
+      <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="vis-palco" id="vis-palco"><div class="vis-carregando"><i class="fa-solid fa-circle-notch fa-spin"></i><b>${pdf ? 'Abrindo o PDF…' : 'Preparando a visualização…'}</b><small>${pdf ? '' : 'O Word é convertido em PDF pelo Google Drive. Leva alguns segundos.'}</small></div></div>
+    <div class="vis-rodape">
+      <span class="text-[12px] text-ink3 mr-auto" id="vis-info">${a.tam ? tamArq(a.tam) : ''}</span>
+      <button type="button" class="btn btn-sec !h-9" id="vis-aba" disabled onclick="if(Vis.url)window.open(Vis.url,'_blank','noopener')"><i class="fa-solid fa-up-right-from-square"></i><span>Abrir em nova aba</span></button>
+      <button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${id}','original',this,'${qual}')"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'Baixar PDF' : 'Baixar Word'}</button>
+      ${pdf ? '' : `<button type="button" class="btn btn-sec !h-9" id="vis-pdf" onclick="if(Vis.blob)salvarArquivo(Vis.blob, '${esc(a.nome.replace(/\.[a-z0-9]{2,5}$/i, '').replace(/'/g, ''))}.pdf', 'PDF baixado', 'fa-file-pdf')"><i class="fa-solid fa-file-pdf text-red-600"></i>Baixar PDF</button>`}
+    </div>`, 'visualizador');
+  const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-xl', 'modal-vis');
+  const seq = Vis.seq;
+  try {
+    const blob = await pdfParaVer(id, qual);
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    Vis.blob = blob; Vis.url = URL.createObjectURL(blob);
+    const b = $('vis-aba'); if (b) b.disabled = false;
+    await desenharVis(seq);
+  } catch (e) {
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    $('vis-palco').innerHTML = `<div class="vis-carregando erro"><i class="fa-solid fa-triangle-exclamation"></i><b>Não deu para mostrar o arquivo</b><small>${esc(e.message || 'Tente baixar o arquivo.')}</small></div>`;
+  }
+}
+async function desenharVis(seq) {
+  const palco = $('vis-palco'); if (!palco) return;
+  let lib;
+  try { lib = await carregarPdfJs(); } catch (e) { lib = null; }
+  if (seq !== Vis.seq || !$('vis-palco')) return;
+  if (!lib) { palco.innerHTML = `<iframe class="vis-frame" src="${Vis.url}" title="Visualização do arquivo"></iframe>`; return; }
+  try {
+    if (!Vis.doc) Vis.doc = await lib.getDocument({ data: new Uint8Array(await Vis.blob.arrayBuffer()) }).promise;
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    const doc = Vis.doc, n = Math.min(doc.numPages, 60);
+    palco.innerHTML = '';
+    const largura = Math.max(280, Math.min(palco.clientWidth - 32, 980));
+    const info = $('vis-info'); if (info) info.textContent = `${doc.numPages} página${doc.numPages > 1 ? 's' : ''}${doc.numPages > n ? ` (mostrando ${n}; abra em nova aba para ver todas)` : ''}${Vis.blob ? ' · ' + tamArq(Vis.blob.size) : ''}`;
+    $('vis-pct').textContent = Math.round(Vis.escala * 100) + '%';
+    for (let i = 1; i <= n; i++) {
+      const pg = await doc.getPage(i);
+      if (seq !== Vis.seq || !$('vis-palco')) return;
+      const base = pg.getViewport({ scale: 1 });
+      const esc1 = (largura / base.width) * Vis.escala, dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const vp = pg.getViewport({ scale: esc1 * dpr });
+      const cv = document.createElement('canvas');
+      cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+      cv.style.width = Math.floor(vp.width / dpr) + 'px'; cv.style.height = Math.floor(vp.height / dpr) + 'px';
+      cv.className = 'vis-pag'; cv.setAttribute('aria-label', `Página ${i}`);
+      palco.appendChild(cv);
+      await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+    }
+  } catch (e) {
+    if ($('vis-palco')) palco.innerHTML = `<iframe class="vis-frame" src="${Vis.url}" title="Visualização do arquivo"></iframe>`;
+  }
+}
+function zoomVis(d) {
+  const nv = Math.max(0.5, Math.min(2.5, Math.round((Vis.escala + d * 0.25) * 100) / 100));
+  if (nv === Vis.escala || !Vis.doc) return;
+  Vis.escala = nv; desenharVis(Vis.seq);
+}
 /** Anexar/trocar a minuta ou o arquivo publicado direto da planilha. Anexar o publicado marca a publicação como Publicado. */
 function anexarArqPortaria(id, qual = 'minuta') {
   if (!pode('sol:2')) { toast('Seu perfil só pode visualizar as publicações.', 'fa-lock'); return; }
@@ -5082,8 +5487,9 @@ function celArquivo(x, qual = 'minuta') {
   const [ico, cor] = icoArq(a.nome);
   const pdf = ehPdfArq(a.nome);
   return `<span class="pt-arq"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate" title="${esc(a.nome)}${a.tam ? ' · ' + tamArq(a.tam) : ''}">${esc(a.nome)}</span>
+    <button type="button" class="gs-cel-bt pt-dl pt-ver" style="--c:#4f46e5" title="${q.rot}: ver o arquivo" onclick="verArqPortaria('${x.id}','${qual}')"><i class="fa-solid fa-eye"></i></button>
     <button type="button" class="gs-cel-bt pt-dl" style="--c:${pdf ? '#dc2626' : '#2563eb'}" title="${q.rot}: baixar ${pdf ? 'o PDF' : 'em Word (original)'}" onclick="baixarArqPortaria('${x.id}','original',this,'${qual}')"><i class="fa-solid ${pdf ? 'fa-file-pdf' : 'fa-file-word'}"></i></button>
-    ${pdf ? '' : `<button type="button" class="gs-cel-bt pt-dl" style="--c:#dc2626" title="${q.rot}: baixar em PDF" onclick="baixarArqPortaria('${x.id}','pdf',this,'${qual}')"><i class="fa-solid fa-file-pdf"></i></button>`}</span>`;
+    ${pdf ? '' : `<button type="button" class="gs-cel-bt pt-dl conv" style="--c:#dc2626" title="${q.rot}: baixar em PDF" onclick="baixarArqPortaria('${x.id}','pdf',this,'${qual}')"><i class="fa-solid fa-file-pdf"></i></button>`}</span>`;
 }
 function celLink(x) {
   if (!x.link) return '';
@@ -5129,7 +5535,7 @@ function abrirFormPortaria(id, foco) {
       </div>
       <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
-    <form class="modal-corpo space-y-3" id="form-port" oninput="marcarCamposPort()" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
+    <form class="modal-corpo space-y-3" id="form-port" novalidate oninput="marcarCamposPort()" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
       ${campo(1, PORT_COR, 'fa-layer-group', 'Tipo de documento', 'O que vai ser publicado: toque em um', `
         <div class="pt-tipos" id="pt-tipos">${PUB_TIPOS.map(([t, ico, cor]) => `<button type="button" class="pt-tipo ${t === tipoAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(t)}" aria-pressed="${t === tipoAtual}" onclick="escolherTipoPub(this)"><span class="pt-tipo-ico"><i class="fa-solid ${ico}"></i></span>${esc(t)}</button>`).join('')}</div>
         <input type="hidden" id="pt-tipo" value="${esc(tipoAtual)}">
@@ -5230,7 +5636,8 @@ function renderArqForm(q) {
   else if (atual) {
     const pdf = ehPdfArq(atual.nome);
     html = cartao(atual.nome, atual.tam, 'Arquivo salvo') + `<div class="flex flex-wrap gap-1.5 justify-end">
-      ${FormPort.id ? `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','original',this,'${q}')"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'PDF' : 'Word'}</button>
+      ${FormPort.id ? `<button type="button" class="btn btn-sec !h-9" onclick="verArqPortaria('${FormPort.id}','${q}')"><i class="fa-solid fa-eye text-indigo-600"></i>Ver</button>
+      <button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','original',this,'${q}')"><i class="fa-solid ${pdf ? 'fa-file-pdf text-red-600' : 'fa-file-word text-blue-600'}"></i>${pdf ? 'PDF' : 'Word'}</button>
       ${pdf ? '' : `<button type="button" class="btn btn-sec !h-9" data-rot="1" onclick="baixarArqPortaria('${FormPort.id}','pdf',this,'${q}')"><i class="fa-solid fa-file-pdf text-red-600"></i>PDF</button>`}` : ''}
       ${pe ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" title="Remover o arquivo" onclick="FormPort.arqs.${q}.remover=true;renderArqForm('${q}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div></div>`;
   }
@@ -5407,6 +5814,7 @@ function renderPortarias() {
       if (x.link) itens.push({ rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') });
       Object.entries(PUB_ARQS).forEach(([q, a]) => {
         const f = arqDe(x, q);
+        if (f) itens.push({ rot: `${a.rot}: ver`, ico: 'fa-eye', cor: '#4f46e5', fn: () => verArqPortaria(x.id, q) });
         if (f) itens.push({ rot: `${a.rot}: baixar ${ehPdfArq(f.nome) ? 'o PDF' : 'em Word'}`, ico: ehPdfArq(f.nome) ? 'fa-file-pdf' : 'fa-file-word', cor: '#2563eb', fn: () => baixarArqPortaria(x.id, 'original', null, q) });
         if (f && !ehPdfArq(f.nome)) itens.push({ rot: `${a.rot}: baixar em PDF`, ico: 'fa-file-pdf', cor: '#dc2626', fn: () => baixarArqPortaria(x.id, 'pdf', null, q) });
         if (pode('sol:2')) itens.push({ rot: (f ? 'Trocar ' : 'Anexar ') + a.rot.toLowerCase(), ico: a.ico, cor: a.cor, fn: () => anexarArqPortaria(x.id, q) });
