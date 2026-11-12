@@ -47,12 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.53.0">
+<meta name="gabdoc-versao" content="1.54.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Administração: usuários em cartões, com busca, filtros e ativar/desativar num toque",
-  "Administração: ao criar um usuário, veja o que o perfil escolhido pode ver e fazer",
-  "Perfis e permissões: modelos prontos, explicação de cada nível e quem usa cada perfil",
-  "Auditoria: limpar o histórico (com backup antes) e exportar em CSV"
+  "Nomeações e Exonerações: novas visualizações Lado a lado e Linha do tempo",
+  "Nomeações e Exonerações: formulário novo, em cartões, igual ao de Publicações",
+  "IN e NOR agora se chamam I e N (os registros antigos são convertidos sozinhos)"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -391,6 +390,67 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nom-barra b { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
   .nom-barra-t { height: 8px; border-radius: 99px; background: var(--card2); overflow: hidden; }
   .nom-barra-t span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #0891b2, #22d3ee); transition: width .4s; }
+  @media (max-width: 640px) { .nom-seg-vista button:not(.ativo) .nom-seg-rot, .nom-seg-tipo button:not(.ativo) svg + .nom-seg-rot, .nom-seg-tipo button:not(.ativo) i + .nom-seg-rot { display: none; } .nom-seg-vista button, .nom-seg-tipo button { padding-left: 10px; padding-right: 10px; } }
+  .nl-lados { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  @media (max-width: 900px) { .nl-lados { grid-template-columns: minmax(0, 1fr); } }
+  .nl-lado { --c: #2563eb; border-radius: 16px; background: var(--card); border: 1px solid var(--line); overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
+  .nl-cab { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(90deg, color-mix(in srgb, var(--c) 10%, var(--card)), var(--card)); }
+  .nl-cab b { display: block; font-size: 15px; font-weight: 900; color: var(--ink); }
+  .nl-cab small { font-size: 11.5px; color: var(--ink3); }
+  .nl-cab-ico { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 15px; box-shadow: 0 8px 18px -10px var(--c); flex: none; }
+  .nl-total { font-size: 22px; font-weight: 900; color: var(--c); }
+  .nl-novo { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); }
+  .nl-novo:hover { background: var(--c); color: #fff; }
+  .nl-barra { display: flex; height: 5px; background: var(--line); }
+  .nl-corpo { padding: 6px 10px 10px; }
+  .nl-grupo { border-bottom: 1px dashed var(--line); }
+  .nl-grupo:last-child { border-bottom: 0; }
+  .nl-grupo > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 4px; font-size: 12.5px; font-weight: 800; color: var(--ink2); }
+  .nl-grupo > summary::-webkit-details-marker { display: none; }
+  .nl-seta { font-size: 9px; color: var(--ink3); transition: transform .15s; }
+  .nl-grupo[open] .nl-seta { transform: rotate(90deg); }
+  .nl-n { margin-left: auto; min-width: 24px; padding: 0 7px; border-radius: 99px; text-align: center; font-size: 11.5px; font-weight: 900; color: var(--s); background: color-mix(in srgb, var(--s) 13%, var(--card)); }
+  .nl-itens { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; }
+  .nl-linha { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 11px; cursor: pointer; border: 1px solid transparent; transition: background .12s, border-color .12s; }
+  .nl-linha:hover, .nl-linha:focus-visible { background: color-mix(in srgb, var(--c) 5%, var(--card2)); border-color: color-mix(in srgb, var(--c) 20%, var(--line)); outline: none; }
+  .nl-av { --c: #64748b; width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 900; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); border: 1.5px solid color-mix(in srgb, var(--c) 30%, transparent); }
+  .nl-nome { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nl-sub { display: block; font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nl-q { font-size: 11.5px; font-weight: 700; color: var(--ink3); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+  .nl-q.ok { color: var(--ok); }
+  .nl-q i { font-size: 9px; }
+  .nl-bt { flex: none; }
+  .tl-lista { display: flex; flex-direction: column; gap: 14px; }
+  .tl-mes { display: flex; flex-direction: column; gap: 8px; }
+  .tl-mes-tit { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--ink2); padding: 0 4px; }
+  .tl-mes-tit i { color: var(--brand); }
+  .tl-mes-tit span { margin-left: auto; font-size: 11px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink3); }
+  .tl-item { --c: #2563eb; display: grid; grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr) auto; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); cursor: pointer; transition: box-shadow .15s, transform .15s; }
+  .tl-item:hover, .tl-item:focus-visible { box-shadow: 0 10px 24px -16px rgba(15,23,42,.45); transform: translateY(-1px); outline: none; }
+  .tl-item.alerta { background: linear-gradient(90deg, color-mix(in srgb, var(--urg) 4%, var(--card)), var(--card) 40%); }
+  .tl-quem { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .tl-trilha { display: flex; align-items: flex-start; min-width: 0; }
+  .tl-et { --e: var(--ink3); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; width: 92px; flex: none; }
+  .tl-et b { font-size: 11.5px; font-weight: 800; color: var(--ink2); }
+  .tl-et small { font-size: 11px; color: var(--ink3); white-space: nowrap; }
+  .tl-pt { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; color: var(--ink3); background: var(--card2); border: 2px dashed var(--line); }
+  .tl-et.feita .tl-pt { color: #fff; background: var(--ok); border: 2px solid var(--ok); }
+  .tl-et.feita small { color: var(--ink2); font-weight: 700; }
+  .tl-et.atual .tl-pt { color: #d97706; background: color-mix(in srgb, #d97706 12%, var(--card)); border: 2px solid #d97706; animation: tlPulso 2s infinite; }
+  .tl-et.atual small { color: #d97706; font-weight: 700; }
+  .tl-et.neg .tl-pt { color: #fff; background: #dc2626; border: 2px solid #dc2626; }
+  .tl-et.neg small { color: #dc2626; font-weight: 700; }
+  @keyframes tlPulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(217,119,6,.35); } 50% { box-shadow: 0 0 0 6px rgba(217,119,6,0); } }
+  @media (prefers-reduced-motion: reduce) { .tl-et.atual .tl-pt { animation: none; } }
+  .tl-lig { flex: 1; min-width: 18px; height: 2px; margin-top: 15px; background: repeating-linear-gradient(90deg, var(--line) 0 5px, transparent 5px 9px); position: relative; }
+  .tl-lig.on { background: var(--ok); }
+  .tl-lig em { position: absolute; left: 50%; top: -17px; transform: translateX(-50%); font-style: normal; font-size: 10.5px; font-weight: 800; color: var(--ink3); white-space: nowrap; background: var(--card); padding: 0 4px; border-radius: 6px; }
+  .tl-acoes { display: flex; align-items: center; gap: 6px; }
+  @media (max-width: 900px) {
+    .tl-item { grid-template-columns: minmax(0, 1fr) auto; }
+    .tl-trilha { grid-column: 1 / -1; grid-row: 2; }
+    .tl-et { width: 78px; }
+  }
   .nom-quadro { display: grid; grid-template-columns: repeat(4, minmax(250px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 6px; align-items: start; }
   .nom-col { --c: var(--brand); border-radius: 14px; background: var(--card2); border: 1px solid var(--line); display: flex; flex-direction: column; min-height: 180px; transition: border-color .15s, background .15s; }
   .nom-col.alvo { border-color: var(--c); border-style: dashed; background: color-mix(in srgb, var(--c) 7%, var(--card2)); }
@@ -854,6 +914,20 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pt-tipo-ico { width: 28px; height: 28px; border-radius: 8px; flex: none; display: grid; place-items: center; font-size: 13px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, var(--card)); }
   .pt-tipo.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
   .pt-tipo.ativo .pt-tipo-ico { background: rgba(255,255,255,.2); color: #fff; }
+  .nm-hero { background-color: #0c1a3d; background-image: radial-gradient(600px 220px at 0% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 70%), radial-gradient(420px 200px at 100% 100%, rgba(124,58,237,.22), transparent 70%); transition: background-image .3s; }
+  .nm-ops { display: grid; gap: 8px; }
+  .nm-ops-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nm-ops-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .nm-ops-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .nm-ops .op-card { padding: 9px 11px; gap: 10px; }
+  .nm-cat { --c: #7c3aed; min-height: 52px; border-radius: 12px; font-size: 22px; font-weight: 900; letter-spacing: .02em; color: var(--c); background: color-mix(in srgb, var(--c) 6%, var(--card)); border: 1.5px solid color-mix(in srgb, var(--c) 30%, var(--line)); transition: background .15s, color .15s, transform .15s, box-shadow .15s; }
+  .nm-cat:hover { transform: translateY(-1px); }
+  .nm-cat.ativo { background: var(--c); color: #fff; border-color: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
+  .nm-lot { --c: #334155; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 800; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, var(--line)); }
+  .nm-lot i { font-size: 11px; color: var(--c); }
+  .nm-lot.ativo { background: var(--c); color: #fff; border-color: var(--c); }
+  .nm-lot.ativo i { color: #fff; }
+  .nm-pulsa { box-shadow: 0 0 0 3px color-mix(in srgb, #ea580c 45%, transparent); transition: box-shadow .3s; }
   .pt-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   @media (max-width: 640px) { .pt-status { grid-template-columns: minmax(0, 1fr); } }
   .pt-status .op-card { padding: 9px 11px; gap: 10px; }
@@ -2433,7 +2507,7 @@ async function iniciarStore() {
       aoMudarDados();
     }, () => {});
     db.collection('nomeacoes').onSnapshot(snap => {
-      Store.nomeacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      Store.nomeacoes = normNomIN(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       aoMudarDados();
     }, () => {});
     db.collection('portarias').onSnapshot(snap => {
@@ -2441,7 +2515,7 @@ async function iniciarStore() {
       aoMudarDados();
     }, () => {});
     db.collection('contratacoes').onSnapshot(snap => {
-      Store.contratacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      Store.contratacoes = normContrIN(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       aoMudarDados();
     }, () => {});
     db.collection('chefe').onSnapshot(snap => {
@@ -2531,8 +2605,8 @@ function aplicarCarga(r) {
     Store.comunicados = r.comunicados || [];
     Store.simec = r.simec || [];
     Store.emails = r.emails || [];
-    Store.contratacoes = r.contratacoes || [];
-    Store.nomeacoes = r.nomeacoes || [];
+    Store.contratacoes = normContrIN(r.contratacoes);
+    Store.nomeacoes = normNomIN(r.nomeacoes);
     Store.portarias = r.portarias || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
@@ -6186,15 +6260,15 @@ function exemplosChefe() {
       { id: 'sm4', numero: 'EMD-2026/044', assunto: 'Cadastro de emenda parlamentar para aquisição de mobiliário', modulo: 'Emendas', municipio: 'Barra do Garças', escola: '', responsavel: 'Rodrigo Alves', prazo: h(-12), situacao: 'Concluída', observacoes: '', exemplo: true }
     ],
     contratacoes: [
-      { id: 'kt1', nome: 'Ana Beatriz Moura', forma: 'SIGADOC', tipo: 'IN', protocolo: h(-12), cargo: 'Assessora técnica', processo: 'SEDUC-PRO-2026/50110', entrevista: h(2), status: 'Aguardando Entrevista', inicio: '', lotacao: 'Gabinete', observacao: '', exemplo: true },
-      { id: 'kt2', nome: 'Carlos Henrique Prado', forma: 'E-mail', tipo: 'NOR', protocolo: h(-5), cargo: 'Analista administrativo', processo: 'SEDUC-PRO-2026/50187', entrevista: '', status: 'Em andamento', inicio: '', lotacao: 'SAGP', observacao: 'Aguardando autorização da Secretária.', exemplo: true },
-      { id: 'kt3', nome: 'Juliana Ferraz', forma: 'Ofício', tipo: 'IN', protocolo: h(-30), cargo: 'Motorista', processo: 'SEDUC-PRO-2026/49870', entrevista: h(-20), status: 'Concluído', inicio: h(-3), lotacao: 'Transporte — Gabinete', observacao: '', exemplo: true },
-      { id: 'kt4', nome: 'Roberto Lima', forma: 'Presencial', tipo: 'NOR', protocolo: h(-18), cargo: 'Assessor especial', processo: 'SEDUC-PRO-2026/49992', entrevista: '', status: 'Não Autorizado', inicio: '', lotacao: '', observacao: '', exemplo: true }
+      { id: 'kt1', nome: 'Ana Beatriz Moura', forma: 'SIGADOC', tipo: 'I', protocolo: h(-12), cargo: 'Assessora técnica', processo: 'SEDUC-PRO-2026/50110', entrevista: h(2), status: 'Aguardando Entrevista', inicio: '', lotacao: 'Gabinete', observacao: '', exemplo: true },
+      { id: 'kt2', nome: 'Carlos Henrique Prado', forma: 'E-mail', tipo: 'N', protocolo: h(-5), cargo: 'Analista administrativo', processo: 'SEDUC-PRO-2026/50187', entrevista: '', status: 'Em andamento', inicio: '', lotacao: 'SAGP', observacao: 'Aguardando autorização da Secretária.', exemplo: true },
+      { id: 'kt3', nome: 'Juliana Ferraz', forma: 'Ofício', tipo: 'I', protocolo: h(-30), cargo: 'Motorista', processo: 'SEDUC-PRO-2026/49870', entrevista: h(-20), status: 'Concluído', inicio: h(-3), lotacao: 'Transporte — Gabinete', observacao: '', exemplo: true },
+      { id: 'kt4', nome: 'Roberto Lima', forma: 'Presencial', tipo: 'N', protocolo: h(-18), cargo: 'Assessor especial', processo: 'SEDUC-PRO-2026/49992', entrevista: '', status: 'Não Autorizado', inicio: '', lotacao: '', observacao: '', exemplo: true }
     ],
     nomeacoes: [
-      { id: 'nm1', nome: 'Paulo Roberto Arruda', tipo: 'Nomeação', categoria: 'IN', cargo: 'Assessor Especial', simbolo: 'DGA-3', lotacao: 'Gabinete', processo: 'SEDUC-PRO-2026/51020', protocolo: h(-8), inicio: '', status: 'Aguardando publicação', observacao: '', exemplo: true },
-      { id: 'nm2', nome: 'Luciana Campos', tipo: 'Exoneração', categoria: 'NOR', cargo: 'Coordenadora', simbolo: 'DGA-5', lotacao: 'SAGE', processo: 'SEDUC-PRO-2026/51088', protocolo: h(-3), inicio: '', status: 'Em andamento', observacao: 'A pedido.', exemplo: true },
-      { id: 'nm3', nome: 'Marcos Vinícius Leite', tipo: 'Nomeação', categoria: 'NOR', cargo: 'Superintendente', simbolo: 'DGA-2', lotacao: 'SAGP', processo: 'SEDUC-PRO-2026/50644', protocolo: h(-25), inicio: h(-10), status: 'Publicado', observacao: '', exemplo: true }
+      { id: 'nm1', nome: 'Paulo Roberto Arruda', tipo: 'Nomeação', categoria: 'I', cargo: 'Assessor Especial', simbolo: 'DGA-3', lotacao: 'Gabinete', processo: 'SEDUC-PRO-2026/51020', protocolo: h(-8), inicio: '', status: 'Aguardando publicação', observacao: '', exemplo: true },
+      { id: 'nm2', nome: 'Luciana Campos', tipo: 'Exoneração', categoria: 'N', cargo: 'Coordenadora', simbolo: 'DGA-5', lotacao: 'SAGE', processo: 'SEDUC-PRO-2026/51088', protocolo: h(-3), inicio: '', status: 'Em andamento', observacao: 'A pedido.', exemplo: true },
+      { id: 'nm3', nome: 'Marcos Vinícius Leite', tipo: 'Nomeação', categoria: 'N', cargo: 'Superintendente', simbolo: 'DGA-2', lotacao: 'SAGP', processo: 'SEDUC-PRO-2026/50644', protocolo: h(-25), inicio: h(-10), status: 'Publicado', observacao: '', exemplo: true }
     ],
     info: { nome: 'Chefe de Gabinete (exemplo)', cargo: 'Chefe de Gabinete', email: 'gabinete@seduc.mt.gov.br', telefone: '(65) 3613-0000', ramal: '0000', local: 'Gabinete da Secretária', obs: 'Dados de exemplo. Edite em "Editar dados".' }
   };
@@ -6207,7 +6281,11 @@ const STATUS_CONTR = {
   'Concluído':             ['#16a34a', 'fa-circle-check'],
   'Não Autorizado':        ['#dc2626', 'fa-ban']
 };
-const TIPOS_CONTR = { IN: '#7c3aed', NOR: '#0d9488' };
+const TIPOS_CONTR = { I: '#7c3aed', N: '#0d9488' };
+/** "IN"/"NOR" (nomes antigos) viram "I"/"N". */
+const normIN = v => { const t = String(v || '').trim().toUpperCase(); return t === 'IN' ? 'I' : t === 'NOR' ? 'N' : t; };
+const normNomIN = l => (l || []).map(x => x && x.categoria && x.categoria !== normIN(x.categoria) ? { ...x, categoria: normIN(x.categoria) } : x);
+const normContrIN = l => (l || []).map(x => x && x.tipo && x.tipo !== normIN(x.tipo) ? { ...x, tipo: normIN(x.tipo) } : x);
 const FORMAS_CONTR = ['SIGADOC', 'E-mail', 'Ofício', 'Presencial', 'WhatsApp', 'Telefone'];
 const contrFeita = x => /^(conclu|nao autoriz)/.test(Utils_norm(x && x.status));
 const corContr = st => STATUS_CONTR[st] || ['#64748b', 'fa-circle'];
@@ -6251,7 +6329,7 @@ async function excluirContratacaoId(id) {
     action: 'excluir_contratacao', payload: { id }, nuvem: () => Store.db.collection('contratacoes').doc(id).delete() });
 }
 async function editarContrCampos(x, campos) {
-  if ('tipo' in campos) { campos.tipo = String(campos.tipo || '').trim().toUpperCase(); if (campos.tipo && !TIPOS_CONTR[campos.tipo]) { toast('Tipo deve ser IN ou NOR.', 'fa-triangle-exclamation'); return false; } }
+  if ('tipo' in campos) { campos.tipo = String(campos.tipo || '').trim().toUpperCase(); campos.tipo = normIN(campos.tipo); if (campos.tipo && !TIPOS_CONTR[campos.tipo]) { toast('Tipo deve ser I ou N.', 'fa-triangle-exclamation'); return false; } }
   const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarContratacao(x.id, d);
 }
 function abrirFormContratacao(id, foco) {
@@ -6322,7 +6400,7 @@ function renderContratacoes() {
     colunas: [
       { key: 'nome', rot: 'Nome', w: 230, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '' },
       { key: 'forma', rot: 'Forma de Recebimento', w: 165, tipo: 'texto', editavel: true, lista: 'lista-forma-contr-g' },
-      { key: 'tipo', rot: 'Tipo (IN ou NOR)', w: 110, wCompacta: 90, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['IN', 'IN'], ['NOR', 'NOR']], render: x => x.tipo ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.tipo] || '#64748b'}">${esc(x.tipo)}</span>` : '' },
+      { key: 'tipo', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 64, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.tipo ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.tipo] || '#64748b'}">${esc(x.tipo)}</span>` : '' },
       { key: 'protocolo', rot: 'Data de protocolo', w: 125, tipo: 'data', editavel: true },
       { key: 'cargo', rot: 'Cargo pretendido', w: 190, wCompacta: 170, tipo: 'texto', editavel: true },
       { key: 'processo', rot: 'Número de processo', w: 200, tipo: 'texto', editavel: true },
@@ -6339,7 +6417,7 @@ function renderContratacoes() {
     ordemPadrao: ordemFinalizados(contrFeita, ordemContr, porFimRecente('atualizadoEm')),
     classeLinha: x => contrFeita(x) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, '#c2410c'], ['and', 'Em andamento', x => x.status === 'Em andamento', '#2563eb'], ['entr', 'Aguardando entrevista', x => x.status === 'Aguardando Entrevista', '#d97706'],
-            ['ok', 'Concluídos', x => x.status === 'Concluído', '#16a34a'], ['nao', 'Não autorizados', x => x.status === 'Não Autorizado', '#dc2626'], ['in', 'IN', x => x.tipo === 'IN', '#7c3aed'], ['nor', 'NOR', x => x.tipo === 'NOR', '#0d9488']],
+            ['ok', 'Concluídos', x => x.status === 'Concluído', '#16a34a'], ['nao', 'Não autorizados', x => x.status === 'Não Autorizado', '#dc2626'], ['in', 'I', x => x.tipo === 'I', '#7c3aed'], ['nor', 'N', x => x.tipo === 'N', '#0d9488']],
     aoEditarCampos: editarContrCampos,
     acoes: x => {
       const btn = x.status === 'Em andamento' ? `<button type="button" class="gs-acao" style="--c:#d97706" title="Marcar como Aguardando Entrevista e informar a data" onclick="editarContrCampos(Store.contratacoes.find(c=>c.id==='${x.id}'),{status:'Aguardando Entrevista'}).then(()=>abrirFormContratacao('${x.id}','entrevista'))"><i class="fa-solid fa-user-clock"></i>Entrevista</button>`
@@ -6399,45 +6477,130 @@ function abrirFormNomeacao(id, pre = {}) {
   if (!pode('chefe:2')) { toast('Seu perfil não cadastra nomeações e exonerações.', 'fa-lock'); return; }
   const x = id ? Store.nomeacoes.find(c => c.id === id) : { status: 'Em andamento', protocolo: hojeISO(), tipo: 'Nomeação', ...pre };
   if (!x) return;
-  const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
-  const campo = (n, cor, rot, html) => `<div class="flex gap-3 items-start">${num(n, cor)}<label class="block flex-1 min-w-0"><span class="rotulo !text-[12.5px]">${rot}</span>${html}</label></div>`;
+  // 9 preenchimentos em cartões numerados (mesmo padrão do formulário de Publicações)
+  const campo = (n, cor, ico, rot, dica, corpo) => `
+    <section class="passo pt-passo nm-passo" style="--c:${cor}" data-nm="${n}">
+      <header class="passo-topo"><span class="passo-num">${n}</span><span class="pt-ico-campo"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><h4>${rot}</h4><p>${dica}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
+      <div class="passo-corpo">${corpo}</div>
+    </section>`;
+  const comIco = (ico, html) => `<div class="relative"><i class="fa-solid ${ico} absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs pointer-events-none"></i>${html}</div>`;
+  const unicos = k => [...new Set((Store.nomeacoes || []).map(r => String(r[k] || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR')).slice(0, 200);
+  const lista = (idl, k) => `<datalist id="${idl}">${unicos(k).map(v => `<option value="${esc(v)}">`).join('')}</datalist>`;
+  const lotAtalhos = ['Gabinete'].concat(Object.keys(COR_SEC).filter(k => k !== 'GS'));
+  const descTipo = { 'Nomeação': 'Entrada no cargo', 'Exoneração': 'Saída do cargo' };
+  const descSt = { 'Em andamento': 'Processo tramitando', 'Aguardando publicação': 'Pronto, falta o D.O.', 'Publicado': 'Saiu no Diário Oficial', 'Não Autorizado': 'Não vai seguir' };
+  const [corT, icoT] = TIPOS_NOM[x.tipo] || TIPOS_NOM['Nomeação'];
   abrirModal(`
-    <div class="form-hero" style="background-color:#0c1a3d;background-image:radial-gradient(600px 200px at 0% 0%, rgba(59,130,246,.35), transparent 70%)">
+    <div class="form-hero nm-hero" id="nm-hero" style="--c:${corT}">
       <div class="flex items-start gap-3">
-        <div class="hero-icos"><span class="on" style="--c:#2563eb"><i class="fa-solid fa-id-card"></i></span></div>
-        <div class="min-w-0 flex-1"><p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-300">${id ? 'Editar' : 'Novo registro'} · Chefe de Gabinete</p><h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">Nomeação ou Exoneração</h3></div>
+        <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${corT}" id="nm-hero-ico"><i class="fa-solid ${icoT}"></i></span></div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-200/90">${id ? 'Editar registro' : 'Novo registro'} · Chefe de Gabinete</p>
+          <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5" id="nm-titulo">${esc(id ? x.nome : (x.tipo || 'Nomeação ou Exoneração'))}</h3>
+          <p class="text-[12.5px] text-white/65 mt-1">Do protocolo à publicação no Diário Oficial e à data de início.</p>
+        </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
-    <form class="modal-corpo space-y-4" id="form-nom" onsubmit="event.preventDefault();salvarFormNomeacao('${id || ''}')">
-      ${campo(1, '#2563eb', 'Tipo', `<div class="grid grid-cols-2 gap-2" id="nm-tipos">${Object.entries(TIPOS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${x.tipo === k ? 'ativo' : ''}" style="--c:${cor}" data-v="${k}" onclick="document.querySelectorAll('#nm-tipos .op-card').forEach(b=>b.classList.toggle('ativo',b===this))"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="font-bold text-[14px] text-ink">${k}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
-      ${campo(2, '#7c3aed', 'Tipo (IN ou NOR)', `<div class="flex gap-2" id="nm-cats">${Object.entries(TIPOS_CONTR).map(([k, cor]) => `<button type="button" class="det-sit ${x.categoria === k ? 'atual' : ''}" style="--c:${cor}" data-v="${k}" onclick="const on=!this.classList.contains('atual');document.querySelectorAll('#nm-cats .det-sit').forEach(b=>b.classList.remove('atual'));this.classList.toggle('atual',on)">${k}</button>`).join('')}</div>`)}
-      ${campo(3, '#0f172a', 'Nome *', `<input class="campo campo-g w-full" id="nm-nome" required value="${esc(x.nome || '')}" placeholder="Nome completo">`)}
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        ${campo(4, '#0d9488', 'Cargo', `<input class="campo w-full" id="nm-cargo" value="${esc(x.cargo || '')}" placeholder="Ex.: Assessor Especial">`)}
-        ${campo(5, '#7c3aed', 'Símbolo / DGA', `<input class="campo w-full" id="nm-simbolo" value="${esc(x.simbolo || '')}" placeholder="Ex.: DGA-3">`)}
-        ${campo(6, '#0891b2', 'Lotação', `<input class="campo w-full" id="nm-lotacao" value="${esc(x.lotacao || '')}" placeholder="Unidade">`)}
-        ${campo(7, '#64748b', 'Nº do processo', `<input class="campo w-full" id="nm-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000">`)}
-        ${campo(8, '#0891b2', 'Data de protocolo', `<input type="date" class="campo w-full" id="nm-protocolo" value="${esc(x.protocolo || '')}">`)}
-        ${campo(9, '#16a34a', 'Data de Início', `<input type="date" class="campo w-full" id="nm-inicio" value="${esc(x.inicio || '')}">`)}
+    <form class="modal-corpo space-y-3" id="form-nom" novalidate oninput="marcarCamposNom()" onsubmit="event.preventDefault();salvarFormNomeacao('${id || ''}')">
+      <div class="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-3">
+        ${campo(1, '#2563eb', 'fa-people-arrows', 'Tipo', 'Nomeação ou exoneração: toque em um', `
+          <div class="nm-ops nm-ops-2" id="nm-tipos">${Object.entries(TIPOS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${x.tipo === k ? 'ativo' : ''}" style="--c:${cor}" data-v="${k}" aria-pressed="${x.tipo === k}" onclick="escolherTipoNom(this)"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 leading-tight"><b class="block text-[14px] text-ink">${k}</b><small class="text-[11.5px] text-ink3">${descTipo[k] || ''}</small></span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
+        ${campo(2, '#7c3aed', 'fa-tag', 'I ou N', 'Classificação do registro (opcional)', `
+          <div class="nm-ops nm-ops-2" id="nm-cats">${Object.entries(TIPOS_CONTR).map(([k, cor]) => `<button type="button" class="nm-cat ${x.categoria === k ? 'ativo' : ''}" style="--c:${cor}" data-v="${k}" aria-pressed="${x.categoria === k}" onclick="escolherCatNom(this)">${k}</button>`).join('')}</div>`)}
       </div>
-      ${campo(10, '#d97706', 'Status', `<div class="flex flex-wrap gap-1.5" id="nm-sits">${Object.entries(STATUS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="det-sit ${k === (x.status || 'Em andamento') ? 'atual' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('#nm-sits .det-sit').forEach(b=>b.classList.toggle('atual',b===this))"><i class="fa-solid ${ico}"></i>${esc(k)}</button>`).join('')}</div>`)}
-      ${campo(11, '#64748b', 'Observação', `<textarea class="campo w-full" rows="3" id="nm-obs">${esc(x.observacao || '')}</textarea>`)}
-      <p id="nm-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
+      ${campo(3, '#0f172a', 'fa-user', 'Nome', 'Nome completo da pessoa', comIco('fa-user', `<input class="campo campo-g w-full !pl-8" id="nm-nome" required value="${esc(x.nome || '')}" placeholder="Nome completo" autocomplete="off">`))}
+      ${campo(4, '#0d9488', 'fa-briefcase', 'Cargo e símbolo', 'Cargo em comissão e o símbolo (DGA)', `
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_170px] gap-3">
+          <div><p class="pt-sub"><i class="fa-solid fa-briefcase"></i>Cargo</p>${comIco('fa-briefcase', `<input class="campo campo-g w-full !pl-8" id="nm-cargo" list="nm-l-cargo" value="${esc(x.cargo || '')}" placeholder="Ex.: Assessor Especial" autocomplete="off">`)}</div>
+          <div><p class="pt-sub"><i class="fa-solid fa-award"></i>Símbolo / DGA</p>${comIco('fa-award', `<input class="campo campo-g w-full !pl-8 uppercase" id="nm-simbolo" list="nm-l-simbolo" value="${esc(x.simbolo || '')}" placeholder="Ex.: DGA-3" autocomplete="off">`)}</div>
+        </div>
+        <div class="flex flex-wrap gap-1.5">${['DGA-1', 'DGA-2', 'DGA-3', 'DGA-4', 'DGA-5', 'DGA-6'].map(d => `<button type="button" class="atalho" onclick="$('nm-simbolo').value='${d}';marcarCamposNom()">${d}</button>`).join('')}</div>
+        ${lista('nm-l-cargo', 'cargo')}${lista('nm-l-simbolo', 'simbolo')}`)}
+      ${campo(5, '#0891b2', 'fa-building', 'Lotação', 'Unidade onde a pessoa fica (ou ficava)', `
+        ${comIco('fa-building', `<input class="campo campo-g w-full !pl-8" id="nm-lotacao" list="nm-l-lotacao" value="${esc(x.lotacao || '')}" placeholder="Ex.: Gabinete, SAGE…" autocomplete="off" oninput="sincLotNom()">`)}
+        <div class="flex flex-wrap gap-1.5" id="nm-lots">${lotAtalhos.map(sg => `<button type="button" class="nm-lot ${Utils_norm(x.lotacao) === Utils_norm(sg) ? 'ativo' : ''}" style="--c:${COR_SEC[sg] || '#334155'}" data-v="${sg}" onclick="$('nm-lotacao').value=this.dataset.v;sincLotNom();marcarCamposNom()"><i class="fa-solid ${sg === 'Gabinete' ? 'fa-landmark' : icoSec(sg)}"></i>${sg}</button>`).join('')}</div>
+        ${lista('nm-l-lotacao', 'lotacao')}`)}
+      ${campo(6, '#64748b', 'fa-folder-open', 'Número do processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="nm-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
+      ${campo(7, '#0891b2', 'fa-calendar-day', 'Datas', 'Quando foi protocolado e quando a pessoa começa (ou sai)', `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div><p class="pt-sub"><i class="fa-solid fa-inbox"></i>Data de protocolo</p>
+            ${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="nm-protocolo" value="${esc(x.protocolo || '')}" oninput="infoDatasNom()">`)}
+            <div class="flex flex-wrap gap-1.5 mt-2">${[['Hoje', 0], ['Ontem', -1], ['Há 2 dias', -2], ['Há 1 semana', -7]].map(([r, d]) => `<button type="button" class="atalho" onclick="$('nm-protocolo').value=somaDias(${d});infoDatasNom();marcarCamposNom()">${r}</button>`).join('')}</div></div>
+          <div><p class="pt-sub"><i class="fa-solid fa-play"></i>Data de início <span class="font-normal text-ink3">(depois de publicado)</span></p>
+            ${comIco('fa-flag-checkered', `<input type="date" class="campo campo-g w-full !pl-8" id="nm-inicio" value="${esc(x.inicio || '')}" oninput="infoDatasNom()">`)}
+            <div class="flex flex-wrap gap-1.5 mt-2">${[['Hoje', 0], ['Amanhã', 1], ['+7 dias', 7]].map(([r, d]) => `<button type="button" class="atalho" onclick="$('nm-inicio').value=somaDias(${d});infoDatasNom();marcarCamposNom()">${r}</button>`).join('')}<button type="button" class="atalho" onclick="$('nm-inicio').value='';infoDatasNom();marcarCamposNom()">Sem data</button></div></div>
+        </div>
+        <p class="text-[12px] font-semibold" id="nm-datas-info"></p>`)}
+      ${campo(8, '#d97706', 'fa-signal', 'Status', 'Em que ponto está', `
+        <div class="nm-ops nm-ops-4" id="nm-sits">${Object.entries(STATUS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === (x.status || 'Em andamento') ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === (x.status || 'Em andamento')}" onclick="escolherStatusNom(this)"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 leading-tight"><b class="block text-[13px] text-ink">${esc(k)}</b><small class="text-[11px] text-ink3">${descSt[k] || ''}</small></span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
+      ${campo(9, '#64748b', 'fa-note-sticky', 'Observação', 'Algo importante sobre o caso (opcional)', `<textarea class="campo w-full" rows="2" id="nm-obs" placeholder="Ex.: A pedido · aguardando autorização da Secretária">${esc(x.observacao || '')}</textarea>`)}
+      <p id="nm-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
-    <div class="modal-rodape">${id && pode('chefe:3') ? `<button class="btn btn-sec !text-red-600 mr-auto" onclick="if(confirmarDuplo(this)){fecharModal();excluirNomeacaoId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-nom" id="btn-nom-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div>`, 'nomeacao');
+    <div class="modal-rodape !justify-between items-center">
+      <span class="text-[12px] text-ink3" id="nm-resumo"></span>
+      <div class="flex gap-2">${id && pode('chefe:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirNomeacaoId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-nom" id="btn-nom-salvar" style="background:${corT};border-color:${corT}"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar'}</button></div>
+    </div>`, 'nomeacao');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  FormNom.id = id || '';
+  infoDatasNom(); marcarCamposNom();
   setTimeout(() => $('nm-nome') && $('nm-nome').focus(), 120);
+}
+const FormNom = { id: '' };
+function escolherTipoNom(btn) {
+  document.querySelectorAll('#nm-tipos .op-card').forEach(b => { b.classList.toggle('ativo', b === btn); b.setAttribute('aria-pressed', b === btn); });
+  const [cor, ico] = TIPOS_NOM[btn.dataset.v] || TIPOS_NOM['Nomeação'];
+  const h = $('nm-hero'); if (h) h.style.setProperty('--c', cor);
+  const hi = $('nm-hero-ico'); if (hi) { hi.style.setProperty('--c', cor); hi.innerHTML = `<i class="fa-solid ${ico}"></i>`; }
+  const sb = $('btn-nom-salvar'); if (sb) { sb.style.background = cor; sb.style.borderColor = cor; }
+  marcarCamposNom();
+}
+function escolherCatNom(btn) {
+  const on = !btn.classList.contains('ativo');
+  document.querySelectorAll('#nm-cats .nm-cat').forEach(b => { b.classList.toggle('ativo', on && b === btn); b.setAttribute('aria-pressed', on && b === btn); });
+  marcarCamposNom();
+}
+function escolherStatusNom(btn) {
+  document.querySelectorAll('#nm-sits .op-card').forEach(b => { b.classList.toggle('ativo', b === btn); b.setAttribute('aria-pressed', b === btn); });
+  if (btn.dataset.v === 'Publicado' && !$('nm-inicio').value) { const i = $('nm-inicio'); i.focus(); i.closest('.pt-passo').classList.add('nm-pulsa'); setTimeout(() => i.closest('.pt-passo').classList.remove('nm-pulsa'), 1600); }
+  infoDatasNom(); marcarCamposNom();
+}
+function sincLotNom() {
+  const v = Utils_norm($('nm-lotacao').value.trim());
+  document.querySelectorAll('#nm-lots .nm-lot').forEach(b => b.classList.toggle('ativo', Utils_norm(b.dataset.v) === v));
+}
+function infoDatasNom() {
+  const el = $('nm-datas-info'); if (!el) return;
+  const p = $('nm-protocolo').value, i = $('nm-inicio').value;
+  const st = (document.querySelector('#nm-sits .op-card.ativo') || {}).dataset;
+  const pub = st && st.v === 'Publicado';
+  let t = '', cor = 'var(--ink3)', ico = 'fa-circle-info';
+  if (p && i && i < p) { t = 'A data de início está antes do protocolo.'; cor = 'var(--urg)'; ico = 'fa-triangle-exclamation'; }
+  else if (p && i) { const d = Math.round((new Date(i + 'T12:00') - new Date(p + 'T12:00')) / 864e5); t = `${d} dia${d === 1 ? '' : 's'} do protocolo ao início.`; cor = 'var(--ok)'; ico = 'fa-route'; }
+  else if (p) { const d = diasDesde(p); t = d > 0 ? `Protocolado há ${d} dia${d === 1 ? '' : 's'}.` : d === 0 ? 'Protocolado hoje.' : 'Protocolo com data futura.'; if (pub) { t += ' Informe a data de início.'; cor = '#ea580c'; ico = 'fa-flag-checkered'; } else ico = 'fa-clock'; }
+  el.innerHTML = t ? `<i class="fa-solid ${ico} mr-1"></i>${t}` : ''; el.style.color = cor;
+}
+/** ✓ nos cartões preenchidos e na barrinha do topo. */
+function marcarCamposNom() {
+  if (!$('form-nom')) return;
+  const v = k => ($(k) ? $(k).value.trim() : '');
+  const ok = { 1: !!document.querySelector('#nm-tipos .op-card.ativo'), 2: !!document.querySelector('#nm-cats .nm-cat.ativo'), 3: !!v('nm-nome'), 4: !!(v('nm-cargo') || v('nm-simbolo')), 5: !!v('nm-lotacao'), 6: !!v('nm-processo'), 7: !!v('nm-protocolo'), 8: !!document.querySelector('#nm-sits .op-card.ativo'), 9: !!v('nm-obs') };
+  Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`.nm-passo[data-nm="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`#nm-hero .pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
+  const n = Object.values(ok).filter(Boolean).length;
+  const r = $('nm-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 9 preenchidos`;
+  const t = $('nm-titulo'); if (t && !FormNom.id) { const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset; t.textContent = v('nm-nome') || (tp && tp.v) || 'Nomeação ou Exoneração'; }
 }
 async function salvarFormNomeacao(id) {
   const v = k => $(k).value.trim();
-  const aviso = t => { const el = $('nm-aviso'); el.textContent = t; el.classList.remove('hidden'); };
-  if (!v('nm-nome')) return aviso('Informe o nome da pessoa.');
-  const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset, ct = (document.querySelector('#nm-cats .det-sit.atual') || {}).dataset, st = (document.querySelector('#nm-sits .det-sit.atual') || {}).dataset;
+  const aviso = t => { const el = $('nm-aviso'); el.textContent = t; el.classList.remove('hidden'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset, ct = (document.querySelector('#nm-cats .nm-cat.ativo') || {}).dataset, st = (document.querySelector('#nm-sits .op-card.ativo') || {}).dataset;
   if (!tp || !tp.v) return aviso('Escolha Nomeação ou Exoneração.');
+  if (!v('nm-nome')) { $('nm-nome').focus(); return aviso('Informe o nome da pessoa.'); }
+  if (v('nm-protocolo') && v('nm-inicio') && v('nm-inicio') < v('nm-protocolo')) return aviso('A data de início não pode ser antes do protocolo.');
   const antigo = id ? Store.nomeacoes.find(c => c.id === id) : null;
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
-    nome: v('nm-nome'), tipo: tp.v, categoria: (ct && ct.v) || '', cargo: v('nm-cargo'), simbolo: v('nm-simbolo'), lotacao: v('nm-lotacao'), processo: v('nm-processo'),
+    nome: v('nm-nome'), tipo: tp.v, categoria: (ct && ct.v) || '', cargo: v('nm-cargo'), simbolo: v('nm-simbolo').toUpperCase(), lotacao: v('nm-lotacao'), processo: v('nm-processo'),
     protocolo: v('nm-protocolo'), inicio: v('nm-inicio'), status: (st && st.v) || 'Em andamento', observacao: v('nm-obs'), atualizadoEm: new Date().toISOString() };
   const btn = $('btn-nom-salvar'); btn.disabled = true;
   if (await salvarNomeacao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? `${dados.tipo} registrada · salvando em segundo plano.` : `${dados.tipo} salva.`, 'fa-id-card'); if (abaAtual !== 'nomeacoes' && abaAtual !== 'chefe') irPara('nomeacoes'); }
@@ -6447,7 +6610,7 @@ async function salvarFormNomeacao(id) {
 const ordemNom = (a, b) => String(a.protocolo || '9999').localeCompare(String(b.protocolo || '9999')) || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
 /* ----- Nomeações e Exonerações: controles, painéis e quadro ----- */
 const NOM_UI_PADRAO = { vista: 'planilha', tipo: '', cat: '', st: '', periodo: 'tudo', busca: '', paineis: true };
-const nomUI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_nom_ui') || '{}'); } catch (e) {} return Object.assign({}, NOM_UI_PADRAO, window.innerWidth < 768 ? { paineis: false } : {}, s, { busca: '' }); })();
+const nomUI = (() => { let s = {}; try { s = JSON.parse(localStorage.getItem('gabdoc_nom_ui') || '{}'); } catch (e) {} if (s.cat) s.cat = normIN(s.cat); return Object.assign({}, NOM_UI_PADRAO, window.innerWidth < 768 ? { paineis: false } : {}, s, { busca: '' }); })();
 function nomSet(k, v, render = true) {
   nomUI[k] = v;
   try { const { busca, ...resto } = nomUI; localStorage.setItem('gabdoc_nom_ui', JSON.stringify(resto)); } catch (e) {}
@@ -6455,7 +6618,7 @@ function nomSet(k, v, render = true) {
 }
 function nomLimpar() { Object.assign(nomUI, { tipo: '', cat: '', st: '', periodo: 'tudo', busca: '' }); nomSet('periodo', 'tudo'); }
 const diasDesde = d => d ? -diasAte(String(d).slice(0, 10)) : null;
-/** Registros depois dos controles da página (tipo, IN/NOR, status, período do protocolo e busca do quadro). */
+/** Registros depois dos controles da página (tipo, I/N, status, período do protocolo e busca do quadro). */
 function nomFiltrados() {
   const ini = { '30': somaDias(-30), '90': somaDias(-90), ano: hojeISO().slice(0, 4) + '-01-01' }[nomUI.periodo] || '';
   const b = Utils_norm(nomUI.busca || '').trim();
@@ -6464,18 +6627,18 @@ function nomFiltrados() {
     && (!b || Utils_norm([x.nome, x.cargo, x.simbolo, x.lotacao, x.processo, x.observacao].join(' ')).includes(b)));
 }
 function nomTopo(base, lst) {
-  const seg = (k, ops) => `<div class="dv-seg nom-seg" role="group">${ops.map(([v, rot, ico, cor]) => `<button type="button" class="${nomUI[k] === v ? 'ativo' : ''}" aria-pressed="${nomUI[k] === v}" ${cor ? `style="--c:${cor}"` : ''} onclick="nomSet('${k}','${v}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}${rot}</button>`).join('')}</div>`;
+  const seg = (k, ops) => `<div class="dv-seg nom-seg nom-seg-${k}" role="group">${ops.map(([v, rot, ico, cor]) => `<button type="button" class="${nomUI[k] === v ? 'ativo' : ''}" aria-pressed="${nomUI[k] === v}" title="${esc(rot)}" ${cor ? `style="--c:${cor}"` : ''} onclick="nomSet('${k}','${v}')">${ico ? `<i class="fa-solid ${ico}"></i>` : ''}<span class="nom-seg-rot">${rot}</span></button>`).join('')}</div>`;
   const filtrando = nomUI.tipo || nomUI.cat || nomUI.st || nomUI.periodo !== 'tudo' || nomUI.busca;
   const conta = (lista, st) => lista.filter(x => x.status === st).length;
   // ----- controles -----
   const controles = `<div class="nom-ctrl">
     <div class="nom-ctrl-l">
-      ${seg('vista', [['planilha', 'Planilha', 'fa-table-cells'], ['quadro', 'Quadro', 'fa-table-columns']])}
+      ${seg('vista', [['planilha', 'Planilha', 'fa-table-cells'], ['quadro', 'Quadro', 'fa-table-columns'], ['lados', 'Lado a lado', 'fa-arrows-left-right'], ['linha', 'Linha do tempo', 'fa-timeline']])}
       <span class="nom-div"></span>
       ${seg('tipo', [['', 'Todos'], ['Nomeação', 'Nomeações', 'fa-user-check', '#2563eb'], ['Exoneração', 'Exonerações', 'fa-user-xmark', '#be123c']])}
-      ${seg('cat', [['', 'IN e NOR'], ['IN', 'IN', '', '#7c3aed'], ['NOR', 'NOR', '', '#0d9488']])}
+      ${seg('cat', [['', 'I e N'], ['I', 'I', '', '#7c3aed'], ['N', 'N', '', '#0d9488']])}
       <label class="nom-periodo"><i class="fa-solid fa-calendar-days"></i><select onchange="nomSet('periodo',this.value)" aria-label="Período do protocolo">${[['tudo', 'Todo o período'], ['30', 'Protocolo: 30 dias'], ['90', 'Protocolo: 90 dias'], ['ano', 'Protocolo: este ano']].map(([v, r]) => `<option value="${v}" ${nomUI.periodo === v ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
-      ${nomUI.vista === 'quadro' ? `<label class="nom-busca"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar nome, cargo, lotação…" value="${esc(nomUI.busca)}" oninput="nomUI.busca=this.value;clearTimeout(window._nomBusca);window._nomBusca=setTimeout(()=>{renderNomeacoes();const i=document.querySelector('.nom-busca input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></label>` : ''}
+      ${nomUI.vista !== 'planilha' ? `<label class="nom-busca"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar nome, cargo, lotação…" value="${esc(nomUI.busca)}" oninput="nomUI.busca=this.value;clearTimeout(window._nomBusca);window._nomBusca=setTimeout(()=>{renderNomeacoes();const i=document.querySelector('.nom-busca input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></label>` : ''}
     </div>
     <div class="nom-ctrl-r">
       ${filtrando ? `<button type="button" class="btn btn-sec !h-9" onclick="nomLimpar()"><i class="fa-solid fa-filter-circle-xmark"></i>Limpar <b class="ml-1">${lst.length}/${base.length}</b></button>` : ''}
@@ -6503,8 +6666,8 @@ function nomTopo(base, lst) {
     <div class="nom-split-leg"><span><i class="fa-solid ${ia}" style="color:${ca}"></i>${a[0]} <b>${a[1]}</b>${t ? ` · ${pa}%` : ''}</span><span><i class="fa-solid ${ib}" style="color:${cb}"></i>${b[0]} <b>${b[1]}</b>${t ? ` · ${100 - pa}%` : ''}</span></div></div>`; };
   const pComp = `<section class="nom-painel"><h3><i class="fa-solid fa-chart-pie" style="color:#7c3aed"></i>Composição</h3>
     ${split('Nomeações × Exonerações', ['Nomeações', baseKpi.filter(x => x.tipo === 'Nomeação').length], ['Exonerações', baseKpi.filter(x => x.tipo === 'Exoneração').length], '#2563eb', '#be123c', 'fa-user-check', 'fa-user-xmark')}
-    ${split('IN × NOR', ['IN', baseKpi.filter(x => x.categoria === 'IN').length], ['NOR', baseKpi.filter(x => x.categoria === 'NOR').length], '#7c3aed', '#0d9488', 'fa-circle', 'fa-circle')}
-    ${baseKpi.filter(x => !x.categoria).length ? `<p class="nom-nota">${baseKpi.filter(x => !x.categoria).length} sem IN/NOR informado</p>` : ''}</section>`;
+    ${split('I × N', ['I', baseKpi.filter(x => x.categoria === 'I').length], ['N', baseKpi.filter(x => x.categoria === 'N').length], '#7c3aed', '#0d9488', 'fa-circle', 'fa-circle')}
+    ${baseKpi.filter(x => !x.categoria).length ? `<p class="nom-nota">${baseKpi.filter(x => !x.categoria).length} sem I/N informado</p>` : ''}</section>`;
   const antigos = abertos.filter(x => x.protocolo).sort(ordemNom).slice(0, 5);
   const pAntigos = `<section class="nom-painel"><h3><i class="fa-solid fa-hourglass-half" style="color:#d97706"></i>Em aberto há mais tempo</h3>
     ${antigos.length ? `<div class="nom-lista">${antigos.map(x => { const d = diasDesde(x.protocolo), [cor, ico] = TIPOS_NOM[x.tipo] || ['#64748b', 'fa-user']; return `<button type="button" class="nom-item" onclick="abrirFormNomeacao('${x.id}')"><span class="nom-av" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="min-w-0"><b>${esc(x.nome)}</b><small>${esc([x.cargo, x.status].filter(Boolean).join(' · '))}</small></span><span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !text-[11px]">${d === 0 ? 'hoje' : d + ' dia' + (d === 1 ? '' : 's')}</span></button>`; }).join('')}</div>`
@@ -6545,14 +6708,85 @@ function nomQuadro(lst) {
     </section>`;
   }).join('')}</div>`;
 }
+/** Botão "avançar status" (Em andamento → Aguardando publicação → Publicado). */
+function nomBtnAvancar(x, cls = 'nom-card-btn') {
+  const prox = { 'Em andamento': 'Aguardando publicação', 'Aguardando publicação': 'Publicado' }[x.status];
+  if (!prox || !pode('chefe:2')) return '';
+  return `<button type="button" class="${cls}" style="--c:${corNom(prox)[0]}" title="Mover para: ${prox}" onclick="event.stopPropagation();editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'${prox}'})${prox === 'Publicado' ? `.then(()=>abrirFormNomeacao('${x.id}'))` : ''}"><i class="fa-solid ${corNom(prox)[1]}"></i></button>`;
+}
+const iniciaisNom = n => String(n || '?').trim().split(/\s+/).filter(p => p.length > 2 || /^[A-ZÀ-Ú]/.test(p)).filter((p, i, a) => i === 0 || i === a.length - 1).map(p => p[0]).join('').toUpperCase().slice(0, 2) || '?';
+/** Vista "Lado a lado": Nomeações | Exonerações, cada lado agrupado por status. */
+function nomLados(lst) {
+  const sts = Object.keys(STATUS_NOM);
+  const linha = x => {
+    const [cor] = TIPOS_NOM[x.tipo] || ['#64748b'], d = diasDesde(x.protocolo);
+    const quando = x.inicio ? `<span class="nl-q ok"><i class="fa-solid fa-play"></i>${fmt(x.inicio)}</span>` : x.protocolo && !nomFeita(x) ? `<span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !text-[11px]">${d === 0 ? 'hoje' : d + 'd'}</span>` : x.protocolo ? `<span class="nl-q">${fmt(x.protocolo)}</span>` : '';
+    return `<div class="nl-linha" role="button" tabindex="0" onclick="abrirFormNomeacao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormNomeacao('${x.id}')">
+      <span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.nome))}</span>
+      <span class="min-w-0 flex-1"><b class="nl-nome">${esc(x.nome)}${x.categoria ? ` <span class="gs-pill !text-[10px] !py-0" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : ''}</b><small class="nl-sub">${esc([x.cargo, x.simbolo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small></span>
+      ${quando}${nomBtnAvancar(x, 'nom-card-btn nl-bt')}
+    </div>`;
+  };
+  const lado = tipo => {
+    const [cor, ico] = TIPOS_NOM[tipo], l = lst.filter(x => x.tipo === tipo), t = Math.max(1, l.length);
+    const grupos = sts.map(st => {
+      const g = l.filter(x => x.status === st).sort(nomFeita({ status: st }) ? (a, b) => String(b.inicio || b.protocolo || '').localeCompare(String(a.inicio || a.protocolo || '')) : ordemNom);
+      if (!g.length) return '';
+      const [c2, i2] = corNom(st), aberto = !nomFeita({ status: st }) || l.length <= 8;
+      return `<details class="nl-grupo" style="--s:${c2}" ${aberto ? 'open' : ''}><summary><i class="fa-solid fa-chevron-right nl-seta"></i><i class="fa-solid ${i2}" style="color:${c2}"></i>${st}<span class="nl-n">${g.length}</span></summary><div class="nl-itens">${g.map(linha).join('')}</div></details>`;
+    }).join('');
+    return `<section class="nl-lado" style="--c:${cor}">
+      <header class="nl-cab"><span class="nl-cab-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0 flex-1"><b>${tipo === 'Nomeação' ? 'Nomeações' : 'Exonerações'}</b><small>${l.filter(x => !nomFeita(x)).length} em aberto · ${l.filter(x => x.status === 'Publicado').length} publicada(s)</small></div><span class="nl-total">${l.length}</span>
+        ${pode('chefe:2') ? `<button type="button" class="nl-novo" title="Nova ${tipo.toLowerCase()}" onclick="abrirFormNomeacao(null,{tipo:'${tipo}'})"><i class="fa-solid fa-plus"></i></button>` : ''}</header>
+      <div class="nl-barra" title="Por status">${sts.map(st => { const n = l.filter(x => x.status === st).length; return n ? `<span style="width:${n / t * 100}%;background:${corNom(st)[0]}" title="${st}: ${n}"></span>` : ''; }).join('') || '<span style="width:100%;background:var(--line)"></span>'}</div>
+      <div class="nl-corpo">${grupos || `<p class="nom-vazio"><i class="fa-solid fa-inbox"></i>Nenhuma ${tipo.toLowerCase()} com esses filtros.</p>`}</div>
+    </section>`;
+  };
+  return `<div class="nl-lados">${lado('Nomeação')}${lado('Exoneração')}</div>`;
+}
+/** Vista "Linha do tempo": protocolo → publicação → início de cada registro, agrupados pelo mês do protocolo. */
+function nomLinha(lst) {
+  if (!lst.length) return '<p class="nom-vazio"><i class="fa-solid fa-inbox"></i>Nenhum registro com esses filtros.</p>';
+  const dif = (a, b) => Math.round((new Date(b + 'T12:00') - new Date(a + 'T12:00')) / 864e5);
+  const ord = [...lst].sort((a, b) => String(b.protocolo || '0').localeCompare(String(a.protocolo || '0')) || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'));
+  const meses = new Map();
+  ord.forEach(x => { const k = String(x.protocolo || '').slice(0, 7) || 'sem'; if (!meses.has(k)) meses.set(k, []); meses.get(k).push(x); });
+  const nomeMes = k => { if (k === 'sem') return 'Sem data de protocolo'; const [a, m] = k.split('-'); return ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][+m - 1] + ' de ' + a; };
+  const item = x => {
+    const [cor, ico] = TIPOS_NOM[x.tipo] || ['#64748b', 'fa-user'];
+    const neg = x.status === 'Não Autorizado', pub = x.status === 'Publicado', agu = x.status === 'Aguardando publicação';
+    const hoje = hojeISO();
+    // etapa 1: protocolo
+    const e1 = `<div class="tl-et ${x.protocolo ? 'feita' : ''}"><span class="tl-pt"><i class="fa-solid fa-inbox"></i></span><b>Protocolo</b><small>${x.protocolo ? fmt(x.protocolo) : '—'}</small></div>`;
+    // etapa 2: publicação
+    const e2 = neg ? `<div class="tl-et neg"><span class="tl-pt"><i class="fa-solid fa-ban"></i></span><b>Não autorizado</b><small>encerrado</small></div>`
+      : `<div class="tl-et ${pub ? 'feita' : agu ? 'atual' : ''}"><span class="tl-pt"><i class="fa-solid fa-newspaper"></i></span><b>Publicação</b><small>${pub ? 'publicado' : agu ? 'aguardando D.O.' : 'em andamento'}</small></div>`;
+    // etapa 3: início
+    const e3 = neg ? '' : `<div class="tl-et ${x.inicio && x.inicio <= hoje ? 'feita' : x.inicio ? 'atual' : ''}"><span class="tl-pt"><i class="fa-solid fa-play"></i></span><b>Início</b><small>${x.inicio ? fmt(x.inicio) + (x.inicio > hoje ? ' · em ' + dif(hoje, x.inicio) + 'd' : '') : pub ? 'informar data' : '—'}</small></div>`;
+    // ligações com dias
+    const l1 = x.protocolo ? (x.inicio && pub ? '' : !nomFeita(x) ? `${diasDesde(x.protocolo)}d` : '') : '';
+    const l2 = x.protocolo && x.inicio ? `${dif(x.protocolo, x.inicio)}d no total` : '';
+    const lig = (t, on) => `<span class="tl-lig ${on ? 'on' : ''}">${t ? `<em>${t}</em>` : ''}</span>`;
+    const d = diasDesde(x.protocolo), alerta = !nomFeita(x) && d > 30;
+    return `<article class="tl-item ${alerta ? 'alerta' : ''}" style="--c:${cor}" role="button" tabindex="0" onclick="abrirFormNomeacao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormNomeacao('${x.id}')">
+      <div class="tl-quem"><span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.nome))}</span><div class="min-w-0"><b class="nl-nome">${esc(x.nome)}</b>
+        <small class="nl-sub"><i class="fa-solid ${ico}" style="color:${cor}"></i> ${esc(x.tipo || '—')}${x.categoria ? ` · <b style="color:${TIPOS_CONTR[x.categoria]}">${esc(x.categoria)}</b>` : ''}${x.simbolo ? ' · ' + esc(x.simbolo) : ''}</small>
+        <small class="nl-sub">${esc([x.cargo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small></div></div>
+      <div class="tl-trilha">${e1}${lig(l1, pub || agu || neg)}${e2}${neg ? '' : lig(l2, pub)}${e3}</div>
+      <div class="tl-acoes">${alerta ? `<span class="gs-dias vencido !text-[11px]" title="Em aberto há mais de 30 dias"><i class="fa-solid fa-triangle-exclamation"></i>${d}d</span>` : ''}${nomBtnAvancar(x)}<button type="button" class="nom-card-btn" title="Abrir" onclick="event.stopPropagation();abrirFormNomeacao('${x.id}')"><i class="fa-solid fa-pen"></i></button></div>
+    </article>`;
+  };
+  return `<div class="tl-lista">${[...meses.entries()].map(([k, l]) => `<section class="tl-mes"><h3 class="tl-mes-tit"><i class="fa-solid fa-calendar"></i>${nomeMes(k)}<span>${l.length} registro${l.length === 1 ? '' : 's'}</span></h3>${l.map(item).join('')}</section>`).join('')}</div>`;
+}
 function renderNomeacoes() {
   const cont = $('nom-corpo');
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   const base = Store.nomeacoes || [];
   const filtrados = nomFiltrados();
   const topo = nomTopo(base, filtrados);
-  if (nomUI.vista === 'quadro') {
-    cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${topo}${nomQuadro(filtrados)}</div>`;
+  if (nomUI.vista !== 'planilha') {
+    const corpo = nomUI.vista === 'lados' ? nomLados(filtrados) : nomUI.vista === 'linha' ? nomLinha(filtrados) : nomQuadro(filtrados);
+    cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${topo}${corpo}</div>`;
     return;
   }
   renderGrade(cont, {
@@ -6562,7 +6796,7 @@ function renderNomeacoes() {
       { key: 'nome', rot: 'Nome', w: 240, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '',
         render: x => { const [cor, ico] = TIPOS_NOM[x.tipo] || ['#94a3b8', 'fa-user']; return `<span class="inline-flex items-center gap-2 min-w-0"><span class="nom-mini" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="truncate">${esc(x.nome || '')}</span></span>`; } },
       { key: 'tipo', rot: 'Tipo', w: 135, wCompacta: 130, tipo: 'select', editavel: true, opcoes: () => Object.keys(TIPOS_NOM).map(k => [k, k]), render: x => x.tipo ? `<span class="gs-pill" style="--c:${(TIPOS_NOM[x.tipo] || ['#64748b'])[0]}"><i class="fa-solid ${(TIPOS_NOM[x.tipo] || [0, 'fa-circle'])[1]} text-[9px]"></i>${esc(x.tipo)}</span>` : '' },
-      { key: 'categoria', rot: 'Tipo (IN ou NOR)', w: 110, wCompacta: 90, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['IN', 'IN'], ['NOR', 'NOR']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
+      { key: 'categoria', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 64, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
       { key: 'cargo', rot: 'Cargo', w: 200, wCompacta: 180, tipo: 'texto', editavel: true },
       { key: 'simbolo', rot: 'Símbolo / DGA', w: 120, tipo: 'texto', editavel: true },
       { key: 'lotacao', rot: 'Lotação', w: 190, tipo: 'texto', editavel: true },
@@ -7783,7 +8017,7 @@ const TEMAS_REL = [
   { k: 'chefe', rot: 'Chefe de Gabinete', ico: 'fa-user-tie', cor: '#b45309', desc: 'Processos, documentos para assinatura e SIMEC do Chefe' },
   { k: 'publicacoes', rot: 'Publicações', ico: 'fa-newspaper', cor: '#4f46e5', desc: 'Portarias, editais e demais atos: status, prazos, tipos e áreas' },
   { k: 'nomeacoes', rot: 'Nomeações e Exonerações', ico: 'fa-id-card', cor: '#1e40af', desc: 'Status, atos e publicações do período' },
-  { k: 'innor', rot: 'IN e NOR', ico: 'fa-people-arrows', cor: '#7c3aed', desc: 'Contratações e nomeações/exonerações juntas, separadas por IN e NOR' },
+  { k: 'innor', rot: 'I e N', ico: 'fa-people-arrows', cor: '#7c3aed', desc: 'Contratações e nomeações/exonerações juntas, separadas por I e N' },
   { k: 'contratacoes', rot: 'Contratações de pessoal', ico: 'fa-user-plus', cor: '#c2410c', desc: 'Exclusivo do Chefe de Gabinete · status, entrevistas e lotação' },
   { k: 'eventos', rot: 'Eventos', ico: 'fa-calendar-check', cor: '#c026d3', desc: 'Agenda de eventos da SEDUC-MT' },
   { k: 'comunicados', rot: 'Comunicados importantes', ico: 'fa-bullhorn', cor: '#0284c7', desc: 'Mural vigente com o texto completo' },
@@ -7839,11 +8073,11 @@ function graficoMesesRel(lista, titulo, grupos, n = 6) {
   const nm = m => ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(m.slice(5)) - 1] + '/' + m.slice(2, 4);
   return { tipo: 'bar', titulo, labels: meses.map(nm), series: grupos.map(([rot, cor, f, campo]) => ({ rot, cor, dados: meses.map(m => lista.filter(x => String(x[campo || 'protocolo'] || '').slice(0, 7) === m && f(x)).length) })) };
 }
-/** Tabela-resumo (como "Por secretaria adjunta" do relatório geral): grupo × IN × NOR × total. */
+/** Tabela-resumo (como "Por secretaria adjunta" do relatório geral): grupo × I × N × total. */
 function tabResumoRel(titulo, rot, lista, grupo, cat) {
   const m = new Map(); lista.forEach(x => { const g = grupo(x) || 'Não informado'; if (!m.has(g)) m.set(g, []); m.get(g).push(x); });
-  const linhas = [...m.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'pt-BR')).map(([g, l]) => [g, l.filter(x => cat(x) === 'IN').length, l.filter(x => cat(x) === 'NOR').length, l.length]);
-  return { t: 'tabela', titulo, colunas: [{ rot, w: '*' }, { rot: 'IN', w: 'auto', n: 1 }, { rot: 'NOR', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }], linhas, vazio: 'Sem registros no período.' };
+  const linhas = [...m.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'pt-BR')).map(([g, l]) => [g, l.filter(x => cat(x) === 'I').length, l.filter(x => cat(x) === 'N').length, l.length]);
+  return { t: 'tabela', titulo, colunas: [{ rot, w: '*' }, { rot: 'I', w: 'auto', n: 1 }, { rot: 'N', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }], linhas, vazio: 'Sem registros no período.' };
 }
 function graficoMeses(lista, n = 6) {
   const meses = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); meses.push(iso(d).slice(0, 7)); }
@@ -8096,23 +8330,23 @@ function montarRelatorio() {
       subtitulo = [P.rot + ' (data de protocolo)', [comContr ? 'Contratações' : '', comNom ? 'Nomeações e Exonerações' : ''].filter(Boolean).join(' + ')].join(' · ');
       const origens = (comContr ? ['Contratação'] : []).concat(comNom ? ['Nomeação', 'Exoneração'].filter(o => !fs.orig || o === fs.orig) : []);
       const conta = (cat, org) => reg.filter(r => r.cat === cat && (!org || r.origem === org)).length;
-      const nIN = conta('IN'), nNOR = conta('NOR'), sem = reg.filter(r => !r.cat);
-      add(kp([{ rot: 'Registros', val: reg.length, cor: '#475569' }, { rot: 'IN', val: nIN, cor: '#7c3aed' }, { rot: 'NOR', val: nNOR, cor: '#0d9488' },
+      const nIN = conta('I'), nNOR = conta('N'), sem = reg.filter(r => !r.cat);
+      add(kp([{ rot: 'Registros', val: reg.length, cor: '#475569' }, { rot: 'I', val: nIN, cor: '#7c3aed' }, { rot: 'N', val: nNOR, cor: '#0d9488' },
         { rot: 'Em aberto', val: reg.filter(r => !r.feito).length, cor: '#2563eb' }, { rot: 'Concluídos / publicados', val: reg.filter(r => r.feito).length, cor: '#16a34a' }]));
       const maior = origens.map(o => [o, reg.filter(r => r.origem === o).length]).sort((a, b) => b[1] - a[1])[0];
-      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocolados ${reg.length} registro(s) de ${origens.map(o => o.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' e $1')}: ${nIN} IN (${reg.length ? Math.round(nIN / reg.length * 100) : 0}%) e ${nNOR} NOR (${reg.length ? Math.round(nNOR / reg.length * 100) : 0}%)${sem.length ? `, além de ${sem.length} sem o tipo informado` : ''}. ` +
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocolados ${reg.length} registro(s) de ${origens.map(o => o.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' e $1')}: ${nIN} I (${reg.length ? Math.round(nIN / reg.length * 100) : 0}%) e ${nNOR} N (${reg.length ? Math.round(nNOR / reg.length * 100) : 0}%)${sem.length ? `, além de ${sem.length} sem o tipo informado` : ''}. ` +
         `Estão em aberto ${reg.filter(r => !r.feito).length} e foram concluídos ou publicados ${reg.filter(r => r.feito).length}.` + (maior && maior[1] ? ` A origem com mais registros é ${maior[0].toLowerCase()}, com ${maior[1]}.` : '')] });
-      add(graf(graficoMesesRel(reg.map(r => r.x), 'Protocolados por mês: IN e NOR', [['IN', '#7c3aed', x => (x.categoria || x.tipo) === 'IN'], ['NOR', '#0d9488', x => (x.categoria || x.tipo) === 'NOR']])));
-      add(graf({ tipo: 'bar', titulo: 'IN e NOR por origem', labels: origens, series: [{ rot: 'IN', dados: origens.map(o => conta('IN', o)), cor: '#7c3aed' }, { rot: 'NOR', dados: origens.map(o => conta('NOR', o)), cor: '#0d9488' }] }));
-      add(tab('Resumo por origem', [{ rot: 'Origem', w: '*' }, { rot: 'IN', w: 'auto', n: 1 }, { rot: 'NOR', w: 'auto', n: 1 }, { rot: 'Sem tipo', w: 'auto', n: 1 }, { rot: 'Em aberto', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
-        origens.map(o => { const l = reg.filter(r => r.origem === o); return [o, l.filter(r => r.cat === 'IN').length, l.filter(r => r.cat === 'NOR').length, l.filter(r => !r.cat).length, l.filter(r => !r.feito).length, l.length]; })));
+      add(graf(graficoMesesRel(reg.map(r => r.x), 'Protocolados por mês: I e N', [['I', '#7c3aed', x => (x.categoria || x.tipo) === 'I'], ['N', '#0d9488', x => (x.categoria || x.tipo) === 'N']])));
+      add(graf({ tipo: 'bar', titulo: 'I e N por origem', labels: origens, series: [{ rot: 'I', dados: origens.map(o => conta('I', o)), cor: '#7c3aed' }, { rot: 'N', dados: origens.map(o => conta('N', o)), cor: '#0d9488' }] }));
+      add(tab('Resumo por origem', [{ rot: 'Origem', w: '*' }, { rot: 'I', w: 'auto', n: 1 }, { rot: 'N', w: 'auto', n: 1 }, { rot: 'Sem tipo', w: 'auto', n: 1 }, { rot: 'Em aberto', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
+        origens.map(o => { const l = reg.filter(r => r.origem === o); return [o, l.filter(r => r.cat === 'I').length, l.filter(r => r.cat === 'N').length, l.filter(r => !r.cat).length, l.filter(r => !r.feito).length, l.length]; })));
       add(e.tabela && tabResumoRel('Por lotação', 'Lotação', reg.map(r => r.x), x => x.lotacao, x => (x.categoria || x.tipo)));
       const col = [{ rot: 'Origem', w: 'auto' }, { rot: 'Nome', w: '*' }, { rot: 'Cargo', w: '*' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
       const lin = r => [r.origem, r.x.nome || '—', r.x.cargo || '—', r.x.lotacao || '—', r.x.processo || '—', r.x.protocolo ? fmt(r.x.protocolo) : '—', r.x.inicio ? fmt(r.x.inicio) : '—', r.x.status || '—'];
       const ord = l => l.slice().sort((a, b) => origens.indexOf(a.origem) - origens.indexOf(b.origem) || String(a.x.protocolo || '9999').localeCompare(String(b.x.protocolo || '9999')) || String(a.x.nome || '').localeCompare(String(b.x.nome || ''), 'pt-BR'));
-      add(tab('Registros IN', col, ord(reg.filter(r => r.cat === 'IN')).map(lin), 'Nenhum registro IN no período.'));
-      add(tab('Registros NOR', col, ord(reg.filter(r => r.cat === 'NOR')).map(lin), 'Nenhum registro NOR no período.'));
-      if (sem.length) add(tab('Sem IN/NOR informado', col, ord(sem).map(lin)));
+      add(tab('Registros I', col, ord(reg.filter(r => r.cat === 'I')).map(lin), 'Nenhum registro I no período.'));
+      add(tab('Registros N', col, ord(reg.filter(r => r.cat === 'N')).map(lin), 'Nenhum registro N no período.'));
+      if (sem.length) add(tab('Sem I/N informado', col, ord(sem).map(lin)));
       break;
     }
     case 'publicacoes': {
@@ -8160,15 +8394,15 @@ function montarRelatorio() {
       add(kp([{ rot: 'Nomeações', val: nN, cor: '#2563eb' }, { rot: 'Exonerações', val: nE, cor: '#be123c' }, { rot: 'Em andamento', val: l.filter(x => x.status === 'Em andamento').length, cor: corNom('Em andamento')[0] },
         { rot: 'Aguardando publicação', val: l.filter(x => x.status === 'Aguardando publicação').length, cor: corNom('Aguardando publicação')[0] }, { rot: 'Publicados', val: l.filter(x => x.status === 'Publicado').length, cor: corNom('Publicado')[0] }]));
       const velho = ab.filter(x => x.protocolo).sort(ordemNom)[0];
-      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${nN} nomeação(ões) e ${nE} exoneração(ões), sendo ${l.filter(x => x.categoria === 'IN').length} IN e ${l.filter(x => x.categoria === 'NOR').length} NOR. ` +
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${nN} nomeação(ões) e ${nE} exoneração(ões), sendo ${l.filter(x => x.categoria === 'I').length} I e ${l.filter(x => x.categoria === 'N').length} N. ` +
         `Foram publicados ${l.filter(x => x.status === 'Publicado').length}, ${l.filter(x => x.status === 'Aguardando publicação').length} aguardam publicação, ${l.filter(x => x.status === 'Em andamento').length} estão em andamento e ${l.filter(x => x.status === 'Não Autorizado').length} não foram autorizados.` +
         (velho ? ` O registro em aberto há mais tempo é de ${velho.nome}, protocolado há ${diasDesde(velho.protocolo)} dia(s).` : '')] });
       add(graf(graficoMesesRel(l, 'Protocolados por mês', [['Nomeações', '#2563eb', x => x.tipo === 'Nomeação'], ['Exonerações', '#be123c', x => x.tipo === 'Exoneração']])));
       add(graf({ tipo: 'bar', titulo: 'Por status', labels: Object.keys(STATUS_NOM), series: [{ rot: 'Nomeações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Nomeação' && x.status === k).length), cor: '#2563eb' }, { rot: 'Exonerações', dados: Object.keys(STATUS_NOM).map(k => l.filter(x => x.tipo === 'Exoneração' && x.status === k).length), cor: '#be123c' }] }));
-      add(tab('Por tipo (IN ou NOR)', [{ rot: 'Tipo', w: '*' }, { rot: 'Nomeações', w: 'auto', n: 1 }, { rot: 'Exonerações', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
-        [['IN', 'IN'], ['NOR', 'NOR'], ['', 'Sem tipo informado']].map(([k, r]) => [r, l.filter(x => (x.categoria || '') === k && x.tipo === 'Nomeação').length, l.filter(x => (x.categoria || '') === k && x.tipo === 'Exoneração').length, l.filter(x => (x.categoria || '') === k).length]).filter((row, i) => i < 2 || row[3])));
+      add(tab('Por tipo (I ou N)', [{ rot: 'Tipo', w: '*' }, { rot: 'Nomeações', w: 'auto', n: 1 }, { rot: 'Exonerações', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
+        [['I', 'I'], ['N', 'N'], ['', 'Sem tipo informado']].map(([k, r]) => [r, l.filter(x => (x.categoria || '') === k && x.tipo === 'Nomeação').length, l.filter(x => (x.categoria || '') === k && x.tipo === 'Exoneração').length, l.filter(x => (x.categoria || '') === k).length]).filter((row, i) => i < 2 || row[3])));
       add(e.tabela && tabResumoRel('Por lotação', 'Lotação', l, x => x.lotacao, x => x.categoria));
-      const col = [{ rot: 'Nome', w: '*' }, { rot: 'IN/NOR', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const col = [{ rot: 'Nome', w: '*' }, { rot: 'I/N', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
       const lin = x => [x.nome, x.categoria || '—', x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.inicio ? fmt(x.inicio) : '—', x.status || '—'];
       const ord = lista => lista.slice().sort((a, b) => (nomFeita(a) - nomFeita(b)) || ordemNom(a, b));
       add(tab('Nomeações', col, ord(l.filter(x => x.tipo === 'Nomeação')).map(lin), 'Nenhuma nomeação no período.'));
@@ -8185,13 +8419,13 @@ function montarRelatorio() {
       const n = st => l.filter(x => x.status === st).length;
       add(kp([{ rot: 'Total', val: l.length, cor: '#c2410c' }].concat(Object.entries(STATUS_CONTR).map(([k, [cor]]) => ({ rot: k, val: n(k), cor })))));
       const prox = l.filter(x => x.status === 'Aguardando Entrevista' && x.entrevista && diasAte(x.entrevista) >= 0).sort((a, b) => a.entrevista.localeCompare(b.entrevista))[0];
-      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${l.length} contratação(ões) de pessoal: ${l.filter(x => x.tipo === 'IN').length} IN e ${l.filter(x => x.tipo === 'NOR').length} NOR. ` +
+      add({ t: 'texto', titulo: 'Síntese', paragrafos: [`No período (${P.rot.toLowerCase()}), foram protocoladas ${l.length} contratação(ões) de pessoal: ${l.filter(x => x.tipo === 'I').length} I e ${l.filter(x => x.tipo === 'N').length} N. ` +
         `${n('Concluído')} foram concluídas, ${n('Aguardando Entrevista')} aguardam entrevista, ${n('Em andamento')} estão em andamento e ${n('Não Autorizado')} não foram autorizadas.` +
         (prox ? ` A próxima entrevista é de ${prox.nome}, em ${fmt(prox.entrevista)}.` : '')] });
-      add(graf(graficoMesesRel(l, 'Protocoladas por mês', [['IN', '#7c3aed', x => x.tipo === 'IN'], ['NOR', '#0d9488', x => x.tipo === 'NOR']])));
+      add(graf(graficoMesesRel(l, 'Protocoladas por mês', [['I', '#7c3aed', x => x.tipo === 'I'], ['N', '#0d9488', x => x.tipo === 'N']])));
       add(graf({ tipo: 'hbar', titulo: 'Contratações por status', labels: Object.keys(STATUS_CONTR), series: [{ rot: 'Pessoas', dados: Object.keys(STATUS_CONTR).map(k => n(k)), cores: Object.values(STATUS_CONTR).map(v => v[0]) }] }));
-      add(tab('Por tipo (IN ou NOR)', [{ rot: 'Tipo', w: '*' }].concat(Object.keys(STATUS_CONTR).map(k => ({ rot: k, w: 'auto', n: 1 }))).concat([{ rot: 'Total', w: 'auto', n: 1 }]),
-        [['IN', 'IN'], ['NOR', 'NOR'], ['', 'Sem tipo informado']].map(([k, r]) => [r].concat(Object.keys(STATUS_CONTR).map(st => l.filter(x => (x.tipo || '') === k && x.status === st).length)).concat([l.filter(x => (x.tipo || '') === k).length])).filter((row, i) => i < 2 || row[row.length - 1])));
+      add(tab('Por tipo (I ou N)', [{ rot: 'Tipo', w: '*' }].concat(Object.keys(STATUS_CONTR).map(k => ({ rot: k, w: 'auto', n: 1 }))).concat([{ rot: 'Total', w: 'auto', n: 1 }]),
+        [['I', 'I'], ['N', 'N'], ['', 'Sem tipo informado']].map(([k, r]) => [r].concat(Object.keys(STATUS_CONTR).map(st => l.filter(x => (x.tipo || '') === k && x.status === st).length)).concat([l.filter(x => (x.tipo || '') === k).length])).filter((row, i) => i < 2 || row[row.length - 1])));
       add(e.tabela && tabResumoRel('Por lotação', 'Lotação', l, x => x.lotacao, x => x.tipo));
       const col = [{ rot: 'Nome', w: '*' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Cargo pretendido', w: '*' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Entrevista', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Lotação', w: 'auto' }];
       const lin = x => [x.nome, x.tipo || '—', x.cargo || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.entrevista ? fmt(x.entrevista) : '—', x.inicio ? fmt(x.inicio) : '—', x.lotacao || '—'];
@@ -8292,7 +8526,7 @@ function montarRelatorio() {
   }
   if (e.obs.trim()) add({ t: 'texto', titulo: 'Observações', paragrafos: e.obs.trim().split(/\n{2,}/), grupo: 'obsLivre' });
   // partes que o usuário pode ligar e desligar (configurador do relatório)
-  const RESUMOS = ['Por tipo (IN ou NOR)', 'Resumo por origem', 'Por lotação', 'Por secretaria adjunta', 'Por tipo de documento', 'Casa Civil por etapa', 'Por área solicitante', 'Publicações por status'];
+  const RESUMOS = ['Por tipo (I ou N)', 'Resumo por origem', 'Por lotação', 'Por secretaria adjunta', 'Por tipo de documento', 'Casa Civil por etapa', 'Por área solicitante', 'Publicações por status'];
   for (let k = B.length - 1; k >= 0; k--) {
     const b = B[k], g = b.grupo || (b.t === 'tabela' ? (RESUMOS.includes(b.titulo) ? 'resumo' : b.titulo === 'Observações' ? 'obs' : 'lista') : b.t === 'texto' && b.titulo === 'Síntese' ? 'sintese' : '');
     if ((g === 'sintese' && e.sintese === false) || (g === 'resumo' && e.tabResumo === false) || (g === 'lista' && e.listas === false) || (g === 'obs' && e.obsTab === false)) B.splice(k, 1);
@@ -8608,8 +8842,8 @@ async function gerarExcel(btn) {
 }
 /* ----- Configurador do relatório: opções + prévia antes de gerar ----- */
 const RCFG_TEMAS = {
-  contratacoes: { filtros: [['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_CONTR).map(k => [k, k]))]] },
-  nomeacoes: { filtros: [['tipo', 'Registros', [['', 'Nomeações e exonerações'], ['Nomeação', 'Só nomeações'], ['Exoneração', 'Só exonerações']]], ['cat', 'Tipo', [['', 'IN e NOR'], ['IN', 'IN'], ['NOR', 'NOR']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_NOM).map(k => [k, k]))]] },
+  contratacoes: { filtros: [['cat', 'Tipo', [['', 'I e N'], ['I', 'I'], ['N', 'N']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_CONTR).map(k => [k, k]))]] },
+  nomeacoes: { filtros: [['tipo', 'Registros', [['', 'Nomeações e exonerações'], ['Nomeação', 'Só nomeações'], ['Exoneração', 'Só exonerações']]], ['cat', 'Tipo', [['', 'I e N'], ['I', 'I'], ['N', 'N']]], ['st', 'Status', [['', 'Todos']].concat(Object.keys(STATUS_NOM).map(k => [k, k]))]] },
   publicacoes: { filtros: [['tipo', 'Tipo de documento', () => [['', 'Todos os tipos']].concat([...new Set(PUB_TIPOS.map(t => t[0]).concat((Store.portarias || []).map(x => x.tipoDoc).filter(Boolean)))].map(t => [t, t]))],
     ['st', 'Status', [['', 'Todos']].concat(Object.keys(PUB_STATUS).map(k => [k, k]))], ['area', 'Área solicitante', () => [['', 'Todas as áreas']].concat(SECRETARIAS.map(s => [s, s]))],
     ['prazo', 'Prazo', [['', 'Todos'], ['venc', 'Só vencidas'], ['breve', `Vencem em até ${PUB_ALERTA} dias`], ['com', 'Com prazo'], ['sem', 'Sem prazo']]]] },
