@@ -23,13 +23,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.63.0">
+<meta name="gabdoc-versao" content="1.65.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Aplicativo de celular: instale pelo navegador e o GABDoc abre em tela cheia, com ícone próprio",
-  "Barra inferior com Início, Processos, Hoje (resumo do dia), Agenda e Menu",
-  "No celular, as planilhas viram cartões fáceis de tocar (dá para voltar à planilha)",
-  "Botão Voltar do celular fecha janelas e volta à tela anterior; puxe para baixo para atualizar",
-  "Contador de pendências no ícone do aplicativo"
+  "Publicações: a autoridade revisa a minuta com os botões Autorizar e Devolver fixos embaixo do documento",
+  "Painel ao lado (aba no celular) com assunto, prazo, prioridade, quem pediu, a mensagem, o histórico e um resumo automático da minuta",
+  "Fila de autorização: depois de decidir, já abre a próxima pendente e mostra quantas faltam (ex.: 2 de 5)"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1024,6 +1022,99 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .aut-av:first-child { margin-left: 0; }
   .gs-compacto .aut-cel .aut-rot { display: none; }
   .gs-compacto .aut-cel:not(:has(.aut-avs)) { padding: 0 8px; }
+  /* ----- Publicações: prioridade (contorno vermelho com "Prioridade", como nos processos) ----- */
+  .gc.gs-urg { border: 2px solid var(--urg); position: relative; padding-top: 18px; }
+  .gc.gs-urg::before { content: 'Prioridade'; position: absolute; top: -1px; left: 12px; padding: 1px 8px; border-radius: 0 0 6px 6px; background: var(--urg); color: #fff; font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .pt-prio-tg { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; border: 1.5px dashed var(--line); background: var(--card); }
+  .pt-prio-tg .pt-prio-ico { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; flex: none; color: var(--urg); background: color-mix(in srgb, var(--urg) 10%, var(--card)); }
+  .pt-prio-tg b { display: block; font-size: 13.5px; color: var(--ink); }
+  .pt-prio-tg small { display: block; font-size: 11.5px; color: var(--ink3); }
+  .pt-prio-tg .pt-prio-sw { margin-left: auto; width: 40px; height: 22px; border-radius: 99px; background: var(--line); position: relative; flex: none; transition: background .15s; }
+  .pt-prio-tg .pt-prio-sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 99px; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+  .pt-prio-tg.ativo { border: 2px solid var(--urg); background: color-mix(in srgb, var(--urg) 7%, var(--card)); }
+  .pt-prio-tg.ativo .pt-prio-ico { color: #fff; background: var(--urg); }
+  .pt-prio-tg.ativo .pt-prio-sw { background: var(--urg); }
+  .pt-prio-tg.ativo .pt-prio-sw::after { transform: translateX(18px); }
+  /* ----- Revisão da minuta (autoridade) ----- */
+  .modal.modal-rev { height: min(94vh, 980px); max-width: 1320px !important; }
+  .rev-fila { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: color-mix(in srgb, #7c3aed 8%, var(--card)); border: 1px solid color-mix(in srgb, #7c3aed 25%, var(--line)); }
+  .rev-fila button { width: 30px; height: 30px; border-radius: 9px; color: #7c3aed; }
+  .rev-fila button:disabled { opacity: .3; }
+  .rev-fila button:not(:disabled):hover { background: var(--card); }
+  .rev-fila span { font-size: 12.5px; color: var(--ink2); padding: 0 6px; white-space: nowrap; }
+  .rev-fila b { color: #7c3aed; font-size: 14px; }
+  .rev-abas { display: none; }
+  .rev-corpo { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .rev-corpo .vis-palco { border-right: 1px solid var(--line); }
+  .rev-lado { overflow-y: auto; background: var(--card); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .rev-sec { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--card); display: flex; flex-direction: column; gap: 8px; }
+  .rev-sec h4, .rev-hist summary { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); display: flex; align-items: center; gap: 7px; }
+  .rev-hist summary { cursor: pointer; list-style: none; }
+  .rev-hist summary::-webkit-details-marker { display: none; }
+  .rev-hist summary small { padding: 0 6px; border-radius: 99px; background: var(--card2); font-size: 10px; }
+  .rev-prio { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 6px; background: var(--urg); color: #fff; font-size: 10.5px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+  .rev-assunto { font-size: 15px; font-weight: 800; color: var(--ink); line-height: 1.35; }
+  .rev-dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+  .rev-dl dt { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+  .rev-dl dd { font-size: 13px; color: var(--ink); overflow-wrap: anywhere; }
+  .rev-prazo { display: inline-block; font-size: 11px; font-weight: 800; padding: 0 6px; border-radius: 99px; color: #0f766e; background: color-mix(in srgb, #0d9488 12%, var(--card)); }
+  .rev-prazo.perto { color: #c2410c; background: color-mix(in srgb, #ea580c 12%, var(--card)); }
+  .rev-prazo.venc { color: #fff; background: #dc2626; }
+  .rev-msg { position: relative; font-size: 13px; font-style: italic; color: var(--ink2); background: var(--card2); border-radius: 10px; padding: 8px 10px 8px 30px; }
+  .rev-msg :is(i, svg) { position: absolute; left: 10px; top: 11px; font-size: 10px; color: #7c3aed; }
+  .rev-auts { display: flex; flex-direction: column; gap: 4px; }
+  .rev-auts li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink); }
+  .rev-auts li > :is(i, svg) { color: var(--c); width: 14px !important; }
+  .rev-auts li em { color: #7c3aed; font-style: normal; font-weight: 700; }
+  .rev-auts li small { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--c); }
+  .rev-res-it { display: flex; gap: 9px; }
+  .rev-res-it > :is(i, svg) { width: 14px !important; color: #7c3aed; margin-top: 3px; flex: none; font-size: 12px; }
+  .rev-res-it small { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+  .rev-res-it p { font-size: 13px; color: var(--ink); line-height: 1.45; }
+  .rev-tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: var(--card2); border: 1px solid var(--line); margin: 1px 0; }
+  .rev-res-vazio { font-size: 12.5px; color: var(--ink3); display: flex; gap: 8px; align-items: center; }
+  .rev-res-nota { font-size: 11px; color: var(--ink3); border-top: 1px dashed var(--line); padding-top: 7px; display: flex; gap: 6px; align-items: flex-start; }
+  #rev-resumo { display: flex; flex-direction: column; gap: 9px; }
+  .rev-hist ol { margin-top: 8px; display: flex; flex-direction: column; }
+  .rev-hist li { display: flex; gap: 9px; position: relative; padding-bottom: 9px; font-size: 12.5px; }
+  .rev-hist li:not(:last-child)::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: var(--line); }
+  .rev-h-ico { width: 24px; height: 24px; border-radius: 99px; display: grid; place-items: center; flex: none; color: #fff; background: var(--c); font-size: 10px; }
+  .rev-hist time { font-size: 11px; color: var(--ink3); }
+  .rev-dev { padding: 12px 16px; border-top: 1px solid var(--line); background: color-mix(in srgb, #dc2626 5%, var(--card)); display: flex; flex-direction: column; gap: 8px; }
+  .rev-dev[hidden] { display: none; }
+  .rev-barra { display: flex; align-items: center; gap: 10px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--card); box-shadow: 0 -8px 20px -16px rgba(15,23,42,.35); }
+  .rev-barra-info { display: flex; gap: 8px; margin-right: auto; }
+  .rev-bt { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 48px; padding: 0 26px; border-radius: 14px; font-size: 15px; font-weight: 800; transition: filter .15s, transform .1s; }
+  .rev-bt:active { transform: scale(.98); }
+  .rev-bt:disabled { opacity: .55; }
+  .rev-bt.ok { color: #fff; background: #16a34a; box-shadow: 0 8px 18px -8px #16a34a; }
+  .rev-bt.ok:hover { filter: brightness(1.07); }
+  .rev-bt.dev { color: #dc2626; background: var(--card); border: 2px solid color-mix(in srgb, #dc2626 55%, var(--line)); }
+  .rev-bt.dev:hover, .rev-bt.dev.ativo { background: color-mix(in srgb, #dc2626 8%, var(--card)); border-color: #dc2626; }
+  .rev-abrir { width: 100%; display: flex; align-items: center; gap: 11px; text-align: left; padding: 11px 13px; border-radius: 13px; color: #fff; background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 10px 22px -12px #7c3aed; }
+  .rev-abrir > :is(i, svg):first-child { font-size: 20px; }
+  .rev-abrir b { display: block; font-size: 14px; } .rev-abrir small { display: block; font-size: 11.5px; opacity: .85; }
+  .rev-abrir > :is(i, svg):last-child { margin-left: auto; }
+  .rev-fim { margin: auto; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .rev-fim-ico { width: 72px; height: 72px; border-radius: 99px; display: grid; place-items: center; font-size: 34px; color: #fff; background: #16a34a; box-shadow: 0 12px 30px -10px #16a34a; }
+  .rev-fim h3 { font-size: 22px; font-weight: 900; color: var(--ink); }
+  .rev-fim p { font-size: 14px; color: var(--ink2); max-width: 380px; margin-bottom: 8px; }
+  @media (max-width: 900px) {
+    .rev-abas { display: flex; gap: 4px; padding: 6px 10px; border-bottom: 1px solid var(--line); background: var(--card); }
+    .rev-abas button { flex: 1; height: 36px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+    .rev-abas button.ativo { color: #7c3aed; background: color-mix(in srgb, #7c3aed 10%, var(--card)); }
+    .rev-corpo { grid-template-columns: minmax(0, 1fr); }
+    .rev-corpo .vis-palco { border-right: 0; }
+    .modal-rev .rev-lado { display: none; }
+    .modal-rev.ver-det .rev-lado { display: flex; }
+    .modal-rev.ver-det .rev-corpo .vis-palco { display: none; }
+  }
+  @media (max-width: 640px) {
+    .rev-topo { padding: 10px 12px; gap: 8px; } .rev-topo .vis-ico { display: none; } .rev-zoom { display: none; }
+    .rev-barra { padding-left: 10px; padding-right: 10px; gap: 8px; }
+    .rev-bt { flex: 1; padding: 0 10px; height: 50px; }
+    .rev-barra-info .btn span { display: none; }
+  }
   /* ===================== Aplicativo no celular ===================== */
   html, body { overscroll-behavior-y: none; }
   body { -webkit-tap-highlight-color: transparent; }
@@ -3930,15 +4021,16 @@ function itensResumoDia() {
   const out = { part: [], autorizar: [], venc: [], hoje: [], prox: [], agenda: [], assinar: 0, devolvidas: [] };
   const add = (x) => { if (x.dias < 0) out.venc.push(x); else if (x.dias === 0) out.hoje.push(x); else if (x.dias <= DIAS_PRAZO) out.prox.push(x); };
   (Store._sol || []).filter(x => !FEITO(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: [ehProcesso(x) ? 'Processo' : 'Documento', x.numero].filter(Boolean).join(' · '), ico: ehProcesso(x) ? 'fa-folder-open' : 'fa-file-signature', cor: ehProcesso(x) ? '#b45309' : '#2563eb', dias: diasAte(x.prazo), prazo: x.prazo, urg: !!x.urgente, abrir: `abrirDetalhe('${x.id}')` }));
-  (Store.portarias || []).filter(x => !pubFeita(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto || nomePub(x), sub: 'Publicação · ' + nomePub(x) + (autPendente(x) ? ' · em autorização' : ''), ico: 'fa-newspaper', cor: '#4f46e5', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormPortaria('${x.id}')` }));
+  (Store.portarias || []).filter(x => !pubFeita(x) && x.prazo).forEach(x => add({ id: x.id, urg: prioPub(x), titulo: x.assunto || nomePub(x), sub: 'Publicação · ' + nomePub(x) + (autPendente(x) ? ' · em autorização' : ''), ico: 'fa-newspaper', cor: '#4f46e5', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormPortaria('${x.id}')` }));
   (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: 'SIMEC' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-building-flag', cor: '#0d9488', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormSimec('${x.id}')` }));
   out.part = (typeof paraConfirmarPart === 'function' ? paraConfirmarPart() : []).map(e => { const p = partEv(e); return { id: e.id, titulo: e.titulo, sub: ['Participação da Secretária', e.municipio, p && p.pedidoPor ? 'pedido por ' + p.pedidoPor : ''].filter(Boolean).join(' · '), ico: 'fa-user-tie', cor: '#0d9488', prazo: e.dataInicio, dias: diasAte(e.dataInicio), evento: true, abrir: `abrirPartEv('${e.id}','')` }; });
-  out.autorizar = paraMimAut().map(x => { const a = autPub(x); return { id: x.id, titulo: nomePub(x), sub: (x.assunto || '') + (a && a.pedidoPor ? ' · pedido por ' + a.pedidoPor : ''), ico: 'fa-file-signature', cor: '#7c3aed', prazo: x.prazo, dias: x.prazo ? diasAte(x.prazo) : null, abrir: `abrirAutPub('${x.id}')` }; });
+  out.autorizar = paraMimAut().sort((a, b) => pesoPrioPub(a) - pesoPrioPub(b)).map(x => { const a = autPub(x); return { id: x.id, urg: prioPub(x), titulo: nomePub(x), sub: (x.assunto || '') + (a && a.pedidoPor ? ' · pedido por ' + a.pedidoPor : ''), ico: 'fa-file-signature', cor: '#7c3aed', prazo: x.prazo, dias: x.prazo ? diasAte(x.prazo) : null, abrir: Store.modo === 'planilha' ? `revisarMinuta('${x.id}')` : `abrirAutPub('${x.id}')` }; });
   out.agenda = (Store.agenda || []).filter(a => a.data === hojeISO() && !['cancelado', 'adiado'].includes(agSit(a))).sort((a, b) => String(a.hora || '99').localeCompare(String(b.hora || '99')))
     .map(a => ({ id: a.id, titulo: String(a.titulo || '').replace('[Exemplo] ', ''), sub: [a.hora ? a.hora + (a.horaFim ? '–' + a.horaFim : '') : 'Dia todo', a.local || a.municipio].filter(Boolean).join(' · '), ico: 'fa-calendar-day', cor: '#0891b2', abrir: `abrirFormAgenda('${a.id}')` }));
   if (pode('assinar')) out.assinar = (Store._sol || []).filter(x => !FEITO(x) && ehAssinatura(x) && x.status !== 'ajuste').length;
   if (pode('gravar')) out.devolvidas = (Store._sol || []).filter(x => x.status === 'ajuste').map(x => ({ id: x.id, titulo: x.assunto, sub: 'Devolvido para correção' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-rotate-left', cor: '#db2777', abrir: `abrirDetalhe('${x.id}')` }))
     .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }) : []);
+  (Store.portarias || []).filter(x => !pubFeita(x) && !x.prazo && prioPub(x)).forEach(x => out.hoje.push({ id: x.id, urg: true, titulo: x.assunto || nomePub(x), sub: 'Publicação prioritária (sem prazo) · ' + nomePub(x), ico: 'fa-newspaper', cor: '#dc2626', dias: null, abrir: `abrirFormPortaria('${x.id}')` }));
   out.venc.sort((a, b) => a.dias - b.dias); out.prox.sort((a, b) => a.dias - b.dias);
   return out;
 }
@@ -6021,6 +6113,9 @@ const PORT_MAX = 20 * 1024 * 1024;
 const PUB_TIPOS = [['Portaria', 'fa-stamp', '#4f46e5'], ['Edital', 'fa-bullhorn', '#0891b2'], ['Instrução Normativa', 'fa-book', '#7c3aed'], ['Resolução', 'fa-gavel', '#be123c'],
   ['Decreto', 'fa-landmark', '#334155'], ['Extrato', 'fa-file-contract', '#0d9488'], ['Aviso', 'fa-circle-exclamation', '#d97706'], ['Comunicado', 'fa-envelope-open-text', '#2563eb']];
 const tipoPub = t => PUB_TIPOS.find(x => Utils_norm(x[0]) === Utils_norm(t)) || [t || '', 'fa-file-lines', '#64748b'];
+/** Marcador de prioridade das publicações (sim/não): a linha ganha o contorno vermelho "Prioridade". */
+const prioPub = x => !!x && /^(sim|true|1|prioridade|urgente|alta)$/i.test(String(x.prioridade || '').trim());
+const pesoPrioPub = x => prioPub(x) && !pubFeita(x) ? 0 : 1;
 const PUB_STATUS = { 'Aguardando Publicação': ['#d97706', 'fa-hourglass-half'], 'Aguardando Autorização': ['#7c3aed', 'fa-file-signature'], 'Publicado': ['#16a34a', 'fa-circle-check'], 'Devolvido Para Correção': ['#dc2626', 'fa-rotate-left'] };
 /** Status que a pessoa escolhe à mão ("Aguardando Autorização" entra e sai pelo fluxo de autorização). */
 const PUB_STATUS_MANUAIS = Object.keys(PUB_STATUS).filter(s => s !== 'Aguardando Autorização');
@@ -6076,7 +6171,7 @@ function normLink(v) {
 function exemplosPortarias() {
   const h = d => somaDias(d);
   return [
-    { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), prazo: h(2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
+    { id: 'pt1', prioridade: 'Sim', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), prazo: h(2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
     { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', publicadoEm: h(-3), link: '', exemplo: true },
     { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), prazo: h(-3), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
     { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), prazo: h(10), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true },
@@ -6168,6 +6263,7 @@ async function pdfParaVer(id, qual) {
   return blob;
 }
 async function verArqPortaria(id, qual = 'minuta') {
+  if (qual === 'minuta' && Store.modo === 'planilha' && minhaVezAut(portaria(id))) { revisarMinuta(id); return; }
   const x = portaria(id), a = arqDe(x, qual), q = PUB_ARQS[qual];
   if (!a) { toast(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.', 'fa-circle-info'); return; }
   if (Vis.url) { try { URL.revokeObjectURL(Vis.url); } catch (e) {} }
@@ -6445,7 +6541,7 @@ function caixaAutPub(todas) {
     <span class="aut-bar-lista">${nomes}${n > 2 ? `<span class="aut-bar-mais">+${n - 2}</span>` : ''}</span>
     <span class="aut-bar-bts">
       <button type="button" class="aut-bar-bt" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')"><i class="fa-solid fa-filter"></i><span>Ver na planilha</span></button>
-      <button type="button" class="aut-bar-bt pri" onclick="abrirAutPub('${prim.id}')"><i class="fa-solid fa-pen-nib"></i><span>${minhas.length ? 'Autorizar' : 'Abrir'}</span></button>
+      <button type="button" class="aut-bar-bt pri" onclick="${minhas.length && Store.modo === 'planilha' ? 'revisarMinuta()' : `abrirAutPub('${prim.id}')`}"><i class="fa-solid fa-pen-nib"></i><span>${minhas.length ? (minhas.length > 1 ? `Revisar (${minhas.length})` : 'Revisar e autorizar') : 'Abrir'}</span></button>
       <button type="button" class="aut-bar-x" title="Ocultar até a próxima novidade" aria-label="Ocultar aviso" onclick="try{sessionStorage.setItem('gabdoc_autbar','${chave}')}catch(e){};this.closest('.aut-bar').remove()"><i class="fa-solid fa-xmark"></i></button>
     </span>
   </div>`;
@@ -6540,6 +6636,7 @@ function abrirAutPub(id, foco) {
       <section><p class="aut-sec-tit"><i class="fa-solid fa-user-shield"></i>Autoridades</p><ul class="aut-pessoas">${a.itens.map(linhaItem).join('')}</ul></section>
       ${minha && !multi ? `<section class="aut-decidir" id="aut-decidir">
         <p class="aut-sec-tit"><i class="fa-solid fa-pen-nib"></i>A sua decisão</p>
+        <button type="button" class="rev-abrir" onclick="revisarMinuta('${id}')"><i class="fa-solid fa-file-circle-check"></i><span><b>Revisar a minuta e decidir</b><small>Documento, detalhes e resumo lado a lado${paraMimAut().length > 1 ? ` · fila com ${paraMimAut().length} publicações` : ''}</small></span><i class="fa-solid fa-chevron-right"></i></button>
         <textarea class="campo w-full" rows="2" id="aut-obs" maxlength="1000" placeholder="Observação (obrigatória para devolver): o que precisa ser corrigido?"></textarea>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button type="button" class="aut-bt dev" onclick="decidirAut('${id}','devolver')"><i class="fa-solid fa-rotate-left"></i><span><b>Devolver para correção</b><small>Volta para quem pediu, com a sua observação</small></span></button>
@@ -6557,6 +6654,195 @@ function abrirAutPub(id, foco) {
     </div>`, 'aut', { id });
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   if (foco === 'devolver' && $('aut-obs')) setTimeout(() => { $('aut-obs').focus(); $('aut-obs').placeholder = 'O que precisa ser corrigido? (obrigatório para devolver)'; }, 80);
+}
+/* ----- Revisão da minuta pela autoridade: documento + detalhes + Autorizar/Devolver, em fila ----- */
+const Rev = { fila: [], id: '', feitas: 0, aba: 'doc' };
+/** Fila do que espera a MINHA decisão: prioridades primeiro, depois o prazo mais curto. */
+function filaRevisao() {
+  return paraMimAut().slice().sort((a, b) => pesoPrioPub(a) - pesoPrioPub(b) || String(a.prazo || '9999').localeCompare(String(b.prazo || '9999')) || String((autPub(a) || {}).pedidoEm || '').localeCompare(String((autPub(b) || {}).pedidoEm || ''))).map(x => x.id);
+}
+function revisarMinuta(id) {
+  const fila = filaRevisao();
+  if (!id) id = fila[0];
+  if (!id) { toast('Nenhuma publicação aguardando a sua autorização.', 'fa-circle-check'); return; }
+  if (!fila.includes(id)) { abrirAutPub(id); return; }
+  Rev.fila = fila; Rev.feitas = 0;
+  abrirRevisao(id);
+}
+/** Extrai do texto da minuta um resumo por regras (ementa, Art. 1º, pessoas, datas, vigência, revogações). */
+function resumoMinuta(txt) {
+  const t = String(txt || '').replace(/\s+/g, ' ').trim();
+  if (t.length < 40) return null;
+  const corta = (s, n) => { s = s.trim(); return s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s; };
+  const out = {};
+  const verbos = 'Disp[õo]e|Designa|Institui|Altera|Nomeia|Exonera|Regulamenta|Estabelece|Aprova|Torna p[úu]blic|Autoriza|Concede|Revoga|Homologa|Convoca|Prorroga|Delega|Cria|Define|Fixa|Credencia|Constitui|Retifica|Torna sem efeito|Cede|Remove|Lota|Atribui';
+  const antes = t.split(/\bRESOLVE\b|\bArt\.?\s*1\s*[º°o]/i)[0] || t;
+  let m = antes.match(new RegExp(`((?:${verbos})[^.]{10,400}\\.)`, 'i'));
+  if (m) out.ementa = corta(m[1], 320);
+  m = t.match(/Art\.?\s*1\s*[º°o]?\s*[-–—.:]?\s*(.+?)(?=\bArt\.?\s*2\s*[º°o]?|\bRegistrada|\bPublique-se|\bCumpra-se|$)/i);
+  if (m) out.art1 = corta(m[1], 380);
+  const arts = new Set((t.match(/\bArt\.?\s*\d+/gi) || []).map(a => a.replace(/\D/g, '')));
+  out.artigos = arts.size;
+  const comuns = /^(SECRET[ÁA]RI[AO]|ESTADO|EDUCA[ÇC][ÃA]O|PORTARIA|EDITAL|RESOLVE|GOVERNO|MATO|GROSSO|SEDUC|GABINETE|INSTRU[ÇC][ÃA]O|NORMATIVA|ADJUNT[AO]|DE|DA|DO|DOS|DAS|E|EM|N[º°O]|MT|ART|LEI|DECRETO|ANEXO|CONSIDERANDO|REGISTRADA|PUBLICADA|CUMPRA-SE|PUBLIQUE-SE|CUIAB[ÁA]|ESCOLA|ESTADUAL|DIRETORIA|REGIONAL|COORDENADORIA|SUPERINTEND[ÊE]NCIA|GEST[ÃA]O|PESSOAS|PROFISSIONAIS|SERVIDOR(ES)?|COMISS[ÃA]O|ANO|ATO)$/;
+  const pessoas = new Set();
+  (t.match(/\b[A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}(?:\s+(?:D[AEO]S?\s+)?[A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}){1,5}\b/g) || []).forEach(s => {
+    const ps = s.split(/\s+/).filter(p => !/^D[AEO]S?$/.test(p));
+    if (ps.length >= 2 && ps.every(p => !comuns.test(p)) && s.length <= 60) pessoas.add(s.toLowerCase().replace(/(^|\s)(\S)/g, (a, b, c) => b + c.toUpperCase()).replace(/\s(D[aeo]s?)\s/g, (a, b) => ' ' + b.toLowerCase() + ' '));
+  });
+  out.pessoas = [...pessoas].slice(0, 8);
+  out.matriculas = (t.match(/matr[íi]cula\s*(?:n[º°o.]*\s*)?[\d.\-/]{4,}/gi) || []).length;
+  const datas = new Set();
+  (t.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/g) || []).forEach(d => datas.add(d));
+  (t.match(/\b\d{1,2}[º°]?\s+de\s+(?:janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+\d{4}\b/gi) || []).forEach(d => datas.add(d.replace(/\s+/g, ' ')));
+  out.datas = [...datas].slice(0, 6);
+  m = t.match(/[^.]*entra(?:rá)? em vigor[^.]*\./i); if (m) out.vigencia = corta(m[0], 200);
+  m = t.match(/[^.]*\brevoga(?:m-se|-se|da|do)?\b[^.]*\./i); if (m) out.revoga = corta(m[0], 220);
+  return out;
+}
+async function textoDoPdf(doc, max = 12) {
+  let txt = '';
+  for (let i = 1; i <= Math.min(doc.numPages, max); i++) { const pg = await doc.getPage(i); const c = await pg.getTextContent(); txt += ' ' + c.items.map(it => it.str).join(' '); }
+  return txt;
+}
+function htmlResumoMinuta(r, estado) {
+  if (estado === 'carregando') return '<p class="rev-res-vazio"><i class="fa-solid fa-circle-notch fa-spin"></i>Lendo a minuta…</p>';
+  if (estado === 'sem') return '<p class="rev-res-vazio"><i class="fa-solid fa-file-circle-xmark"></i>Sem minuta anexada: não há texto para resumir.</p>';
+  if (!r) return '<p class="rev-res-vazio"><i class="fa-solid fa-eye-slash"></i>Não deu para ler o texto da minuta (pode ser um documento digitalizado).</p>';
+  const it = (ico, rot, v) => v ? `<div class="rev-res-it"><i class="fa-solid ${ico}"></i><div class="min-w-0"><small>${rot}</small><p>${v}</p></div></div>` : '';
+  const html = it('fa-quote-left', 'Ementa', esc(r.ementa || '')) + it('fa-gavel', 'Art. 1º', esc(r.art1 || '')) +
+    it('fa-users', 'Pessoas citadas', r.pessoas.length ? r.pessoas.map(p => `<span class="rev-tag">${esc(p)}</span>`).join(' ') + (r.matriculas ? ` <span class="text-ink3 text-[11.5px]">· ${r.matriculas} matrícula(s)</span>` : '') : '') +
+    it('fa-calendar-day', 'Datas no texto', r.datas.map(d => `<span class="rev-tag">${esc(d)}</span>`).join(' ')) +
+    it('fa-power-off', 'Vigência', esc(r.vigencia || '')) + it('fa-eraser', 'Revogação', esc(r.revoga || ''));
+  return (html || '<p class="rev-res-vazio">O texto não segue o padrão de portaria; leia o documento.</p>') + `<p class="rev-res-nota"><i class="fa-solid fa-wand-magic-sparkles"></i>Resumo automático, montado a partir do texto da minuta${r.artigos ? ` (${r.artigos} artigo${r.artigos > 1 ? 's' : ''})` : ''}. Confira no documento.</p>`;
+}
+function ladoRevisao(x) {
+  const a = autPub(x) || { itens: [], hist: [] };
+  const d = diasPub(x);
+  const prazo = x.prazo ? `<b>${fmt(x.prazo)}</b> <span class="rev-prazo ${d !== null && d < 0 ? 'venc' : d !== null && d <= 2 ? 'perto' : ''}">${d === null ? '' : d < 0 ? `venceu há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'vence hoje' : d === 1 ? 'vence amanhã' : `faltam ${d} dias`}</span>` : '<span class="text-ink3">Sem prazo</span>';
+  const HIST = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'] };
+  const hist = (a.hist || []).slice().reverse().map(h => { const [hi, hc, ht] = HIST[h.acao] || ['fa-circle', '#64748b', h.acao]; return `<li style="--c:${hc}"><span class="rev-h-ico"><i class="fa-solid ${hi}"></i></span><div class="min-w-0"><p><b>${esc(h.por || '—')}</b> ${ht}</p>${h.obs ? `<p class="text-ink3 break-words">${esc(h.obs)}</p>` : ''}<time>${dataHoraCurta(h.em)}</time></div></li>`; }).join('');
+  return `
+    <section class="rev-sec">
+      ${prioPub(x) ? '<span class="rev-prio"><i class="fa-solid fa-flag"></i>Prioridade</span>' : ''}
+      <p class="rev-assunto">${esc(x.assunto || 'Sem assunto')}</p>
+      <dl class="rev-dl">
+        <div><dt>Prazo</dt><dd>${prazo}</dd></div>
+        <div><dt>Prioridade</dt><dd>${prioPub(x) ? '<b class="text-red-600">Prioridade</b>' : 'Normal'}</dd></div>
+        ${x.setor ? `<div><dt>Área</dt><dd>${esc(x.setor)}</dd></div>` : ''}
+        ${x.processo ? `<div><dt>Processo</dt><dd>${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 font-bold">${esc(x.processo)} <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>` : esc(x.processo)}</dd></div>` : ''}
+      </dl>
+    </section>
+    <section class="rev-sec">
+      <h4><i class="fa-solid fa-paper-plane"></i>Pedido</h4>
+      <p class="text-[13px]"><b>${esc(a.pedidoPor || '—')}</b> <span class="text-ink3">em ${dataHoraCurta(a.pedidoEm)}</span></p>
+      ${a.mensagem ? `<div class="rev-msg"><i class="fa-solid fa-quote-left"></i>${esc(a.mensagem)}</div>` : ''}
+      <ul class="rev-auts">${a.itens.map(i => { const [c2, i2, r2] = SIT_ITEM_AUT[i.situacao] || SIT_ITEM_AUT.pendente; return `<li style="--c:${c2}"><i class="fa-solid ${i2}"></i><span class="min-w-0 truncate">${esc(i.usuario)}${Utils_norm(i.usuario) === Utils_norm(euAut()) ? ' <em>(você)</em>' : ''}</span><small>${r2}</small></li>`; }).join('')}</ul>
+    </section>
+    <section class="rev-sec">
+      <h4><i class="fa-solid fa-wand-magic-sparkles"></i>Resumo automático</h4>
+      <div id="rev-resumo">${htmlResumoMinuta(null, arqDe(x, 'minuta') ? 'carregando' : 'sem')}</div>
+    </section>
+    ${hist ? `<details class="rev-sec rev-hist" ${a.rodada > 1 ? 'open' : ''}><summary><i class="fa-solid fa-clock-rotate-left"></i>Histórico <small>${(a.hist || []).length}</small></summary><ol>${hist}</ol></details>` : ''}`;
+}
+function abrirRevisao(id) {
+  const x = portaria(id); if (!x) return;
+  Rev.id = id;
+  const pos = Rev.fila.indexOf(id), n = Rev.fila.length;
+  const min = arqDe(x, 'minuta');
+  if (Vis.url) { try { URL.revokeObjectURL(Vis.url); } catch (e) {} }
+  Object.assign(Vis, { id, qual: 'minuta', blob: null, url: '', escala: 1, doc: null, seq: Vis.seq + 1 });
+  const ehMod = modalAberto && modalAberto.tipo === 'revisao';
+  const html = `
+    <div class="vis-topo rev-topo">
+      <span class="vis-ico" style="--c:${AUT_COR}"><i class="fa-solid fa-pen-nib"></i></span>
+      <div class="min-w-0 flex-1"><p class="vis-sel">Revisar e autorizar${prioPub(x) ? ' · <span class="text-red-600">prioridade</span>' : ''}</p><h3 class="vis-tit"><span class="truncate">${esc(nomePub(x))}</span></h3></div>
+      <div class="rev-fila" aria-label="Fila de autorização">
+        <button type="button" onclick="navRevisao(-1)" ${pos <= 0 ? 'disabled' : ''} title="Anterior" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="rev-pos"><b>${pos + 1}</b> de ${n}</span>
+        <button type="button" onclick="navRevisao(1)" ${pos >= n - 1 ? 'disabled' : ''} title="Próxima" aria-label="Próxima"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="vis-zoom rev-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
+      <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="rev-abas" role="tablist"><button type="button" data-a="doc" onclick="abaRevisao('doc')"><i class="fa-solid fa-file-lines"></i>Documento</button><button type="button" data-a="det" onclick="abaRevisao('det')"><i class="fa-solid fa-circle-info"></i>Detalhes e resumo</button></div>
+    <div class="rev-corpo">
+      <div class="vis-palco" id="vis-palco">${min ? `<div class="vis-carregando"><i class="fa-solid fa-circle-notch fa-spin"></i><b>${ehPdfArq(min.nome) ? 'Abrindo o PDF…' : 'Preparando a visualização…'}</b><small>${ehPdfArq(min.nome) ? '' : 'O Word é convertido em PDF pelo Google Drive. Leva alguns segundos.'}</small></div>` : `<div class="vis-carregando erro"><i class="fa-solid fa-file-circle-xmark"></i><b>Sem minuta anexada</b><small>Decida pelos detalhes ao lado ou devolva pedindo a minuta.</small></div>`}</div>
+      <aside class="rev-lado scrollbar-thin" id="rev-lado">${ladoRevisao(x)}</aside>
+    </div>
+    <div class="rev-dev" id="rev-dev" hidden>
+      <label class="block"><span class="rotulo !text-[12.5px]">O que precisa ser corrigido? *</span><textarea class="campo w-full" rows="2" id="rev-obs" maxlength="1000" placeholder="Ex.: corrigir a matrícula do servidor no Art. 1º"></textarea></label>
+      <div class="flex gap-2 justify-end"><button type="button" class="btn btn-sec" onclick="devolverRevisao(false)">Cancelar</button><button type="button" class="btn btn-pri" style="background:#dc2626;border-color:#dc2626" onclick="decidirRevisao('devolver',this)"><i class="fa-solid fa-rotate-left"></i>Confirmar devolução</button></div>
+    </div>
+    <div class="rev-barra">
+      <span class="rev-barra-info">${n > 1 ? `<button type="button" class="btn btn-sec !h-10" onclick="navRevisao(1, true)" ${pos >= n - 1 ? 'disabled' : ''}><i class="fa-solid fa-forward"></i><span>Pular</span></button>` : ''}${min ? `<button type="button" class="btn btn-sec !h-10" onclick="baixarArqPortaria('${id}','${ehPdfArq(min.nome) ? 'original' : 'pdf'}',this,'minuta')" title="Baixar a minuta em PDF"><i class="fa-solid fa-download"></i><span>Baixar</span></button>` : ''}</span>
+      <button type="button" class="rev-bt dev" id="rev-bt-dev" onclick="devolverRevisao(true)"><i class="fa-solid fa-rotate-left"></i><span>Devolver</span></button>
+      <button type="button" class="rev-bt ok" onclick="decidirRevisao('autorizar',this)"><i class="fa-solid fa-circle-check"></i><span>Autorizar</span></button>
+    </div>`;
+  if (ehMod) { const m = document.querySelector('#modal-raiz .modal'); m.innerHTML = html; modalAberto.id = id; }
+  else { abrirModal(html, 'revisao', { id }); const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-xl', 'modal-vis', 'modal-rev'); }
+  abaRevisao(Rev.aba || 'doc');
+  carregarDocRevisao(id, Vis.seq);
+}
+async function carregarDocRevisao(id, seq) {
+  const x = portaria(id); if (!arqDe(x, 'minuta')) return;
+  try {
+    const blob = await pdfParaVer(id, 'minuta');
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    Vis.blob = blob; Vis.url = URL.createObjectURL(blob);
+    await desenharVis(seq);
+    if (seq !== Vis.seq) return;
+    let r = null;
+    try { if (Vis.doc) r = resumoMinuta(await textoDoPdf(Vis.doc)); } catch (e) { r = null; }
+    if (seq === Vis.seq && $('rev-resumo')) $('rev-resumo').innerHTML = htmlResumoMinuta(r);
+  } catch (e) {
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    $('vis-palco').innerHTML = `<div class="vis-carregando erro"><i class="fa-solid fa-triangle-exclamation"></i><b>Não deu para mostrar a minuta</b><small>${esc(e.message || 'Tente baixar o arquivo.')}</small></div>`;
+    if ($('rev-resumo')) $('rev-resumo').innerHTML = htmlResumoMinuta(null);
+  }
+}
+function abaRevisao(a) {
+  Rev.aba = a;
+  const m = document.querySelector('#modal-raiz .modal-rev'); if (!m) return;
+  m.classList.toggle('ver-det', a === 'det');
+  m.querySelectorAll('.rev-abas button').forEach(b => b.classList.toggle('ativo', b.dataset.a === a));
+}
+function navRevisao(d) {
+  const i = Rev.fila.indexOf(Rev.id) + d;
+  if (i < 0 || i >= Rev.fila.length) return;
+  abrirRevisao(Rev.fila[i]);
+}
+function devolverRevisao(abrir) {
+  const box = $('rev-dev'); if (!box) return;
+  box.hidden = !abrir;
+  const b = $('rev-bt-dev'); if (b) b.classList.toggle('ativo', !!abrir);
+  if (abrir) setTimeout(() => $('rev-obs') && $('rev-obs').focus(), 30);
+}
+async function decidirRevisao(acao, btn) {
+  const id = Rev.id;
+  const obs = acao === 'devolver' ? ($('rev-obs') ? $('rev-obs').value.trim() : '') : '';
+  if (acao === 'devolver' && !obs) { toast('Escreva o que precisa ser corrigido.', 'fa-triangle-exclamation'); if ($('rev-obs')) $('rev-obs').focus(); return; }
+  if (btn) btn.disabled = true;
+  const ok = await execAutPub(id, acao, { obs });
+  if (!ok) { if (btn) btn.disabled = false; return; }
+  Rev.feitas++;
+  const x = portaria(id), a = autPub(x);
+  toast(acao === 'devolver' ? 'Devolvida para correção.' : a && a.situacao === 'autorizada' ? 'Autorizada · pronta para publicar.' : 'Autorização registrada.', acao === 'devolver' ? 'fa-rotate-left' : 'fa-circle-check');
+  // próxima da fila (a decidida sai; novas que chegaram entram no fim)
+  const pos = Rev.fila.indexOf(id);
+  const restantes = Rev.fila.filter(k => k !== id && minhaVezAut(portaria(k)));
+  filaRevisao().forEach(k => { if (!restantes.includes(k)) restantes.push(k); });
+  Rev.fila = restantes;
+  if (!restantes.length) { fimRevisao(); return; }
+  abrirRevisao(restantes[Math.min(Math.max(pos, 0), restantes.length - 1)]);
+}
+function fimRevisao() {
+  const m = document.querySelector('#modal-raiz .modal'); if (!m || !modalAberto || modalAberto.tipo !== 'revisao') return;
+  m.innerHTML = `<div class="rev-fim">
+    <span class="rev-fim-ico"><i class="fa-solid fa-circle-check"></i></span>
+    <h3>Tudo decidido!</h3>
+    <p>${Rev.feitas} publicaç${Rev.feitas === 1 ? 'ão decidida' : 'ões decididas'} agora. Não há mais nada aguardando a sua autorização.</p>
+    <button type="button" class="btn btn-pri !h-11 !px-6" onclick="fecharModal()"><i class="fa-solid fa-check"></i>Fechar</button>
+  </div>`;
 }
 async function decidirAut(id, acao, emNome) {
   const obs = ($('aut-obs') && $('aut-obs').value || '').trim();
@@ -6613,7 +6899,7 @@ function abrirFormPortaria(id, foco) {
         ${campo(2, '#64748b', 'fa-folder-open', 'Número do Processo', 'Nº SIGADOC do processo', comIco('fa-hashtag', `<input class="campo campo-g w-full !pl-8" id="pt-processo" value="${esc(x.processo || '')}" placeholder="SEDUC-PRO-2026/00000" autocomplete="off">`))}
         ${campo(3, '#4338ca', 'fa-file-lines', 'Número do documento', 'Como sai no Diário Oficial', comIco('fa-file-lines', `<input class="campo campo-g w-full !pl-8" id="pt-numero" value="${esc(x.numero || '')}" placeholder="Ex.: Portaria nº 000/2026/GS/SEDUC-MT" autocomplete="off">`))}
       </div>
-      ${campo(4, '#0891b2', 'fa-calendar-day', 'Recebimento e prazo', 'Quando chegou ao Gabinete e até quando deve ser publicado', `
+      ${campo(4, '#0891b2', 'fa-calendar-day', 'Recebimento, prazo e prioridade', 'Quando chegou, até quando deve ser publicado e se é prioridade', `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div><p class="pt-sub"><i class="fa-solid fa-inbox"></i>Data de recebimento</p>
             ${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="pt-recebimento" value="${esc(x.recebimento || '')}">`)}
@@ -6622,7 +6908,8 @@ function abrirFormPortaria(id, foco) {
             ${comIco('fa-flag-checkered', `<input type="date" class="campo campo-g w-full !pl-8" id="pt-prazo" value="${esc(x.prazo || '')}" oninput="infoPrazoPub()">`)}
             <div class="flex flex-wrap gap-1.5 mt-2">${[3, 5, 10, 15, 30].map(d => `<button type="button" class="atalho" onclick="$('pt-prazo').value=somaDias(${d});infoPrazoPub();marcarCamposPort()">+${d} dias</button>`).join('')}<button type="button" class="atalho" onclick="$('pt-prazo').value='';infoPrazoPub();marcarCamposPort()">Sem prazo</button></div>
             <p class="text-[12px] font-semibold mt-1.5" id="pt-prazo-info"></p></div>
-        </div>`)}
+        </div>
+        <button type="button" class="pt-prio-tg mt-3 ${prioPub(x) ? 'ativo' : ''}" id="pt-prio" aria-pressed="${prioPub(x)}" onclick="this.classList.toggle('ativo');this.setAttribute('aria-pressed',this.classList.contains('ativo'))"><span class="pt-prio-ico"><i class="fa-solid fa-flag"></i></span><span class="min-w-0"><b>Marcar como prioridade</b><small>A linha fica com contorno vermelho e vai para o topo da lista</small></span><span class="pt-prio-sw" aria-hidden="true"></span></button>`)}
       ${campo(5, '#0f172a', 'fa-align-left', 'Assunto', 'Do que trata o documento', `<textarea class="campo w-full" rows="2" id="pt-assunto" placeholder="Ex.: Designação de comissão de avaliação de estágio probatório">${esc(x.assunto || '')}</textarea>`)}
       ${campo(6, '#d97706', 'fa-sitemap', 'Área solicitante', 'Secretaria adjunta que pediu a publicação: toque em uma', `
         <div class="sec-grade" id="pt-setores">${siglas.map(sg => botaoSec(sg, sg === setorAtual, 'ptset').replace('onclick="alternarChip(this)"', 'onclick="escolherSetorPort(this)"')).join('')}</div>
@@ -6747,7 +7034,7 @@ async function salvarFormPortaria(id) {
   if (link === null) return aviso('O link do processo deve começar com http:// ou https://.');
   const antigo = id ? portaria(id) : null;
   const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
-    tipoDoc: v('pt-tipo'), processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), prazo: v('pt-prazo'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), status: statusFormPub(), link, atualizadoEm: new Date().toISOString() };
+    tipoDoc: v('pt-tipo'), processo: v('pt-processo'), numero: v('pt-numero'), recebimento: v('pt-recebimento'), prazo: v('pt-prazo'), assunto: v('pt-assunto'), setor: v('pt-setor').toUpperCase(), status: statusFormPub(), prioridade: $('pt-prio').classList.contains('ativo') ? 'Sim' : '', link, atualizadoEm: new Date().toISOString() };
   const btn = $('btn-port-salvar'); btn.disabled = true;
   try {
     for (const q of Object.keys(PUB_ARQS)) {
@@ -6772,7 +7059,7 @@ async function salvarFormPortaria(id) {
 }
 /** Abertas primeiro (mais recentes no topo); publicadas no fim. */
 const ordemPortRec = (a, b) => String(b.recebimento || '').localeCompare(String(a.recebimento || '')) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || ''));
-const ordemPort = (a, b) => { const da = diasPub(a), db = diasPub(b); if (da !== null || db !== null) { if (da === null) return 1; if (db === null) return -1; if (da !== db) return da - db; } return ordemPortRec(a, b); };
+const ordemPort = (a, b) => { if (pesoPrioPub(a) !== pesoPrioPub(b)) return pesoPrioPub(a) - pesoPrioPub(b); const da = diasPub(a), db = diasPub(b); if (da !== null || db !== null) { if (da === null) return 1; if (db === null) return -1; if (da !== db) return da - db; } return ordemPortRec(a, b); };
 /* ----- Publicações: estatísticas, cabeçalho e painéis ----- */
 const mesesAte = n => { const m = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); m.push(iso(d).slice(0, 7)); } return m; };
 const MES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -6854,7 +7141,7 @@ function renderPortarias() {
   renderGrade(cont, {
     id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
     topo: `${caixaAutPub(todas)}${alertaPrazosPub(todas)}<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, `${tipos.length} tipo(s) de documento`, '')}
+      ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, todas.some(x => !pubFeita(x) && prioPub(x)) ? `<span class="text-red-600 font-bold"><i class="fa-solid fa-flag mr-1"></i>${todas.filter(x => !pubFeita(x) && prioPub(x)).length} prioridade(s)</span>` : `${tipos.length} tipo(s) de documento`, todas.some(x => !pubFeita(x) && prioPub(x)) ? 'prio' : '')}
       ${kpi(AUT_COR, 'fa-file-signature', 'Em autorização', conta('Aguardando Autorização'), paraMimAut().length ? `<span class="font-bold" style="color:${AUT_COR}">${paraMimAut().length} para você autorizar</span>` : `${todas.filter(x => (autPub(x) || {}).situacao === 'autorizada' && !pubFeita(x)).length} autorizada(s) a publicar`, 'aut')}
       ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), todas.some(pubVencida) ? `<span class="text-red-600 font-bold">${todas.filter(pubVencida).length} com prazo vencido</span>` : `${todas.filter(pubAVencer).length} vencem em até ${PUB_ALERTA} dias`, 'agu')}
       ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
@@ -6883,8 +7170,8 @@ function renderPortarias() {
     larguraAcoes: 166,
     finalizado: pubFeita,
     ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPortRec),
-    classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
-    chips: [['', L('filtro.todos'), () => true, PORT_COR]].concat(paraMimAut().length ? [['minha', 'Para eu autorizar', x => !!minhaVezAut(x), AUT_COR]] : []).concat([['aut', 'Em autorização', x => statusPub(x) === 'Aguardando Autorização', AUT_COR], ['autok', 'Autorizadas', x => (autPub(x) || {}).situacao === 'autorizada', '#16a34a'], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
+    classeLinha: x => pubFeita(x) ? 'gs-feito' : prioPub(x) ? 'gs-urg' : '',
+    chips: [['', L('filtro.todos'), () => true, PORT_COR]].concat(paraMimAut().length ? [['minha', 'Para eu autorizar', x => !!minhaVezAut(x), AUT_COR]] : []).concat([['aut', 'Em autorização', x => statusPub(x) === 'Aguardando Autorização', AUT_COR], ['prio', 'Prioridade', x => !pubFeita(x) && prioPub(x), '#dc2626'], ['autok', 'Autorizadas', x => (autPub(x) || {}).situacao === 'autorizada', '#16a34a'], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
             ['venc', 'Prazo vencido', pubVencida, '#dc2626'], ['breve', `Vencem em até ${PUB_ALERTA} dias`, pubAVencer, '#ea580c'], ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']])
       .concat(tipos.slice(0, 6).map(t => ['tipo:' + t, t, x => x.tipoDoc === t, tipoPub(t)[2]])),
     aoEditarCampos: editarPortCampos,
@@ -6907,6 +7194,9 @@ function renderPortarias() {
       if (minhaVezAut(x)) itens.push({ rot: 'Autorizar ou devolver', ico: 'fa-pen-nib', cor: '#16a34a', fn: () => abrirAutPub(x.id) });
       if (a) itens.push({ rot: 'Ver a autorização', ico: 'fa-file-signature', cor: AUT_COR, fn: () => abrirAutPub(x.id) });
       if (!autPendente(x) && !pubFeita(x)) itens.push({ rot: a && a.situacao !== 'cancelada' ? 'Pedir autorização de novo' : 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'sol:2', fn: () => abrirPedirAut(x.id) });
+      if (!pubFeita(x)) {
+        itens.push({ sep: true }, prioPub(x) ? { rot: 'Retirar a prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'sol:2', fn: () => editarPortCampos(x, { prioridade: '' }) } : { rot: 'Marcar como prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'sol:2', fn: () => editarPortCampos(x, { prioridade: 'Sim' }) });
+      }
       if (!autPendente(x)) {
         itens.push({ sep: true }, { titulo: 'Mudar o status para' });
         PUB_STATUS_MANUAIS.filter(s => s !== statusPub(x)).forEach(s => itens.push({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => editarPortCampos(x, { status: s }) }));
@@ -6924,7 +7214,8 @@ function renderPortarias() {
       if (pode('sol:3')) itens.push({ rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirPortariaId(x.id) });
       return itens;
     },
-    acoesLote: PUB_STATUS_MANUAIS.map(s => ({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', campos: () => ({ status: s }), filtro: r => !autPendente(r) })),
+    acoesLote: PUB_STATUS_MANUAIS.map(s => ({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', campos: () => ({ status: s }), filtro: r => !autPendente(r) }))
+      .concat([{ rot: 'Marcar como prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'sol:2', campos: () => ({ prioridade: 'Sim' }) }, { rot: 'Retirar a prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'sol:2', campos: () => ({ prioridade: '' }) }]),
     novaLinha: () => abrirFormPortaria(), textoNovaLinha: 'Nova publicação (abre o formulário)',
     textoVazio: 'Nenhuma publicação cadastrada.',
     botaoNovo: `<button class="btn btn-pri !h-9" style="background:${PORT_COR};border-color:${PORT_COR}" onclick="abrirFormPortaria()"><i class="fa-solid fa-plus"></i>Nova publicação</button>`
