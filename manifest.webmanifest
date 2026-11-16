@@ -1,8 +1,10 @@
 {
-  "name": "GABDoc · Assessoria de Secretária",
-  "short_name": "GABDoc",
-  "description": "Controle de assinaturas, ofícios, despachos, urgências e demandas da Casa Civil do Gabinete da SEDUC-MT.",
   "id": "./",
+  "name": "GABDoc · Gabinete SEDUC-MT",
+  "short_name": "GABDoc",
+  "description": "Processos, assinaturas, prazos, publicações, agenda e eventos do Gabinete da Secretária de Estado de Educação de Mato Grosso.",
+  "lang": "pt-BR",
+  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -10,16 +12,23 @@
   "orientation": "any",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "lang": "pt-BR",
-  "categories": ["productivity", "business"],
+  "categories": ["productivity", "business", "education"],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icones/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icones/icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Mesa da Secretária", "url": "./#mesa", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Prazos", "url": "./#prazos", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Nova solicitação", "url": "./#nova", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Resumo do dia", "short_name": "Hoje", "url": "./#hoje", "icons": [{ "src": "icones/icone-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Nova solicitação", "short_name": "Nova", "url": "./#nova", "icons": [{ "src": "icones/icone-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Prazos", "url": "./#prazos", "icons": [{ "src": "icones/icone-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Agenda", "url": "./#agenda", "icons": [{ "src": "icones/icone-96.png", "sizes": "96x96", "type": "image/png" }] }
+  ],
+  "screenshots": [
+    { "src": "icones/tela-1.png", "sizes": "780x1688", "type": "image/png", "form_factor": "narrow", "label": "Resumo do dia" },
+    { "src": "icones/tela-2.png", "sizes": "780x1688", "type": "image/png", "form_factor": "narrow", "label": "Processos em cartões" },
+    { "src": "icones/tela-3.png", "sizes": "780x1688", "type": "image/png", "form_factor": "narrow", "label": "Eventos e participação da Secretária" }
   ]
 }
