@@ -47,9 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.57.1">
+<meta name="gabdoc-versao" content="1.58.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Perfis: aviso claro quando o Apps Script ainda não foi atualizado para liberar \"Autoriza publicações\""
+  "Chefe de Gabinete: os prazos das Publicações aparecem em \"Prazos do Chefe de Gabinete\"",
+  "Pedir autorização: e-mail caprichado para cada autoridade escolhida, com botão para abrir o GABDoc",
+  "Ao escolher as autoridades, mostra quem recebe por e-mail e quem está sem e-mail cadastrado"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1031,6 +1033,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .aut-op:hover { border-color: color-mix(in srgb, #7c3aed 45%, var(--line)); }
   .aut-op b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .aut-op small { display: block; font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aut-op-mail { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; font-size: 10.5px; font-weight: 700; color: #b45309; }
+  .aut-op-mail.ok { color: #0f766e; }
+  .aut-op-mail :is(i, svg) { font-size: 9.5px; }
   .aut-op-av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 12px; font-weight: 900; color: #7c3aed; background: color-mix(in srgb, #7c3aed 12%, var(--card)); }
   .aut-op-ck { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: none; font-size: 11px; color: transparent; border: 2px solid var(--line); }
   .aut-op.ativo { border-color: #7c3aed; background: color-mix(in srgb, #7c3aed 7%, var(--card)); }
@@ -5765,7 +5770,7 @@ const euAut = () => Store.modo === 'planilha' ? ((Store.sessao && Store.sessao.u
 const podeAutorizar = () => Store.modo !== 'planilha' || !!(Store.sessao && Store.sessao.permissoes && Store.sessao.permissoes.autorizar);
 /** Autoridades que podem ser chamadas a autorizar. */
 function listaAutorizadores() {
-  if (Store.modo === 'planilha') return (Store.autorizadores || []).map(u => ({ usuario: u.usuario, cargo: u.cargo || '', perfil: u.perfil || '' }));
+  if (Store.modo === 'planilha') return (Store.autorizadores || []).map(u => ({ usuario: u.usuario, cargo: u.cargo || '', perfil: u.perfil || '', temEmail: u.temEmail }));
   return autoridadesAtivas().map(a => ({ usuario: a.nome, cargo: a.cargo || '', perfil: '' }));
 }
 /** Item do pedido que espera a MINHA decisão (planilha: o meu usuário). */
@@ -5839,13 +5844,22 @@ async function execAutPub(id, acao, dados = {}) {
   if (Store.modo === 'planilha') {
     trocarNaLista(Store.portarias, id, novo); aoMudarDados();
     const payload = { id, acao }; ['autorizadores', 'mensagem', 'obs'].forEach(k => { if (dados[k] !== undefined) payload[k] = dados[k]; });
+    if (/^https:/.test(location.href)) payload.appUrl = location.origin + location.pathname;
     tarefaGrav({ rotulo: rot, detalhe: nomePub(x), icone: 'fa-file-signature',
       executar: async () => { await esperarGravacaoPub(id); return API.post('pub_autorizacao', payload, 60000); },
-      aoOk: res => { if (res && res.publicacao) { trocarNaLista(Store.portarias, id, { ...res.publicacao, id }); aoMudarDados(); } },
+      aoOk: res => { if (res && res.publicacao) { trocarNaLista(Store.portarias, id, { ...res.publicacao, id }); aoMudarDados(); } avisoEmailAut(acao, res && res.emails); },
       aoErro: () => { const atual = portaria(id); if (atual && atual.autorizacao === novo.autorizacao) { trocarNaLista(Store.portarias, id, x); aoMudarDados(); } } });
     return true;
   }
   return salvarPortaria(id, semId(novo), rot);
+}
+/** Depois do pedido: diz por e-mail a quem foi (e quem ficou sem, por não ter e-mail cadastrado). */
+function avisoEmailAut(acao, em) {
+  if (!em || (acao !== 'solicitar' && acao !== 'lembrar')) return;
+  const lista = l => l.length === 1 ? l[0] : l.slice(0, -1).join(', ') + ' e ' + l[l.length - 1];
+  if (em.erro) { toast('O pedido foi registrado, mas o e-mail não saiu: ' + em.erro, 'fa-triangle-exclamation'); return; }
+  if (em.enviados && em.enviados.length && !(em.semEmail || []).length) { toast('E-mail enviado para ' + lista(em.enviados) + '.', 'fa-envelope-circle-check'); return; }
+  if ((em.semEmail || []).length) toast(`${em.enviados && em.enviados.length ? 'E-mail enviado para ' + lista(em.enviados) + '. ' : ''}Sem e-mail cadastrado: ${lista(em.semEmail)} (veja só no GABDoc). Cadastre o e-mail em Administração › Usuários.`, 'fa-envelope');
 }
 /* --- célula "Autorização" na planilha --- */
 function celAutPub(x) {
@@ -5900,7 +5914,7 @@ function cartoesAutoridades(selecionados = [], idCont = 'aut-escolha') {
   if (!lista.length) return `<div class="aut-vazio"><i class="fa-solid fa-user-shield"></i><div><b>Nenhuma autoridade autorizadora ainda.</b><p>${Store.modo === 'planilha' ? 'Peça ao Administrador: em <b>Administração › Perfis e permissões</b>, ligue “Autoriza publicações” no perfil de quem autoriza (ex.: Secretária, Chefe de Gabinete).' : 'Cadastre as autoridades em <b>Administração › Personalização › Autoridades</b>.'}</p></div></div>`;
   const sel = new Set(selecionados.map(Utils_norm));
   return `<div class="aut-escolha" id="${idCont}">${lista.map(u => { const on = sel.has(Utils_norm(u.usuario)); return `<button type="button" class="aut-op ${on ? 'ativo' : ''}" data-v="${esc(u.usuario)}" aria-pressed="${on}" onclick="this.classList.toggle('ativo');this.setAttribute('aria-pressed',this.classList.contains('ativo'));if(window.marcarCamposPort)marcarCamposPort()">
-      <span class="aut-op-av">${esc(iniciais(u.usuario))}</span><span class="min-w-0 flex-1 text-left"><b>${esc(u.usuario)}</b><small>${esc(u.cargo || u.perfil || 'Autoridade autorizadora')}</small></span><span class="aut-op-ck"><i class="fa-solid fa-check"></i></span></button>`; }).join('')}</div>`;
+      <span class="aut-op-av">${esc(iniciais(u.usuario))}</span><span class="min-w-0 flex-1 text-left"><b>${esc(u.usuario)}</b><small>${esc(u.cargo || u.perfil || 'Autoridade autorizadora')}</small>${u.temEmail === undefined ? '' : u.temEmail ? '<span class="aut-op-mail ok"><i class="fa-solid fa-envelope"></i>recebe por e-mail</span>' : '<span class="aut-op-mail"><i class="fa-solid fa-envelope-open"></i>sem e-mail cadastrado</span>'}</span><span class="aut-op-ck"><i class="fa-solid fa-check"></i></span></button>`; }).join('')}</div>`;
 }
 const autEscolhidos = (idCont = 'aut-escolha') => [...document.querySelectorAll(`#${idCont} .aut-op.ativo`)].map(b => b.dataset.v);
 function heroAut(x, sub) {
@@ -6508,6 +6522,8 @@ function prazosChefe() {
   Store.solChefe.filter(s => !FEITO(s) && s.prazo).forEach(s => out.push({ tipo: ehProcesso(s) ? 'proc' : 'ass', id: s.id, titulo: s.assunto, numero: s.numero, prazo: s.prazo, dias: diasAte(s.prazo), urgente: s.urgente }));
   if (podeContratacoes()) (Store.contratacoes || []).filter(x => x.status === 'Aguardando Entrevista' && x.entrevista).forEach(x => out.push({ tipo: 'contr', id: x.id, titulo: 'Entrevista: ' + x.nome, numero: x.cargo, prazo: x.entrevista, dias: diasAte(x.entrevista) }));
   (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => out.push({ tipo: 'simec', id: x.id, titulo: x.assunto, numero: x.numero || x.modulo, prazo: x.prazo, dias: diasAte(x.prazo) }));
+  // Publicações com prazo (não publicadas): portarias, editais… que precisam sair no Diário Oficial
+  (Store.portarias || []).filter(x => !pubFeita(x) && x.prazo).forEach(x => out.push({ tipo: 'pub', id: x.id, titulo: x.assunto || nomePub(x), numero: nomePub(x) + (autPendente(x) ? ' · em autorização' : ''), prazo: x.prazo, dias: diasAte(x.prazo), urgente: !!minhaVezAut(x) }));
   return out.filter(x => x.dias <= 7).sort((a, b) => a.dias - b.dias || (!!b.urgente - !!a.urgente));
 }
 
@@ -7275,8 +7291,8 @@ function renderChefe() {
   const kpi = (cor, ico, rot, val, sub, aba) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="irPara('${aba}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
   const dado = (ico, txt, href) => txt ? (href ? `<a href="${href}" target="_blank" rel="noopener"><i class="fa-solid ${ico}"></i>${esc(txt)}</a>` : `<span><i class="fa-solid ${ico}"></i>${esc(txt)}</span>`) : '';
   const tel = String(info.telefone || '').replace(/\D/g, '');
-  const tipoPz = { proc: ['fa-folder-open', '#b45309', 'Processo'], ass: ['fa-file-signature', '#2563eb', 'Documento'], simec: ['fa-building-flag', '#0d9488', 'SIMEC'], contr: ['fa-user-clock', '#c2410c', 'Contratação de pessoal'] };
-  const abrirPz = x => x.tipo === 'simec' ? `abrirFormSimec('${x.id}')` : x.tipo === 'contr' ? `abrirFormContratacao('${x.id}')` : `abrirDetalhe('${x.id}')`;
+  const tipoPz = { proc: ['fa-folder-open', '#b45309', 'Processo'], ass: ['fa-file-signature', '#2563eb', 'Documento'], simec: ['fa-building-flag', '#0d9488', 'SIMEC'], contr: ['fa-user-clock', '#c2410c', 'Contratação de pessoal'], pub: ['fa-newspaper', '#4f46e5', 'Publicação'] };
+  const abrirPz = x => x.tipo === 'pub' ? (minhaVezAut(portaria(x.id)) ? `abrirAutPub('${x.id}')` : `abrirFormPortaria('${x.id}')`) : x.tipo === 'simec' ? `abrirFormSimec('${x.id}')` : x.tipo === 'contr' ? `abrirFormContratacao('${x.id}')` : `abrirDetalhe('${x.id}')`;
   const kt = podeContratacoes() ? (Store.contratacoes || []).filter(x => !contrFeita(x)) : null;
   const ultimas = ch.flatMap(s => (s.historico || []).map(h => ({ h, s }))).sort((a, b) => String(b.h.em).localeCompare(String(a.h.em))).slice(0, 6);
   c.innerHTML = `<div class="space-y-4">
@@ -7296,7 +7312,7 @@ function renderChefe() {
       ${kpi('#2563eb', 'fa-file-signature', 'Para assinatura', assA.length, 'em aberto', 'chefe-ass')}
       ${kpi('#1e40af', 'fa-id-card', 'Nomeações e exonerações', (Store.nomeacoes || []).filter(x => !nomFeita(x)).length, 'em aberto', 'nomeacoes')}
       ${kpi('#0d9488', 'fa-building-flag', 'SIMEC', smA.length, 'demandas em aberto', 'simec')}
-      ${kpi('#dc2626', 'fa-circle-exclamation', 'Vencidos', venc.length, 'processos, documentos e SIMEC', venc[0] && venc[0].tipo === 'simec' ? 'simec' : 'chefe-proc')}
+      ${kpi('#dc2626', 'fa-circle-exclamation', 'Vencidos', venc.length, 'processos, documentos, SIMEC e publicações', venc[0] && venc[0].tipo === 'simec' ? 'simec' : venc[0] && venc[0].tipo === 'pub' ? 'portarias' : 'chefe-proc')}
       ${kpi('#ea580c', 'fa-hourglass-half', 'Vencem em 7 dias', prox.length, 'atenção nos próximos dias', 'chefe-proc')}
       ${kpi('#dc2626', 'fa-flag', 'Prioridades', prio.length, 'marcadas como prioridade', 'chefe-proc')}
     </div>
