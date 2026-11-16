@@ -47,12 +47,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.61.0">
+<meta name="gabdoc-versao" content="1.62.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Eventos: novas visualizações em Cartões, Calendário e Mapa de MT, além da Planilha",
-  "Eventos: anexe o Briefing do evento em PDF e veja direto no sistema",
-  "Comunicados: Mural organizado por prioridade e Calendário de publicação e validade",
-  "Relatórios próprios de Eventos (com mapa) e de Comunicados, com filtros"
+  "Eventos: a Assessoria solicita a participação da Secretária e o Chefe de Gabinete confirma, indica representante ou recusa",
+  "Eventos: o Chefe de Gabinete recebe o pedido por e-mail e no Resumo do dia",
+  "Eventos: tela do evento redesenhada, com contagem regressiva, etapas, dias, mapa do município e organização",
+  "Eventos: saiu a opção \"Incluir na Agenda da Secretária\""
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1047,6 +1047,115 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .aut-av:first-child { margin-left: 0; }
   .gs-compacto .aut-cel .aut-rot { display: none; }
   .gs-compacto .aut-cel:not(:has(.aut-avs)) { padding: 0 8px; }
+  /* ----- Participação da Secretária e detalhes do evento ----- */
+  .evp-cel { --c: #0d9488; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800; white-space: nowrap; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); }
+  .evp-cel.minha { --c: #16a34a; color: #fff; background: #16a34a; border-color: #16a34a; animation: autPulso 2.2s infinite; }
+  .gs-compacto .evp-cel span { display: none; }
+  .aut-pedir[style*="--c"] { color: var(--c); border-color: color-mix(in srgb, var(--c) 55%, transparent); background: color-mix(in srgb, var(--c) 6%, var(--card)); }
+  .evp { --c: #94a3b8; border-radius: 16px; padding: 14px; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 9%, var(--card)), var(--card) 70%); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 15%, transparent); display: flex; flex-direction: column; gap: 11px; scroll-margin-top: 10px; }
+  .evp-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--c) 75%, var(--ink)); }
+  .evp-status { display: flex; align-items: center; gap: 11px; }
+  .evp-ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; flex: none; font-size: 18px; color: #fff; background: var(--c); box-shadow: 0 6px 16px -6px var(--c); }
+  .evp-status > div > b { display: block; font-size: 15.5px; font-weight: 800; color: var(--ink); line-height: 1.25; }
+  .evp-status > div > small { display: block; font-size: 12.5px; color: var(--ink3); margin-top: 2px; }
+  .evp-msg { position: relative; font-size: 13px; color: var(--ink2, var(--ink)); background: var(--card2); border-radius: 11px; padding: 9px 12px 9px 32px; font-style: italic; }
+  .evp-msg i { position: absolute; left: 11px; top: 11px; font-size: 11px; color: var(--c); }
+  .evp-vez { font-size: 12px; font-weight: 800; color: var(--ink2, var(--ink)); display: flex; align-items: center; gap: 6px; }
+  .evp-vez i, .evp-vez svg { color: #16a34a; }
+  .evp-decs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 560px) { .evp-decs { grid-template-columns: 1fr; } }
+  .evp-dec { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: 12px; text-align: left; border: 1.5px solid color-mix(in srgb, var(--c) 35%, var(--line)); background: var(--card); transition: background .15s, border-color .15s, transform .1s; }
+  .evp-dec:hover { background: color-mix(in srgb, var(--c) 8%, var(--card)); border-color: var(--c); }
+  .evp-dec:active { transform: scale(.98); }
+  .evp-dec > :is(i, svg) { width: 32px !important; height: 32px; padding: 8px; border-radius: 10px; flex: none; color: #fff; background: var(--c); box-sizing: border-box; }
+  .evp-dec b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+  .evp-dec small { display: block; font-size: 11px; color: var(--ink3); margin-top: 1px; }
+  .evp-dec.ativo { border-color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 20%, transparent); }
+  .evp-dec.atual b::after { content: ' · atual'; font-weight: 600; color: var(--ink3); }
+  .evp-mudar summary { cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; gap: 6px; list-style: none; }
+  .evp-mudar summary::-webkit-details-marker { display: none; }
+  .evp-mudar[open] summary { margin-bottom: 8px; color: var(--ink); }
+  .evp-linha { display: flex; flex-wrap: wrap; gap: 8px; }
+  .evp-form { --c: #0d9488; display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: var(--card); border: 1.5px solid color-mix(in srgb, var(--c) 45%, var(--line)); }
+  .evp-form[hidden] { display: none; }
+  .evp-hist summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; gap: 6px; list-style: none; }
+  .evp-hist summary::-webkit-details-marker { display: none; }
+  .evp-hist summary small { font-size: 10.5px; padding: 0 6px; border-radius: 99px; background: var(--card2); }
+  .evp-hist ol { margin-top: 10px; display: flex; flex-direction: column; gap: 0; }
+  .evp-hist li { display: flex; gap: 10px; position: relative; padding-bottom: 10px; }
+  .evp-hist li:not(:last-child)::before { content: ''; position: absolute; left: 12px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .evp-hist-ico { width: 26px; height: 26px; border-radius: 99px; display: grid; place-items: center; flex: none; font-size: 10.5px; color: #fff; background: var(--c); }
+  .evp-hist p { font-size: 12.5px; color: var(--ink); }
+  .evp-hist .evp-hist-obs { color: var(--ink3); font-style: italic; }
+  .evp-hist time { font-size: 11px; color: var(--ink3); }
+  .evp-mini { --c: #64748b; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; padding: 8px 11px; border-radius: 10px; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); }
+  .evp-pedir { display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; border-radius: 12px; border: 1.5px dashed color-mix(in srgb, #0d9488 45%, var(--line)); background: color-mix(in srgb, #0d9488 5%, var(--card)); cursor: pointer; }
+  .evp-pedir input { margin-top: 2px; accent-color: #0d9488; }
+  .evp-pedir b { display: block; font-size: 13.5px; color: var(--ink); }
+  .evp-pedir small { display: block; font-size: 12px; color: var(--ink3); }
+  .evp-pedir:has(input:checked) { border-style: solid; background: color-mix(in srgb, #0d9488 10%, var(--card)); }
+  .modal-evx { max-width: 980px !important; }
+  .evx-hero-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 13px; color: rgba(255,255,255,.9); }
+  .evx-hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+  .evx-hero-meta :is(i, svg) { opacity: .75; }
+  .evx-cont { flex: none; text-align: center; min-width: 76px; padding: 7px 10px; border-radius: 14px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); color: #fff; line-height: 1.05; }
+  .evx-cont b { display: block; font-size: 28px; font-weight: 900; letter-spacing: -.02em; }
+  .evx-cont small { display: block; font-size: 10px; font-weight: 700; color: rgba(255,255,255,.8); max-width: 80px; margin: 2px auto 0; }
+  .evx-cont.passado { opacity: .75; }
+  .evx-cont.txt :is(i, svg) { font-size: 20px; margin-bottom: 4px; }
+  @media (max-width: 560px) { .evx-cont { display: none; } }
+  .evx-passos { display: flex; margin-top: 16px; counter-reset: p; }
+  .evx-passos li { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+  .evx-passos li::before { content: ''; position: absolute; top: 14px; left: -50%; right: 50%; height: 3px; background: rgba(255,255,255,.18); border-radius: 3px; }
+  .evx-passos li:first-child::before { display: none; }
+  .evx-passos li.feito::before, .evx-passos li.atual::before { background: rgba(255,255,255,.75); }
+  .evx-passos li span { position: relative; z-index: 1; width: 30px; height: 30px; border-radius: 99px; display: grid; place-items: center; font-size: 12px; color: rgba(255,255,255,.6); background: #3a1840; border: 2px solid rgba(255,255,255,.22); }
+  .evx-passos li.feito span { background: #fff; color: var(--c); border-color: #fff; }
+  .evx-passos li.atual span { background: var(--c); color: #fff; border-color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 40%, transparent); }
+  .evx-passos li em { font-style: normal; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .evx-passos li.atual em, .evx-passos li.feito em { color: #fff; }
+  .evx-passos.fora { opacity: .45; }
+  .evx-fora { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #fff; padding: 3px 10px; border-radius: 99px; background: var(--c); }
+  .evx-corpo { background: var(--card2); }
+  .evx-grade { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 760px) { .evx-grade { grid-template-columns: 1fr; } }
+  .evx-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .evx-card { --c: #c026d3; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 13px 14px; display: flex; flex-direction: column; gap: 11px; }
+  .evx-card h4 { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+  .evx-card h4 > :is(i, svg) { width: 24px !important; height: 24px; padding: 6px; border-radius: 8px; box-sizing: border-box; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .evx-dias { display: flex; flex-wrap: wrap; gap: 6px; }
+  .evx-dia { width: 50px; display: flex; flex-direction: column; align-items: center; padding: 5px 0 6px; border-radius: 11px; background: color-mix(in srgb, #c026d3 7%, var(--card)); border: 1px solid color-mix(in srgb, #c026d3 22%, var(--line)); line-height: 1.05; }
+  .evx-dia em { font-style: normal; font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: #c026d3; letter-spacing: .05em; }
+  .evx-dia b { font-size: 19px; font-weight: 900; color: var(--ink); margin: 1px 0; }
+  .evx-dia small { font-size: 10px; color: var(--ink3); font-weight: 600; }
+  .evx-dia.hoje { background: #c026d3; border-color: #c026d3; } .evx-dia.hoje :is(em, b, small) { color: #fff; }
+  .evx-dia.passou { opacity: .55; }
+  .evx-dia.mais { justify-content: center; background: var(--card2); }
+  .evx-ls { display: flex; flex-direction: column; gap: 9px; }
+  .evx-l { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+  .evx-l > :is(i, svg) { width: 16px !important; margin-top: 3px; color: var(--ink3); flex: none; font-size: 13px; }
+  .evx-l small { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+  .evx-l b { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+  .evx-onde { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; align-items: center; }
+  @media (max-width: 400px) { .evx-onde { grid-template-columns: 96px minmax(0, 1fr); } }
+  .evx-mapa { width: 100%; height: auto; }
+  .evx-mapa path { fill: var(--mapa-vazio, #e2e8f0); stroke: var(--card); stroke-width: 1.2; }
+  .evx-mapa path.on { fill: #2563eb; }
+  .evx-mapa .pino { fill: #dc2626; stroke: #fff; stroke-width: 5; }
+  .evx-mapa .pulso { fill: #dc2626; opacity: .25; transform-box: fill-box; transform-origin: center; animation: evxPulso 1.8s ease-out infinite; }
+  @keyframes evxPulso { from { transform: scale(.5); opacity: .45; } to { transform: scale(1.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .evx-mapa .pulso, .evp-cel.minha { animation: none; } }
+  .evx-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #2563eb; }
+  .evx-link:hover { text-decoration: underline; }
+  .evx-secs { display: flex; flex-direction: column; gap: 6px; }
+  .evx-sec { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 11px; background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 22%, var(--line)); }
+  .evx-sec > :is(i, svg) { width: 28px !important; height: 28px; padding: 7px; border-radius: 9px; box-sizing: border-box; color: #fff; background: var(--c); flex: none; }
+  .evx-sec b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); }
+  .evx-sec small { display: block; font-size: 11.5px; color: var(--ink3); }
+  .evx-obs { font-size: 13.5px; color: var(--ink); white-space: pre-wrap; line-height: 1.5; padding-left: 10px; border-left: 3px solid #d97706; }
+  .evx-reg { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--ink3); padding: 0 4px; }
+  .evx-reg span { display: inline-flex; align-items: center; gap: 6px; }
+  .evx-card .ev-brief { border-radius: 12px; }
   /* ----- Eventos e Comunicados: cartões, calendário, mapa ----- */
   :root { --mapa-vazio: #eef2f7; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mapa-vazio: #1e293b; } }
@@ -3243,7 +3352,7 @@ async function salvarEvento(id, dados, rotulo) {
   const novo = !id;
   if (!gravaEmFila()) {
     if (novo) id = 'ev' + Date.now();
-    trocarNaLista(Store.eventos, id, { ...dados, id }); aoMudarDados(); return true;
+    trocarNaLista(Store.eventos, id, { ...dados, id }); aoMudarDados(); return id;
   }
   const antigo = novo ? null : Store.eventos.find(x => x.id === id);
   if (novo) id = novoIdLocal('E');
@@ -3254,7 +3363,7 @@ async function salvarEvento(id, dados, rotulo) {
     detalhe: [dados.titulo, dados.dataInicio ? fmt(dados.dataInicio) : ''].filter(Boolean).join(' · '),
     action: 'salvar_evento', payload: { id, criarComId: novo, dados: semId(dados) },
     nuvem: () => Store.db.collection('eventos').doc(ref).set(semId(dados)) });
-  return true;
+  return id;
 }
 async function excluirEventoId(id) {
   const e = Store.eventos.find(x => x.id === id);
@@ -3544,6 +3653,10 @@ function gerarExemplos() {
     E('Solenidade Professor Destaque', 35, 35, '19:00', 'Cuiabá', 'Teatro da UFMT', 'GS', 'Professores premiados', 'A confirmar', 'Planejamento'),
     E('Encontro estadual de coordenadores pedagógicos', -10, -9, '08:00', 'Várzea Grande', 'Centro de convenções', 'SAGE', '450 coordenadores', 'Presença confirmada', 'Realizado')
   ];
+  // exemplos com o fluxo de participação: um aguardando o Chefe de Gabinete e um já decidido
+  { const ped = new Date(Date.now() - 864e5).toISOString(), dec = new Date(Date.now() - 3 * 36e5).toISOString();
+    Object.assign(eventos[2], { partPedido: JSON.stringify({ situacao: 'pendente', pedidoEm: ped, pedidoPor: 'Assessoria', mensagem: 'A organização convidou a Secretária para a abertura oficial.', hist: [{ em: ped, por: 'Assessoria', acao: 'solicitou', obs: 'A organização convidou a Secretária para a abertura oficial.' }] }) });
+    Object.assign(eventos[3], { partPedido: JSON.stringify({ situacao: 'decidida', pedidoEm: ped, pedidoPor: 'Assessoria', mensagem: '', decisao: 'representar', decididoEm: dec, decididoPor: 'Chefe de Gabinete', obs: 'Agenda em Brasília no mesmo dia', representante: 'Secretário Adjunto da SAGP', hist: [{ em: ped, por: 'Assessoria', acao: 'solicitou', obs: '' }, { em: dec, por: 'Chefe de Gabinete', acao: 'indicou representante', obs: 'Secretário Adjunto da SAGP · Agenda em Brasília no mesmo dia' }] }) }); }
   const M = (titulo, categoria, prioridade, conteudo, secretaria, pub, val, fixado) => ({ exemplo: true, titulo: '[Exemplo] ' + titulo, categoria, prioridade, conteudo, secretaria, publicadoEm: h(pub), validoAte: val === null ? '' : h(val), fixado, referencia: '', arquivado: false, criadoPor: 'Assessoria' });
   const comunicados = [
     M('Prazo final para atualização do Censo Escolar', 'Prazo', 'Urgente', 'Todas as unidades escolares devem concluir a atualização das matrículas no sistema do Censo Escolar até a data indicada. Dúvidas com a coordenação de estatística da SAGE.', 'SAGE', 0, 10, true),
@@ -3747,11 +3860,12 @@ function emLote(fn) { renderAdiado++; try { return fn(); } finally { if (--rende
 let resumoMostrado = false;
 const nomeUsuarioResumo = () => Store.modo === 'planilha' ? ((Store.sessao && Store.sessao.usuario) || '') : ((Store.eu && Store.eu.name) || '');
 function itensResumoDia() {
-  const out = { autorizar: [], venc: [], hoje: [], prox: [], agenda: [], assinar: 0, devolvidas: [] };
+  const out = { part: [], autorizar: [], venc: [], hoje: [], prox: [], agenda: [], assinar: 0, devolvidas: [] };
   const add = (x) => { if (x.dias < 0) out.venc.push(x); else if (x.dias === 0) out.hoje.push(x); else if (x.dias <= DIAS_PRAZO) out.prox.push(x); };
   (Store._sol || []).filter(x => !FEITO(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: [ehProcesso(x) ? 'Processo' : 'Documento', x.numero].filter(Boolean).join(' · '), ico: ehProcesso(x) ? 'fa-folder-open' : 'fa-file-signature', cor: ehProcesso(x) ? '#b45309' : '#2563eb', dias: diasAte(x.prazo), prazo: x.prazo, urg: !!x.urgente, abrir: `abrirDetalhe('${x.id}')` }));
   (Store.portarias || []).filter(x => !pubFeita(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto || nomePub(x), sub: 'Publicação · ' + nomePub(x) + (autPendente(x) ? ' · em autorização' : ''), ico: 'fa-newspaper', cor: '#4f46e5', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormPortaria('${x.id}')` }));
   (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: 'SIMEC' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-building-flag', cor: '#0d9488', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormSimec('${x.id}')` }));
+  out.part = (typeof paraConfirmarPart === 'function' ? paraConfirmarPart() : []).map(e => { const p = partEv(e); return { id: e.id, titulo: e.titulo, sub: ['Participação da Secretária', e.municipio, p && p.pedidoPor ? 'pedido por ' + p.pedidoPor : ''].filter(Boolean).join(' · '), ico: 'fa-user-tie', cor: '#0d9488', prazo: e.dataInicio, dias: diasAte(e.dataInicio), evento: true, abrir: `abrirPartEv('${e.id}','')` }; });
   out.autorizar = paraMimAut().map(x => { const a = autPub(x); return { id: x.id, titulo: nomePub(x), sub: (x.assunto || '') + (a && a.pedidoPor ? ' · pedido por ' + a.pedidoPor : ''), ico: 'fa-file-signature', cor: '#7c3aed', prazo: x.prazo, dias: x.prazo ? diasAte(x.prazo) : null, abrir: `abrirAutPub('${x.id}')` }; });
   out.agenda = (Store.agenda || []).filter(a => a.data === hojeISO() && !['cancelado', 'adiado'].includes(agSit(a))).sort((a, b) => String(a.hora || '99').localeCompare(String(b.hora || '99')))
     .map(a => ({ id: a.id, titulo: String(a.titulo || '').replace('[Exemplo] ', ''), sub: [a.hora ? a.hora + (a.horaFim ? '–' + a.horaFim : '') : 'Dia todo', a.local || a.municipio].filter(Boolean).join(' · '), ico: 'fa-calendar-day', cor: '#0891b2', abrir: `abrirFormAgenda('${a.id}')` }));
@@ -3761,16 +3875,16 @@ function itensResumoDia() {
   out.venc.sort((a, b) => a.dias - b.dias); out.prox.sort((a, b) => a.dias - b.dias);
   return out;
 }
-const totalResumo = r => r.autorizar.length + r.venc.length + r.hoje.length;
+const totalResumo = r => r.autorizar.length + r.part.length + r.venc.length + r.hoje.length;
 function abrirResumoDia() {
   const r = itensResumoDia();
   const nome = nomeUsuarioResumo().split(' ')[0];
   const dataTxt = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-  const quando = x => x.dias === null || x.dias === undefined ? '' : x.dias < 0 ? `<span class="rd-dias venc">venceu há ${-x.dias} dia${x.dias === -1 ? '' : 's'}</span>` : x.dias === 0 ? '<span class="rd-dias hoje">vence hoje</span>' : `<span class="rd-dias">em ${x.dias} dia${x.dias === 1 ? '' : 's'} · ${fmtCurto(x.prazo)}</span>`;
+  const quando = x => x.evento ? `<span class="rd-dias ${x.dias <= 0 ? 'hoje' : ''}">${x.dias <= 0 ? 'evento hoje' : x.dias === 1 ? 'evento amanhã' : 'evento em ' + x.dias + ' dias'} · ${fmtCurto(x.prazo)}</span>` : x.dias === null || x.dias === undefined ? '' : x.dias < 0 ? `<span class="rd-dias venc">venceu há ${-x.dias} dia${x.dias === -1 ? '' : 's'}</span>` : x.dias === 0 ? '<span class="rd-dias hoje">vence hoje</span>' : `<span class="rd-dias">em ${x.dias} dia${x.dias === 1 ? '' : 's'} · ${fmtCurto(x.prazo)}</span>`;
   const item = x => `<button type="button" class="rd-item" onclick="${x.abrir}"><span class="rd-item-ico" style="--c:${x.cor}"><i class="fa-solid ${x.ico}"></i></span><span class="min-w-0 flex-1"><b>${x.urg ? '<i class="fa-solid fa-flag text-red-600 mr-1"></i>' : ''}${esc(x.titulo || '—')}</b><small>${esc(x.sub || '')}</small></span>${quando(x)}<i class="fa-solid fa-chevron-right rd-seta"></i></button>`;
   const secao = (ico, cor, tit, lista, max = 5, extra = '') => lista.length ? `<section class="rd-sec" style="--c:${cor}"><h4><i class="fa-solid ${ico}"></i>${tit}<span class="rd-n">${lista.length}</span>${extra}</h4><div class="rd-lista">${lista.slice(0, max).map(item).join('')}</div>${lista.length > max ? `<p class="rd-mais">+ ${lista.length - max} outro(s)</p>` : ''}</section>` : '';
   const tile = (cor, ico, val, rot, acao) => `<button type="button" class="rd-tile ${val ? '' : 'zero'}" style="--c:${cor}" ${acao ? `onclick="${acao}"` : 'disabled'}><span class="rd-tile-v"><i class="fa-solid ${ico}"></i>${val}</span><span class="rd-tile-r">${rot}</span></button>`;
-  const nada = !r.autorizar.length && !r.venc.length && !r.hoje.length && !r.prox.length && !r.agenda.length && !r.devolvidas.length && !r.assinar;
+  const nada = !r.autorizar.length && !r.part.length && !r.venc.length && !r.hoje.length && !r.prox.length && !r.agenda.length && !r.devolvidas.length && !r.assinar;
   const temPrazos = abaPermitida('prazos');
   abrirModal(`
     <div class="rd-hero">
@@ -3785,6 +3899,7 @@ function abrirResumoDia() {
       </div>
       <div class="rd-tiles">
         ${Store.portarias && Store.portarias.length || r.autorizar.length ? tile('#a78bfa', 'fa-file-signature', r.autorizar.length, 'para autorizar', r.autorizar.length ? `document.getElementById('rd-aut').scrollIntoView({behavior:'smooth'})` : '') : ''}
+        ${r.part.length ? tile('#5eead4', 'fa-user-tie', r.part.length, 'eventos p/ confirmar', `document.getElementById('rd-part').scrollIntoView({behavior:'smooth'})`) : ''}
         ${tile('#f87171', 'fa-circle-exclamation', r.venc.length, 'vencidos', r.venc.length ? `document.getElementById('rd-venc').scrollIntoView({behavior:'smooth'})` : '')}
         ${tile('#fb923c', 'fa-hourglass-end', r.hoje.length, 'vencem hoje', r.hoje.length ? `document.getElementById('rd-hoje').scrollIntoView({behavior:'smooth'})` : '')}
         ${tile('#fbbf24', 'fa-hourglass-half', r.prox.length, `próx. ${DIAS_PRAZO} dias`, r.prox.length ? `document.getElementById('rd-prox').scrollIntoView({behavior:'smooth'})` : '')}
@@ -3795,6 +3910,7 @@ function abrirResumoDia() {
       ${nada ? `<div class="rd-vazio"><i class="fa-solid fa-circle-check"></i><b>Tudo em dia</b><p>Nenhum prazo vencido ou vencendo, nada aguardando você.</p></div>` : ''}
       ${r.assinar ? `<button type="button" class="rd-aviso" onclick="fecharModal();irPara('mesa')"><i class="fa-solid fa-signature"></i><span><b>${r.assinar} documento${r.assinar === 1 ? '' : 's'}</b> aguardando assinatura</span><i class="fa-solid fa-chevron-right rd-seta"></i></button>` : ''}
       <div id="rd-aut">${secao('fa-file-signature', '#7c3aed', 'Para você autorizar', r.autorizar)}</div>
+      <div id="rd-part">${secao('fa-user-tie', '#0d9488', 'Participação da Secretária para confirmar', r.part)}</div>
       <div id="rd-venc">${secao('fa-circle-exclamation', '#dc2626', 'Prazos vencidos', r.venc)}</div>
       <div id="rd-hoje">${secao('fa-hourglass-end', '#ea580c', 'Vencem hoje', r.hoje)}</div>
       ${secao('fa-rotate-left', '#db2777', 'Devolvidos para correção', r.devolvidas, 4)}
@@ -3828,6 +3944,7 @@ function aoMudarDados() {
   resolverNomes(Store._sol.flatMap(s => (s.historico || []).map(h => h.por))).then(() => { if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe(); });
   renderAba();
   if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe();
+  if (modalAberto && modalAberto.tipo === 'evento-ver') atualizarCardPart(modalAberto.id);
   statusSync();
   marcarLinhasPendentes();
   talvezResumoDia();
@@ -8017,7 +8134,7 @@ function verBriefing(id) {
 }
 
 /* ---------- Eventos: filtros comuns ---------- */
-const EV_FILTROS = [['', 'Todos', () => true], ['prox', 'Próximos 30 dias', e => evProximo(e)], ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada'], ['brief', 'Com briefing', e => !!e.briefId], ['real', 'Realizados', e => /^realiz/.test(Utils_norm(e.situacao))]];
+const EV_FILTROS = [['', 'Todos', () => true], ['prox', 'Próximos 30 dias', e => evProximo(e)], ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada'], ['part', 'Aguardando confirmação', e => partPendente(e)], ['brief', 'Com briefing', e => !!e.briefId], ['real', 'Realizados', e => /^realiz/.test(Utils_norm(e.situacao))]];
 function eventosFiltrados() {
   const f = (EV_FILTROS.find(x => x[0] === evUI.filtro) || EV_FILTROS[0])[2];
   const q = Utils_norm(evUI.busca || '');
@@ -8097,45 +8214,227 @@ function vistaMapaEv(l) {
     </aside>
   </div>`;
 }
+/* ---------- Participação da Secretária: a Assessoria solicita, o Chefe de Gabinete decide ---------- */
+const DECISAO_PART = {
+  confirmar:   { part: 'Presença confirmada', cor: '#16a34a', ico: 'fa-user-check', rot: 'Confirmar presença', sub: 'A Secretária participará', hist: 'confirmou a presença' },
+  representar: { part: 'Representada',        cor: '#7c3aed', ico: 'fa-people-arrows', rot: 'Será representada', sub: 'Indicar quem vai no lugar', hist: 'indicou representante' },
+  recusar:     { part: 'Não participará',     cor: '#64748b', ico: 'fa-user-xmark', rot: 'Não participará', sub: 'A Secretária não irá', hist: 'não confirmou' }
+};
+const HIST_PART = { solicitou: ['fa-paper-plane', '#0d9488', 'solicitou a participação'], lembrou: ['fa-bell', '#d97706', 'lembrou o Chefe de Gabinete'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'],
+  confirmou: ['fa-user-check', '#16a34a', 'confirmou a presença'], 'indicou representante': ['fa-people-arrows', '#7c3aed', 'indicou representante'], 'não confirmou': ['fa-user-xmark', '#64748b', 'decidiu que não participará'] };
+function partEv(e) {
+  let p = e && e.partPedido; if (!p) return null;
+  if (typeof p === 'string') { try { p = JSON.parse(p); } catch (x) { return null; } }
+  return p && typeof p === 'object' ? p : null;
+}
+/** Quem decide: o Chefe de Gabinete (e o Administrador). Fora da planilha não há perfis: a equipe registra. */
+const podeConfirmarPart = () => Store.modo !== 'planilha' || !!(Store.sessao && Store.sessao.permissoes && (Store.sessao.permissoes.admin || Store.sessao.permissoes.contratacoes));
+const partPendente = e => { const p = partEv(e); return !!p && p.situacao === 'pendente' && !evEncerrado(e); };
+const paraConfirmarPart = () => podeConfirmarPart() ? (Store.eventos || []).filter(e => partPendente(e) && evFim(e) >= hojeISO()).sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio))) : [];
+/** Nome da Secretária (Administração › Personalização › Autoridades), se cadastrado. */
+function nomeSecretaria() {
+  try { const a = autoridadesAtivas().find(x => /secret[aá]ri/i.test(x.cargo || '') && !/adjunt|execut/i.test(x.cargo || '')); return a ? a.nome : ''; } catch (e) { return ''; }
+}
+function resumoPart(p) {
+  if (!p) return '';
+  const f = iso => iso ? fmt(String(iso).slice(0, 10)) : '';
+  if (p.situacao === 'pendente') return `Aguardando o Chefe de Gabinete · pedido por ${p.pedidoPor} em ${f(p.pedidoEm)}`;
+  if (p.situacao === 'cancelada') return `Pedido cancelado por ${p.decididoPor || ''} em ${f(p.decididoEm)}`;
+  return `${(DECISAO_PART[p.decisao] || {}).part || p.decisao} · por ${p.decididoPor || ''} em ${f(p.decididoEm)}${p.representante ? ' · representante: ' + p.representante : ''}${p.obs ? ' · ' + p.obs : ''}`;
+}
+/** Aplica a ação no registro local (mesmas regras do servidor). */
+function aplicarPartLocal(e, acao, d) {
+  let p = partEv(e); const agora = new Date().toISOString(), eu = nomeUsuarioResumo() || 'Equipe';
+  const hist = (a, obs) => { p.hist = (p.hist || []).concat([{ em: agora, por: eu, acao: a, obs: obs || '' }]).slice(-40); };
+  let participacao = e.participacao || '';
+  if (acao === 'solicitar') {
+    if (p && p.situacao === 'pendente') throw new Error('Já há um pedido aguardando o Chefe de Gabinete.');
+    p = { situacao: 'pendente', pedidoEm: agora, pedidoPor: eu, mensagem: String(d.mensagem || '').trim(), decisao: '', decididoEm: '', decididoPor: '', obs: '', representante: '', hist: p && p.hist || [] };
+    hist('solicitou', p.mensagem); participacao = 'A confirmar';
+  } else if (DECISAO_PART[acao]) {
+    if (!podeConfirmarPart()) throw new Error('Só o Chefe de Gabinete confirma a participação da Secretária.');
+    if (!p || p.situacao !== 'pendente') p = { situacao: 'pendente', pedidoEm: agora, pedidoPor: eu, mensagem: '', hist: p && p.hist || [] };
+    const rep = String(d.representante || '').trim(), obs = String(d.obs || '').trim();
+    if (acao === 'representar' && !rep) throw new Error('Informe quem vai representar a Secretária.');
+    Object.assign(p, { situacao: 'decidida', decisao: acao, decididoEm: agora, decididoPor: eu, obs, representante: acao === 'representar' ? rep : '' });
+    hist({ confirmar: 'confirmou', representar: 'indicou representante', recusar: 'não confirmou' }[acao], [acao === 'representar' ? rep : '', obs].filter(Boolean).join(' · '));
+    participacao = DECISAO_PART[acao].part;
+  } else {
+    if (!p || p.situacao !== 'pendente') throw new Error('Não há pedido de participação em andamento.');
+    if (acao === 'cancelar') { Object.assign(p, { situacao: 'cancelada', decididoEm: agora, decididoPor: eu }); hist('cancelou', ''); participacao = ''; }
+    else hist('lembrou', '');
+  }
+  return { p, participacao };
+}
+async function execPartEv(id, acao, dados = {}) {
+  const x = eventoPorId(id); if (!x) return false;
+  let r;
+  try { r = aplicarPartLocal(x, acao, dados); } catch (er) { toast(er.message, 'fa-triangle-exclamation'); return false; }
+  const novo = { ...x, participacao: r.participacao, partPedido: JSON.stringify(r.p), partResumo: resumoPart(r.p), atualizadoEm: new Date().toISOString() };
+  const rot = { solicitar: 'Participação solicitada', lembrar: 'Lembrete ao Chefe de Gabinete', cancelar: 'Pedido de participação cancelado' }[acao] || 'Participação → ' + DECISAO_PART[acao].part;
+  if (Store.modo === 'planilha') {
+    trocarNaLista(Store.eventos, id, novo); aoMudarDados();
+    const payload = { id, acao }; ['mensagem', 'obs', 'representante'].forEach(k => { if (dados[k] !== undefined) payload[k] = dados[k]; });
+    if (/^https:/.test(location.href)) payload.appUrl = location.origin + location.pathname;
+    tarefaGrav({ rotulo: rot, detalhe: x.titulo, icone: 'fa-user-tie',
+      executar: async () => { await esperarGravacaoPub(id); return API.post('ev_participacao', payload, 60000); },
+      aoOk: res => { if (res && res.evento) { trocarNaLista(Store.eventos, id, { ...res.evento, id }); aoMudarDados(); } avisoEmailPart(acao, res && res.emails); },
+      aoErro: () => { const atual = eventoPorId(id); if (atual && atual.partPedido === novo.partPedido) { trocarNaLista(Store.eventos, id, x); aoMudarDados(); } } });
+    return true;
+  }
+  await salvarEvento(id, semId(novo), rot);
+  return true;
+}
+function avisoEmailPart(acao, em) {
+  if (!em || (acao !== 'solicitar' && acao !== 'lembrar')) return;
+  const lista = l => l.length === 1 ? l[0] : l.slice(0, -1).join(', ') + ' e ' + l[l.length - 1];
+  if (em.erro) { toast('O pedido foi registrado, mas o e-mail não saiu: ' + em.erro, 'fa-triangle-exclamation'); return; }
+  if (em.enviados && em.enviados.length && !(em.semEmail || []).length) { toast('E-mail enviado ao Chefe de Gabinete (' + lista(em.enviados) + ').', 'fa-envelope-circle-check'); return; }
+  if ((em.semEmail || []).length) toast(`${em.enviados && em.enviados.length ? 'E-mail enviado para ' + lista(em.enviados) + '. ' : ''}Sem e-mail cadastrado: ${lista(em.semEmail)} (verá o pedido no GABDoc).`, 'fa-envelope');
+  else if (!(em.enviados || []).length) toast('Pedido registrado. Nenhum usuário com perfil "Chefe de Gabinete" tem e-mail cadastrado: o pedido aparece no resumo do dia dele.', 'fa-circle-info');
+}
+/** Formulário embutido no cartão (pedido ou decisão). */
+function formPartEv(id, acao) {
+  const box = $('evp-form'); if (!box) return;
+  document.querySelectorAll('.evp-dec').forEach(b => b.classList.toggle('ativo', b.dataset.a === acao));
+  if (!acao) { box.innerHTML = ''; box.hidden = true; return; }
+  const d = DECISAO_PART[acao];
+  box.hidden = false;
+  box.style.setProperty('--c', d ? d.cor : '#0d9488');
+  box.innerHTML = acao === 'solicitar'
+    ? `<label class="block"><span class="rotulo !text-[12.5px]">Mensagem ao Chefe de Gabinete <span class="font-normal text-ink3">(opcional)</span></span><textarea class="campo w-full" rows="2" id="evp-msg" maxlength="1000" placeholder="Ex.: A organização pediu a fala de abertura às 8h."></textarea></label>
+       <div class="flex gap-2 justify-end"><button type="button" class="btn btn-sec" onclick="formPartEv('${id}','')">Cancelar</button><button type="button" class="btn btn-pri" style="background:#0d9488;border-color:#0d9488" onclick="enviarPartEv('${id}','solicitar',this)"><i class="fa-solid fa-paper-plane"></i>Enviar o pedido</button></div>`
+    : `${acao === 'representar' ? `<label class="block"><span class="rotulo !text-[12.5px]">Quem vai representar a Secretária *</span><input class="campo w-full" id="evp-rep" maxlength="160" placeholder="Nome e cargo (ex.: Secretária Adjunta da SAGE)"></label>` : ''}
+       <label class="block"><span class="rotulo !text-[12.5px]">${acao === 'recusar' ? 'Motivo' : 'Observação'} <span class="font-normal text-ink3">(opcional)</span></span><input class="campo w-full" id="evp-obs" maxlength="1000" placeholder="${acao === 'recusar' ? 'Ex.: agenda em Brasília no mesmo dia' : 'Ex.: chegará às 9h, fala de 10 minutos'}"></label>
+       <div class="flex gap-2 justify-end"><button type="button" class="btn btn-sec" onclick="formPartEv('${id}','')">Cancelar</button><button type="button" class="btn btn-pri" style="background:${d.cor};border-color:${d.cor}" onclick="enviarPartEv('${id}','${acao}',this)"><i class="fa-solid ${d.ico}"></i>${d.rot}</button></div>`;
+  const f = box.querySelector('input,textarea'); if (f) f.focus();
+}
+async function enviarPartEv(id, acao, btn) {
+  const dados = acao === 'solicitar' ? { mensagem: ($('evp-msg') || {}).value || '' } : { obs: ($('evp-obs') || {}).value || '', representante: ($('evp-rep') || {}).value || '' };
+  if (acao === 'representar' && !dados.representante.trim()) { toast('Informe quem vai representar a Secretária.', 'fa-triangle-exclamation'); $('evp-rep').focus(); return; }
+  if (btn) btn.disabled = true;
+  const ok = await execPartEv(id, acao, dados);
+  if (!ok) { if (btn) btn.disabled = false; return; }
+  toast(acao === 'solicitar' ? 'Pedido enviado ao Chefe de Gabinete.' : acao === 'lembrar' ? 'Lembrete enviado ao Chefe de Gabinete.' : acao === 'cancelar' ? 'Pedido cancelado.' : 'Decisão registrada: ' + DECISAO_PART[acao].part + '.', acao === 'solicitar' ? 'fa-paper-plane' : 'fa-user-tie');
+  atualizarCardPart(id, true);
+}
+/** Redesenha só o cartão de participação do evento aberto (sem perder a rolagem). */
+function atualizarCardPart(id, forcar) {
+  const el = $('evp-card'); if (!el || !modalAberto || modalAberto.tipo !== 'evento-ver' || modalAberto.id !== id) return;
+  const f = $('evp-form'); if (!forcar && f && !f.hidden) return;
+  const e = eventoPorId(id); if (!e) return;
+  el.outerHTML = cardPartEv(e);
+  const hp = $('evx-hero-part'); if (hp) hp.outerHTML = pillPartHero(e);
+}
+function pillPartHero(e) {
+  const p = partEv(e), pend = partPendente(e);
+  if (!e.participacao && !pend) return '<span id="evx-hero-part"></span>';
+  return `<span id="evx-hero-part" class="gs-pill" style="--c:${pend ? '#d97706' : PARTICIPACAO_EV[e.participacao] || '#64748b'}"><i class="fa-solid ${pend ? 'fa-hourglass-half' : 'fa-user-tie'} text-[9px]"></i>${pend ? 'Secretária: aguardando confirmação' : esc(rotPart(e.participacao))}${!pend && p && p.representante ? ' · ' + esc(p.representante) : ''}</span>`;
+}
+/** Cartão "Participação da Secretária" (pedido, decisão do Chefe de Gabinete e histórico). */
+function cardPartEv(e) {
+  const p = partEv(e), pend = partPendente(e), chefe = podeConfirmarPart(), equipe = pode('eventos:2'), enc = evEncerrado(e);
+  const nomeSec = nomeSecretaria();
+  const f = iso => iso ? fmt(String(iso).slice(0, 10)) + (String(iso).length > 10 ? ' · ' + new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '') : '';
+  const dec = p && p.situacao === 'decidida' ? DECISAO_PART[p.decisao] : null;
+  let cor = '#94a3b8', ico = 'fa-user-tie', tit = 'Participação ainda não solicitada', sub = equipe && !enc ? 'Peça ao Chefe de Gabinete que confirme se a Secretária vai ao evento.' : 'Nenhum pedido feito.';
+  if (pend) { cor = '#d97706'; ico = 'fa-hourglass-half'; tit = 'Aguardando o Chefe de Gabinete'; sub = `Pedido por <b>${esc(p.pedidoPor || '')}</b> em ${esc(f(p.pedidoEm))}`; }
+  else if (dec) { cor = dec.cor; ico = dec.ico; tit = dec.part + (p.representante ? ': ' + p.representante : ''); sub = `Decidido por <b>${esc(p.decididoPor || '')}</b> em ${esc(f(p.decididoEm))}`; }
+  else if (e.participacao) { cor = PARTICIPACAO_EV[e.participacao] || '#64748b'; ico = 'fa-user-tie'; tit = rotPart(e.participacao); sub = p && p.situacao === 'cancelada' ? 'O último pedido foi cancelado.' : 'Registrado no cadastro do evento.'; }
+  else if (p && p.situacao === 'cancelada') sub = `O pedido foi cancelado por ${esc(p.decididoPor || '')} em ${esc(f(p.decididoEm))}.`;
+  const msg = pend && p.mensagem ? `<div class="evp-msg"><i class="fa-solid fa-quote-left"></i>${esc(p.mensagem)}</div>` : dec && p.obs ? `<div class="evp-msg"><i class="fa-solid fa-quote-left"></i>${esc(p.obs)}</div>` : '';
+  const botoesDec = Object.entries(DECISAO_PART).map(([k, d]) => `<button type="button" class="evp-dec ${dec && p.decisao === k ? 'atual' : ''}" data-a="${k}" style="--c:${d.cor}" onclick="formPartEv('${e.id}','${k}')"><i class="fa-solid ${d.ico}"></i><span><b>${d.rot}</b><small>${d.sub}</small></span></button>`).join('');
+  let acoes = '';
+  if (!enc && chefe && pend) acoes = `<p class="evp-vez"><i class="fa-solid fa-gavel"></i>Sua decisão, como Chefe de Gabinete:</p><div class="evp-decs">${botoesDec}</div>`;
+  else if (!enc && chefe && !pend) acoes = `<details class="evp-mudar" ${p || e.participacao ? '' : 'open'}><summary><i class="fa-solid fa-gavel"></i>${dec ? 'Mudar a decisão' : 'Decidir agora (sem pedido)'}</summary><div class="evp-decs">${botoesDec}</div></details>`;
+  const linhaBt = [];
+  if (!enc && equipe && !pend) linhaBt.push(`<button type="button" class="btn btn-pri !h-9" style="background:#0d9488;border-color:#0d9488" onclick="formPartEv('${e.id}','solicitar')"><i class="fa-solid fa-paper-plane"></i>${p ? 'Solicitar de novo' : 'Solicitar participação da Secretária'}</button>`);
+  if (!enc && equipe && pend) {
+    if (Store.modo === 'planilha' && !chefe) linhaBt.push(`<button type="button" class="btn btn-sec !h-9" onclick="this.disabled=true;enviarPartEv('${e.id}','lembrar')"><i class="fa-solid fa-bell text-amber-500"></i>Lembrar o Chefe</button>`);
+    linhaBt.push(`<button type="button" class="btn btn-sec !h-9" onclick="if(this.dataset.c){enviarPartEv('${e.id}','cancelar',this)}else{this.dataset.c=1;this.lastChild.textContent='Confirmar cancelamento'}"><i class="fa-solid fa-ban"></i><span>Cancelar pedido</span></button>`);
+  }
+  const hist = (p && p.hist || []).slice().reverse();
+  const histHtml = hist.length ? `<details class="evp-hist"><summary><i class="fa-solid fa-clock-rotate-left"></i>Histórico <small>${hist.length}</small></summary><ol>${hist.map(h => { const [hi, hc, hr] = HIST_PART[h.acao] || ['fa-circle', '#64748b', h.acao]; return `<li style="--c:${hc}"><span class="evp-hist-ico"><i class="fa-solid ${hi}"></i></span><div class="min-w-0"><p><b>${esc(h.por || '')}</b> ${esc(hr)}</p>${h.obs ? `<p class="evp-hist-obs">${esc(h.obs)}</p>` : ''}<time>${esc(f(h.em))}</time></div></li>`; }).join('')}</ol></details>` : '';
+  return `<section class="evp" id="evp-card" style="--c:${cor}">
+    <header class="evp-cab"><span class="evp-tag"><i class="fa-solid fa-user-tie"></i>Participação da Secretária${nomeSec ? ' · ' + esc(nomeSec) : ''}</span></header>
+    <div class="evp-status"><span class="evp-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0 flex-1"><b>${esc(tit)}</b><small>${sub}</small></div></div>
+    ${msg}${acoes}
+    ${linhaBt.length ? `<div class="evp-linha">${linhaBt.join('')}</div>` : ''}
+    <div id="evp-form" class="evp-form" hidden></div>
+    ${histHtml}
+  </section>`;
+}
+
+/* ---------- Detalhes do evento ---------- */
+const PASSOS_EV = ['Planejamento', 'Em preparação', 'Confirmado', 'Realizado'];
+function contagemEv(e) {
+  if (!e.dataInicio) return { n: '', t: 'sem data' };
+  const hoje = hojeISO(), sit = Utils_norm(e.situacao);
+  if (/^cancel/.test(sit)) return { n: '', t: 'cancelado', ico: 'fa-ban' };
+  if (evNoDia(e, hoje)) return { n: '', t: 'acontecendo hoje', ico: 'fa-tower-broadcast' };
+  const d = diasAte(e.dataInicio);
+  if (d > 0) return { n: d, t: d === 1 ? 'dia para o evento' : 'dias para o evento' };
+  const df = -diasAte(evFim(e));
+  return { n: df, t: df === 1 ? 'dia desde o fim' : 'dias desde o fim', passado: true };
+}
+function miniMapaEv(mun) {
+  const alvo = MT_MAPA.m.find(x => Utils_norm(x.n) === Utils_norm(mun || ''));
+  const paths = MT_MAPA.m.map(x => `<path d="${x.d}" class="${x === alvo ? 'on' : ''}"/>`).join('');
+  return `<svg viewBox="0 0 ${MT_MAPA.w} ${MT_MAPA.h}" class="evx-mapa" role="img" aria-label="${esc(alvo ? alvo.n + ' no mapa de Mato Grosso' : 'Mapa de Mato Grosso')}">${paths}${alvo ? `<circle cx="${alvo.x}" cy="${alvo.y}" r="34" class="pulso"/><circle cx="${alvo.x}" cy="${alvo.y}" r="13" class="pino"/>` : ''}</svg>`;
+}
 function verEvento(id) {
   const e = eventoPorId(id); if (!e) return;
-  const b = briefDe(e), p = PROX_SIT_EV[e.situacao || 'Planejamento'];
-  const info = (ico, rot, val) => val ? `<div class="det-info"><span class="det-info-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><dt>${rot}</dt><dd>${val}</dd></div></div>` : '';
-  const naAgenda = (Store.agenda || []).some(a => a.titulo === e.titulo && a.data === e.dataInicio);
+  const b = briefDe(e), p = PROX_SIT_EV[e.situacao || 'Planejamento'], cont = contagemEv(e);
+  const sitIdx = PASSOS_EV.indexOf(e.situacao || 'Planejamento'), foraFluxo = sitIdx < 0;
+  const passos = `<ol class="evx-passos ${foraFluxo ? 'fora' : ''}">${PASSOS_EV.map((s, i) => `<li class="${!foraFluxo && i < sitIdx ? 'feito' : ''} ${!foraFluxo && i === sitIdx ? 'atual' : ''}" style="--c:${SITUACOES_EV[s].cor}"><span><i class="fa-solid ${!foraFluxo && i < sitIdx ? 'fa-check' : SITUACOES_EV[s].ico}"></i></span><em>${esc(rotEv(s))}</em></li>`).join('')}</ol>${foraFluxo ? `<p class="evx-fora" style="--c:${corSitEv(e)}"><i class="fa-solid ${(SITUACOES_EV[e.situacao] || {}).ico || 'fa-circle'}"></i>Evento ${esc(rotEv(e.situacao).toLowerCase())}</p>` : ''}`;
+  const dias = diasDoEvento(e), hoje = hojeISO();
+  const chipsDias = dias.slice(0, 14).map(d => { const dt = new Date(d + 'T12:00'); return `<span class="evx-dia ${d === hoje ? 'hoje' : d < hoje ? 'passou' : ''}"><em>${dt.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')}</em><b>${dt.getDate()}</b><small>${dt.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</small></span>`; }).join('') + (dias.length > 14 ? `<span class="evx-dia mais"><b>+${dias.length - 14}</b><small>dias</small></span>` : '');
+  const card = (ico, cor, tit, corpo, extra = '') => `<section class="evx-card" style="--c:${cor}"><h4><i class="fa-solid ${ico}"></i>${tit}${extra}</h4>${corpo}</section>`;
+  const linha = (ico, rot, val) => val ? `<div class="evx-l"><i class="${ico.includes(' ') ? ico : 'fa-solid ' + ico}"></i><span class="min-w-0"><small>${rot}</small><b>${val}</b></span></div>` : '';
+  const secs = String(e.organizador || '').split(/\s*[,;]\s*/).filter(Boolean);
+  const reg = (q, em) => q || em ? `${esc(q || '—')}${em ? ' · ' + esc(fmt(String(em).slice(0, 10))) : ''}` : '';
+  const mapsUrl = (e.local || e.municipio) ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([e.local, e.municipio, 'MT'].filter(Boolean).join(', ')) : '';
   abrirModal(`
-    <div class="form-hero ev-hero" style="--c:${corSitEv(e)}">
+    <div class="form-hero ev-hero evx-hero" style="--c:${corSitEv(e)}">
       <div class="flex items-start gap-3">
         ${blocoDataEv(e)}
         <div class="min-w-0 flex-1">
-          <div class="flex flex-wrap gap-1.5 mb-1.5">${pillEv(e.situacao)}${evQuando(e)}${e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(rotPart(e.participacao))}</span>` : ''}</div>
+          <div class="flex flex-wrap gap-1.5 mb-1.5">${pillEv(e.situacao)}${evQuando(e)}${pillPartHero(e)}</div>
           <h3 class="text-[20px] font-extrabold text-white leading-tight">${esc(e.titulo)}</h3>
-          <p class="text-[13px] text-white/90 mt-1"><i class="fa-regular fa-calendar mr-1"></i>${esc(evPeriodo(e))}${e.hora ? ' · ' + esc(e.hora) : ''} · ${esc(evDuracao(e))}</p>
+          <p class="evx-hero-meta"><span><i class="fa-regular fa-calendar"></i>${esc(evPeriodo(e))}</span>${e.hora ? `<span><i class="fa-regular fa-clock"></i>${esc(e.hora)}</span>` : ''}${e.municipio ? `<span><i class="fa-solid fa-location-dot"></i>${esc(e.municipio)}</span>` : ''}</p>
         </div>
-        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+        ${cont.n !== '' ? `<div class="evx-cont ${cont.passado ? 'passado' : ''}"><b>${cont.n}</b><small>${esc(cont.t)}</small></div>` : cont.ico ? `<div class="evx-cont txt"><i class="fa-solid ${cont.ico}"></i><small>${esc(cont.t)}</small></div>` : ''}
+        <button class="text-white/60 hover:text-white p-1 -mr-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
+      ${passos}
     </div>
-    <div class="modal-corpo space-y-4">
-      <div class="ev-brief ${b ? '' : 'vazio'}">
-        <span class="ev-brief-ico"><i class="fa-solid ${b ? 'fa-file-pdf' : 'fa-file-circle-plus'}"></i></span>
-        <div class="min-w-0 flex-1"><b>${b ? 'Briefing do evento' : 'Sem briefing anexado'}</b><small>${b ? esc(b.nome) + (b.tam ? ' · ' + tamArq(b.tam) : '') : 'Anexe o PDF com a pauta, roteiro e informações do evento.'}</small></div>
-        ${b ? `<button type="button" class="btn btn-sec !h-9" onclick="baixarBriefing('${e.id}',this)"><i class="fa-solid fa-download"></i><span class="hidden sm:inline">Baixar</span></button><button type="button" class="btn btn-pri !h-9" style="background:#c026d3;border-color:#c026d3" onclick="verBriefing('${e.id}')"><i class="fa-solid fa-eye"></i>Ver briefing</button>`
-          : pode('eventos:2') ? `<button type="button" class="btn btn-sec !h-9" onclick="abrirFormEvento('${e.id}','brief')"><i class="fa-solid fa-paperclip"></i>Anexar</button>` : ''}
+    <div class="modal-corpo evx-corpo">
+      <div class="evx-grade">
+        <div class="evx-col">
+          ${cardPartEv(e)}
+          ${card('fa-calendar-days', '#c026d3', 'Quando', `<div class="evx-dias">${chipsDias || '<span class="text-ink3 text-[13px]">Sem data</span>'}</div>
+            <div class="evx-ls">${linha('fa-regular fa-calendar', 'Período', esc(evPeriodo(e)))}${linha('fa-regular fa-clock', 'Horário', esc(e.hora || ''))}${linha('fa-solid fa-hourglass-half', 'Duração', esc(evDuracao(e)))}</div>`)}
+          ${card('fa-location-dot', '#2563eb', 'Onde', `<div class="evx-onde">${miniMapaEv(e.municipio)}<div class="evx-ls min-w-0">${linha('fa-solid fa-city', 'Município', esc(e.municipio || '')) || '<p class="text-[13px] text-ink3">Município não informado</p>'}${linha('fa-solid fa-building', 'Local', esc(e.local || ''))}${mapsUrl ? `<a class="evx-link" href="${mapsUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i>Abrir no mapa</a>` : ''}</div></div>`)}
+        </div>
+        <div class="evx-col">
+          ${card('fa-file-pdf', '#dc2626', 'Briefing', `<div class="ev-brief ${b ? '' : 'vazio'}">
+              <span class="ev-brief-ico"><i class="fa-solid ${b ? 'fa-file-pdf' : 'fa-file-circle-plus'}"></i></span>
+              <div class="min-w-0 flex-1"><b class="truncate block">${b ? esc(b.nome) : 'Sem briefing anexado'}</b><small>${b ? (b.tam ? tamArq(b.tam) + ' · ' : '') + 'pauta, roteiro e informações' : 'Anexe o PDF com a pauta e o roteiro.'}</small></div>
+              ${b ? `<button type="button" class="btn btn-sec !h-9 !px-2.5" onclick="baixarBriefing('${e.id}',this)" title="Baixar"><i class="fa-solid fa-download"></i></button><button type="button" class="btn btn-pri !h-9" style="background:#c026d3;border-color:#c026d3" onclick="verBriefing('${e.id}')"><i class="fa-solid fa-eye"></i>Ver</button>`
+                : pode('eventos:2') ? `<button type="button" class="btn btn-sec !h-9" onclick="abrirFormEvento('${e.id}','brief')"><i class="fa-solid fa-paperclip"></i>Anexar</button>` : ''}
+            </div>`)}
+          ${card('fa-sitemap', '#7c3aed', 'Organização', `${secs.length ? `<div class="evx-secs">${secs.map(sg => `<span class="evx-sec" style="--c:${COR_SEC[sg.toUpperCase()] || '#64748b'}"><i class="fa-solid ${icoSec(sg.toUpperCase())}"></i><span class="min-w-0"><b>${esc(sg)}</b>${NOME_SEC[sg.toUpperCase()] ? `<small>${esc(NOME_SEC[sg.toUpperCase()])}</small>` : ''}</span></span>`).join('')}</div>` : ''}
+            <div class="evx-ls">${linha('fa-solid fa-users', 'Público / participantes', esc(e.publico || ''))}${linha('fa-solid fa-user-pen', 'Responsável na Assessoria', esc(e.responsavel || ''))}</div>${!secs.length && !e.publico && !e.responsavel ? '<p class="text-[13px] text-ink3">Sem informações de organização.</p>' : ''}`)}
+          ${e.observacao ? card('fa-note-sticky', '#d97706', 'Observação', `<p class="evx-obs">${esc(e.observacao)}</p>`) : ''}
+          <p class="evx-reg">${e.criadoPor || e.criadoEm ? `<span><i class="fa-solid fa-plus"></i>Cadastrado por ${reg(e.criadoPor, e.criadoEm)}</span>` : ''}${e.atualizadoPor || e.atualizadoEm ? `<span><i class="fa-solid fa-pen"></i>Atualizado por ${reg(e.atualizadoPor, e.atualizadoEm)}</span>` : ''}</p>
+        </div>
       </div>
-      <dl class="det-infos">
-        ${info('fa-location-dot', 'Município', esc(e.municipio || ''))}
-        ${info('fa-building', 'Local', esc(e.local || ''))}
-        ${info('fa-sitemap', 'Secretaria responsável', siglasEv(e.organizador))}
-        ${info('fa-users', 'Público / participantes', esc(e.publico || ''))}
-        ${info('fa-user-pen', 'Responsável na Assessoria', esc(e.responsavel || ''))}
-        ${listaDatas(e.dias).length > 1 ? info('fa-calendar-days', 'Dias do evento', esc(listaDatas(e.dias).map(fmt).join(', '))) : ''}
-      </dl>
-      ${e.observacao ? `<div class="det-obs-txt2" style="border-left-color:#c026d3;background:color-mix(in srgb, #c026d3 5%, var(--card))">${esc(e.observacao)}</div>` : ''}
     </div>
     <div class="modal-rodape !justify-between flex-wrap gap-2">
-      <div class="flex gap-2 flex-wrap">${p && pode('eventos:2') ? `<button class="btn btn-sec" onclick="editarEvCampos(eventoPorId('${e.id}'),{situacao:'${p[0]}'}).then(()=>verEvento('${e.id}'))"><i class="fa-solid ${p[2]}" style="color:${SITUACOES_EV[p[0]].cor}"></i>${esc(L('evacao.' + slugRot(e.situacao || 'Planejamento'), p[1]))}</button>` : ''}${pode('agenda:2') && e.dataInicio ? `<button class="btn btn-sec" ${naAgenda ? 'disabled' : ''} onclick="eventoParaAgenda(eventoPorId('${e.id}'));this.disabled=true"><i class="fa-solid fa-calendar-plus text-teal-600"></i>${naAgenda ? 'Já está na Agenda' : 'Incluir na Agenda'}</button>` : ''}</div>
+      <div class="flex gap-2 flex-wrap">${p && pode('eventos:2') ? `<button class="btn btn-sec" title="Muda a situação do evento" onclick="editarEvCampos(eventoPorId('${e.id}'),{situacao:'${p[0]}'}).then(()=>verEvento('${e.id}'))"><i class="fa-solid ${p[2]}" style="color:${SITUACOES_EV[p[0]].cor}"></i><span class="text-ink3 font-semibold hidden sm:inline">Situação:</span>${esc(L('evacao.' + slugRot(e.situacao || 'Planejamento'), p[1]))}</button>` : ''}</div>
       <div class="flex gap-2">${pode('eventos:2') ? `<button class="btn btn-sec" onclick="abrirFormEvento('${e.id}')"><i class="fa-solid fa-pen"></i>Editar</button>` : ''}<button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
     </div>`, 'evento-ver', { id });
-  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo', 'modal-evx');
 }
 /** Cabeçalho das vistas (troca de vista, filtros e busca). */
 function controlesEv(n) {
@@ -8150,7 +8449,7 @@ function kpisEv() {
   const k = (cor, ico, rot, val, sub, filtro) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="evSet('filtro','${filtro}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
   return `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
     ${k('#c026d3', 'fa-calendar-day', 'Próximos 30 dias', prox.length, `${todos.filter(e => !evEncerrado(e) && evNoDia(e, hoje)).length} acontecendo hoje`, 'prox')}
-    ${k('#16a34a', 'fa-user-tie', 'Com a Secretária', prox.filter(e => e.participacao === 'Presença confirmada').length, `${prox.filter(e => e.participacao === 'A confirmar').length} a confirmar`, 'sec')}
+    ${k('#16a34a', 'fa-user-tie', 'Com a Secretária', prox.filter(e => e.participacao === 'Presença confirmada').length, `${(Store.eventos || []).filter(partPendente).length} aguardando o Chefe de Gabinete`, (Store.eventos || []).some(partPendente) ? 'part' : 'sec')}
     ${k('#7c3aed', 'fa-file-pdf', 'Com briefing', todos.filter(e => e.briefId).length, `${prox.filter(e => !e.briefId).length} próximo(s) sem briefing`, 'brief')}
     ${k('#0d9488', 'fa-flag-checkered', rotEv('Realizado'), todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length, `${new Set(todos.map(e => e.municipio).filter(Boolean)).size} município(s) com eventos`, 'real')}
   </div>`;
@@ -8240,7 +8539,7 @@ function renderEventos() {
       { key: 'local', rot: 'Local', w: 210, tipo: 'texto', editavel: true },
       { key: 'organizador', rot: 'Secretaria responsável', w: 165, wCompacta: 140, tipo: 'texto', editavel: true, render: e => siglasEv(e.organizador) },
       { key: 'publico', rot: 'Público / participantes', w: 190, tipo: 'texto', editavel: true },
-      { key: 'participacao', rot: 'Participação da Secretária', w: 190, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, rotPart(k)])), render: e => e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(rotPart(e.participacao))}</span>` : '' },
+      { key: 'participacao', rot: 'Participação da Secretária', w: 200, tipo: 'texto', editavel: false, valor: e => partPendente(e) ? 'Aguardando o Chefe de Gabinete' : e.participacao || '', render: celPartEv },
       { key: 'situacao', rot: 'Situação', w: 150, tipo: 'select', editavel: true, opcoes: () => Object.keys(SITUACOES_EV).map(k => [k, rotEv(k)]), render: e => pillEv(e.situacao) },
       { key: 'responsavel', rot: 'Responsável na Assessoria', w: 180, tipo: 'texto', editavel: true, lista: 'lista-resp' },
       { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true },
@@ -8253,7 +8552,7 @@ function renderEventos() {
     classeLinha: e => evEncerrado(e) ? 'gs-feito' : '',
     chips: [['', L('filtro.todos'), () => true, '#c026d3'], ['prox', 'Próximos 30 dias', e => evProximo(e), '#c026d3'], ['mes', 'Este mês', e => (e.dataInicio || '').slice(0, 7) === mes || (evFim(e).slice(0, 7) === mes), '#7c3aed'],
             ['prep', 'Em planejamento', e => /^(planej|em prep)/.test(Utils_norm(e.situacao)), '#d97706'], ['conf', rotEv('Confirmado'), e => e.situacao === 'Confirmado', '#0d9488'],
-            ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada', '#16a34a'],
+            ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada', '#16a34a'], ['part', 'Aguardando confirmação', e => partPendente(e), '#d97706'],
             ['real', rotEv('Realizado'), e => /^realiz/.test(Utils_norm(e.situacao)), '#16a34a'], ['canc', rotEv('Adiado') + ' / ' + rotEv('Cancelado'), e => /^(cancel|adiad)/.test(Utils_norm(e.situacao)), '#64748b']],
     aoEditarCampos: editarEvCampos,
     acoes: e => {
@@ -8264,17 +8563,30 @@ function renderEventos() {
     tituloLinha: e => e.titulo + ' · ' + evPeriodo(e),
     menuAcoes: e => Object.keys(SITUACOES_EV).filter(s => s !== e.situacao).map(s => ({ rot: 'Situação: ' + rotEv(s), ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'eventos:2', fn: () => editarEvCampos(e, { situacao: s }) }))
       .concat([{ sep: true },
-               { rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'eventos:2', fn: () => editarEvCampos(e, { participacao: 'Presença confirmada' }) },
-               { rot: 'Incluir na Agenda da Secretária', ico: 'fa-calendar-plus', cor: '#0d9488', perm: 'agenda:2', fn: () => eventoParaAgenda(e) },
+               ...(!evEncerrado(e) && !partPendente(e) ? [{ rot: 'Solicitar participação da Secretária', ico: 'fa-paper-plane', cor: '#0d9488', perm: 'eventos:2', fn: () => abrirPartEv(e.id, 'solicitar') }] : []),
+               ...(!evEncerrado(e) && podeConfirmarPart() ? [{ rot: partPendente(e) ? 'Decidir a participação da Secretária' : 'Participação da Secretária (decidir)', ico: 'fa-gavel', cor: '#16a34a', fn: () => abrirPartEv(e.id, '') }] : []),
                { rot: 'Ver o evento', ico: 'fa-eye', cor: '#c026d3', fn: () => verEvento(e.id) },
                ...(e.briefId ? [{ rot: 'Ver o briefing', ico: 'fa-file-pdf', cor: '#dc2626', fn: () => verBriefing(e.id) }] : []),
                { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'eventos:2', fn: () => abrirFormEvento(e.id) },
                { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'eventos:3', perigo: true, fn: () => excluirEventoId(e.id) }]),
-    acoesLote: Object.keys(SITUACOES_EV).map(sitLote).concat([{ rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'eventos:2', campos: () => ({ participacao: 'Presença confirmada' }) }]),
+    acoesLote: Object.keys(SITUACOES_EV).map(sitLote),
     novaLinha: () => abrirFormEvento(), textoNovaLinha: 'Novo evento (abre o formulário)',
     textoVazio: 'Nenhum evento cadastrado. Use "Novo evento" para organizar o primeiro.',
     botaoNovo: `<button class="btn !h-9 text-white" style="background:#c026d3" onclick="abrirFormEvento()"><i class="fa-solid fa-plus"></i>Novo</button>`
   });
+}
+/** Célula da planilha: situação do pedido e atalho para pedir/decidir. */
+function celPartEv(e) {
+  const p = partEv(e);
+  if (partPendente(e)) return podeConfirmarPart() ? `<button type="button" class="gs-cel-bt evp-cel minha" onclick="abrirPartEv('${e.id}','')" title="Pedido por ${esc(p.pedidoPor || '')}"><i class="fa-solid fa-gavel"></i><span>Decidir</span></button>`
+    : `<button type="button" class="gs-cel-bt evp-cel" style="--c:#d97706" onclick="abrirPartEv('${e.id}','')" title="Pedido por ${esc(p.pedidoPor || '')} · aguardando o Chefe de Gabinete"><i class="fa-solid fa-hourglass-half"></i><span>Aguardando</span></button>`;
+  if (e.participacao) return `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}" title="${esc(e.partResumo || resumoPart(p) || '')}">${esc(rotPart(e.participacao))}</span>`;
+  return !evEncerrado(e) && pode('eventos:2') ? `<button type="button" class="gs-cel-bt aut-pedir" style="--c:#0d9488" onclick="abrirPartEv('${e.id}','solicitar')" title="Pedir ao Chefe de Gabinete que confirme a participação da Secretária"><i class="fa-solid fa-paper-plane"></i><span>Solicitar</span></button>` : '<span class="text-ink3">—</span>';
+}
+/** Abre o evento já no cartão de participação (e, se pedido, no formulário de pedido). */
+function abrirPartEv(id, acao) {
+  verEvento(id);
+  setTimeout(() => { const c = $('evp-card'); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); if (acao) formPartEv(id, acao); }, 60);
 }
 function editarEvCampos(x, campos) {
   const d = { ...x }; delete d.id;
@@ -8285,15 +8597,10 @@ function editarEvCampos(x, campos) {
   const rot = campos.situacao ? 'Situação → ' + campos.situacao : campos.participacao ? 'Participação → ' + campos.participacao : null;
   return salvarEvento(x.id, d, rot);
 }
-function eventoParaAgenda(e) {
-  if (Store.agenda.some(a => a.titulo === e.titulo && a.data === e.dataInicio)) { toast('Este evento já está na Agenda.', 'fa-circle-info'); return; }
-  salvarAgenda(null, { titulo: e.titulo, data: e.dataInicio, hora: /^\d{1,2}:\d{2}$/.test(e.hora || '') ? e.hora : '', tipo: 'evento', local: e.local || '', municipio: e.municipio || '', obs: [e.publico, e.observacao].filter(Boolean).join(' · ') });
-  toast('Evento incluído na Agenda da Secretária.', 'fa-calendar-check');
-}
 const FormEv = { arq: null, remover: false };
 function abrirFormEvento(id, foco) {
   if (!pode('eventos:2')) { toast('Seu perfil não cadastra eventos.', 'fa-lock'); return; }
-  const x = id ? Store.eventos.find(e => e.id === id) : { situacao: 'Planejamento', participacao: 'A confirmar' };
+  const x = id ? Store.eventos.find(e => e.id === id) : { situacao: 'Planejamento', participacao: '' };
   if (!x) return;
   FormEv.arq = null; FormEv.remover = false;
   const secSel = String(x.organizador || '').split(/\s*,\s*/).map(s => s.toUpperCase());
@@ -8326,18 +8633,33 @@ function abrirFormEvento(id, foco) {
           ${rot('Público / participantes', `<input class="campo w-full" id="e-publico" value="${esc(x.publico || '')}" placeholder="Ex.: 1.200 educadores">`)}
           ${rot('Responsável na Assessoria', `<input class="campo w-full" id="e-resp" list="lista-resp" value="${esc(x.responsavel || '')}" placeholder="Quem acompanha o evento">`)}
         </div>`)}
-      ${bloco(3, '#16a34a', 'Situação e participação', `
+      ${bloco(3, '#16a34a', 'Situação', `
         <div><span class="rotulo !text-[12.5px]">Situação</span>${opc('sit', Object.entries(SITUACOES_EV).map(([k, v]) => [k, v.cor]), x.situacao || 'Planejamento')}</div>
-        <div><span class="rotulo !text-[12.5px]">Participação da Secretária</span>${opc('part', Object.entries(PARTICIPACAO_EV), x.participacao || '')}</div>
-        ${rot('Observação', `<textarea class="campo w-full" rows="2" id="e-obs" placeholder="Pauta, necessidades de cerimonial, transporte…">${esc(x.observacao || '')}</textarea>`)}
-        ${!id && pode('agenda:2') ? `<label class="flex items-center gap-2 text-[13px] font-medium"><input type="checkbox" id="e-agenda" class="w-4 h-4"> Incluir também na Agenda da Secretária</label>` : ''}`)}
-      ${bloco(4, '#dc2626', 'Briefing do evento <span class="font-normal text-ink3 text-[12.5px]">(PDF, opcional)</span>', `<div id="e-brief">${htmlBriefForm(x)}</div>`)}
+        ${rot('Observação', `<textarea class="campo w-full" rows="2" id="e-obs" placeholder="Pauta, necessidades de cerimonial, transporte…">${esc(x.observacao || '')}</textarea>`)}`)}
+      ${bloco(4, '#0d9488', 'Participação da Secretária', partFormEv(x))}
+      ${bloco(5, '#dc2626', 'Briefing do evento <span class="font-normal text-ink3 text-[12.5px]">(PDF, opcional)</span>', `<div id="e-brief">${htmlBriefForm(x)}</div>`)}
       <p id="e-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
     </form>
     <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('eventos:3') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirEventoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ev" id="btn-ev-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div></div>`, 'evento');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   spMontar('ev');
   setTimeout(() => { if (foco === 'brief' && $('e-brief')) { $('e-brief').scrollIntoView({ block: 'center' }); const i = $('e-brief-arq'); if (i) i.click(); } else $('e-titulo').focus(); }, 80);
+}
+/** Bloco "Participação da Secretária" do formulário. */
+function partFormEv(x) {
+  const p = partEv(x), pend = partPendente(x);
+  const estado = pend ? `<div class="evp-mini" style="--c:#d97706"><i class="fa-solid fa-hourglass-half"></i><span>Pedido aguardando o Chefe de Gabinete · por ${esc(p.pedidoPor || '')}</span></div>`
+    : x.participacao ? `<div class="evp-mini" style="--c:${PARTICIPACAO_EV[x.participacao] || '#64748b'}"><i class="fa-solid fa-user-tie"></i><span>${esc(rotPart(x.participacao))}${p && p.representante ? ' · ' + esc(p.representante) : ''}${p && p.decididoPor ? ' · decidido por ' + esc(p.decididoPor) : ''}</span></div>` : '';
+  if (podeConfirmarPart()) {
+    const opcs = [['', '#94a3b8', 'Sem definição']].concat(Object.values(DECISAO_PART).map(d => [d.part, d.cor, rotPart(d.part)]));
+    const atual = pend ? '' : (x.participacao === 'A confirmar' ? '' : x.participacao || '');
+    return `${estado}<p class="text-[12.5px] text-ink3">Como Chefe de Gabinete, você decide aqui. ${pend ? 'Escolher uma opção responde ao pedido.' : ''}</p>
+      <div class="flex flex-wrap gap-1.5">${opcs.map(([k, cor, r]) => `<button type="button" class="chip ev-op ev-part ${k === atual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" onclick="document.querySelectorAll('.ev-part').forEach(b=>b.classList.toggle('ativo',b===this));$('e-rep-box').hidden=this.dataset.v!=='Representada'">${esc(r)}</button>`).join('')}</div>
+      <label class="block" id="e-rep-box" ${atual === 'Representada' ? '' : 'hidden'}><span class="rotulo !text-[12.5px]">Quem vai representar</span><input class="campo w-full" id="e-rep" maxlength="160" value="${esc(p && p.representante || '')}" placeholder="Nome e cargo"></label>`;
+  }
+  if (pend || (p && p.situacao === 'decidida')) return estado + `<p class="text-[12.5px] text-ink3">${pend ? 'O Chefe de Gabinete vai confirmar ou não. Acompanhe na tela do evento.' : 'Para pedir de novo, use "Solicitar de novo" na tela do evento.'}</p>`;
+  return `${estado}<label class="evp-pedir"><input type="checkbox" id="e-pedir" class="w-4 h-4" onchange="$('e-pedir-box').hidden=!this.checked"><span><b>Solicitar a participação da Secretária</b><small>O Chefe de Gabinete recebe o pedido (e-mail e resumo do dia) e confirma ou não.</small></span></label>
+    <label class="block" id="e-pedir-box" hidden><span class="rotulo !text-[12.5px]">Mensagem ao Chefe de Gabinete <span class="font-normal text-ink3">(opcional)</span></span><textarea class="campo w-full" rows="2" id="e-pedir-msg" maxlength="1000" placeholder="Ex.: convite oficial do prefeito; fala de abertura às 8h"></textarea></label>`;
 }
 /** Cartão do briefing no formulário: arquivo atual, trocar, retirar, arrastar e soltar. */
 function htmlBriefForm(x) {
@@ -8368,19 +8690,27 @@ async function salvarFormEvento(id) {
   const dados = { ...(antigo ? semId(antigo) : { criadoEm: new Date().toISOString() }),
     titulo: v('e-titulo'), dataInicio: v('e-ini'), dataFim: v('e-fim'), dias: listaDatas(v('e-dias')).length > 1 ? listaDatas(v('e-dias')).map(fmt).join(', ') : '', hora: v('e-hora'), municipio: v('e-mun'), local: v('e-local'),
     organizador: chipsMarcados('evsec').join(', '), publico: v('e-publico'), responsavel: v('e-resp'),
-    situacao: ativo('sit') || 'Planejamento', participacao: ativo('part'), observacao: v('e-obs'), atualizadoEm: new Date().toISOString() };
-  const naAgenda = !id && $('e-agenda') && $('e-agenda').checked;
+    situacao: ativo('sit') || 'Planejamento', participacao: antigo ? antigo.participacao || '' : '', observacao: v('e-obs'), atualizadoEm: new Date().toISOString() };
+  // participação: o Chefe de Gabinete decide direto; os demais só solicitam
+  const decidir = podeConfirmarPart() && document.querySelector('.ev-part') ? ativo('part') : null;
+  const pedir = $('e-pedir') && $('e-pedir').checked ? { mensagem: v('e-pedir-msg') } : null;
+  if (decidir === 'Representada' && !v('e-rep')) return aviso('Informe quem vai representar a Secretária.');
   if (FormEv.remover) Object.assign(dados, { briefId: '', briefNome: '', briefTamanho: '' });
   if (FormEv.arq) {
     const bt = $('btn-ev-salvar'); if (bt) { bt.disabled = true; bt.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Enviando o briefing…'; }
     try { Object.assign(dados, await enviarBriefing(FormEv.arq, dados.titulo)); }
     catch (er) { if (bt) { bt.disabled = false; bt.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; } return aviso(er.message || 'Não foi possível enviar o briefing.'); }
   }
-  await salvarEvento(id || null, dados);
+  const idSalvo = await salvarEvento(id || null, dados);
   FormEv.arq = null; FormEv.remover = false;
   fecharModal();
-  if (naAgenda) eventoParaAgenda(dados);
-  toast(gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', 'fa-calendar-check');
+  const partAntes = antigo && !partPendente(antigo) && antigo.participacao !== 'A confirmar' ? antigo.participacao || '' : '';
+  if (decidir !== null && decidir !== partAntes) {
+    const acao = Object.keys(DECISAO_PART).find(k => DECISAO_PART[k].part === decidir);
+    if (acao && (acao !== 'representar' || v('e-rep'))) await execPartEv(idSalvo, acao, { representante: v('e-rep') });
+    else if (!decidir || decidir === 'A confirmar') await salvarEvento(idSalvo, { ...semId(eventoPorId(idSalvo)), participacao: decidir }, 'Participação → ' + (decidir || '—'));
+  } else if (pedir) await execPartEv(idSalvo, 'solicitar', pedir);
+  toast(pedir ? 'Evento salvo · pedido de participação enviado ao Chefe de Gabinete.' : gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', pedir ? 'fa-paper-plane' : 'fa-calendar-check');
   if (abaAtual !== 'eventos') irPara('eventos');
 }
 
