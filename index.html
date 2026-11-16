@@ -47,11 +47,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.60.0">
+<meta name="gabdoc-versao" content="1.61.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Resumo do dia ao entrar: o que espera por você, vencidos, o que vence hoje e a agenda do dia",
-  "O sino agora abre o Resumo do dia a qualquer momento",
-  "Publicações: o aviso de autorização virou uma linha discreta, sem tomar a tela"
+  "Eventos: novas visualizações em Cartões, Calendário e Mapa de MT, além da Planilha",
+  "Eventos: anexe o Briefing do evento em PDF e veja direto no sistema",
+  "Comunicados: Mural organizado por prioridade e Calendário de publicação e validade",
+  "Relatórios próprios de Eventos (com mapa) e de Comunicados, com filtros"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1046,6 +1047,113 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .aut-av:first-child { margin-left: 0; }
   .gs-compacto .aut-cel .aut-rot { display: none; }
   .gs-compacto .aut-cel:not(:has(.aut-avs)) { padding: 0 8px; }
+  /* ----- Eventos e Comunicados: cartões, calendário, mapa ----- */
+  :root { --mapa-vazio: #eef2f7; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mapa-vazio: #1e293b; } }
+  :root[data-theme="dark"] { --mapa-vazio: #1e293b; }
+  .vis-seg button { gap: 6px; }
+  @media (max-width: 640px) { .vis-seg button:not(.ativo) .nom-seg-rot { display: none; } .vis-seg button { padding-left: 10px; padding-right: 10px; } }
+  .ev-filtros { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ev-sec { display: flex; flex-direction: column; gap: 9px; }
+  .ev-sec-tit { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; color: var(--ink2); cursor: default; list-style: none; }
+  .ev-sec-tit small { font-size: 11px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink3); }
+  .ev-sec-tit :is(i, svg) { color: #c026d3; }
+  .ev-sec-tit.agora { color: #a21caf; }
+  details.ev-sec > summary { cursor: pointer; }
+  details.ev-sec > summary::-webkit-details-marker { display: none; }
+  .ev-seta { font-size: 10px; transition: transform .15s; }
+  details[open] .ev-seta { transform: rotate(90deg); }
+  .ev-pulso { width: 9px; height: 9px; border-radius: 50%; background: #c026d3; box-shadow: 0 0 0 0 rgba(192,38,211,.5); animation: evPulso 1.8s infinite; }
+  @keyframes evPulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(192,38,211,.45); } 50% { box-shadow: 0 0 0 7px rgba(192,38,211,0); } }
+  @media (prefers-reduced-motion: reduce) { .ev-pulso { animation: none; } }
+  .ev-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  @media (max-width: 520px) { .ev-cards { grid-template-columns: minmax(0, 1fr); } }
+  .ev-card { --c: #c026d3; display: flex; flex-direction: column; border-radius: 16px; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--c); overflow: hidden; transition: box-shadow .15s, transform .15s; min-width: 0; }
+  .ev-card:hover { box-shadow: 0 12px 26px -18px rgba(15,23,42,.5); transform: translateY(-1px); }
+  .ev-card.enc { opacity: .72; }
+  .ev-card-corpo { display: flex; gap: 12px; padding: 12px 13px 8px; text-align: left; flex: 1; min-width: 0; }
+  .evd { --c: #c026d3; width: 54px; flex: none; display: flex; flex-direction: column; align-items: center; padding: 6px 2px 5px; border-radius: 12px; background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); line-height: 1; }
+  .evd small { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--c); }
+  .evd b { font-size: 24px; font-weight: 900; color: var(--ink); margin: 3px 0 2px; }
+  .evd em { font-style: normal; font-size: 10px; font-weight: 700; color: var(--ink3); white-space: nowrap; }
+  .ev-hero .evd { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.2); }
+  .ev-hero .evd b { color: #fff; } .ev-hero .evd em { color: rgba(255,255,255,.7); } .ev-hero .evd small { color: #f5d0fe; }
+  .ev-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+  .ev-card-tit { display: block; font-size: 14.5px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+  .ev-card-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 5px; font-size: 12px; color: var(--ink2); }
+  .ev-card-meta > span { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+  .ev-card-meta :is(i, svg) { color: var(--ink3); font-size: 10.5px; }
+  .ev-card footer { display: flex; align-items: center; gap: 6px; padding: 8px 13px 10px; border-top: 1px dashed var(--line); }
+  .ev-bt { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); }
+  .ev-bt:hover { border-color: #c026d3; color: #a21caf; }
+  .ev-bt.brief { color: #dc2626; background: color-mix(in srgb, #dc2626 7%, var(--card)); border-color: color-mix(in srgb, #dc2626 25%, var(--line)); }
+  .gs-cel-bt.ev-bt { height: 24px; }
+  .ev-vazio { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 40px 10px; text-align: center; color: var(--ink3); }
+  .ev-vazio > :is(i, svg) { font-size: 30px; opacity: .6; }
+  .ev-vazio b { color: var(--ink2); font-size: 14px; }
+  .ev-hero { background-color: #2e0a33; background-image: radial-gradient(600px 220px at 0% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 70%); }
+  .ev-brief { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 13px; background: color-mix(in srgb, #dc2626 6%, var(--card)); border: 1px solid color-mix(in srgb, #dc2626 25%, var(--line)); flex-wrap: wrap; }
+  .ev-brief.vazio { background: var(--card2); border-style: dashed; border-color: var(--line); }
+  .ev-brief b { font-size: 13.5px; font-weight: 800; color: var(--ink); }
+  .ev-brief small { display: block; font-size: 12px; color: var(--ink3); }
+  .ev-brief-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; flex: none; font-size: 17px; color: #fff; background: #dc2626; }
+  .ev-brief.vazio .ev-brief-ico { color: var(--ink3); background: var(--card); border: 1px solid var(--line); }
+  .ev-drop { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 18px 12px; border-radius: 13px; border: 2px dashed color-mix(in srgb, #dc2626 35%, var(--line)); background: color-mix(in srgb, #dc2626 4%, var(--card)); color: var(--ink2); }
+  .ev-drop > :is(i, svg) { font-size: 22px; color: #dc2626; }
+  .ev-drop b { font-size: 13.5px; } .ev-drop small { font-size: 12px; color: var(--ink3); }
+  .ev-drop.on, .ev-drop:hover { border-color: #dc2626; background: color-mix(in srgb, #dc2626 9%, var(--card)); }
+  .evc-cab { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .evc-cab h3 { font-size: 16px; font-weight: 800; color: var(--ink); margin-left: 6px; }
+  .evc-grade { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .evc-sem { padding: 6px 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); background: var(--card2); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .evc-dia { min-height: 104px; padding: 5px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; min-width: 0; background: var(--card); }
+  .evc-dia.fds { background: color-mix(in srgb, var(--card2) 55%, var(--card)); }
+  .evc-dia.fora { opacity: .45; }
+  .evc-num { font-size: 12px; font-weight: 800; color: var(--ink2); width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
+  .evc-dia.hoje .evc-num { color: #fff; background: #c026d3; }
+  .evc-itens { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .evc-ev { --c: #c026d3; display: flex; align-items: center; gap: 4px; width: 100%; text-align: left; padding: 3px 6px; border-radius: 6px; font-size: 11.5px; font-weight: 700; color: color-mix(in srgb, var(--c) 80%, var(--ink)); background: color-mix(in srgb, var(--c) 13%, var(--card)); border-left: 3px solid var(--c); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .evc-ev b { font-weight: 900; }
+  .evc-ev :is(i, svg) { font-size: 9px; flex: none; }
+  .evc-ev.enc { opacity: .55; text-decoration: line-through; }
+  .evc-ev.fim { background: transparent; border: 1px dashed var(--c); border-left-width: 3px; }
+  .evc-mais { font-size: 11px; font-weight: 800; color: var(--ink3); padding-left: 4px; }
+  .evc-leg { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 11.5px; color: var(--ink3); }
+  .evc-leg span { display: inline-flex; align-items: center; gap: 5px; }
+  .evc-leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  @media (max-width: 640px) { .evc-dia { min-height: 64px; padding: 3px; } .evc-ev { font-size: 0; padding: 0; height: 6px; border-left-width: 0; border-radius: 3px; background: var(--c); } .evc-ev :is(i, svg), .evc-ev b { display: none; } .evc-sem { padding: 5px 2px; text-align: center; font-size: 10px; } .evc-mais { font-size: 10px; } }
+  .evm { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); gap: 12px; align-items: start; }
+  @media (max-width: 900px) { .evm { grid-template-columns: minmax(0, 1fr); } }
+  .evm-svg { width: 100%; height: auto; max-height: 62vh; display: block; }
+  .evm-svg path { stroke: var(--card); stroke-width: .7; cursor: pointer; transition: opacity .12s; }
+  .evm-svg path:hover { opacity: .8; stroke: var(--ink); stroke-width: 1.2; }
+  .evm-svg path.sel { stroke: #0f172a; stroke-width: 2.4; }
+  .evm-rot { font: 700 15px system-ui, sans-serif; fill: var(--ink); paint-order: stroke; stroke: var(--card); stroke-width: 4px; text-anchor: middle; pointer-events: none; }
+  .evm-leg { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--ink3); margin-top: 6px; }
+  .evm-leg i { width: 90px; height: 8px; border-radius: 99px; display: inline-block; }
+  .evm-rank { display: flex; flex-direction: column; gap: 3px; }
+  .evm-rank button { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 9px; font-size: 13px; color: var(--ink); text-align: left; }
+  .evm-rank button:hover { background: var(--card2); }
+  .evm-pos { width: 20px; font-size: 11px; font-weight: 900; color: var(--ink3); }
+  .evm-barra { width: 70px; height: 6px; border-radius: 99px; background: var(--card2); overflow: hidden; flex: none; }
+  .evm-barra i { display: block; height: 100%; background: #c026d3; border-radius: 99px; }
+  .evm-rank b { width: 22px; text-align: right; color: #a21caf; }
+  .evm-lista { display: flex; flex-direction: column; gap: 6px; }
+  .evm-item { display: flex; align-items: center; gap: 10px; padding: 7px; border-radius: 11px; text-align: left; border: 1px solid var(--line); }
+  .evm-item:hover { background: var(--card2); }
+  .evm-item .evd { width: 46px; } .evm-item .evd b { font-size: 18px; }
+  .evm-item b { display: block; font-size: 13px; color: var(--ink); } .evm-item small { font-size: 11.5px; color: var(--ink3); }
+  .com-mural { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  @media (max-width: 520px) { .com-mural { grid-template-columns: minmax(0, 1fr); } }
+  .com-m { --c: #0284c7; --k: #0284c7; position: relative; display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 15px; text-align: left; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); transition: box-shadow .15s, transform .15s; min-width: 0; }
+  .com-m:hover { box-shadow: 0 12px 26px -18px rgba(15,23,42,.5); transform: translateY(-1px); }
+  .com-m.exp { opacity: .65; }
+  .com-m-cab { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .com-m-cat { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--k); }
+  .com-m-pin { color: #0284c7; font-size: 12px; margin-left: auto; }
+  .com-m-tit { font-size: 14.5px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+  .com-m-txt { font-size: 12.5px; color: var(--ink2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
+  .com-m-rod { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink3); margin-top: 2px; padding-top: 7px; border-top: 1px dashed var(--line); }
   /* ----- Resumo do dia ----- */
   .modal-rd { max-width: 680px; }
   .rd-hero { padding: 18px 20px 16px; color: #fff; background-color: #0c1a3d; background-image: radial-gradient(520px 220px at 0% 0%, rgba(251,191,36,.30), transparent 70%), radial-gradient(420px 220px at 100% 100%, rgba(124,58,237,.35), transparent 70%); }
@@ -2410,7 +2518,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bullhorn text-sky-300"></i> Comunicados importantes</h2>
             <p class="text-sky-100/70 text-xs mt-0.5 hidden sm:block">Mural com as informações importantes da SEDUC-MT: avisos, orientações, normativas, prazos e calendário escolar.</p>
           </div>
-          <div class="flex items-center gap-3"><span class="text-xs text-sky-100/80" id="com-resumo"></span><button onclick="abrirFormComunicado()" data-requer="comunicados:2" class="btn text-white" style="background:#0284c7"><i class="fa-solid fa-plus"></i>Novo comunicado</button></div>
+          <div class="flex flex-wrap items-center gap-2 md:gap-3"><span class="text-xs text-sky-100/80" id="com-resumo"></span><div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('comunicados')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div><button onclick="abrirFormComunicado()" data-requer="comunicados:2" class="btn text-white !h-10" style="background:#0284c7"><i class="fa-solid fa-plus"></i>Novo comunicado</button></div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="com-corpo"></div></div>
@@ -2422,9 +2530,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-calendar-check text-fuchsia-300"></i> Eventos da Secretaria de Educação</h2>
-            <p class="text-fuchsia-100/70 text-xs mt-0.5 hidden sm:block">Organização dos eventos da SEDUC-MT: datas, local, secretaria responsável, público, participação da Secretária e situação.</p>
+            <p class="text-fuchsia-100/70 text-xs mt-0.5 hidden sm:block">Eventos da SEDUC-MT em cartões, calendário e mapa: datas, local, secretaria responsável, participação da Secretária e o briefing de cada um.</p>
           </div>
-          <div class="flex items-center gap-3"><span class="text-xs text-fuchsia-100/80" id="ev-resumo"></span><button onclick="abrirFormEvento()" data-requer="eventos:2" class="btn text-white" style="background:#c026d3"><i class="fa-solid fa-plus"></i>Novo evento</button></div>
+          <div class="flex flex-wrap items-center gap-2 md:gap-3"><span class="text-xs text-fuchsia-100/80" id="ev-resumo"></span><div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('eventos')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div><button onclick="abrirFormEvento()" data-requer="eventos:2" class="btn text-white !h-10" style="background:#c026d3"><i class="fa-solid fa-plus"></i>Novo evento</button></div>
         </div>
       </div>
       <div class="corpo"><div class="flex-1 flex flex-col min-h-0 gap-3 pb-1" id="ev-corpo"></div></div>
@@ -4100,7 +4208,7 @@ function agSelecionar(d) { agEstado.dia = d; if (agEstado.vista === 'mes' && d.s
 function agVista(v) { agEstado.vista = v; if (v === 'mes') agEstado.mes = agEstado.dia.slice(0, 7); agGuardar(); renderAgenda(); }
 function agFonte(k) { agEstado.fontes[k] = !agEstado.fontes[k]; agGuardar(); renderAgenda(); }
 function agBuscar(v) { agEstado.busca = v; clearTimeout(agBuscar.t); agBuscar.t = setTimeout(() => { renderAgenda(); const el = $('ag-busca'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 220); }
-function abrirItemEvento(id) { if (pode('eventos:2')) abrirFormEvento(id); else irPara('eventos'); }
+function abrirItemEvento(id) { if (eventoPorId(id)) verEvento(id); else irPara('eventos'); }
 
 function horaItem(it) {
   if (!it.hora) return `<span class="ag-hora dia-todo">${it.k === 'prazo' ? 'prazo' : it.k === 'comunicado' ? 'expira' : 'dia todo'}</span>`;
@@ -7793,6 +7901,312 @@ function evQuando(e) {
 const pillEv = sit => { const x = SITUACOES_EV[sit] || { cor: '#64748b', ico: 'fa-circle' }; return sit ? `<span class="gs-pill" style="--c:${x.cor}"><i class="fa-solid ${x.ico} text-[9px]"></i>${esc(rotEv(sit))}</span>` : ''; };
 const siglasEv = txt => String(txt || '').split(/\s*[,;]\s*/).filter(Boolean).map(pilulaSigla).join(' ');
 
+/* ========================= Eventos e Comunicados: visualizações =========================
+   Eventos: Cartões · Calendário · Mapa de MT · Planilha, com detalhes e Briefing (PDF).
+   Comunicados: Mural · Calendário · Planilha. Cada área tem o seu relatório. */
+const lerUI = (k, padrao) => { let s = {}; try { s = JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) {} return Object.assign({}, padrao, s); };
+const evUI = lerUI('gabdoc_ev_ui', { vista: 'cartoes', mes: '', periodoMapa: 'prox', mun: '', busca: '', filtro: '' });
+const comUI = lerUI('gabdoc_com_ui', { vista: 'mural', mes: '', busca: '', filtro: '' });
+evUI.mun = ''; evUI.busca = ''; comUI.busca = '';
+function evSet(k, v) { evUI[k] = v; try { localStorage.setItem('gabdoc_ev_ui', JSON.stringify({ vista: evUI.vista, mes: evUI.mes, periodoMapa: evUI.periodoMapa, filtro: evUI.filtro })); } catch (e) {} renderEventos(); }
+function comSet(k, v) { comUI[k] = v; try { localStorage.setItem('gabdoc_com_ui', JSON.stringify({ vista: comUI.vista, mes: comUI.mes, filtro: comUI.filtro })); } catch (e) {} renderComunicados(); }
+const MESES_PT = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const MESES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const nomeMesAno = ym => { const [a, m] = ym.split('-').map(Number); return MESES_PT[m - 1].replace(/^./, c => c.toUpperCase()) + ' de ' + a; };
+const somaMes = (ym, n) => { const [a, m] = ym.split('-').map(Number); const d = new Date(a, m - 1 + n, 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+/** Seletor de visualização (botões com ícone). */
+function segVista(ops, atual, fn) {
+  return `<div class="dv-seg nom-seg vis-seg" role="group" aria-label="Visualização">${ops.map(([v, rot, ico]) => `<button type="button" class="${atual === v ? 'ativo' : ''}" aria-pressed="${atual === v}" title="${esc(rot)}" onclick="${fn}('vista','${v}')"><i class="fa-solid ${ico}"></i><span class="nom-seg-rot">${rot}</span></button>`).join('')}</div>`;
+}
+/** Grade de mês (segunda a domingo) com o conteúdo de cada dia. */
+function gradeMes(ym, celula, onNav) {
+  const [a, m] = ym.split('-').map(Number);
+  const ini = new Date(a, m - 1, 1), off = (ini.getDay() + 6) % 7, nDias = new Date(a, m, 0).getDate();
+  const total = Math.ceil((off + nDias) / 7) * 7, hoje = hojeISO();
+  let cel = '';
+  for (let i = 0; i < total; i++) {
+    const d = iso(new Date(a, m - 1, 1 - off + i)), fora = d.slice(0, 7) !== ym;
+    cel += `<div class="evc-dia ${fora ? 'fora' : ''} ${d === hoje ? 'hoje' : ''} ${(i % 7) > 4 ? 'fds' : ''}"><span class="evc-num">${Number(d.slice(8))}</span><div class="evc-itens">${celula(d, fora)}</div></div>`;
+  }
+  return `<div class="evc">
+    <div class="evc-cab"><button type="button" class="btn btn-sec !h-8 !px-3" onclick="${onNav}(-1)" aria-label="Mês anterior"><i class="fa-solid fa-chevron-left"></i></button><button type="button" class="btn btn-sec !h-8" onclick="${onNav}(0)">Hoje</button><button type="button" class="btn btn-sec !h-8 !px-3" onclick="${onNav}(1)" aria-label="Próximo mês"><i class="fa-solid fa-chevron-right"></i></button><h3>${nomeMesAno(ym)}</h3></div>
+    <div class="evc-grade">${['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(d => `<span class="evc-sem">${d}</span>`).join('')}${cel}</div>
+  </div>`;
+}
+
+/* ---------- Briefing do evento (PDF) ---------- */
+const BRIEF_MAX = 20 * 1024 * 1024;
+const briefDe = e => e && e.briefId ? { id: e.briefId, nome: e.briefNome || 'briefing.pdf', tam: e.briefTamanho || '' } : null;
+const eventoPorId = id => (Store.eventos || []).find(x => x.id === id);
+function validarBriefing(f) {
+  if (!f) return 'Escolha um arquivo PDF.';
+  if (extArq(f.name) !== 'pdf') return 'O briefing precisa ser um arquivo PDF.';
+  if (f.size > BRIEF_MAX) return 'O arquivo passa de 20 MB.';
+  if (!f.size) return 'O arquivo está vazio.';
+  return '';
+}
+async function enviarBriefing(file, rotulo) {
+  const erro = validarBriefing(file); if (erro) throw new Error(erro);
+  const base64 = await lerBase64(file);
+  if (Store.modo === 'planilha') {
+    const r = await API.post('enviar_briefing_evento', { nome: file.name, base64, rotulo: rotulo || '' }, 240000);
+    return { briefId: r.briefId, briefNome: r.briefNome, briefTamanho: r.briefTamanho };
+  }
+  const id = novoIdLocal('B');
+  ArquivosLocais[id] = { nome: file.name, tipo: 'application/pdf', base64 };
+  return { briefId: id, briefNome: file.name, briefTamanho: String(file.size) };
+}
+async function blobBriefing(id) {
+  const e = eventoPorId(id), b = briefDe(e);
+  if (!b) throw new Error('Este evento não tem briefing anexado.');
+  if (CacheVis.has(b.id)) return CacheVis.get(b.id);
+  let blob;
+  if (Store.modo !== 'planilha') {
+    const l = ArquivosLocais[b.id];
+    if (!l) throw new Error('Briefing de exemplo: anexe um PDF para testar.');
+    blob = blobDeBase64(l.base64, 'application/pdf');
+  } else {
+    const r = await API.post('baixar_briefing_evento', { id, arquivoId: b.id, arquivoNome: b.nome }, 240000);
+    blob = blobDeBase64(r.base64, 'application/pdf');
+  }
+  CacheVis.set(b.id, blob);
+  return blob;
+}
+async function baixarBriefing(id, btn) {
+  const e = eventoPorId(id), b = briefDe(e); if (!b) return;
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Baixando…'; }
+  try { await salvarArquivo(await blobBriefing(id), b.nome, 'Briefing baixado: ' + b.nome, 'fa-file-pdf'); }
+  catch (er) { toast(er.message || 'Não foi possível baixar o briefing.', 'fa-triangle-exclamation'); }
+  finally { if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+/** Visualizador de PDF (mesmo das Publicações: pdf.js, zoom, abrir em nova aba). */
+async function abrirVisualizadorPdf({ sel, nome, tam, cor, ico, obter, baixar }) {
+  if (Vis.url) { try { URL.revokeObjectURL(Vis.url); } catch (e) {} }
+  Object.assign(Vis, { id: '', qual: '', blob: null, url: '', escala: 1, doc: null, seq: Vis.seq + 1 });
+  abrirModal(`
+    <div class="vis-topo">
+      <span class="vis-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span>
+      <div class="min-w-0 flex-1"><p class="vis-sel">${esc(sel)}</p><h3 class="vis-tit"><i class="fa-solid fa-file-pdf" style="color:#dc2626"></i><span class="truncate">${esc(nome)}</span></h3></div>
+      <div class="vis-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
+      <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="vis-palco" id="vis-palco"><div class="vis-carregando"><i class="fa-solid fa-circle-notch fa-spin"></i><b>Abrindo o PDF…</b></div></div>
+    <div class="vis-rodape">
+      <span class="text-[12px] text-ink3 mr-auto" id="vis-info">${tam ? tamArq(tam) : ''}</span>
+      <button type="button" class="btn btn-sec !h-9" id="vis-aba" disabled onclick="if(Vis.url)window.open(Vis.url,'_blank','noopener')"><i class="fa-solid fa-up-right-from-square"></i><span>Abrir em nova aba</span></button>
+      <button type="button" class="btn btn-sec !h-9" onclick="${baixar}"><i class="fa-solid fa-file-pdf text-red-600"></i>Baixar PDF</button>
+    </div>`, 'visualizador');
+  const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-xl', 'modal-vis');
+  const seq = Vis.seq;
+  try {
+    const blob = await obter();
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    Vis.blob = blob; Vis.url = URL.createObjectURL(blob);
+    const b = $('vis-aba'); if (b) b.disabled = false;
+    await desenharVis(seq);
+  } catch (e) {
+    if (seq !== Vis.seq || !$('vis-palco')) return;
+    $('vis-palco').innerHTML = `<div class="vis-carregando erro"><i class="fa-solid fa-triangle-exclamation"></i><b>Não deu para mostrar o arquivo</b><small>${esc(e.message || 'Tente baixar o arquivo.')}</small></div>`;
+  }
+}
+function verBriefing(id) {
+  const e = eventoPorId(id), b = briefDe(e);
+  if (!b) { toast('Este evento não tem briefing anexado.', 'fa-circle-info'); return; }
+  abrirVisualizadorPdf({ sel: 'Briefing · ' + (e.titulo || 'Evento'), nome: b.nome, tam: b.tam, cor: '#c026d3', ico: 'fa-file-lines', obter: () => blobBriefing(id), baixar: `baixarBriefing('${id}',this)` });
+}
+
+/* ---------- Eventos: filtros comuns ---------- */
+const EV_FILTROS = [['', 'Todos', () => true], ['prox', 'Próximos 30 dias', e => evProximo(e)], ['sec', 'Com a Secretária', e => e.participacao === 'Presença confirmada'], ['brief', 'Com briefing', e => !!e.briefId], ['real', 'Realizados', e => /^realiz/.test(Utils_norm(e.situacao))]];
+function eventosFiltrados() {
+  const f = (EV_FILTROS.find(x => x[0] === evUI.filtro) || EV_FILTROS[0])[2];
+  const q = Utils_norm(evUI.busca || '');
+  return (Store.eventos || []).filter(e => f(e) && (!q || Utils_norm([e.titulo, e.municipio, e.local, e.organizador, e.publico, e.responsavel, e.observacao].join(' ')).includes(q)));
+}
+const corSitEv = e => (SITUACOES_EV[e.situacao] || { cor: '#64748b' }).cor;
+function blocoDataEv(e) {
+  if (!e.dataInicio) return '<span class="evd"><b>—</b></span>';
+  const [a, m, d] = e.dataInicio.split('-');
+  const fim = evFim(e), varios = fim && fim !== e.dataInicio;
+  return `<span class="evd" style="--c:${corSitEv(e)}"><small>${MESES_CURTO[+m - 1]}</small><b>${+d}</b>${varios ? `<em>até ${fmtCurto(fim)}</em>` : `<em>${['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'][new Date(e.dataInicio + 'T12:00').getDay()]}</em>`}</span>`;
+}
+function cartaoEvento(e) {
+  const b = briefDe(e), enc = evEncerrado(e) || (evFim(e) && evFim(e) < hojeISO());
+  return `<article class="ev-card ${enc ? 'enc' : ''}" style="--c:${corSitEv(e)}">
+    <button type="button" class="ev-card-corpo" onclick="verEvento('${e.id}')">
+      ${blocoDataEv(e)}
+      <span class="min-w-0 flex-1">
+        <span class="ev-card-tags">${pillEv(e.situacao)}${evQuando(e)}</span>
+        <b class="ev-card-tit">${esc(e.titulo)}</b>
+        <span class="ev-card-meta">${e.hora ? `<span><i class="fa-regular fa-clock"></i>${esc(e.hora)}</span>` : ''}${e.municipio || e.local ? `<span><i class="fa-solid fa-location-dot"></i>${esc([e.local, e.municipio].filter(Boolean).join(' · '))}</span>` : ''}${listaDatas(e.dias).length > 1 ? `<span><i class="fa-solid fa-calendar-days"></i>${esc(evPeriodo(e))}</span>` : ''}</span>
+        <span class="ev-card-meta">${e.organizador ? `<span>${siglasEv(e.organizador)}</span>` : ''}${e.publico ? `<span><i class="fa-solid fa-users"></i>${esc(e.publico)}</span>` : ''}</span>
+      </span>
+    </button>
+    <footer>
+      ${e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}"><i class="fa-solid fa-user-tie text-[9px]"></i>${esc(rotPart(e.participacao))}</span>` : '<span></span>'}
+      <span class="flex gap-1.5 ml-auto">${b ? `<button type="button" class="ev-bt brief" onclick="verBriefing('${e.id}')" title="${esc(b.nome)}"><i class="fa-solid fa-file-pdf"></i>Briefing</button>` : ''}<button type="button" class="ev-bt" onclick="verEvento('${e.id}')"><i class="fa-solid fa-eye"></i>Ver</button></span>
+    </footer>
+  </article>`;
+}
+function vistaCartoesEv(l) {
+  const hoje = hojeISO();
+  const agora = l.filter(e => !evEncerrado(e) && evNoDia(e, hoje));
+  const futuros = l.filter(e => !evEncerrado(e) && !agora.includes(e) && (e.dataInicio || '') > hoje).sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio)));
+  const passados = l.filter(e => !agora.includes(e) && !futuros.includes(e)).sort((a, b) => String(evFim(b)).localeCompare(String(evFim(a))));
+  const meses = new Map(); futuros.forEach(e => { const k = e.dataInicio.slice(0, 7); if (!meses.has(k)) meses.set(k, []); meses.get(k).push(e); });
+  const grade = arr => `<div class="ev-cards">${arr.map(cartaoEvento).join('')}</div>`;
+  if (!l.length) return `<div class="ev-vazio"><i class="fa-solid fa-calendar-xmark"></i><b>Nenhum evento ${evUI.filtro || evUI.busca ? 'com esses filtros' : 'cadastrado'}</b>${pode('eventos:2') && !evUI.filtro ? '<button class="btn btn-pri mt-2" style="background:#c026d3;border-color:#c026d3" onclick="abrirFormEvento()"><i class="fa-solid fa-plus"></i>Novo evento</button>' : ''}</div>`;
+  return `${agora.length ? `<section class="ev-sec"><h3 class="ev-sec-tit agora"><span class="ev-pulso"></span>Acontecendo hoje <small>${agora.length}</small></h3>${grade(agora)}</section>` : ''}
+    ${[...meses.entries()].map(([k, arr]) => `<section class="ev-sec"><h3 class="ev-sec-tit"><i class="fa-solid fa-calendar"></i>${nomeMesAno(k)} <small>${arr.length} evento${arr.length > 1 ? 's' : ''}</small></h3>${grade(arr)}</section>`).join('')}
+    ${passados.length ? `<details class="ev-sec ev-passados" ${!agora.length && !futuros.length ? 'open' : ''}><summary class="ev-sec-tit"><i class="fa-solid fa-chevron-right ev-seta"></i>Realizados, encerrados e passados <small>${passados.length}</small></summary>${grade(passados.slice(0, 24))}${passados.length > 24 ? `<p class="text-[12px] text-ink3 mt-2">+ ${passados.length - 24} na Planilha</p>` : ''}</details>` : ''}`;
+}
+function evNavMes(n) { evUI.mes = n === 0 ? hojeISO().slice(0, 7) : somaMes(evUI.mes || hojeISO().slice(0, 7), n); renderEventos(); }
+function vistaCalendarioEv(l) {
+  const ym = evUI.mes || hojeISO().slice(0, 7);
+  return `<div class="dv-card !p-3">${gradeMes(ym, d => {
+    const doDia = l.filter(e => evNoDia(e, d)).sort((a, b) => String(a.hora || '99').localeCompare(String(b.hora || '99')));
+    return doDia.slice(0, 3).map(e => `<button type="button" class="evc-ev ${evEncerrado(e) ? 'enc' : ''}" style="--c:${corSitEv(e)}" onclick="verEvento('${e.id}')" title="${esc(e.titulo + ' · ' + evPeriodo(e) + (e.municipio ? ' · ' + e.municipio : ''))}">${e.hora ? `<b>${esc(e.hora.slice(0, 5))}</b>` : ''}${e.participacao === 'Presença confirmada' ? '<i class="fa-solid fa-user-tie"></i>' : ''}${esc(e.titulo)}</button>`).join('') + (doDia.length > 3 ? `<span class="evc-mais">+${doDia.length - 3}</span>` : '');
+  }, 'evNavMes')}
+  <div class="evc-leg">${Object.entries(SITUACOES_EV).map(([k, v]) => `<span><i style="background:${v.cor}"></i>${esc(rotEv(k))}</span>`).join('')}<span><i class="fa-solid fa-user-tie text-[10px]" style="background:none;color:#16a34a"></i>com a Secretária</span></div></div>`;
+}
+const PERIODOS_MAPA_EV = [['prox', 'Próximos 90 dias', e => !evEncerrado(e) && evFim(e) >= hojeISO() && (e.dataInicio || '') <= somaDias(90)], ['ano', 'Este ano', e => (e.dataInicio || '').slice(0, 4) === hojeISO().slice(0, 4)], ['tudo', 'Todos', () => true]];
+function vistaMapaEv(l) {
+  const per = PERIODOS_MAPA_EV.find(p => p[0] === evUI.periodoMapa) || PERIODOS_MAPA_EV[0];
+  const lista = l.filter(per[2]);
+  const porMun = {}; lista.forEach(e => { if (e.municipio) (porMun[e.municipio] = porMun[e.municipio] || []).push(e); });
+  const max = Math.max(1, ...Object.values(porMun).map(a => a.length));
+  const ranking = Object.entries(porMun).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'pt-BR'));
+  const sel = evUI.mun;
+  const paths = MT_MAPA.m.map(x => { const n = (porMun[x.n] || []).length; const f = n ? misturarHex('#c026d3', '#f5e8f7', 0.25 + 0.75 * n / max) : 'var(--mapa-vazio)';
+    return `<path d="${x.d}" class="${n ? 'com' : ''} ${sel === x.n ? 'sel' : ''}" style="fill:${f}" onclick="evSet('mun', ${esc(JSON.stringify(sel === x.n ? '' : x.n))})"><title>${esc(x.n)}${n ? ' · ' + n + ' evento' + (n > 1 ? 's' : '') : ''}</title></path>`; }).join('');
+  const rots = MT_MAPA.m.filter(x => ranking.slice(0, 8).some(r => r[0] === x.n) || x.n === sel).map(x => `<text x="${x.x}" y="${x.y}" class="evm-rot">${esc(x.n)}</text>`).join('');
+  const semMun = lista.filter(e => !e.municipio).length;
+  const doSel = sel ? (porMun[sel] || []).sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio))) : [];
+  return `<div class="evm">
+    <section class="dv-card !p-3 evm-mapa">
+      <div class="flex flex-wrap items-center gap-2 mb-2"><h3 class="text-[14px] font-extrabold flex items-center gap-2 mr-auto"><i class="fa-solid fa-map-location-dot" style="color:#c026d3"></i>Eventos por município</h3>
+        <div class="dv-seg nom-seg">${PERIODOS_MAPA_EV.map(([k, r]) => `<button type="button" class="${per[0] === k ? 'ativo' : ''}" onclick="evSet('periodoMapa','${k}')">${r}</button>`).join('')}</div></div>
+      <svg viewBox="0 0 ${MT_MAPA.w} ${MT_MAPA.h}" class="evm-svg" role="img" aria-label="Mapa de Mato Grosso com os eventos por município">${paths}${rots}</svg>
+      <div class="evm-leg"><span>menos</span><i style="background:linear-gradient(90deg, ${misturarHex('#c026d3', '#f5e8f7', .25)}, #c026d3)"></i><span>mais eventos</span><span class="ml-auto">${Object.keys(porMun).length} de 142 municípios${semMun ? ` · ${semMun} sem município` : ''}</span></div>
+    </section>
+    <aside class="dv-card !p-3 evm-lado">
+      ${sel ? `<div class="flex items-center gap-2 mb-2"><h3 class="text-[14px] font-extrabold mr-auto"><i class="fa-solid fa-location-dot mr-1.5" style="color:#c026d3"></i>${esc(sel)}</h3><button class="det-mini-bt" onclick="evSet('mun','')"><i class="fa-solid fa-xmark"></i>Limpar</button></div>
+        ${doSel.length ? `<div class="evm-lista">${doSel.map(e => `<button type="button" class="evm-item" style="--c:${corSitEv(e)}" onclick="verEvento('${e.id}')">${blocoDataEv(e)}<span class="min-w-0"><b>${esc(e.titulo)}</b><small>${esc(e.local || '')}${e.hora ? ' · ' + esc(e.hora) : ''}</small></span></button>`).join('')}</div>` : '<p class="text-[13px] text-ink3">Nenhum evento neste município no período.</p>'}`
+      : `<h3 class="text-[14px] font-extrabold mb-2"><i class="fa-solid fa-ranking-star mr-1.5" style="color:#c026d3"></i>Municípios com mais eventos</h3>
+        ${ranking.length ? `<div class="evm-rank">${ranking.slice(0, 12).map(([n, a], i) => `<button type="button" onclick="evSet('mun', ${esc(JSON.stringify(n))})"><span class="evm-pos">${i + 1}</span><span class="min-w-0 flex-1 truncate">${esc(n)}</span><span class="evm-barra"><i style="width:${a.length / max * 100}%"></i></span><b>${a.length}</b></button>`).join('')}</div><p class="text-[11.5px] text-ink3 mt-2"><i class="fa-solid fa-hand-pointer mr-1"></i>Toque num município do mapa para ver os eventos dele.</p>` : '<p class="text-[13px] text-ink3">Nenhum evento com município no período.</p>'}`}
+    </aside>
+  </div>`;
+}
+function verEvento(id) {
+  const e = eventoPorId(id); if (!e) return;
+  const b = briefDe(e), p = PROX_SIT_EV[e.situacao || 'Planejamento'];
+  const info = (ico, rot, val) => val ? `<div class="det-info"><span class="det-info-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><dt>${rot}</dt><dd>${val}</dd></div></div>` : '';
+  const naAgenda = (Store.agenda || []).some(a => a.titulo === e.titulo && a.data === e.dataInicio);
+  abrirModal(`
+    <div class="form-hero ev-hero" style="--c:${corSitEv(e)}">
+      <div class="flex items-start gap-3">
+        ${blocoDataEv(e)}
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap gap-1.5 mb-1.5">${pillEv(e.situacao)}${evQuando(e)}${e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(rotPart(e.participacao))}</span>` : ''}</div>
+          <h3 class="text-[20px] font-extrabold text-white leading-tight">${esc(e.titulo)}</h3>
+          <p class="text-[13px] text-white/90 mt-1"><i class="fa-regular fa-calendar mr-1"></i>${esc(evPeriodo(e))}${e.hora ? ' · ' + esc(e.hora) : ''} · ${esc(evDuracao(e))}</p>
+        </div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+    </div>
+    <div class="modal-corpo space-y-4">
+      <div class="ev-brief ${b ? '' : 'vazio'}">
+        <span class="ev-brief-ico"><i class="fa-solid ${b ? 'fa-file-pdf' : 'fa-file-circle-plus'}"></i></span>
+        <div class="min-w-0 flex-1"><b>${b ? 'Briefing do evento' : 'Sem briefing anexado'}</b><small>${b ? esc(b.nome) + (b.tam ? ' · ' + tamArq(b.tam) : '') : 'Anexe o PDF com a pauta, roteiro e informações do evento.'}</small></div>
+        ${b ? `<button type="button" class="btn btn-sec !h-9" onclick="baixarBriefing('${e.id}',this)"><i class="fa-solid fa-download"></i><span class="hidden sm:inline">Baixar</span></button><button type="button" class="btn btn-pri !h-9" style="background:#c026d3;border-color:#c026d3" onclick="verBriefing('${e.id}')"><i class="fa-solid fa-eye"></i>Ver briefing</button>`
+          : pode('eventos:2') ? `<button type="button" class="btn btn-sec !h-9" onclick="abrirFormEvento('${e.id}','brief')"><i class="fa-solid fa-paperclip"></i>Anexar</button>` : ''}
+      </div>
+      <dl class="det-infos">
+        ${info('fa-location-dot', 'Município', esc(e.municipio || ''))}
+        ${info('fa-building', 'Local', esc(e.local || ''))}
+        ${info('fa-sitemap', 'Secretaria responsável', siglasEv(e.organizador))}
+        ${info('fa-users', 'Público / participantes', esc(e.publico || ''))}
+        ${info('fa-user-pen', 'Responsável na Assessoria', esc(e.responsavel || ''))}
+        ${listaDatas(e.dias).length > 1 ? info('fa-calendar-days', 'Dias do evento', esc(listaDatas(e.dias).map(fmt).join(', '))) : ''}
+      </dl>
+      ${e.observacao ? `<div class="det-obs-txt2" style="border-left-color:#c026d3;background:color-mix(in srgb, #c026d3 5%, var(--card))">${esc(e.observacao)}</div>` : ''}
+    </div>
+    <div class="modal-rodape !justify-between flex-wrap gap-2">
+      <div class="flex gap-2 flex-wrap">${p && pode('eventos:2') ? `<button class="btn btn-sec" onclick="editarEvCampos(eventoPorId('${e.id}'),{situacao:'${p[0]}'}).then(()=>verEvento('${e.id}'))"><i class="fa-solid ${p[2]}" style="color:${SITUACOES_EV[p[0]].cor}"></i>${esc(L('evacao.' + slugRot(e.situacao || 'Planejamento'), p[1]))}</button>` : ''}${pode('agenda:2') && e.dataInicio ? `<button class="btn btn-sec" ${naAgenda ? 'disabled' : ''} onclick="eventoParaAgenda(eventoPorId('${e.id}'));this.disabled=true"><i class="fa-solid fa-calendar-plus text-teal-600"></i>${naAgenda ? 'Já está na Agenda' : 'Incluir na Agenda'}</button>` : ''}</div>
+      <div class="flex gap-2">${pode('eventos:2') ? `<button class="btn btn-sec" onclick="abrirFormEvento('${e.id}')"><i class="fa-solid fa-pen"></i>Editar</button>` : ''}<button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
+    </div>`, 'evento-ver', { id });
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+}
+/** Cabeçalho das vistas (troca de vista, filtros e busca). */
+function controlesEv(n) {
+  return `<div class="nom-ctrl"><div class="nom-ctrl-l">
+    ${segVista([['cartoes', 'Cartões', 'fa-grip'], ['calendario', 'Calendário', 'fa-calendar-days'], ['mapa', 'Mapa', 'fa-map-location-dot'], ['planilha', 'Planilha', 'fa-table-cells']], evUI.vista, 'evSet')}
+    ${evUI.vista !== 'planilha' ? `<span class="nom-div"></span><div class="ev-filtros">${EV_FILTROS.map(([k, r]) => `<button type="button" class="chip-f ${evUI.filtro === k ? 'ativo' : ''}" style="--c:#c026d3" onclick="evSet('filtro','${k}')">${r}</button>`).join('')}</div>
+    <label class="nom-busca"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar evento, município, local…" value="${esc(evUI.busca || '')}" oninput="evUI.busca=this.value;clearTimeout(window._evBusca);window._evBusca=setTimeout(()=>{renderEventos();const i=document.querySelector('#ev-corpo .nom-busca input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},250)"></label><span class="text-[12px] text-ink3">${n} evento${n === 1 ? '' : 's'}</span>` : ''}
+  </div></div>`;
+}
+function kpisEv() {
+  const todos = Store.eventos || [], prox = todos.filter(e => evProximo(e)), hoje = hojeISO();
+  const k = (cor, ico, rot, val, sub, filtro) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="evSet('filtro','${filtro}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  return `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    ${k('#c026d3', 'fa-calendar-day', 'Próximos 30 dias', prox.length, `${todos.filter(e => !evEncerrado(e) && evNoDia(e, hoje)).length} acontecendo hoje`, 'prox')}
+    ${k('#16a34a', 'fa-user-tie', 'Com a Secretária', prox.filter(e => e.participacao === 'Presença confirmada').length, `${prox.filter(e => e.participacao === 'A confirmar').length} a confirmar`, 'sec')}
+    ${k('#7c3aed', 'fa-file-pdf', 'Com briefing', todos.filter(e => e.briefId).length, `${prox.filter(e => !e.briefId).length} próximo(s) sem briefing`, 'brief')}
+    ${k('#0d9488', 'fa-flag-checkered', rotEv('Realizado'), todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length, `${new Set(todos.map(e => e.municipio).filter(Boolean)).size} município(s) com eventos`, 'real')}
+  </div>`;
+}
+
+/* ---------- Comunicados: mural e calendário ---------- */
+const COM_FILTROS = [['', 'Vigentes', c => comVigente(c)], ['urg', 'Urgentes', c => comVigente(c) && c.prioridade === 'Urgente'], ['fix', 'Fixados', c => comVigente(c) && c.fixado], ['vence', 'Vencem em 7 dias', c => comVigente(c) && c.validoAte && c.validoAte <= somaDias(7)], ['exp', 'Expirados e arquivados', c => !comVigente(c)], ['todos', 'Todos', () => true]];
+function comunicadosFiltrados() {
+  const f = (COM_FILTROS.find(x => x[0] === comUI.filtro) || COM_FILTROS[0])[2];
+  const q = Utils_norm(comUI.busca || '');
+  return (Store.comunicados || []).filter(c => f(c) && (!q || Utils_norm([c.titulo, c.conteudo, c.categoria, c.secretaria, c.referencia].join(' ')).includes(q))).sort(ordemCom);
+}
+function controlesCom(n) {
+  return `<div class="nom-ctrl"><div class="nom-ctrl-l">
+    ${segVista([['mural', 'Mural', 'fa-thumbtack'], ['calendario', 'Calendário', 'fa-calendar-days'], ['planilha', 'Planilha', 'fa-table-cells']], comUI.vista, 'comSet')}
+    ${comUI.vista !== 'planilha' ? `<span class="nom-div"></span><div class="ev-filtros">${COM_FILTROS.map(([k, r]) => `<button type="button" class="chip-f ${comUI.filtro === k ? 'ativo' : ''}" style="--c:#0284c7" onclick="comSet('filtro','${k}')">${r}</button>`).join('')}</div>
+    <label class="nom-busca"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar no título ou no texto…" value="${esc(comUI.busca || '')}" oninput="comUI.busca=this.value;clearTimeout(window._comBusca);window._comBusca=setTimeout(()=>{renderComunicados();const i=document.querySelector('#com-corpo .nom-busca input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},250)"></label><span class="text-[12px] text-ink3">${n} comunicado${n === 1 ? '' : 's'}</span>` : ''}
+  </div></div>`;
+}
+function kpisCom() {
+  const todos = Store.comunicados || [], vig = todos.filter(comVigente);
+  const k = (cor, ico, rot, val, sub, filtro) => `<button type="button" class="dv-kpi" style="--c:${cor}" onclick="comSet('filtro','${filtro}')"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${val}</span><span class="sub">${sub}</span></button>`;
+  return `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    ${k('#0284c7', 'fa-bullhorn', 'Vigentes', vig.length, `${todos.filter(c => c.publicadoEm && c.publicadoEm.slice(0, 7) === hojeISO().slice(0, 7)).length} publicado(s) este mês`, '')}
+    ${k('#dc2626', 'fa-bolt', rotPri('Urgente'), vig.filter(c => c.prioridade === 'Urgente').length, `${vig.filter(c => c.prioridade === 'Importante').length} ${rotPri('Importante').toLowerCase()}`, 'urg')}
+    ${k('#ea580c', 'fa-hourglass-half', 'Vencem em 7 dias', vig.filter(c => c.validoAte && c.validoAte <= somaDias(7)).length, 'validade terminando', 'vence')}
+    ${k('#0d9488', 'fa-thumbtack', 'Fixados', vig.filter(c => c.fixado).length, `${todos.filter(c => !comVigente(c)).length} expirado(s) ou arquivado(s)`, 'fix')}
+  </div>`;
+}
+function vistaMuralCom(l) {
+  if (!l.length) return `<div class="ev-vazio"><i class="fa-solid fa-bullhorn"></i><b>Nenhum comunicado ${comUI.filtro || comUI.busca ? 'com esses filtros' : 'vigente'}</b>${pode('comunicados:2') ? '<button class="btn btn-pri mt-2" style="background:#0284c7;border-color:#0284c7" onclick="abrirFormComunicado()"><i class="fa-solid fa-plus"></i>Novo comunicado</button>' : ''}</div>`;
+  const grupos = [['Fixados no topo', 'fa-thumbtack', '#0284c7', c => c.fixado && comVigente(c)], [rotPri('Urgente'), 'fa-bolt', '#dc2626', c => !c.fixado && c.prioridade === 'Urgente' && comVigente(c)], [rotPri('Importante'), 'fa-star', '#d97706', c => !c.fixado && c.prioridade === 'Importante' && comVigente(c)], ['Demais vigentes', 'fa-circle-info', '#0284c7', c => !c.fixado && (c.prioridade || 'Normal') === 'Normal' && comVigente(c)], ['Expirados e arquivados', 'fa-box-archive', '#64748b', c => !comVigente(c)]];
+  const usados = new Set();
+  return grupos.map(([tit, ico, cor, f]) => { const g = l.filter(c => !usados.has(c.id) && f(c)); g.forEach(c => usados.add(c.id)); return g.length ? `<section class="ev-sec"><h3 class="ev-sec-tit" style="--c:${cor}"><i class="fa-solid ${ico}" style="color:${cor}"></i>${tit} <small>${g.length}</small></h3><div class="com-mural">${g.map(cartaoComMural).join('')}</div></section>` : ''; }).join('');
+}
+function cartaoComMural(c) {
+  const p = PRIORIDADES_COM[c.prioridade] || PRIORIDADES_COM.Normal, [, corCat, icoCat] = catCom(c.categoria);
+  const dv = c.validoAte && comVigente(c) ? diasAte(c.validoAte) : null;
+  return `<button type="button" class="com-m ${comVigente(c) ? '' : 'exp'}" style="--c:${p.cor};--k:${corCat}" onclick="lerComunicado('${c.id}')">
+    <span class="com-m-cab"><span class="com-m-cat"><i class="fa-solid ${icoCat}"></i>${esc(rotCat(c.categoria))}</span>${c.fixado ? '<i class="fa-solid fa-thumbtack com-m-pin" title="Fixado"></i>' : ''}${c.prioridade && c.prioridade !== 'Normal' ? chipPri(c.prioridade) : ''}</span>
+    <b class="com-m-tit">${esc(c.titulo)}</b>
+    ${c.conteudo ? `<span class="com-m-txt">${esc(c.conteudo)}</span>` : ''}
+    <span class="com-m-rod"><span>${String(c.secretaria || '').split(/\s*,\s*/).filter(Boolean).map(pilulaSigla).join(' ')}</span><span class="ml-auto ${dv !== null && dv <= 3 ? 'text-orange-600 font-bold' : ''}">${fmt(c.publicadoEm)}${c.validoAte ? (dv !== null ? ` · ${dv === 0 ? 'vence hoje' : dv === 1 ? 'vence amanhã' : 'até ' + fmtCurto(c.validoAte)}` : ' · até ' + fmtCurto(c.validoAte)) : ''}</span></span>
+  </button>`;
+}
+function comNavMes(n) { comUI.mes = n === 0 ? hojeISO().slice(0, 7) : somaMes(comUI.mes || hojeISO().slice(0, 7), n); renderComunicados(); }
+function vistaCalendarioCom(l) {
+  const ym = comUI.mes || hojeISO().slice(0, 7);
+  return `<div class="dv-card !p-3">${gradeMes(ym, d => {
+    const pub = l.filter(c => c.publicadoEm === d), fim = l.filter(c => c.validoAte === d && c.publicadoEm !== d);
+    const it = pub.map(c => ({ c, t: 'pub' })).concat(fim.map(c => ({ c, t: 'fim' })));
+    return it.slice(0, 3).map(({ c, t }) => `<button type="button" class="evc-ev ${t === 'fim' ? 'fim' : ''} ${comVigente(c) ? '' : 'enc'}" style="--c:${(PRIORIDADES_COM[c.prioridade] || PRIORIDADES_COM.Normal).cor === '#64748b' ? '#0284c7' : (PRIORIDADES_COM[c.prioridade]).cor}" onclick="lerComunicado('${c.id}')" title="${esc((t === 'fim' ? 'Validade termina: ' : 'Publicado: ') + c.titulo)}"><i class="fa-solid ${t === 'fim' ? 'fa-hourglass-end' : 'fa-bullhorn'}"></i>${esc(c.titulo)}</button>`).join('') + (it.length > 3 ? `<span class="evc-mais">+${it.length - 3}</span>` : '');
+  }, 'comNavMes')}
+  <div class="evc-leg"><span><i class="fa-solid fa-bullhorn text-[10px]" style="background:none;color:#0284c7"></i>publicado no dia</span><span><i class="fa-solid fa-hourglass-end text-[10px]" style="background:none;color:#ea580c"></i>validade termina</span><span><i style="background:#dc2626"></i>${esc(rotPri('Urgente'))}</span><span><i style="background:#d97706"></i>${esc(rotPri('Importante'))}</span></div></div>`;
+}
+
 function renderEventos() {
   const cont = $('ev-corpo');
   const todos = Store.eventos || [];
@@ -7800,12 +8214,18 @@ function renderEventos() {
   $('ev-resumo').textContent = todos.length ? `${prox.length} nos próximos 30 dias · ${todos.filter(e => /^realiz/.test(Utils_norm(e.situacao))).length} realizado(s)` : '';
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
   preencherListaResp();
+  if (evUI.vista !== 'planilha') {
+    const l = eventosFiltrados();
+    const vista = evUI.vista === 'calendario' ? vistaCalendarioEv(l) : evUI.vista === 'mapa' ? vistaMapaEv(l) : vistaCartoesEv(l);
+    cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${kpisEv()}${controlesEv(l.length)}${vista}</div>`;
+    return;
+  }
   const mes = hojeISO().slice(0, 7);
   const kpi = (chave, rot, ico, cor, n, sub) => `<button type="button" onclick="chipGrade('eventos','${chave}')" class="dv-kpi" style="--c:${cor}"><span class="rot"><i class="fa-solid ${ico}"></i>${rot}</span><span class="val">${n}</span><span class="sub">${sub}</span></button>`;
   const sitLote = s => ({ rot: rotEv(s), ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'eventos:2', campos: () => ({ situacao: s }) });
   renderGrade(cont, {
     id: 'eventos', area: 'eventos', linhas: todos, fonte: () => Store.eventos,
-    topo: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    topo: `${controlesEv(0)}<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       ${kpi('prox', 'Próximos 30 dias', 'fa-calendar-day', '#c026d3', prox.length, `${prox.filter(e => e.participacao === 'Presença confirmada').length} com a Secretária`)}
       ${kpi('prep', 'Em planejamento', 'fa-screwdriver-wrench', '#d97706', todos.filter(e => /^(planej|em prep)/.test(Utils_norm(e.situacao))).length, 'planejamento ou preparação')}
       ${kpi('conf', rotEv('Confirmado'), 'fa-circle-check', '#0d9488', todos.filter(e => e.situacao === 'Confirmado').length, 'prontos para acontecer')}
@@ -7823,9 +8243,10 @@ function renderEventos() {
       { key: 'participacao', rot: 'Participação da Secretária', w: 190, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, rotPart(k)])), render: e => e.participacao ? `<span class="gs-pill" style="--c:${PARTICIPACAO_EV[e.participacao] || '#64748b'}">${esc(rotPart(e.participacao))}</span>` : '' },
       { key: 'situacao', rot: 'Situação', w: 150, tipo: 'select', editavel: true, opcoes: () => Object.keys(SITUACOES_EV).map(k => [k, rotEv(k)]), render: e => pillEv(e.situacao) },
       { key: 'responsavel', rot: 'Responsável na Assessoria', w: 180, tipo: 'texto', editavel: true, lista: 'lista-resp' },
-      { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true }
+      { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true },
+      { key: 'briefNome', rot: 'Briefing', w: 120, wCompacta: 92, tipo: 'texto', editavel: false, render: e => e.briefId ? `<button type="button" class="gs-cel-bt ev-bt brief" onclick="verBriefing('${e.id}')" title="${esc(e.briefNome || '')}"><i class="fa-solid fa-file-pdf"></i>Ver</button>` : '<span class="text-ink3">—</span>' }
     ],
-    compactas: ['titulo', 'dataInicio', 'municipio', 'participacao', 'situacao'],
+    compactas: ['titulo', 'dataInicio', 'municipio', 'participacao', 'situacao', 'briefNome'],
     larguraAcoes: 172,
     finalizado: e => evEncerrado(e) || (!!evFim(e) && evFim(e) < hojeISO()),
     ordemPadrao: ordemFinalizados(e => evEncerrado(e) || (!!evFim(e) && evFim(e) < hojeISO()), (a, b) => String(a.dataInicio || '9').localeCompare(String(b.dataInicio || '9')), (a, b) => String(evFim(b)).localeCompare(String(evFim(a)))),
@@ -7838,13 +8259,15 @@ function renderEventos() {
     acoes: e => {
       const p = PROX_SIT_EV[e.situacao || 'Planejamento'];
       const btn = p && pode('eventos:2') ? `<button type="button" class="gs-acao" style="--c:${SITUACOES_EV[p[0]].cor}" onclick="editarEvCampos(Store.eventos.find(x=>x.id==='${e.id}'),{situacao:'${p[0]}'})"><i class="fa-solid ${p[2]}"></i>${esc(L('evacao.' + slugRot(e.situacao || 'Planejamento'), p[1]))}</button>` : `<span class="gs-acao-fim"><i class="fa-solid fa-circle-check"></i>${esc(rotEv(e.situacao || ''))}</span>`;
-      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormEvento('${e.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('eventos','${e.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
+      return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Ver o evento" onclick="verEvento('${e.id}')"><i class="fa-solid fa-eye"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('eventos','${e.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
     tituloLinha: e => e.titulo + ' · ' + evPeriodo(e),
     menuAcoes: e => Object.keys(SITUACOES_EV).filter(s => s !== e.situacao).map(s => ({ rot: 'Situação: ' + rotEv(s), ico: SITUACOES_EV[s].ico, cor: SITUACOES_EV[s].cor, perm: 'eventos:2', fn: () => editarEvCampos(e, { situacao: s }) }))
       .concat([{ sep: true },
                { rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'eventos:2', fn: () => editarEvCampos(e, { participacao: 'Presença confirmada' }) },
                { rot: 'Incluir na Agenda da Secretária', ico: 'fa-calendar-plus', cor: '#0d9488', perm: 'agenda:2', fn: () => eventoParaAgenda(e) },
+               { rot: 'Ver o evento', ico: 'fa-eye', cor: '#c026d3', fn: () => verEvento(e.id) },
+               ...(e.briefId ? [{ rot: 'Ver o briefing', ico: 'fa-file-pdf', cor: '#dc2626', fn: () => verBriefing(e.id) }] : []),
                { rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'eventos:2', fn: () => abrirFormEvento(e.id) },
                { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'eventos:3', perigo: true, fn: () => excluirEventoId(e.id) }]),
     acoesLote: Object.keys(SITUACOES_EV).map(sitLote).concat([{ rot: rotPart('Presença confirmada'), ico: 'fa-user-check', cor: '#16a34a', perm: 'eventos:2', campos: () => ({ participacao: 'Presença confirmada' }) }]),
@@ -7867,10 +8290,12 @@ function eventoParaAgenda(e) {
   salvarAgenda(null, { titulo: e.titulo, data: e.dataInicio, hora: /^\d{1,2}:\d{2}$/.test(e.hora || '') ? e.hora : '', tipo: 'evento', local: e.local || '', municipio: e.municipio || '', obs: [e.publico, e.observacao].filter(Boolean).join(' · ') });
   toast('Evento incluído na Agenda da Secretária.', 'fa-calendar-check');
 }
-function abrirFormEvento(id) {
+const FormEv = { arq: null, remover: false };
+function abrirFormEvento(id, foco) {
   if (!pode('eventos:2')) { toast('Seu perfil não cadastra eventos.', 'fa-lock'); return; }
   const x = id ? Store.eventos.find(e => e.id === id) : { situacao: 'Planejamento', participacao: 'A confirmar' };
   if (!x) return;
+  FormEv.arq = null; FormEv.remover = false;
   const secSel = String(x.organizador || '').split(/\s*,\s*/).map(s => s.toUpperCase());
   const num = (n, cor) => `<span class="passo-num !w-7 !h-7 !text-[13px] !rounded-lg" style="--c:${cor}">${n}</span>`;
   const bloco = (n, cor, tit, html) => `<section class="space-y-3"><div class="flex items-center gap-2.5">${num(n, cor)}<h4 class="text-[14px] font-bold">${tit}</h4></div><div class="space-y-3 pl-0 sm:pl-[38px]">${html}</div></section>`;
@@ -7906,12 +8331,30 @@ function abrirFormEvento(id) {
         <div><span class="rotulo !text-[12.5px]">Participação da Secretária</span>${opc('part', Object.entries(PARTICIPACAO_EV), x.participacao || '')}</div>
         ${rot('Observação', `<textarea class="campo w-full" rows="2" id="e-obs" placeholder="Pauta, necessidades de cerimonial, transporte…">${esc(x.observacao || '')}</textarea>`)}
         ${!id && pode('agenda:2') ? `<label class="flex items-center gap-2 text-[13px] font-medium"><input type="checkbox" id="e-agenda" class="w-4 h-4"> Incluir também na Agenda da Secretária</label>` : ''}`)}
+      ${bloco(4, '#dc2626', 'Briefing do evento <span class="font-normal text-ink3 text-[12.5px]">(PDF, opcional)</span>', `<div id="e-brief">${htmlBriefForm(x)}</div>`)}
       <p id="e-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p>
     </form>
     <div class="modal-rodape ${id ? '!justify-between' : ''}">${id && pode('eventos:3') ? `<button class="btn btn-perigo" onclick="if(this.dataset.c){fecharModal();excluirEventoId('${id}')}else{this.dataset.c=1;this.lastChild.textContent='Confirmar exclusão'}"><i class="fa-solid fa-trash"></i><span>Excluir</span></button>` : ''}<div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ev" id="btn-ev-salvar"><i class="fa-solid fa-check"></i>Salvar</button></div></div>`, 'evento');
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   spMontar('ev');
-  setTimeout(() => $('e-titulo').focus(), 50);
+  setTimeout(() => { if (foco === 'brief' && $('e-brief')) { $('e-brief').scrollIntoView({ block: 'center' }); const i = $('e-brief-arq'); if (i) i.click(); } else $('e-titulo').focus(); }, 80);
+}
+/** Cartão do briefing no formulário: arquivo atual, trocar, retirar, arrastar e soltar. */
+function htmlBriefForm(x) {
+  const atual = FormEv.remover ? null : briefDe(x);
+  const novo = FormEv.arq;
+  const nome = novo ? novo.name : atual ? atual.nome : '', tam = novo ? novo.size : atual ? atual.tam : '';
+  return `${nome ? `<div class="ev-brief"><span class="ev-brief-ico"><i class="fa-solid fa-file-pdf"></i></span><div class="min-w-0 flex-1"><b class="truncate block">${esc(nome)}</b><small>${tam ? tamArq(tam) : ''}${novo ? ' · será enviado ao salvar' : ''}</small></div>
+      ${!novo && atual && x.id ? `<button type="button" class="btn btn-sec !h-9" onclick="verBriefing('${x.id}')"><i class="fa-solid fa-eye"></i><span class="hidden sm:inline">Ver</span></button>` : ''}
+      <button type="button" class="btn btn-sec !h-9" onclick="$('e-brief-arq').click()"><i class="fa-solid fa-arrows-rotate"></i><span class="hidden sm:inline">Trocar</span></button>
+      <button type="button" class="btn btn-sec !h-9 !text-red-600" onclick="FormEv.arq=null;FormEv.remover=true;$('e-brief').innerHTML=htmlBriefForm(Store.eventos.find(e=>e.id===${esc(JSON.stringify(x.id || ''))})||{})" title="Retirar o briefing"><i class="fa-solid fa-trash"></i></button></div>`
+    : `<button type="button" class="ev-drop" onclick="$('e-brief-arq').click()" ondragover="event.preventDefault();this.classList.add('on')" ondragleave="this.classList.remove('on')" ondrop="event.preventDefault();this.classList.remove('on');escolherBriefForm(event.dataTransfer.files[0])"><i class="fa-solid fa-file-arrow-up"></i><b>Anexar o briefing em PDF</b><small>Toque para escolher ou arraste o arquivo aqui · até 20 MB</small></button>`}
+    <input type="file" id="e-brief-arq" accept="application/pdf,.pdf" class="hidden" onchange="escolherBriefForm(this.files[0]);this.value=''">`;
+}
+function escolherBriefForm(f) {
+  const erro = validarBriefing(f); if (erro) { toast(erro, 'fa-triangle-exclamation'); return; }
+  FormEv.arq = f; FormEv.remover = false;
+  $('e-brief').innerHTML = htmlBriefForm({});
 }
 async function salvarFormEvento(id) {
   const v = k => ($(k) ? $(k).value.trim() : '');
@@ -7927,7 +8370,14 @@ async function salvarFormEvento(id) {
     organizador: chipsMarcados('evsec').join(', '), publico: v('e-publico'), responsavel: v('e-resp'),
     situacao: ativo('sit') || 'Planejamento', participacao: ativo('part'), observacao: v('e-obs'), atualizadoEm: new Date().toISOString() };
   const naAgenda = !id && $('e-agenda') && $('e-agenda').checked;
+  if (FormEv.remover) Object.assign(dados, { briefId: '', briefNome: '', briefTamanho: '' });
+  if (FormEv.arq) {
+    const bt = $('btn-ev-salvar'); if (bt) { bt.disabled = true; bt.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Enviando o briefing…'; }
+    try { Object.assign(dados, await enviarBriefing(FormEv.arq, dados.titulo)); }
+    catch (er) { if (bt) { bt.disabled = false; bt.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; } return aviso(er.message || 'Não foi possível enviar o briefing.'); }
+  }
   await salvarEvento(id || null, dados);
+  FormEv.arq = null; FormEv.remover = false;
   fecharModal();
   if (naAgenda) eventoParaAgenda(dados);
   toast(gravaEmFila() ? 'Evento registrado · salvando em segundo plano.' : 'Evento salvo.', 'fa-calendar-check');
@@ -8065,10 +8515,15 @@ function renderComunicados() {
   const vig = todos.filter(comVigente);
   $('com-resumo').textContent = todos.length ? `${vig.length} vigente(s) · ${vig.filter(c => c.prioridade === 'Urgente').length} urgente(s)` : '';
   if (!Store.pronto) { cont.innerHTML = estadoInicial(); return; }
+  if (comUI.vista !== 'planilha') {
+    const l = comunicadosFiltrados();
+    cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${kpisCom()}${controlesCom(l.length)}${comUI.vista === 'calendario' ? vistaCalendarioCom(comUI.filtro ? l : (Store.comunicados || [])) : vistaMuralCom(l)}</div>`;
+    return;
+  }
   const todosDest = comDestaques(), dest = todosDest.slice(0, 3);
   renderGrade(cont, {
     id: 'comunicados', area: 'comunicados', linhas: todos, fonte: () => Store.comunicados,
-    topo: dest.length ? `<div class="dv-card !p-3"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[13px] font-bold flex items-center gap-2"><span class="dv-ico" style="--c:#0284c7"><i class="fa-solid fa-thumbtack"></i></span>Em destaque</p>${todosDest.length > 3 ? `<button class="text-[12px] font-semibold text-sky-600 hover:underline" onclick="chipGrade('comunicados','fix')">+ ${todosDest.length - 3} em destaque</button>` : ''}</div><div class="grid grid-cols-1 md:grid-cols-3 gap-3">${dest.map(cartaoCom).join('')}</div></div>` : '',
+    topo: controlesCom(0) + (dest.length ? `<div class="dv-card !p-3"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[13px] font-bold flex items-center gap-2"><span class="dv-ico" style="--c:#0284c7"><i class="fa-solid fa-thumbtack"></i></span>Em destaque</p>${todosDest.length > 3 ? `<button class="text-[12px] font-semibold text-sky-600 hover:underline" onclick="chipGrade('comunicados','fix')">+ ${todosDest.length - 3} em destaque</button>` : ''}</div><div class="grid grid-cols-1 md:grid-cols-3 gap-3">${dest.map(cartaoCom).join('')}</div></div>` : ''),
     colunas: [
       { key: 'titulo', rot: 'Comunicado', w: 320, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', render: c => `${c.fixado ? '<i class="fa-solid fa-thumbtack text-sky-500 mr-1.5 text-[11px]"></i>' : ''}${esc(c.titulo)}`, validar: v => !String(v).trim() ? 'O título não pode ficar vazio.' : '' },
       { key: 'categoria', rot: 'Categoria', w: 160, tipo: 'select', editavel: true, opcoes: () => CATEGORIAS_COM.map(c => [c[0], rotCat(c[0])]), render: c => chipCat(c.categoria) },
@@ -9162,19 +9617,44 @@ function montarRelatorio() {
       break;
     }
     case 'eventos': {
-      const l = (Store.eventos || []).filter(x => P.dentro(x.dataInicio) || evProximo(x, 180)).sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio)));
-      add(kp([{ rot: 'Eventos', val: l.length, cor: '#c026d3' }, { rot: 'Próximos 30 dias', val: l.filter(x => evProximo(x)).length, cor: '#7c3aed' }, { rot: 'Com a Secretária', val: l.filter(x => x.participacao === 'Presença confirmada').length, cor: '#16a34a' }, { rot: rotEv('Realizado'), val: l.filter(x => x.situacao === 'Realizado').length, cor: '#0d9488' }]));
-      add(tab('Eventos', [{ rot: 'Evento', w: '*' }, { rot: 'Data', w: 'auto' }, { rot: 'Município / local', w: '*' }, { rot: 'Secretaria', w: 'auto' }, { rot: 'Participação', w: 'auto' }, { rot: 'Situação', w: 'auto' }],
-        l.map(x => [x.titulo, evPeriodo(x) + (x.hora ? ' · ' + x.hora : ''), [x.municipio, x.local].filter(Boolean).join(' · ') || '—', x.organizador || '—', rotPart(x.participacao) || '—', rotEv(x.situacao)])));
-      subtitulo = P.rot + ' e próximos 6 meses';
+      const fs = e.fsec || {}, hoje = hojeISO();
+      const quando = { prox: x => evProximo(x), futuros: x => !evEncerrado(x) && evFim(x) >= hoje, real: x => /^realiz/.test(Utils_norm(x.situacao)), todos: () => true }[fs.quando] || (x => P.dentro(x.dataInicio) || evProximo(x, 180));
+      const l = (Store.eventos || []).filter(x => quando(x) && (!fs.sit || x.situacao === fs.sit) && (!fs.part || x.participacao === fs.part) && (!fs.sec || String(x.organizador || '').split(/\s*,\s*/).includes(fs.sec)))
+        .sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio)));
+      subtitulo = [{ prox: 'Próximos 30 dias', futuros: 'Eventos futuros', real: 'Eventos realizados', todos: 'Todos os eventos' }[fs.quando] || (P.rot + ' e próximos 6 meses'), fs.sit && rotEv(fs.sit), fs.part && rotPart(fs.part), fs.sec].filter(Boolean).join(' · ');
+      const muns = new Set(l.map(x => x.municipio).filter(Boolean));
+      add(kp([{ rot: 'Eventos', val: l.length, cor: '#c026d3' }, { rot: 'Próximos 30 dias', val: l.filter(x => evProximo(x)).length, cor: '#7c3aed' }, { rot: 'Com a Secretária', val: l.filter(x => x.participacao === 'Presença confirmada').length, cor: '#16a34a' },
+        { rot: rotEv('Realizado'), val: l.filter(x => /^realiz/.test(Utils_norm(x.situacao))).length, cor: '#0d9488' }, { rot: 'Municípios', val: muns.size, cor: '#0891b2' }]));
+      if (l.length) {
+        const prox = l.filter(x => !evEncerrado(x) && evFim(x) >= hoje)[0];
+        const secTop = Object.entries(l.reduce((m, x) => { String(x.organizador || '').split(/\s*,\s*/).filter(Boolean).forEach(sg => { m[sg] = (m[sg] || 0) + 1; }); return m; }, {})).sort((a, b) => b[1] - a[1])[0];
+        add({ t: 'texto', titulo: 'Síntese', paragrafos: [`São ${l.length} evento(s) em ${muns.size} município(s): ${l.filter(x => x.participacao === 'Presença confirmada').length} com a presença confirmada da Secretária e ${l.filter(x => x.participacao === 'A confirmar').length} a confirmar.` +
+          (prox ? ` O próximo é ${prox.titulo}, em ${evPeriodo(prox)}${prox.municipio ? ' (' + prox.municipio + ')' : ''}.` : '') + (secTop ? ` A secretaria com mais eventos é ${secTop[0]} (${secTop[1]}).` : '') +
+          ` ${l.filter(x => x.briefId).length} evento(s) têm briefing anexado.`] });
+        const meses = [...new Set(l.map(x => (x.dataInicio || '').slice(0, 7)).filter(Boolean))].sort();
+        if (meses.length > 1) add(graf({ tipo: 'bar', titulo: 'Eventos por mês', labels: meses.map(k => MESES_CURTO[+k.slice(5) - 1] + '/' + k.slice(2, 4)), series: [{ rot: 'Eventos', dados: meses.map(k => l.filter(x => (x.dataInicio || '').slice(0, 7) === k).length), cor: '#c026d3' }] }));
+        add(graf({ tipo: 'hbar', titulo: 'Eventos por situação', labels: Object.keys(SITUACOES_EV).map(rotEv), series: [{ rot: 'Eventos', dados: Object.keys(SITUACOES_EV).map(k => l.filter(x => x.situacao === k).length), cores: Object.values(SITUACOES_EV).map(v => v.cor) }] }));
+      }
+      if (fs.mapa !== 'nao' && l.some(x => x.municipio)) {
+        const antes = Store.eventos, met = relEstado.mapaMetrica;
+        Store.eventos = l; relEstado.mapaMetrica = 'eventos';
+        try { add(blocoMapa('')); } finally { Store.eventos = antes; relEstado.mapaMetrica = met; }
+      }
+      add(tab('Eventos', [{ rot: 'Evento', w: '*' }, { rot: 'Data', w: 'auto' }, { rot: 'Município / local', w: '*' }, { rot: 'Secretaria', w: 'auto' }, { rot: 'Participação', w: 'auto' }, { rot: 'Situação', w: 'auto' }, { rot: 'Briefing', w: 'auto' }],
+        l.map(x => [x.titulo, evPeriodo(x) + (x.hora ? ' · ' + x.hora : ''), [x.municipio, x.local].filter(Boolean).join(' · ') || '—', x.organizador || '—', rotPart(x.participacao) || '—', rotEv(x.situacao), x.briefId ? 'Sim' : '—']), 'Nenhum evento com esses filtros.'));
       break;
     }
     case 'comunicados': {
-      const l = (Store.comunicados || []).filter(comVigente).sort(ordemCom);
-      add(kp([{ rot: 'Vigentes', val: l.length, cor: '#0284c7' }, { rot: rotPri('Urgente'), val: l.filter(x => x.prioridade === 'Urgente').length, cor: '#dc2626' }, { rot: rotPri('Importante'), val: l.filter(x => x.prioridade === 'Importante').length, cor: '#d97706' }, { rot: 'Fixados', val: l.filter(x => x.fixado).length, cor: '#0284c7' }]));
-      l.forEach(x => add({ t: 'comunicado', titulo: x.titulo, meta: [rotCat(x.categoria), rotPri(x.prioridade), x.secretaria, 'Publicado em ' + fmt(x.publicadoEm), x.validoAte ? 'válido até ' + fmt(x.validoAte) : 'sem validade'].filter(Boolean).join(' · '), texto: x.conteudo || '', ref: x.referencia || '', cor: (PRIORIDADES_COM[x.prioridade] || PRIORIDADES_COM.Normal).cor }));
-      if (!l.length) add({ t: 'texto', titulo: 'Comunicados', paragrafos: ['Nenhum comunicado vigente.'] });
-      subtitulo = 'Mural vigente em ' + fmt(hojeISO());
+      const fs = e.fsec || {};
+      const quais = { todos: x => !x.publicadoEm || P.dentro(x.publicadoEm), exp: x => !comVigente(x) }[fs.vig] || comVigente;
+      const l = (Store.comunicados || []).filter(x => quais(x) && (!fs.cat || x.categoria === fs.cat) && (!fs.pri || (x.prioridade || 'Normal') === fs.pri) && (!fs.sec || String(x.secretaria || '').split(/\s*,\s*/).includes(fs.sec))).sort(ordemCom);
+      subtitulo = [{ todos: P.rot + ' (data de publicação)', exp: 'Expirados e arquivados' }[fs.vig] || ('Mural vigente em ' + fmt(hojeISO())), fs.cat && rotCat(fs.cat), fs.pri && rotPri(fs.pri), fs.sec].filter(Boolean).join(' · ');
+      add(kp([{ rot: fs.vig === 'exp' ? 'Comunicados' : fs.vig === 'todos' ? 'No período' : 'Vigentes', val: l.length, cor: '#0284c7' }, { rot: rotPri('Urgente'), val: l.filter(x => x.prioridade === 'Urgente').length, cor: '#dc2626' }, { rot: rotPri('Importante'), val: l.filter(x => x.prioridade === 'Importante').length, cor: '#d97706' },
+        { rot: 'Fixados', val: l.filter(x => x.fixado).length, cor: '#0d9488' }, { rot: 'Vencem em 7 dias', val: l.filter(x => comVigente(x) && x.validoAte && x.validoAte <= somaDias(7)).length, cor: '#ea580c' }]));
+      if (l.length > 1) add(graf({ tipo: 'hbar', titulo: 'Comunicados por categoria', labels: CATEGORIAS_COM.map(c => rotCat(c[0])), series: [{ rot: 'Comunicados', dados: CATEGORIAS_COM.map(c => l.filter(x => (x.categoria || 'Outro') === c[0]).length), cores: CATEGORIAS_COM.map(c => c[1]) }] }));
+      add(tab('Lista de comunicados', [{ rot: 'Comunicado', w: '*' }, { rot: 'Categoria', w: 'auto' }, { rot: 'Prioridade', w: 'auto' }, { rot: 'Secretaria', w: 'auto' }, { rot: 'Publicado', w: 'auto' }, { rot: 'Válido até', w: 'auto' }, { rot: 'Situação', w: 'auto' }],
+        l.map(x => [x.titulo, rotCat(x.categoria) || '—', rotPri(x.prioridade || 'Normal'), x.secretaria || '—', x.publicadoEm ? fmt(x.publicadoEm) : '—', x.validoAte ? fmt(x.validoAte) : 'Sem validade', comSituacao(x)[0]]), 'Nenhum comunicado com esses filtros.'));
+      if (fs.texto !== 'nao') l.forEach(x => add({ t: 'comunicado', titulo: x.titulo, meta: [rotCat(x.categoria), rotPri(x.prioridade), x.secretaria, 'Publicado em ' + fmt(x.publicadoEm), x.validoAte ? 'válido até ' + fmt(x.validoAte) : 'sem validade'].filter(Boolean).join(' · '), texto: x.conteudo || '', ref: x.referencia || '', cor: (PRIORIDADES_COM[x.prioridade] || PRIORIDADES_COM.Normal).cor }));
       break;
     }
     case 'semana': {
@@ -9545,6 +10025,11 @@ const RCFG_TEMAS = {
   publicacoes: { filtros: [['tipo', 'Tipo de documento', () => [['', 'Todos os tipos']].concat([...new Set(PUB_TIPOS.map(t => t[0]).concat((Store.portarias || []).map(x => x.tipoDoc).filter(Boolean)))].map(t => [t, t]))],
     ['st', 'Status', [['', 'Todos']].concat(Object.keys(PUB_STATUS).map(k => [k, k]))], ['area', 'Área solicitante', () => [['', 'Todas as áreas']].concat(SECRETARIAS.map(s => [s, s]))],
     ['prazo', 'Prazo', [['', 'Todos'], ['venc', 'Só vencidas'], ['breve', `Vencem em até ${PUB_ALERTA} dias`], ['com', 'Com prazo'], ['sem', 'Sem prazo']]]] },
+  eventos: { filtros: [['quando', 'Quais eventos', [['', 'Do período e próximos 6 meses'], ['prox', 'Próximos 30 dias'], ['futuros', 'Todos os futuros'], ['real', 'Só realizados'], ['todos', 'Todos']]],
+    ['sit', 'Situação', () => [['', 'Todas']].concat(Object.keys(SITUACOES_EV).map(k => [k, rotEv(k)]))], ['part', 'Participação da Secretária', () => [['', 'Todas']].concat(Object.keys(PARTICIPACAO_EV).map(k => [k, rotPart(k)]))],
+    ['sec', 'Secretaria responsável', () => [['', 'Todas']].concat(SECRETARIAS.map(x => [x, x]))], ['mapa', 'Mapa de MT no relatório', [['sim', 'Incluir o mapa'], ['nao', 'Sem mapa']]]] },
+  comunicados: { filtros: [['vig', 'Quais comunicados', [['', 'Vigentes'], ['todos', 'Todos do período'], ['exp', 'Expirados e arquivados']]], ['cat', 'Categoria', () => [['', 'Todas']].concat(CATEGORIAS_COM.map(c => [c[0], rotCat(c[0])]))],
+    ['pri', 'Prioridade', () => [['', 'Todas']].concat(Object.keys(PRIORIDADES_COM).map(k => [k, rotPri(k)]))], ['sec', 'Secretaria', () => [['', 'Todas']].concat(SECRETARIAS.map(x => [x, x]))], ['texto', 'Texto completo', [['sim', 'Com o texto de cada comunicado'], ['nao', 'Só a lista']]]] },
   innor: { filtros: [['orig', 'Origem', [['', 'Todas as origens'], ['Contratação', 'Contratações'], ['Nomeação', 'Nomeações'], ['Exoneração', 'Exonerações']]]] }
 };
 let rcfg = null, rcfgPdfUrl = null, rcfgTimer = null;
