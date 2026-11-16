@@ -47,11 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.58.0">
+<meta name="gabdoc-versao" content="1.60.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Chefe de Gabinete: os prazos das Publicações aparecem em \"Prazos do Chefe de Gabinete\"",
-  "Pedir autorização: e-mail caprichado para cada autoridade escolhida, com botão para abrir o GABDoc",
-  "Ao escolher as autoridades, mostra quem recebe por e-mail e quem está sem e-mail cadastrado"
+  "Resumo do dia ao entrar: o que espera por você, vencidos, o que vence hoje e a agenda do dia",
+  "O sino agora abre o Resumo do dia a qualquer momento",
+  "Publicações: o aviso de autorização virou uma linha discreta, sem tomar a tela"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -561,7 +561,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .det-assinar { margin-left: auto; height: auto !important; min-height: 44px; padding: 0 18px !important; font-size: 13.5px !important; }
   @media (max-width: 640px) { .det-assinar { margin-left: 0; width: 100%; } .det-status { flex: 1 1 140px; } }
   .det-corpo { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; background: var(--ground); }
-  .det-grade { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+  .det-grade { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; align-items: start; }
   @media (max-width: 860px) { .det-grade { grid-template-columns: 1fr; } }
   .det-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
   .det-card h4 { font-size: 13.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 8px; }
@@ -582,6 +582,41 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .det-info dd { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 1px; overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   .det-obs-txt { border-top: 1px dashed var(--line); padding-top: 10px; }
   .det-obs-txt p:last-child { font-size: 13px; color: var(--ink2); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .det-trilha { display: flex; align-items: flex-start; margin-top: 12px; padding: 10px 6px 2px; border-top: 1px dashed var(--line); overflow-x: auto; }
+  .det-et { --c: var(--ink3); display: flex; flex-direction: column; align-items: center; gap: 3px; flex: none; width: 96px; text-align: center; }
+  .det-et b { font-size: 11.5px; font-weight: 800; color: var(--ink3); line-height: 1.2; }
+  .det-et small { font-size: 10.5px; color: var(--ink3); min-height: 13px; }
+  .det-et-pt { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; color: var(--ink3); background: var(--card2); border: 2px dashed var(--line); }
+  .det-et.feita .det-et-pt { color: #fff; background: #16a34a; border: 2px solid #16a34a; }
+  .det-et.feita b { color: var(--ink2); }
+  .det-et.atual .det-et-pt, .det-et.cancel .det-et-pt { color: #fff; background: var(--c); border: 2px solid var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 18%, transparent); }
+  .det-et.atual b, .det-et.cancel b { color: color-mix(in srgb, var(--c) 85%, var(--ink)); }
+  .det-et-lig { flex: 1; min-width: 14px; height: 2px; margin-top: 13px; background: repeating-linear-gradient(90deg, var(--line) 0 5px, transparent 5px 9px); }
+  .det-et-lig.on { background: #16a34a; }
+  .det-dica { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: var(--ink2); padding: 10px 12px; border-radius: 12px; background: var(--card2); }
+  .det-dica > :is(i, svg) { color: var(--brand); margin-top: 2px; }
+  .det-ultima { font-size: 12px; color: var(--ink3); border-top: 1px dashed var(--line); padding-top: 9px; }
+  .det-ultima :is(i, svg) { margin-right: 5px; }
+  .det-mini-bt { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); }
+  .det-mini-bt:hover { color: var(--brand); border-color: var(--brand); }
+  .det-obs-txt2 { font-size: 13px; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, #0891b2 6%, var(--card)); border-left: 3px solid #0891b2; }
+  .det-nota { display: flex; flex-direction: column; gap: 7px; padding: 10px; border-radius: 12px; background: color-mix(in srgb, #ca8a04 7%, var(--card)); border: 1px solid color-mix(in srgb, #ca8a04 28%, var(--line)); }
+  .det-nota textarea { background: var(--card); resize: vertical; min-height: 54px; }
+  .det-nota-pe { display: flex; align-items: flex-end; gap: 8px; }
+  .det-nota-atalhos { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+  .det-nota-atalhos button { font-size: 11px; font-weight: 700; color: #a16207; padding: 2px 8px; border-radius: 99px; background: var(--card); border: 1px solid color-mix(in srgb, #ca8a04 30%, var(--line)); }
+  .det-nota-atalhos button:hover { background: color-mix(in srgb, #ca8a04 12%, var(--card)); }
+  .det-tl-filtro { display: flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--card2); }
+  .det-tl-filtro button { flex: 1; height: 28px; border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--ink3); }
+  .det-tl-filtro button span { font-size: 10.5px; opacity: .75; }
+  .det-tl-filtro button.on { color: var(--ink); background: var(--card); box-shadow: 0 1px 2px rgba(15,23,42,.1); }
+  .det-tl-dia { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); margin: 2px 0 8px 38px; }
+  .det-tl-item.nota { padding-bottom: 12px; }
+  .det-tl-bolha { padding: 8px 10px; border-radius: 4px 12px 12px 12px; background: color-mix(in srgb, #ca8a04 9%, var(--card)); border: 1px solid color-mix(in srgb, #ca8a04 28%, var(--line)); }
+  .det-tl-bolha-cab { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink3); margin-bottom: 3px; }
+  .det-tl-bolha-cab b { color: var(--ink); font-size: 12px; }
+  .det-tl-av { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 8.5px; font-weight: 900; color: #fff; background: #ca8a04; flex: none; }
+  .det-tl-bolha-txt { font-size: 13px; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
   .det-hist { position: sticky; top: 0; }
   @media (max-width: 640px) { .det { overflow-y: auto; } .det-corpo { flex: none; overflow: visible; } .det > .modal-rodape { position: sticky; bottom: 0; background: var(--card); z-index: 2; } }
   @media (max-width: 860px) { .det-hist { position: static; } }
@@ -1011,6 +1046,63 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .aut-av:first-child { margin-left: 0; }
   .gs-compacto .aut-cel .aut-rot { display: none; }
   .gs-compacto .aut-cel:not(:has(.aut-avs)) { padding: 0 8px; }
+  /* ----- Resumo do dia ----- */
+  .modal-rd { max-width: 680px; }
+  .rd-hero { padding: 18px 20px 16px; color: #fff; background-color: #0c1a3d; background-image: radial-gradient(520px 220px at 0% 0%, rgba(251,191,36,.30), transparent 70%), radial-gradient(420px 220px at 100% 100%, rgba(124,58,237,.35), transparent 70%); }
+  .rd-hero-ico { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; flex: none; font-size: 18px; color: #fbbf24; background: rgba(251,191,36,.15); border: 1px solid rgba(251,191,36,.35); }
+  .rd-hero-sub { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: rgba(191,219,254,.85); }
+  .rd-hero-tit { font-size: 21px; font-weight: 900; line-height: 1.15; margin-top: 2px; }
+  .rd-hero-txt { font-size: 13px; color: rgba(255,255,255,.75); margin-top: 3px; }
+  .rd-hero-txt b { color: #fff; }
+  .rd-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 14px; }
+  .rd-tile { --c: #fff; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); text-align: left; transition: background .15s; }
+  .rd-tile:not([disabled]):hover { background: rgba(255,255,255,.14); }
+  .rd-tile-v { display: flex; align-items: center; gap: 7px; font-size: 20px; font-weight: 900; color: #fff; }
+  .rd-tile-v :is(i, svg) { font-size: 13px; color: var(--c); }
+  .rd-tile-r { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.7); }
+  .rd-tile.zero { opacity: .55; }
+  .rd-corpo { display: flex; flex-direction: column; gap: 14px; max-height: min(56vh, 520px); overflow-y: auto; }
+  .rd-sec h4 { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; color: color-mix(in srgb, var(--c) 80%, var(--ink)); margin-bottom: 7px; }
+  .rd-n { min-width: 22px; padding: 0 7px; border-radius: 99px; font-size: 11px; text-align: center; color: #fff; background: var(--c); letter-spacing: 0; }
+  .rd-lista { display: flex; flex-direction: column; gap: 5px; }
+  .rd-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 11px; text-align: left; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--c); transition: background .12s; }
+  .rd-item:hover { background: var(--card2); }
+  .rd-item b { display: block; font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rd-item small { display: block; font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rd-item-ico { --c: #64748b; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; font-size: 12px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .rd-dias { flex: none; font-size: 11px; font-weight: 800; color: var(--ink3); white-space: nowrap; }
+  .rd-dias.venc { color: var(--urg); }
+  .rd-dias.hoje { color: #ea580c; }
+  .rd-seta { font-size: 10px; color: var(--ink3); flex: none; }
+  .rd-mais { font-size: 12px; color: var(--ink3); margin: 5px 0 0 4px; }
+  .rd-aviso { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; text-align: left; font-size: 13px; color: var(--ink); background: color-mix(in srgb, #16a34a 8%, var(--card)); border: 1px solid color-mix(in srgb, #16a34a 30%, var(--line)); }
+  .rd-aviso > :is(i, svg):first-child { color: #16a34a; }
+  .rd-aviso span { flex: 1; }
+  .rd-vazio { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 26px 10px; text-align: center; color: var(--ink2); }
+  .rd-vazio > :is(i, svg) { font-size: 30px; color: #16a34a; margin-bottom: 4px; }
+  .rd-vazio b { font-size: 15px; color: var(--ink); }
+  .rd-vazio p { font-size: 13px; color: var(--ink3); }
+  .rd-nao { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink3); cursor: pointer; }
+  @media (max-width: 640px) { .rd-item .rd-dias { display: none; } .rd-corpo { max-height: none; } }
+  .aut-bar { --c: #7c3aed; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 10px; border-radius: 12px; background: color-mix(in srgb, var(--c) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); min-width: 0; }
+  .aut-bar-ico { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; flex: none; color: #fff; background: var(--c); font-size: 12px; }
+  .aut-bar-tit { font-size: 13px; font-weight: 800; color: color-mix(in srgb, var(--c) 75%, var(--ink)); white-space: nowrap; }
+  .aut-bar-lista { display: flex; gap: 5px; min-width: 0; flex: 1; overflow: hidden; }
+  .aut-bar-item { max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 700; color: var(--ink2); padding: 2px 9px; border-radius: 99px; background: var(--card); border: 1px solid var(--line); }
+  .aut-bar-item:hover { color: var(--c); border-color: var(--c); }
+  .aut-bar-mais { font-size: 12px; font-weight: 800; color: var(--c); align-self: center; }
+  .aut-bar-bts { display: flex; align-items: center; gap: 5px; flex: none; margin-left: auto; }
+  .aut-bar-bt { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 9px; font-size: 12px; font-weight: 700; color: var(--c); background: var(--card); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); }
+  .aut-bar-bt.pri { color: #fff; background: var(--c); border-color: var(--c); }
+  .aut-bar-x { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--ink3); }
+  .aut-bar-x:hover { background: var(--card2); color: var(--ink); }
+  @media (max-width: 760px) { .aut-bar { flex-wrap: wrap; } .aut-bar-lista { display: none; } .aut-bar-tit { white-space: normal; flex: 1; font-size: 12.5px; } .aut-bar-bt span { display: none; } .aut-bar-bt.pri span { display: inline; } }
+  .aut-bar.pz { --c: #dc2626; }
+  .aut-bar.pz.breve { --c: #ea580c; }
+  .pz-seg { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 800; white-space: nowrap; padding: 3px 9px; border-radius: 99px; }
+  .pz-seg.venc { color: #dc2626; background: color-mix(in srgb, #dc2626 10%, var(--card)); }
+  .pz-seg.breve { color: #c2410c; background: color-mix(in srgb, #ea580c 10%, var(--card)); }
+  .pz-seg:hover { filter: brightness(.95); }
   .aut-caixa { flex-shrink: 0; border-radius: 16px; border: 1px solid color-mix(in srgb, #7c3aed 30%, var(--line)); background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 9%, var(--card)), var(--card) 60%); overflow: hidden; }
   .aut-caixa-cab { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
   .aut-caixa-cab b { display: block; font-size: 14.5px; font-weight: 900; color: var(--ink); }
@@ -1835,7 +1927,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-file-signature text-sm text-white"></i></div>
         <h1 class="sb-logo-txt text-2xl font-black tracking-tight whitespace-nowrap">GAB<span class="text-blue-500">Doc</span></h1>
-        <button id="sb-sino" onclick="irPara('prazos')" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Prazos vencidos e que vencem hoje" aria-label="Ver prazos">
+        <button id="sb-sino" onclick="abrirResumoDia()" class="relative ml-2 w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center" title="Resumo do dia: pendências, vencidos e o que vence hoje" aria-label="Abrir o resumo do dia">
           <i class="fa-solid fa-bell"></i>
           <span id="sino-count" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-black items-center justify-center border-2 border-slate-900">0</span>
         </button>
@@ -2355,7 +2447,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <div class="dv-seg" id="mov-periodo"><button data-p="1">Hoje</button><button data-p="7">7 dias</button><button data-p="30">30 dias</button><button data-p="">Tudo</button></div>
             <select id="mov-usuario" class="campo" aria-label="Usuário"></select>
             <select id="mov-tipo" class="campo" aria-label="Tipo de movimentação">
-              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Em andamento</option><option value="ajuste">Devoluções</option><option value="urgente">Prioridade</option><option value="casa">Casa Civil</option>
+              <option value="">Todas as ações</option><option value="assinado">Assinaturas</option><option value="aguardando">Em andamento</option><option value="ajuste">Devoluções</option><option value="urgente">Prioridade</option><option value="casa">Casa Civil</option><option value="nota">Anotações</option><option value="obs">Observações</option>
             </select>
             <div class="relative flex-1 min-w-[180px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink3 text-xs"></i><input id="mov-busca" class="campo w-full !pl-8" placeholder="Buscar ação, assunto, nº ou observação" aria-label="Buscar movimentação"></div>
           </div>
@@ -3137,7 +3229,7 @@ function atualizarIdentidade() {
   statusSync();
 }
 function mostrarLogin() { const t = $('login-screen'); t.classList.remove('hidden', 'opacity-0'); }
-function esconderLogin() { const t = $('login-screen'); t.classList.add('opacity-0'); setTimeout(() => t.classList.add('hidden'), 450); }
+function esconderLogin() { const t = $('login-screen'); t.classList.add('opacity-0'); setTimeout(() => { t.classList.add('hidden'); talvezResumoDia(); }, 450); }
 
 
 
@@ -3540,6 +3632,88 @@ new MutationObserver(aoMudarTema).observe(document.documentElement, { attributes
 let renderAdiado = 0, renderPerdido = false;
 /** Enquanto várias linhas são alteradas de uma vez, a tela é redesenhada uma vez só no final. */
 function emLote(fn) { renderAdiado++; try { return fn(); } finally { if (--renderAdiado === 0 && renderPerdido) { renderPerdido = false; aoMudarDados(); } } }
+/* ========================= Resumo do dia =========================
+   Aparece toda vez que a pessoa entra no sistema (uma vez por sessão do navegador):
+   o que espera por ela hoje, o que venceu, o que vence hoje e nos próximos dias, a agenda de hoje.
+   Só usa os dados que o perfil já recebe (a planilha não envia as áreas sem acesso). */
+let resumoMostrado = false;
+const nomeUsuarioResumo = () => Store.modo === 'planilha' ? ((Store.sessao && Store.sessao.usuario) || '') : ((Store.eu && Store.eu.name) || '');
+function itensResumoDia() {
+  const out = { autorizar: [], venc: [], hoje: [], prox: [], agenda: [], assinar: 0, devolvidas: [] };
+  const add = (x) => { if (x.dias < 0) out.venc.push(x); else if (x.dias === 0) out.hoje.push(x); else if (x.dias <= DIAS_PRAZO) out.prox.push(x); };
+  (Store._sol || []).filter(x => !FEITO(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: [ehProcesso(x) ? 'Processo' : 'Documento', x.numero].filter(Boolean).join(' · '), ico: ehProcesso(x) ? 'fa-folder-open' : 'fa-file-signature', cor: ehProcesso(x) ? '#b45309' : '#2563eb', dias: diasAte(x.prazo), prazo: x.prazo, urg: !!x.urgente, abrir: `abrirDetalhe('${x.id}')` }));
+  (Store.portarias || []).filter(x => !pubFeita(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto || nomePub(x), sub: 'Publicação · ' + nomePub(x) + (autPendente(x) ? ' · em autorização' : ''), ico: 'fa-newspaper', cor: '#4f46e5', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormPortaria('${x.id}')` }));
+  (Store.simec || []).filter(x => !simecFeito(x) && x.prazo).forEach(x => add({ id: x.id, titulo: x.assunto, sub: 'SIMEC' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-building-flag', cor: '#0d9488', dias: diasAte(x.prazo), prazo: x.prazo, abrir: `abrirFormSimec('${x.id}')` }));
+  out.autorizar = paraMimAut().map(x => { const a = autPub(x); return { id: x.id, titulo: nomePub(x), sub: (x.assunto || '') + (a && a.pedidoPor ? ' · pedido por ' + a.pedidoPor : ''), ico: 'fa-file-signature', cor: '#7c3aed', prazo: x.prazo, dias: x.prazo ? diasAte(x.prazo) : null, abrir: `abrirAutPub('${x.id}')` }; });
+  out.agenda = (Store.agenda || []).filter(a => a.data === hojeISO() && !['cancelado', 'adiado'].includes(agSit(a))).sort((a, b) => String(a.hora || '99').localeCompare(String(b.hora || '99')))
+    .map(a => ({ id: a.id, titulo: String(a.titulo || '').replace('[Exemplo] ', ''), sub: [a.hora ? a.hora + (a.horaFim ? '–' + a.horaFim : '') : 'Dia todo', a.local || a.municipio].filter(Boolean).join(' · '), ico: 'fa-calendar-day', cor: '#0891b2', abrir: `abrirFormAgenda('${a.id}')` }));
+  if (pode('assinar')) out.assinar = (Store._sol || []).filter(x => !FEITO(x) && ehAssinatura(x) && x.status !== 'ajuste').length;
+  if (pode('gravar')) out.devolvidas = (Store._sol || []).filter(x => x.status === 'ajuste').map(x => ({ id: x.id, titulo: x.assunto, sub: 'Devolvido para correção' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-rotate-left', cor: '#db2777', abrir: `abrirDetalhe('${x.id}')` }))
+    .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }) : []);
+  out.venc.sort((a, b) => a.dias - b.dias); out.prox.sort((a, b) => a.dias - b.dias);
+  return out;
+}
+const totalResumo = r => r.autorizar.length + r.venc.length + r.hoje.length;
+function abrirResumoDia() {
+  const r = itensResumoDia();
+  const nome = nomeUsuarioResumo().split(' ')[0];
+  const dataTxt = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const quando = x => x.dias === null || x.dias === undefined ? '' : x.dias < 0 ? `<span class="rd-dias venc">venceu há ${-x.dias} dia${x.dias === -1 ? '' : 's'}</span>` : x.dias === 0 ? '<span class="rd-dias hoje">vence hoje</span>' : `<span class="rd-dias">em ${x.dias} dia${x.dias === 1 ? '' : 's'} · ${fmtCurto(x.prazo)}</span>`;
+  const item = x => `<button type="button" class="rd-item" onclick="${x.abrir}"><span class="rd-item-ico" style="--c:${x.cor}"><i class="fa-solid ${x.ico}"></i></span><span class="min-w-0 flex-1"><b>${x.urg ? '<i class="fa-solid fa-flag text-red-600 mr-1"></i>' : ''}${esc(x.titulo || '—')}</b><small>${esc(x.sub || '')}</small></span>${quando(x)}<i class="fa-solid fa-chevron-right rd-seta"></i></button>`;
+  const secao = (ico, cor, tit, lista, max = 5, extra = '') => lista.length ? `<section class="rd-sec" style="--c:${cor}"><h4><i class="fa-solid ${ico}"></i>${tit}<span class="rd-n">${lista.length}</span>${extra}</h4><div class="rd-lista">${lista.slice(0, max).map(item).join('')}</div>${lista.length > max ? `<p class="rd-mais">+ ${lista.length - max} outro(s)</p>` : ''}</section>` : '';
+  const tile = (cor, ico, val, rot, acao) => `<button type="button" class="rd-tile ${val ? '' : 'zero'}" style="--c:${cor}" ${acao ? `onclick="${acao}"` : 'disabled'}><span class="rd-tile-v"><i class="fa-solid ${ico}"></i>${val}</span><span class="rd-tile-r">${rot}</span></button>`;
+  const nada = !r.autorizar.length && !r.venc.length && !r.hoje.length && !r.prox.length && !r.agenda.length && !r.devolvidas.length && !r.assinar;
+  const temPrazos = abaPermitida('prazos');
+  abrirModal(`
+    <div class="rd-hero">
+      <div class="flex items-start gap-3">
+        <span class="rd-hero-ico"><i class="fa-solid fa-sun"></i></span>
+        <div class="min-w-0 flex-1">
+          <p class="rd-hero-sub">Resumo do dia · ${esc(dataTxt)}</p>
+          <h3 class="rd-hero-tit">${saudacao()}${nome ? ', ' + esc(nome) : ''}!</h3>
+          <p class="rd-hero-txt">${nada ? 'Nada pendente para hoje. Tudo em dia!' : totalResumo(r) ? `Você tem <b>${totalResumo(r)}</b> ${totalResumo(r) === 1 ? 'pendência' : 'pendências'} que pedem atenção hoje.` : 'Nada vencido nem vencendo hoje. Veja o que vem pela frente.'}</p>
+        </div>
+        <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="rd-tiles">
+        ${Store.portarias && Store.portarias.length || r.autorizar.length ? tile('#a78bfa', 'fa-file-signature', r.autorizar.length, 'para autorizar', r.autorizar.length ? `document.getElementById('rd-aut').scrollIntoView({behavior:'smooth'})` : '') : ''}
+        ${tile('#f87171', 'fa-circle-exclamation', r.venc.length, 'vencidos', r.venc.length ? `document.getElementById('rd-venc').scrollIntoView({behavior:'smooth'})` : '')}
+        ${tile('#fb923c', 'fa-hourglass-end', r.hoje.length, 'vencem hoje', r.hoje.length ? `document.getElementById('rd-hoje').scrollIntoView({behavior:'smooth'})` : '')}
+        ${tile('#fbbf24', 'fa-hourglass-half', r.prox.length, `próx. ${DIAS_PRAZO} dias`, r.prox.length ? `document.getElementById('rd-prox').scrollIntoView({behavior:'smooth'})` : '')}
+        ${abaPermitida('agenda') ? tile('#67e8f9', 'fa-calendar-day', r.agenda.length, 'na agenda hoje', r.agenda.length ? `document.getElementById('rd-ag').scrollIntoView({behavior:'smooth'})` : '') : ''}
+      </div>
+    </div>
+    <div class="modal-corpo rd-corpo">
+      ${nada ? `<div class="rd-vazio"><i class="fa-solid fa-circle-check"></i><b>Tudo em dia</b><p>Nenhum prazo vencido ou vencendo, nada aguardando você.</p></div>` : ''}
+      ${r.assinar ? `<button type="button" class="rd-aviso" onclick="fecharModal();irPara('mesa')"><i class="fa-solid fa-signature"></i><span><b>${r.assinar} documento${r.assinar === 1 ? '' : 's'}</b> aguardando assinatura</span><i class="fa-solid fa-chevron-right rd-seta"></i></button>` : ''}
+      <div id="rd-aut">${secao('fa-file-signature', '#7c3aed', 'Para você autorizar', r.autorizar)}</div>
+      <div id="rd-venc">${secao('fa-circle-exclamation', '#dc2626', 'Prazos vencidos', r.venc)}</div>
+      <div id="rd-hoje">${secao('fa-hourglass-end', '#ea580c', 'Vencem hoje', r.hoje)}</div>
+      ${secao('fa-rotate-left', '#db2777', 'Devolvidos para correção', r.devolvidas, 4)}
+      <div id="rd-ag">${secao('fa-calendar-day', '#0891b2', 'Agenda de hoje', r.agenda, 6)}</div>
+      <div id="rd-prox">${secao('fa-hourglass-half', '#d97706', `Vencem nos próximos ${DIAS_PRAZO} dias`, r.prox, 5)}</div>
+    </div>
+    <div class="modal-rodape !justify-between items-center flex-wrap gap-2">
+      <label class="rd-nao"><input type="checkbox" id="rd-nao-hoje" onchange="resumoNaoHoje(this.checked)"> Não mostrar de novo hoje</label>
+      <div class="flex gap-2">${temPrazos ? `<button class="btn btn-sec" onclick="fecharModal();irPara('prazos')"><i class="fa-solid fa-list-check"></i><span class="hidden sm:inline">Todos os prazos</span></button>` : ''}<button class="btn btn-pri" onclick="fecharModal()"><i class="fa-solid fa-check"></i>Começar o dia</button></div>
+    </div>`, 'resumo');
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo', 'modal-rd');
+  try { sessionStorage.setItem('gabdoc_resumo_sessao', hojeISO() + '|' + nomeUsuarioResumo()); } catch (e) {}
+}
+function resumoNaoHoje(v) { try { const k = 'gabdoc_resumo_off_' + nomeUsuarioResumo() + '_' + hojeISO(); if (v) localStorage.setItem(k, '1'); else localStorage.removeItem(k); } catch (e) {} }
+/** Abre o resumo uma vez por sessão, assim que os dados chegam e a tela de entrada some. */
+function talvezResumoDia() {
+  if (resumoMostrado || !Store.pronto) return;
+  if (Store.modo === 'planilha' && !Store.sessao) return;
+  const ls = $('login-screen'); if (ls && !ls.classList.contains('hidden') && !ls.classList.contains('opacity-0')) return;
+  if (modalAberto) return;
+  resumoMostrado = true;
+  try {
+    if (localStorage.getItem('gabdoc_resumo_off_' + nomeUsuarioResumo() + '_' + hojeISO())) return;
+    if (sessionStorage.getItem('gabdoc_resumo_sessao') === hojeISO() + '|' + nomeUsuarioResumo()) return;
+  } catch (e) {}
+  setTimeout(() => { if (!modalAberto) abrirResumoDia(); }, 900);
+}
 function aoMudarDados() {
   if (renderAdiado) { renderPerdido = true; return; }
   atualizarBadges();
@@ -3548,6 +3722,7 @@ function aoMudarDados() {
   if (modalAberto && modalAberto.tipo === 'detalhe') renderDetalhe();
   statusSync();
   marcarLinhasPendentes();
+  talvezResumoDia();
 }
 function renderAba() {
   if (String(abaAtual).startsWith('doc:')) { renderDocs(); aplicarPermissoes(); return; }
@@ -3592,7 +3767,7 @@ function atualizarBadges() {
   set('bdg-contr', podeContratacoes() ? (Store.contratacoes || []).filter(x => !contrFeita(x)).length : 0);
   set('bdg-chefe', prazosChefe().filter(x => x.dias <= 0).length);
   somarBadgesGrupos();
-  const sino = $('sino-count'), n = prazosAtivos().filter(s => diasAte(s.prazo) <= 0).length;
+  const sino = $('sino-count'), n = (() => { try { return totalResumo(itensResumoDia()); } catch (e) { return prazosAtivos().filter(s => diasAte(s.prazo) <= 0).length; } })();
   sino.textContent = n; sino.classList.toggle('hidden', !n); sino.classList.toggle('flex', !!n);
 }
 
@@ -4315,7 +4490,11 @@ async function salvarForm(id) {
     if (!!antigo.urgente !== dados.urgente) mud.push(dados.urgente ? 'Marcado como PRIORIDADE' : 'Prioridade retirada');
     if (!!antigo.casaCivil !== dados.casaCivil) mud.push(dados.casaCivil ? 'Incluído na trilha da Casa Civil' : 'Retirado da trilha da Casa Civil');
     else if (dados.casaCivil && antigo.ccEtapa !== dados.ccEtapa) mud.push('Casa Civil: ' + ETAPAS_CC[dados.ccEtapa].rot);
-    dados.historico = (dados.historico || []).concat({ em: new Date().toISOString(), acao: mud.length ? mud.join(' · ') : 'Dados atualizados', obs: '', por: meuId() });
+    const obsA = String(antigo.observacoes || '').trim(), obsB = String(dados.observacoes || '').trim();
+    const outrosCampos = ['tipo', 'natureza', 'numero', 'assunto', 'origem', 'interessado', 'municipio', 'responsavel', 'autoridade', 'prazo', 'ccNumero'].some(k => String(antigo[k] || '') !== String(dados[k] || ''));
+    const agora = new Date().toISOString();
+    if (mud.length || outrosCampos || obsA === obsB) dados.historico = (dados.historico || []).concat({ em: agora, acao: mud.length ? mud.join(' · ') : 'Dados atualizados', obs: '', por: meuId() });
+    if (obsA !== obsB) dados.historico = (dados.historico || []).concat({ em: agora, acao: obsB ? (obsA ? 'Observações atualizadas' : 'Observação adicionada') : 'Observações apagadas', obs: obsB, por: meuId(), situacaoAnterior: dados.status, situacaoNova: dados.status });
   }
   const btn = $('btn-salvar'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Salvando…';
   const novoId = await salvarSol(id || null, dados);
@@ -4359,8 +4538,10 @@ function abrirDetalhe(id) {
 function renderDetalhe() {
   const el = $('detalhe'); if (!el || !modalAberto) return;
   const obsAntes = $('d-obs') ? $('d-obs').value : '';
+  const notaAntes = $('d-nota') ? $('d-nota').value : '';
   const corpoAntes = el.querySelector('.det-corpo'), rolagem = corpoAntes ? corpoAntes.scrollTop : 0;
   const focoObs = document.activeElement && document.activeElement.id === 'd-obs';
+  const focoNota = document.activeElement && document.activeElement.id === 'd-nota';
   setTimeout(aplicarPermissoes, 0);
   const s = solPorId(modalAberto.id);
   if (!s) { el.innerHTML = `<div class="modal-corpo">${vazio('fa-file-circle-xmark', 'Processo não encontrado', 'Ele pode ter sido excluído por outra pessoa da equipe.')}</div><div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>`; return; }
@@ -4374,7 +4555,7 @@ function renderDetalhe() {
   const diasCasa = s.recebidoEm && (aberto || (s.status === 'assinado' && s.assinadoEm)) ? Math.max(0, diasEntre(s.recebidoEm, aberto ? hojeISO() : s.assinadoEm)) : null;
   const secs = secDe(s);
   const info = (ico, rot, val) => `<div class="det-info"><span class="det-info-ico"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><dt>${rot}</dt><dd>${val}</dd></div></div>`;
-  const dica = !pode('gravar') && !pode('assinar') ? '<p class="text-[12.5px] text-ink3"><i class="fa-solid fa-lock mr-1"></i>Seu perfil só visualiza este processo.</p>' : '';
+  const dica = !pode('gravar') && !pode('assinar') ? '<p class="det-dica"><i class="fa-solid fa-eye"></i><span>Seu perfil só visualiza este processo, mas você pode <b>registrar anotações</b> na linha do tempo.</span></p>' : '';
   el.innerHTML = `
     <div class="det-topo">
       <div class="flex items-start justify-between gap-3">
@@ -4394,6 +4575,7 @@ function renderDetalhe() {
         ${s.assinadoEm ? `<div class="det-status" style="--c:#16a34a"><i class="fa-solid fa-signature"></i><div><small>Assinado em</small><b>${fmt(s.assinadoEm)}</b></div></div>` : ''}
         ${aberto && pode('assinar') ? `<button class="btn btn-pri det-assinar" onclick="acaoDetalhe('assinado')"><i class="fa-solid fa-signature"></i>${esc(AC('assinar'))}</button>` : ''}
       </div>
+      ${trilhaDetalhe(s)}
     </div>
     <div class="det-corpo">
       <div class="det-grade">
@@ -4427,16 +4609,14 @@ function renderDetalhe() {
               ${info(t.ico, 'Tipo de documento', esc(t.rot))}
               ${s.casaCivil ? info('fa-landmark', 'Casa Civil', `${esc((ETAPAS_CC[s.ccEtapa] || ETAPAS_CC.preparo).rot)}${s.ccNumero ? `<br><span class="text-ink3 font-medium">${esc(s.ccNumero)}</span>` : ''}`) : ''}
             </dl>
-            ${s.observacoes ? `<div class="det-obs-txt"><p class="rotulo !text-[11.5px]">Observações</p><p>${esc(s.observacoes)}</p></div>` : ''}
+            ${(() => { const ult = (s.historico || []).slice().reverse().find(h => h.em); return ult ? `<p class="det-ultima"><i class="fa-solid fa-clock-rotate-left"></i>Última movimentação ${tempoAtras(ult.em)} por <b>${esc(autorDe(ult) || '—')}</b></p>` : ''; })()}
+          </section>
+          <section class="det-card det-obs-card">
+            <h4><i class="fa-solid fa-comment-dots"></i>Observações do processo ${pode('gravar') ? `<button type="button" class="det-mini-bt ml-auto" onclick="abrirForm('${s.id}')"><i class="fa-solid fa-pen"></i>${s.observacoes ? 'Editar' : 'Escrever'}</button>` : ''}</h4>
+            ${s.observacoes ? `<p class="det-obs-txt2">${esc(s.observacoes)}</p><p class="text-[11.5px] text-ink3">Cada alteração das observações fica registrada na linha do tempo.</p>` : `<p class="text-[12.5px] text-ink3">Nenhuma observação fixa. Para registrar algo do dia a dia, use <b>Anotar</b> na linha do tempo.</p>`}
           </section>
         </div>
-        <section class="det-card det-hist">
-          <h4><i class="fa-solid fa-clock-rotate-left"></i>Tramitação <span class="text-ink3 font-semibold">${hist.length}</span></h4>
-          ${hist.length ? `<div class="det-tl">${hist.map((h, i) => { const [cor, ico] = MOV_ESTILO[classeMov(h)] || MOV_ESTILO.outro; return `<div class="det-tl-item ${i === 0 ? 'ultimo' : ''}" style="--c:${cor}">
-            <span class="det-tl-ico"><i class="fa-solid ${ico}"></i></span>
-            <div class="min-w-0"><p class="det-tl-acao">${esc(h.acao)}</p>${h.obs ? `<p class="det-tl-obs">${esc(h.obs)}</p>` : ''}<p class="det-tl-quem">${fmtHora(h.em)} · ${esc(autorDe(h))}</p></div>
-          </div>`; }).join('')}</div>` : '<p class="text-[13px] text-ink3">Ainda sem andamentos registrados.</p>'}
-        </section>
+        ${linhaTempoDetalhe(s, hist)}
       </div>
     </div>
     <div class="modal-rodape !justify-between">
@@ -4444,8 +4624,79 @@ function renderDetalhe() {
       <div class="flex gap-2"><button class="btn btn-sec" data-requer="gravar" onclick="abrirForm('${s.id}')"><i class="fa-solid fa-pen"></i>${esc(AC('editar'))}</button><button class="btn btn-sec" onclick="fecharModal()">Fechar</button></div>
     </div>`;
   const obs = $('d-obs'); if (obs && obsAntes) { obs.value = obsAntes; if (focoObs) obs.focus(); }
+  const nota = $('d-nota'); if (nota && notaAntes) { nota.value = notaAntes; if (focoNota) nota.focus(); }
   const corpo = el.querySelector('.det-corpo'); if (corpo && rolagem) corpo.scrollTop = rolagem;
   atualizarAvisoColegas();
+}
+/* ----- Detalhes: trilha da situação e linha do tempo (com anotações) ----- */
+const detTL = { filtro: '' };
+const ehNota = h => Utils_norm(h.acao) === 'anotacao';
+const ehObsMov = h => /^observac/.test(Utils_norm(h.acao));
+/** Recebido → Em andamento → Assinado → Arquivado, com a data em que cada etapa foi alcançada. */
+function trilhaDetalhe(s) {
+  const ordem = ['recebido', 'analise', 'assinado', 'expedido'];
+  const hist = s.historico || [];
+  const quando = k => { if (k === 'recebido') return s.recebidoEm || (hist[0] && String(hist[0].em).slice(0, 10)) || ''; const h = hist.find(h => h.situacaoNova === k && h.situacaoAnterior !== k) || hist.find(h => Utils_norm(h.acao) === Utils_norm(HIST_STATUS[k] || '~')); return h ? String(h.em).slice(0, 10) : (k === 'assinado' && s.assinadoEm) || ''; };
+  if (s.status === 'cancelado') return `<div class="det-trilha"><div class="det-et cancel" style="--c:${STATUS.cancelado.cor}"><span class="det-et-pt"><i class="fa-solid fa-ban"></i></span><b>${esc(STATUS.cancelado.rot)}</b><small>${quando('cancelado') ? fmtCurto(quando('cancelado')) : ''}</small></div></div>`;
+  const atualI = s.status === 'ajuste' ? 1 : Math.max(0, ordem.indexOf(s.status));
+  return `<div class="det-trilha" role="list" aria-label="Etapas do processo">${ordem.map((k, i) => {
+    const st = i === 1 && s.status === 'ajuste' ? STATUS.ajuste : STATUS[k];
+    const cls = i < atualI ? 'feita' : i === atualI ? 'atual' : '';
+    const d = i <= atualI ? quando(i === 1 && s.status === 'ajuste' ? 'ajuste' : k) : '';
+    return `${i ? `<span class="det-et-lig ${i <= atualI ? 'on' : ''}"></span>` : ''}<div class="det-et ${cls}" style="--c:${st.cor}" role="listitem"><span class="det-et-pt"><i class="fa-solid ${i < atualI ? 'fa-check' : st.ico}"></i></span><b>${esc(st.rot)}</b><small>${d ? fmtCurto(d) : ''}</small></div>`;
+  }).join('')}</div>`;
+}
+function linhaTempoDetalhe(s, hist) {
+  const nNotas = hist.filter(ehNota).length;
+  const lista = hist.filter(h => detTL.filtro === 'notas' ? ehNota(h) || ehObsMov(h) : detTL.filtro === 'mov' ? !ehNota(h) : true);
+  const diaRot = d => { const k = iso(new Date(d)); return k === hojeISO() ? 'Hoje' : k === somaDias(-1) ? 'Ontem' : new Date(d).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', year: k.slice(0, 4) === hojeISO().slice(0, 4) ? undefined : 'numeric' }).replace('.', ''); };
+  const hora = d => { const x = new Date(d); return String(x.getHours()).padStart(2, '0') + ':' + String(x.getMinutes()).padStart(2, '0'); };
+  let dia = '';
+  const itens = lista.map((h, i) => {
+    const k = h.em ? iso(new Date(h.em)) : '';
+    const cab = k !== dia ? (dia = k, `<p class="det-tl-dia">${h.em ? diaRot(h.em) : 'Sem data'}</p>`) : '';
+    const autor = autorDe(h) || '—';
+    if (ehNota(h)) return `${cab}<div class="det-tl-item nota ${i === 0 ? 'ultimo' : ''}" style="--c:#ca8a04"><span class="det-tl-ico"><i class="fa-solid fa-note-sticky"></i></span>
+      <div class="min-w-0 flex-1"><div class="det-tl-bolha"><p class="det-tl-bolha-cab"><span class="det-tl-av">${esc(iniciais(autor))}</span><b>${esc(autor)}</b><span>anotou · ${hora(h.em)}</span></p><p class="det-tl-bolha-txt">${esc(h.obs || '')}</p></div></div></div>`;
+    const [cor, ico] = MOV_ESTILO[classeMov(h)] || MOV_ESTILO.outro;
+    return `${cab}<div class="det-tl-item ${i === 0 ? 'ultimo' : ''}" style="--c:${cor}"><span class="det-tl-ico"><i class="fa-solid ${ico}"></i></span>
+      <div class="min-w-0"><p class="det-tl-acao">${esc(h.acao)}</p>${h.obs ? `<p class="det-tl-obs">${esc(h.obs)}</p>` : ''}<p class="det-tl-quem" title="${esc(fmtHora(h.em))}">${hora(h.em)} · ${esc(autor)}</p></div></div>`;
+  }).join('');
+  const seg = (k, rot, n) => `<button type="button" class="${detTL.filtro === k ? 'on' : ''}" onclick="detTL.filtro='${k}';renderDetalhe()">${rot}${n !== undefined ? ` <span>${n}</span>` : ''}</button>`;
+  return `<section class="det-card det-hist">
+    <h4><i class="fa-solid fa-timeline"></i>Linha do tempo <span class="text-ink3 font-semibold">${hist.length}</span></h4>
+    <div class="det-nota">
+      <textarea id="d-nota" rows="2" class="campo w-full" maxlength="2000" placeholder="Escreva uma anotação: ligação, conversa, próximo passo…" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();anotarDetalhe()}"></textarea>
+      <div class="det-nota-pe">
+        <div class="det-nota-atalhos">${['Liguei para a área', 'Aguardando retorno', 'Conversado com a Secretária', 'Despacho enviado'].map(t => `<button type="button" onclick="const n=$('d-nota');n.value=(n.value?n.value.trim()+' ':'')+${esc(JSON.stringify(t))};n.focus()">${esc(t)}</button>`).join('')}</div>
+        <button type="button" class="btn btn-pri !h-9" id="btn-nota" style="background:#ca8a04;border-color:#ca8a04" onclick="anotarDetalhe()"><i class="fa-solid fa-note-sticky"></i>Anotar</button>
+      </div>
+    </div>
+    <div class="det-tl-filtro" role="group" aria-label="Mostrar">${seg('', 'Tudo', hist.length)}${seg('notas', 'Anotações', nNotas + hist.filter(ehObsMov).length)}${seg('mov', 'Andamentos', hist.length - nNotas)}</div>
+    ${itens ? `<div class="det-tl">${itens}</div>` : `<p class="text-[13px] text-ink3">${detTL.filtro === 'notas' ? 'Nenhuma anotação ainda. Escreva acima e toque em Anotar.' : 'Ainda sem andamentos registrados.'}</p>`}
+  </section>`;
+}
+/** Anotação na linha do tempo: não muda nada no processo e qualquer perfil que vê o processo pode registrar. */
+async function anotarDetalhe() {
+  const el = $('d-nota'); if (!el || !modalAberto) return;
+  const texto = el.value.trim();
+  if (!texto) { el.focus(); toast('Escreva a anotação.', 'fa-pen'); return; }
+  const s = solPorId(modalAberto.id); if (!s) return;
+  const h = { em: new Date().toISOString(), acao: 'Anotação', obs: texto, por: meuId(), porNome: eu() || (Store.eu && Store.eu.name) || '', situacaoAnterior: s.status, situacaoNova: s.status };
+  el.value = '';
+  if (Store.modo === 'planilha') {
+    const antes = copia(s.historico || []);
+    trocarNaLista(Store._sol, s.id, { ...s, historico: antes.concat(h) }); aoMudarDados();
+    tarefaGrav({ rotulo: 'Anotação', detalhe: [s.numero, s.assunto].filter(Boolean).join(' · '), icone: 'fa-note-sticky',
+      executar: async () => { await esperarGravacaoPub(s.id); return API.post('anotar_solicitacao', { id: s.id, texto }); },
+      aoOk: r => { if (r && r.solicitacao && !Grav.pendente(s.id)) { substituirLocal(r.solicitacao); aoMudarDados(); } },
+      aoErro: () => { const a = solPorId(s.id); if (a) { trocarNaLista(Store._sol, s.id, { ...a, historico: (a.historico || []).filter(x => x !== h) }); aoMudarDados(); } } });
+  } else {
+    const d = copia(s); d.historico = (d.historico || []).concat(h);
+    await salvarSol(s.id, d, 'Anotação');
+  }
+  detTL.filtro = detTL.filtro === 'mov' ? '' : detTL.filtro;
+  toast('Anotação registrada na linha do tempo.', 'fa-note-sticky');
 }
 function acaoDetalhe(k) { const o = $('d-obs'); const obs = o ? o.value.trim() : ''; if (o) o.value = ''; acaoRapida(modalAberto.id, k, obs); }
 async function alternarUrgente() {
@@ -5497,11 +5748,15 @@ function alertaPrazosPub(todas) {
   const venc = todas.filter(pubVencida).sort((a, b) => diasPub(a) - diasPub(b));
   const breve = todas.filter(pubAVencer).sort((a, b) => diasPub(a) - diasPub(b));
   if (!venc.length && !breve.length) return '';
-  const item = x => `<button type="button" class="pa-item" onclick="abrirFormPortaria('${x.id}')" title="${esc(x.assunto || '')}"><b>${esc(nomePub(x))}</b><span>${txtDiasPub(diasPub(x))} · ${fmt(x.prazo)}</span></button>`;
-  const bloco = (cls, ico, tit, lista, chip) => !lista.length ? '' : `<div class="pa-bloco ${cls}">
-      <button type="button" class="pa-tit" onclick="chipGrade('portarias','${chip}')"><span class="pa-ico"><i class="fa-solid ${ico}"></i></span><span><b>${lista.length}</b> ${tit}</span><i class="fa-solid fa-filter text-[11px] opacity-60"></i></button>
-      <div class="pa-lista">${lista.slice(0, 4).map(item).join('')}${lista.length > 4 ? `<button type="button" class="pa-mais" onclick="chipGrade('portarias','${chip}')">+${lista.length - 4} · ver todas</button>` : ''}</div></div>`;
-  return `<div class="pub-alerta" role="status">${bloco('venc', 'fa-triangle-exclamation', venc.length === 1 ? 'publicação vencida' : 'publicações vencidas', venc, 'venc')}${bloco('breve', 'fa-bell', `${breve.length === 1 ? 'vence' : 'vencem'} em até ${PUB_ALERTA} dias`, breve, 'breve')}</div>`;
+  // uma linha só: a lista completa fica no filtro da planilha e no Resumo do dia
+  const prox = venc.concat(breve).slice(0, 2);
+  return `<div class="aut-bar pz ${venc.length ? '' : 'breve'}" role="status">
+    <span class="aut-bar-ico"><i class="fa-solid ${venc.length ? 'fa-triangle-exclamation' : 'fa-bell'}"></i></span>
+    ${venc.length ? `<button type="button" class="pz-seg venc" onclick="chipGrade('portarias','venc')"><b>${venc.length}</b> ${venc.length === 1 ? 'vencida' : 'vencidas'}</button>` : ''}
+    ${breve.length ? `<button type="button" class="pz-seg breve" onclick="chipGrade('portarias','breve')"><b>${breve.length}</b> ${breve.length === 1 ? 'vence' : 'vencem'} em até ${PUB_ALERTA} dias</button>` : ''}
+    <span class="aut-bar-lista">${prox.map(x => `<button type="button" class="aut-bar-item" onclick="abrirFormPortaria('${x.id}')" title="${esc(x.assunto || '')} · ${txtDiasPub(diasPub(x))}">${esc(nomePub(x))} · ${esc(txtDiasPub(diasPub(x)))}</button>`).join('')}</span>
+    <span class="aut-bar-bts"><button type="button" class="aut-bar-bt" onclick="chipGrade('portarias','${venc.length ? 'venc' : 'breve'}')"><i class="fa-solid fa-filter"></i><span>Ver na planilha</span></button></span>
+  </div>`;
 }
 /** Os dois arquivos de cada publicação e o prefixo dos seus campos. */
 const PUB_ARQS = { minuta: { p: 'arquivo', rot: 'Minuta', ico: 'fa-file-pen', cor: '#2563eb', dica: 'Texto minutado, de preferência Word' }, publicado: { p: 'pub', rot: 'Arquivo publicado', ico: 'fa-newspaper', cor: '#16a34a', dica: 'Como saiu publicado (ex.: Diário Oficial)' } };
@@ -5875,34 +6130,27 @@ function celAutPub(x) {
   if (a.situacao === 'pendente' && minhaVezAut(x)) return `<button type="button" class="gs-cel-bt aut-cel minha" title="Aguardando a sua autorização · ${esc(dica)}" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-pen-nib"></i><span>Autorizar</span></button>`;
   return `<button type="button" class="gs-cel-bt aut-cel" style="--c:${cor}" title="${esc(rot)} · ${esc(dica)}" onclick="abrirAutPub('${x.id}')">${a.situacao === 'pendente' ? `<span class="aut-avs">${avs}</span><span class="aut-n">${ok}/${n}</span>` : `<i class="fa-solid ${ico}"></i><span class="aut-rot">${rot}</span>`}</button>`;
 }
-/* --- caixa "Para você autorizar" acima da planilha --- */
+/* --- aviso compacto "Para você autorizar" acima da planilha (uma linha; a lista fica no Resumo do dia) --- */
 function caixaAutPub(todas) {
   const minhas = todas.filter(x => minhaVezAut(x));
   const outras = Store.modo === 'planilha' ? [] : todas.filter(x => autPendente(x) && !minhaVezAut(x));
   const lista = minhas.concat(outras);
   if (!lista.length) return '';
-  const tit = minhas.length ? `${minhas.length === 1 ? 'publicação aguarda' : 'publicações aguardam'} a sua autorização` : `${lista.length === 1 ? 'publicação aguarda' : 'publicações aguardam'} autorização`;
-  const item = x => {
-    const a = autPub(x), [t, ico, cor] = tipoPub(x.tipoDoc), minha = !!minhaVezAut(x), d = diasDesde(a.pedidoEm), min = arqDe(x, 'minuta');
-    const faltam = a.itens.filter(i => i.situacao === 'pendente').map(i => i.usuario);
-    return `<div class="aut-item ${minha ? 'minha' : ''}">
-      <span class="aut-item-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span>
-      <div class="min-w-0 flex-1">
-        <button type="button" class="aut-item-tit" onclick="abrirAutPub('${x.id}')">${esc(nomePub(x))}</button>
-        <p class="aut-item-sub">${esc(x.assunto || '—')}</p>
-        <p class="aut-item-meta"><i class="fa-solid fa-paper-plane"></i>Pedido por <b>${esc(a.pedidoPor || '—')}</b> ${d === 0 ? 'hoje' : d === 1 ? 'ontem' : `há ${d} dias`}${a.mensagem ? ` · <i>“${esc(a.mensagem)}”</i>` : ''}${!minha ? ` · falta: ${esc(faltam.join(', '))}` : ''}</p>
-      </div>
-      <div class="aut-item-bts">
-        ${min ? `<button type="button" class="btn btn-sec !h-9" title="Ver a minuta" onclick="verArqPortaria('${x.id}','minuta')"><i class="fa-solid fa-eye text-indigo-600"></i><span class="hidden sm:inline">Minuta</span></button>` : ''}
-        ${minha ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" onclick="abrirAutPub('${x.id}','devolver')"><i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Devolver</span></button><button type="button" class="btn btn-pri !h-9" style="background:#16a34a;border-color:#16a34a" onclick="autorizarRapido('${x.id}',this)"><i class="fa-solid fa-check"></i>Autorizar</button>`
-          : `<button type="button" class="btn btn-sec !h-9" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-file-signature" style="color:${AUT_COR}"></i>Abrir</button>`}
-      </div></div>`;
-  };
-  return `<section class="aut-caixa" role="region" aria-label="Autorizações">
-    <header class="aut-caixa-cab"><span class="aut-caixa-ico"><i class="fa-solid fa-file-signature"></i></span><div class="min-w-0 flex-1"><b>${lista.length} ${tit}</b><small>${minhas.length ? 'Veja a minuta e autorize, ou devolva dizendo o que corrigir.' : 'Abra para registrar a decisão de cada autoridade.'}</small></div>
-      <button type="button" class="aut-caixa-filtro" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')"><i class="fa-solid fa-filter"></i>Filtrar</button></header>
-    <div class="aut-lista">${lista.slice(0, 5).map(item).join('')}${lista.length > 5 ? `<button type="button" class="pa-mais" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')">+${lista.length - 5} · ver todas</button>` : ''}</div>
-  </section>`;
+  const chave = 'gabdoc_autbar_' + lista.map(x => x.id).join(',');
+  try { if (sessionStorage.getItem('gabdoc_autbar') === chave) return ''; } catch (e) {}
+  const n = lista.length, prim = lista[0];
+  const tit = minhas.length ? `${n} ${n === 1 ? 'publicação aguarda' : 'publicações aguardam'} a sua autorização` : `${n} ${n === 1 ? 'publicação aguarda' : 'publicações aguardam'} autorização`;
+  const nomes = lista.slice(0, 2).map(x => `<button type="button" class="aut-bar-item" onclick="abrirAutPub('${x.id}')" title="${esc(x.assunto || '')}">${esc(nomePub(x))}</button>`).join('');
+  return `<div class="aut-bar" role="status">
+    <span class="aut-bar-ico"><i class="fa-solid fa-file-signature"></i></span>
+    <b class="aut-bar-tit">${tit}</b>
+    <span class="aut-bar-lista">${nomes}${n > 2 ? `<span class="aut-bar-mais">+${n - 2}</span>` : ''}</span>
+    <span class="aut-bar-bts">
+      <button type="button" class="aut-bar-bt" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')"><i class="fa-solid fa-filter"></i><span>Ver na planilha</span></button>
+      <button type="button" class="aut-bar-bt pri" onclick="abrirAutPub('${prim.id}')"><i class="fa-solid fa-pen-nib"></i><span>${minhas.length ? 'Autorizar' : 'Abrir'}</span></button>
+      <button type="button" class="aut-bar-x" title="Ocultar até a próxima novidade" aria-label="Ocultar aviso" onclick="try{sessionStorage.setItem('gabdoc_autbar','${chave}')}catch(e){};this.closest('.aut-bar').remove()"><i class="fa-solid fa-xmark"></i></button>
+    </span>
+  </div>`;
 }
 async function autorizarRapido(id, btn) {
   if (btn && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = '<i class="fa-solid fa-check-double"></i>Confirmar'; setTimeout(() => { if (btn.isConnected && btn.dataset.conf) { delete btn.dataset.conf; btn.innerHTML = '<i class="fa-solid fa-check"></i>Autorizar'; } }, 4000); return; }
@@ -9621,6 +9869,8 @@ function aplicarPermissoes() {
 const movEstado = { periodo: '30', usuario: '', tipo: '', busca: '' };
 function classeMov(h) {
   const a = Utils_norm(h.acao);
+  if (a === 'anotacao') return 'nota';
+  if (/^observac/.test(a)) return 'obs';
   if (h.situacaoNova === 'assinado' && h.situacaoAnterior !== 'assinado') return 'assinado';
   if ((h.situacaoNova === 'aguardando' || h.situacaoNova === 'analise') && h.situacaoAnterior !== h.situacaoNova) return 'aguardando';
   if (h.situacaoNova === 'cancelado' && h.situacaoAnterior !== 'cancelado') return 'cancelado';
@@ -9637,7 +9887,7 @@ function Utils_norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ
 const MOV_ESTILO = {
   assinado: ['#16a34a', 'fa-signature', 'Assinatura'], aguardando: ['#2563eb', 'fa-arrows-spin', 'Em andamento'], cancelado: ['#6b7280', 'fa-ban', 'Cancelamento'], ajuste: ['#ea580c', 'fa-rotate-left', 'Devolução'],
   urgente: ['#dc2626', 'fa-flag', 'Prioridade'], casa: ['#7c3aed', 'fa-landmark', 'Casa Civil'], cadastro: ['#2563eb', 'fa-inbox', 'Cadastro'],
-  exclusao: ['#64748b', 'fa-trash', 'Exclusão'], outro: ['#0d9488', 'fa-arrow-right-arrow-left', 'Andamento']
+  exclusao: ['#64748b', 'fa-trash', 'Exclusão'], nota: ['#ca8a04', 'fa-note-sticky', 'Anotação'], obs: ['#0891b2', 'fa-comment-dots', 'Observações'], outro: ['#0d9488', 'fa-arrow-right-arrow-left', 'Andamento']
 };
 function todasMovimentacoes() {
   const out = [];
