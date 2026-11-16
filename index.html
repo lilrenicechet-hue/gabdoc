@@ -47,11 +47,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.54.0">
+<meta name="gabdoc-versao" content="1.57.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Nomeações e Exonerações: novas visualizações Lado a lado e Linha do tempo",
-  "Nomeações e Exonerações: formulário novo, em cartões, igual ao de Publicações",
-  "IN e NOR agora se chamam I e N (os registros antigos são convertidos sozinhos)"
+  "Publicações: fluxo de autorização · peça a autorização das autoridades e elas autorizam ou devolvem",
+  "Caixa \"Para você autorizar\" no topo de Publicações, com a minuta a um toque",
+  "Perfis: nova opção \"Autoriza publicações\" (Autoridade Autorizadora)"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -927,6 +927,18 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .nm-lot i { font-size: 11px; color: var(--c); }
   .nm-lot.ativo { background: var(--c); color: #fff; border-color: var(--c); }
   .nm-lot.ativo i { color: #fff; }
+  .nm-chk { --c: #16a34a; width: 100%; height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 12px; font-weight: 800; font-size: 13.5px; color: var(--ink2); background: var(--card); border: 1.5px solid var(--line); transition: background .15s, border-color .15s; }
+  .nm-chk-cx { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font-size: 11px; color: transparent; border: 2px solid var(--line); background: var(--card2); }
+  .nm-chk.ativo { color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 8%, var(--card)); border-color: var(--c); }
+  .nm-chk.ativo .nm-chk-cx { color: #fff; background: var(--c); border-color: var(--c); }
+  .nm-ri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .nm-ri button { --c: #64748b; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 12px; font-size: 12.5px; font-weight: 800; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 5%, var(--card)); border: 1.5px solid color-mix(in srgb, var(--c) 28%, var(--line)); white-space: nowrap; }
+  .nm-ri button i { color: var(--c); font-size: 12px; }
+  .nm-ri button.ativo { background: var(--c); color: #fff; border-color: var(--c); }
+  .nm-ri button.ativo i { color: #fff; }
+  .nm-selos { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .nm-selo { --c: #64748b; display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 7px; border-radius: 99px; font-size: 10.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 11%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); white-space: nowrap; }
+  .nm-selo i { font-size: 8.5px; }
   .nm-pulsa { box-shadow: 0 0 0 3px color-mix(in srgb, #ea580c 45%, transparent); transition: box-shadow .3s; }
   .pt-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   @media (max-width: 640px) { .pt-status { grid-template-columns: minmax(0, 1fr); } }
@@ -984,6 +996,95 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   body.gs-redimensionando, body.gs-redimensionando * { cursor: col-resize !important; user-select: none !important; }
   /* Publicações: status e link em Ações; tipo junto do número */
   .pub-st { --c: #d97706; height: 26px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 800; white-space: nowrap; color: color-mix(in srgb, var(--c) 82%, var(--ink)); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1.5px dashed color-mix(in srgb, var(--c) 60%, transparent); margin-right: auto; }
+  /* ----- Publicações: autorização ----- */
+  .aut-pedir { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #7c3aed; padding: 2px 9px; border-radius: 999px; border: 1px dashed color-mix(in srgb, #7c3aed 55%, transparent); background: color-mix(in srgb, #7c3aed 6%, var(--card)); }
+  .aut-pedir:hover { background: color-mix(in srgb, #7c3aed 14%, var(--card)); }
+  .gs-compacto .aut-pedir span { display: none; }
+  .aut-cel { --c: #7c3aed; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 4px; border-radius: 999px; font-size: 11.5px; font-weight: 800; color: color-mix(in srgb, var(--c) 85%, var(--ink)); background: color-mix(in srgb, var(--c) 10%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); white-space: nowrap; max-width: 100%; }
+  .aut-cel:not(:has(.aut-avs)) { padding-left: 9px; }
+  .aut-cel:hover { background: color-mix(in srgb, var(--c) 18%, var(--card)); }
+  .aut-cel.minha { --c: #16a34a; color: #fff; background: #16a34a; border-color: #16a34a; padding-left: 10px; animation: autPulso 2.2s infinite; }
+  @keyframes autPulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,.45); } 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0); } }
+  @media (prefers-reduced-motion: reduce) { .aut-cel.minha { animation: none; } }
+  .aut-avs { display: inline-flex; }
+  .aut-av { --c: #d97706; width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; font-size: 8.5px; font-weight: 900; color: #fff; background: var(--c); border: 1.5px solid var(--card); margin-left: -5px; }
+  .aut-av:first-child { margin-left: 0; }
+  .gs-compacto .aut-cel .aut-rot { display: none; }
+  .gs-compacto .aut-cel:not(:has(.aut-avs)) { padding: 0 8px; }
+  .aut-caixa { flex-shrink: 0; border-radius: 16px; border: 1px solid color-mix(in srgb, #7c3aed 30%, var(--line)); background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 9%, var(--card)), var(--card) 60%); overflow: hidden; }
+  .aut-caixa-cab { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+  .aut-caixa-cab b { display: block; font-size: 14.5px; font-weight: 900; color: var(--ink); }
+  .aut-caixa-cab small { display: block; font-size: 12px; color: var(--ink3); }
+  .aut-caixa-ico { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: #7c3aed; font-size: 15px; flex: none; box-shadow: 0 8px 18px -10px #7c3aed; }
+  .aut-caixa-filtro { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 9px; font-size: 12px; font-weight: 700; color: #7c3aed; border: 1px solid color-mix(in srgb, #7c3aed 30%, var(--line)); background: var(--card); flex: none; }
+  .aut-lista { display: flex; flex-direction: column; gap: 6px; padding: 0 10px 10px; }
+  .aut-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
+  .aut-item.minha { border-color: color-mix(in srgb, #16a34a 35%, var(--line)); }
+  .aut-item-ico { --c: #4f46e5; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: var(--c); background: color-mix(in srgb, var(--c) 11%, var(--card)); }
+  .aut-item-tit { font-size: 13.5px; font-weight: 800; color: var(--ink); text-align: left; }
+  .aut-item-tit:hover { text-decoration: underline; }
+  .aut-item-sub { font-size: 12px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aut-item-meta { font-size: 11.5px; color: var(--ink3); margin-top: 1px; }
+  .aut-item-meta .fa-paper-plane { font-size: 9.5px; margin-right: 4px; color: #7c3aed; }
+  .aut-item-bts { display: flex; gap: 6px; flex: none; }
+  @media (max-width: 640px) { .aut-item { flex-wrap: wrap; } .aut-item-bts { width: 100%; justify-content: flex-end; } .aut-caixa-filtro { display: none; } }
+  .aut-escolha { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .aut-op { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 12px; background: var(--card); border: 1.5px solid var(--line); transition: border-color .15s, background .15s; }
+  .aut-op:hover { border-color: color-mix(in srgb, #7c3aed 45%, var(--line)); }
+  .aut-op b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aut-op small { display: block; font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aut-op-av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 12px; font-weight: 900; color: #7c3aed; background: color-mix(in srgb, #7c3aed 12%, var(--card)); }
+  .aut-op-ck { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: none; font-size: 11px; color: transparent; border: 2px solid var(--line); }
+  .aut-op.ativo { border-color: #7c3aed; background: color-mix(in srgb, #7c3aed 7%, var(--card)); }
+  .aut-op.ativo .aut-op-ck { color: #fff; background: #7c3aed; border-color: #7c3aed; }
+  .aut-op.ativo .aut-op-av { color: #fff; background: #7c3aed; }
+  .aut-vazio, .aut-aviso { display: flex; gap: 10px; align-items: flex-start; padding: 11px 13px; border-radius: 12px; font-size: 12.5px; color: var(--ink2); background: color-mix(in srgb, #7c3aed 6%, var(--card)); border: 1px dashed color-mix(in srgb, #7c3aed 35%, var(--line)); }
+  .aut-vazio > :is(i, svg), .aut-aviso > :is(i, svg) { color: #7c3aed; font-size: 16px; margin-top: 2px; }
+  .aut-vazio b, .aut-aviso b { color: var(--ink); }
+  .aut-aviso.dev { background: color-mix(in srgb, #dc2626 6%, var(--card)); border-color: color-mix(in srgb, #dc2626 35%, var(--line)); }
+  .aut-aviso.dev > :is(i, svg) { color: #dc2626; }
+  .aut-topo { --c: #7c3aed; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 11px 13px; border-radius: 13px; background: color-mix(in srgb, var(--c) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); }
+  .aut-topo b { display: block; font-size: 14.5px; font-weight: 900; color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
+  .aut-topo small { display: block; font-size: 12px; color: var(--ink3); }
+  .aut-topo-ico { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: var(--c); flex: none; }
+  .aut-barra { display: flex; gap: 3px; width: 100%; }
+  .aut-barra span { flex: 1; height: 5px; border-radius: 99px; }
+  .aut-msg { display: flex; gap: 8px; padding: 9px 12px; border-radius: 11px; background: var(--card2); font-size: 13px; color: var(--ink2); font-style: italic; }
+  .aut-msg :is(i, svg) { color: #7c3aed; font-size: 11px; margin-top: 3px; }
+  .aut-doc { display: flex; flex-wrap: wrap; gap: 6px; }
+  .aut-doc > span, .aut-doc > a, .aut-doc > button { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 9px; font-size: 12px; font-weight: 700; color: var(--ink2); background: var(--card); border: 1px solid var(--line); text-decoration: none; }
+  .aut-doc > a, .aut-doc > button { color: #4f46e5; cursor: pointer; }
+  .aut-doc > a:hover, .aut-doc > button:hover { border-color: #4f46e5; }
+  .aut-doc :is(i, svg) { font-size: 11px; }
+  .aut-sec-tit { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; color: var(--ink2); margin-bottom: 7px; }
+  .aut-sec-tit :is(i, svg) { color: #7c3aed; }
+  .aut-pessoas { display: flex; flex-direction: column; gap: 6px; }
+  .aut-pessoa { --c: #d97706; display: flex; gap: 10px; align-items: flex-start; padding: 9px 11px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); }
+  .aut-pessoa.eu { background: color-mix(in srgb, #16a34a 5%, var(--card)); }
+  .aut-pessoa b { display: block; font-size: 13.5px; font-weight: 800; color: var(--ink); }
+  .aut-pessoa small { display: block; font-size: 12px; color: var(--ink3); }
+  .aut-pessoa-av { position: relative; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 12px; font-weight: 900; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .aut-pessoa-ck { position: absolute; right: -3px; bottom: -3px; width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; font-size: 8.5px; color: #fff; background: var(--c); border: 2px solid var(--card); }
+  .aut-voce { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; color: #16a34a; background: color-mix(in srgb, #16a34a 12%, var(--card)); padding: 1px 6px; border-radius: 99px; vertical-align: 2px; }
+  .aut-obs { margin-top: 4px; font-size: 12.5px; color: var(--ink2); font-style: italic; }
+  .aut-decidir { padding: 12px; border-radius: 14px; background: var(--card2); display: flex; flex-direction: column; gap: 8px; }
+  .aut-bt { display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 12px; text-align: left; border: 1.5px solid; transition: transform .12s, box-shadow .12s; }
+  .aut-bt:hover { transform: translateY(-1px); }
+  .aut-bt > :is(i, svg) { font-size: 20px; }
+  .aut-bt b { display: block; font-size: 14px; font-weight: 900; }
+  .aut-bt small { display: block; font-size: 11.5px; opacity: .8; }
+  .aut-bt.ok { color: #fff; background: #16a34a; border-color: #16a34a; box-shadow: 0 10px 22px -14px #16a34a; }
+  .aut-bt.dev { color: #dc2626; background: var(--card); border-color: color-mix(in srgb, #dc2626 45%, var(--line)); }
+  .aut-hist > summary { cursor: pointer; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 800; color: var(--ink2); list-style: none; }
+  .aut-hist > summary::-webkit-details-marker { display: none; }
+  .aut-hist ul { display: flex; flex-direction: column; gap: 9px; margin-top: 9px; padding-left: 4px; }
+  .aut-hist li { display: flex; gap: 9px; font-size: 12.5px; color: var(--ink2); }
+  .aut-hist small { font-size: 11px; color: var(--ink3); }
+  .aut-h-ico { --c: #64748b; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 10px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--card)); }
+  .aut-form-res { --c: #7c3aed; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 11px; background: color-mix(in srgb, var(--c) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); }
+  .aut-form-res > :is(i, svg) { color: var(--c); font-size: 16px; }
+  .aut-form-res b { display: block; font-size: 13px; font-weight: 800; color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
+  .aut-form-res small { display: block; font-size: 11.5px; color: var(--ink3); }
   .pub-st:hover { background: color-mix(in srgb, var(--c) 18%, var(--card)); }
   .pub-st.feito { border-style: solid; color: #fff; background: var(--c); border-color: var(--c); }
   .pub-st .pub-st-seta { font-size: 8px; opacity: .7; }
@@ -2139,11 +2240,18 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-id-card text-blue-300"></i> Nomeações e Exonerações</h2>
             <p class="text-blue-100/70 text-xs mt-0.5 hidden sm:block">Acompanhamento de nomeações e exonerações do Chefe de Gabinete: protocolo, publicação no Diário Oficial, data de início e status.</p>
           </div>
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-col items-stretch md:items-end gap-2">
+            <nav class="pub-links" aria-label="Acesso rápido" id="nom-links">
+              <a href="https://www.iomat.mt.gov.br/" target="_blank" rel="noopener noreferrer" style="--c:#38bdf8" title="Abrir o IOMAT-MT (Diário Oficial de Mato Grosso)"><span class="pub-link-ico"><i class="fa-solid fa-book-open"></i></span><span><b>IOMAT-MT</b><small>Diário Oficial</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+              <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" style="--c:#f87171" title="Abrir o Gmail"><span class="pub-link-ico"><i class="fa-solid fa-envelope"></i></span><span><b>Gmail</b><small>Caixa de entrada</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+              <a href="https://www.sigadoc.mt.gov.br/siga/app/principal" target="_blank" rel="noopener noreferrer" style="--c:#4ade80" title="Abrir o SIGADOC"><span class="pub-link-ico"><i class="fa-solid fa-folder-tree"></i></span><span><b>SIGADOC</b><small>Processos</small></span><i class="fa-solid fa-arrow-up-right-from-square pub-link-seta"></i></a>
+            </nav>
+          <div class="flex flex-wrap items-center gap-2 md:justify-end">
           <div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('nomeacoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div>
           <div class="flex gap-2" data-requer="chefe:2">
             <button onclick="abrirFormNomeacao(null,{tipo:'Nomeação'})" class="btn bg-blue-600 hover:bg-blue-500 text-white"><i class="fa-solid fa-user-check"></i>Nova nomeação</button>
             <button onclick="abrirFormNomeacao(null,{tipo:'Exoneração'})" class="btn bg-rose-700 hover:bg-rose-600 text-white"><i class="fa-solid fa-user-xmark"></i>Nova exoneração</button>
+          </div>
           </div>
           </div>
         </div>
@@ -2445,7 +2553,7 @@ function areaDaAba(tab) {
   if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes', 'emails'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
-function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
+function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if (tab === 'portarias' && Store.modo === 'planilha' && podeAutorizar() && nivelArea('sol') < 1) return true; if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
 /** Esconde do menu as seções sem acesso (e os títulos de grupo que ficarem vazios). */
 function aplicarAcessoMenu() {
   document.querySelectorAll('#nav .nav-btn[data-tab]').forEach(b => { if (b.dataset.tab !== 'admin') b.classList.toggle('sem-acesso', !abaPermitida(b.dataset.tab)); });
@@ -2608,6 +2716,7 @@ function aplicarCarga(r) {
     Store.contratacoes = normContrIN(r.contratacoes);
     Store.nomeacoes = normNomIN(r.nomeacoes);
     Store.portarias = r.portarias || [];
+    Store.autorizadores = r.autorizadores || [];
     if (r.listas && r.listas.unidades) Store.unidades = r.listas.unidades;
   }
   if (r.personalizacao) aplicarPersonalizacao(r.personalizacao);
@@ -3463,8 +3572,10 @@ function atualizarBadges() {
   set('bdg-urg', prazosAtivos().length);
   set('bdg-cc', Store.sol.filter(CC_ATIVO).length);
   SECOES_DOC.forEach(d => set('bdg-doc-' + d.tipo, Store.sol.filter(s => s.tipo === d.tipo && !FEITO(s)).length));
-  set('bdg-port', (Store.portarias || []).filter(x => !pubFeita(x)).length);
-  { const b = $('bdg-port'); if (b) { const v = (Store.portarias || []).some(pubVencida); b.classList.toggle('bg-red-600', v); b.classList.toggle('bg-indigo-600', !v); b.title = v ? 'Há publicações com prazo vencido' : 'Aguardando publicação ou devolvidas para correção'; } }
+  set('bdg-port', paraMimAut().length || (Store.portarias || []).filter(x => !pubFeita(x)).length);
+  { const b = $('bdg-port'); if (b) { const minhas = paraMimAut().length, v = (Store.portarias || []).some(pubVencida);
+    b.classList.toggle('bg-violet-600', !!minhas); b.classList.toggle('bg-red-600', !minhas && v); b.classList.toggle('bg-indigo-600', !minhas && !v);
+    b.title = minhas ? `${minhas} publicação(ões) aguardando a sua autorização` : v ? 'Há publicações com prazo vencido' : 'Aguardando publicação ou devolvidas para correção'; } }
   set('bdg-ev', (Store.eventos || []).filter(e => evProximo(e)).length);
   set('bdg-com', comDestaques().length);
   set('bdg-sem', Store.sol.filter(s => !FEITO(s) && s.prazo && s.prazo >= hojeISO() && s.prazo <= somaDias(6 - (new Date().getDay() + 6) % 7)).length);
@@ -4522,7 +4633,7 @@ function renderGrade(cont, cfg) {
   const wCol = c => larg[c.key] || c.w || 140;
   const flexivel = st.compacto ? cols.find(c => c.flex && !larg[c.key]) : null;
   const celular = window.innerWidth < 768;
-  const largura = (celular ? 30 : 46) + cols.reduce((a, c) => a + (c === flexivel ? (celular ? 150 : 200) : wCol(c)), 0) + (celular && larguraAcoes ? 72 : larguraAcoes);
+  const largura = (celular ? 30 : 46) + cols.reduce((a, c) => a + (c === flexivel ? (celular ? 150 : (c.wMin || 200)) : wCol(c)), 0) + (celular && larguraAcoes ? 72 : larguraAcoes);
   const colgroup = `<col style="width:46px">${cols.map(c => c === flexivel ? '<col>' : `<col style="width:${wCol(c)}px">`).join('')}${cfg.acoes ? `<col style="width:${larguraAcoes}px">` : ''}`;
   const padraoCol = !st.ordem && cfg.ordemColuna;
   const cab = cols.map((c, i) => `<th class="gs-cab ${st.ordem === c.key || padraoCol === c.key ? 'ordenado' : ''}" onclick="ordenarGrade('${cfg.id}','${c.key}')" title="${padraoCol === c.key ? 'Ordenado por prazo: vencidos e mais apertados primeiro' : 'Ordenar por ' + esc(c.rot)}">
@@ -5358,7 +5469,9 @@ const PORT_MAX = 20 * 1024 * 1024;
 const PUB_TIPOS = [['Portaria', 'fa-stamp', '#4f46e5'], ['Edital', 'fa-bullhorn', '#0891b2'], ['Instrução Normativa', 'fa-book', '#7c3aed'], ['Resolução', 'fa-gavel', '#be123c'],
   ['Decreto', 'fa-landmark', '#334155'], ['Extrato', 'fa-file-contract', '#0d9488'], ['Aviso', 'fa-circle-exclamation', '#d97706'], ['Comunicado', 'fa-envelope-open-text', '#2563eb']];
 const tipoPub = t => PUB_TIPOS.find(x => Utils_norm(x[0]) === Utils_norm(t)) || [t || '', 'fa-file-lines', '#64748b'];
-const PUB_STATUS = { 'Aguardando Publicação': ['#d97706', 'fa-hourglass-half'], 'Publicado': ['#16a34a', 'fa-circle-check'], 'Devolvido Para Correção': ['#dc2626', 'fa-rotate-left'] };
+const PUB_STATUS = { 'Aguardando Publicação': ['#d97706', 'fa-hourglass-half'], 'Aguardando Autorização': ['#7c3aed', 'fa-file-signature'], 'Publicado': ['#16a34a', 'fa-circle-check'], 'Devolvido Para Correção': ['#dc2626', 'fa-rotate-left'] };
+/** Status que a pessoa escolhe à mão ("Aguardando Autorização" entra e sai pelo fluxo de autorização). */
+const PUB_STATUS_MANUAIS = Object.keys(PUB_STATUS).filter(s => s !== 'Aguardando Autorização');
 const statusPub = x => (x && x.status && PUB_STATUS[x.status]) ? x.status : 'Aguardando Publicação';
 const pubFeita = x => statusPub(x) === 'Publicado';
 /** Prazo para publicação: alerta para as vencidas e as que vencem em até PUB_ALERTA dias (só as não publicadas). */
@@ -5410,7 +5523,12 @@ function exemplosPortarias() {
     { id: 'pt1', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/31490', numero: 'Portaria nº 512/2026/GS/SEDUC-MT', recebimento: h(-2), prazo: h(2), assunto: 'Designação de comissão de avaliação de estágio probatório dos servidores efetivos', setor: 'SAGP', status: 'Aguardando Publicação', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
     { id: 'pt2', tipoDoc: 'Edital', processo: 'SEDUC-PRO-2026/30877', numero: 'Edital nº 021/2026/SEDUC-MT', recebimento: h(-6), assunto: 'Processo seletivo simplificado para profissionais da educação', setor: 'SAGE', status: 'Publicado', publicadoEm: h(-3), link: '', exemplo: true },
     { id: 'pt3', tipoDoc: 'Instrução Normativa', processo: 'SEDUC-PRO-2026/29911', numero: 'IN nº 004/2026/GS/SEDUC-MT', recebimento: h(-15), prazo: h(-3), assunto: 'Procedimentos para atribuição de aulas no ano letivo de 2027', setor: 'GS', status: 'Devolvido Para Correção', link: 'https://www.sigadoc.mt.gov.br/', exemplo: true },
-    { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), prazo: h(10), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true }
+    { id: 'pt4', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/28654', numero: '', recebimento: h(-1), prazo: h(10), assunto: 'Lotação provisória de profissionais da educação na DRE de Sinop', setor: 'SAGP', status: 'Aguardando Publicação', link: '', exemplo: true },
+    (() => { const ped = new Date(Date.now() - 26 * 3600e3).toISOString(), dec = new Date(Date.now() - 5 * 3600e3).toISOString();
+      const a = { rodada: 1, situacao: 'pendente', pedidoEm: ped, pedidoPor: 'Assessoria', mensagem: 'Precisa sair no Diário de sexta-feira', concluidaEm: '',
+        itens: [{ usuario: 'Chefe de Gabinete', cargo: 'Gabinete', situacao: 'autorizado', em: dec, obs: 'De acordo' }, { usuario: 'Secretária de Estado de Educação', cargo: 'Secretária', situacao: 'pendente', em: '', obs: '' }],
+        hist: [{ em: ped, por: 'Assessoria', acao: 'solicitou', obs: 'Chefe de Gabinete, Secretária de Estado de Educação · Precisa sair no Diário de sexta-feira' }, { em: dec, por: 'Chefe de Gabinete', acao: 'autorizou', obs: 'De acordo' }] };
+      return { id: 'pt5', tipoDoc: 'Portaria', processo: 'SEDUC-PRO-2026/32015', numero: 'Portaria nº 530/2026/GS/SEDUC-MT', recebimento: h(-1), prazo: h(3), assunto: 'Institui o Comitê de Busca Ativa Escolar no âmbito da SEDUC-MT', setor: 'SAGE', status: 'Aguardando Autorização', link: 'https://www.sigadoc.mt.gov.br/', autorizacao: JSON.stringify(a), autResumo: resumoAut(a), exemplo: true }; })()
   ];
 }
 function lerBase64(file) {
@@ -5586,7 +5704,7 @@ async function salvarPortaria(id, dados, rotulo) {
   dados.publicadoEm = statusPub(dados) === 'Publicado' ? (dados.publicadoEm || hojeISO()) : '';
   if (!gravaEmFila()) {
     if (novo) id = 'pt' + Date.now();
-    trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados(); return true;
+    trocarNaLista(Store.portarias, id, { ...dados, id }); aoMudarDados(); return id;
   }
   const antigo = novo ? null : portaria(id);
   if (novo) id = novoIdLocal('P');
@@ -5597,7 +5715,7 @@ async function salvarPortaria(id, dados, rotulo) {
     detalhe: nomePub(dados),
     action: 'salvar_portaria', payload: { id, criarComId: novo, dados: semId(dados) },
     nuvem: () => Store.db.collection('portarias').doc(ref).set(semId(dados)) });
-  return true;
+  return id;
 }
 async function excluirPortariaId(id) {
   const x = portaria(id);
@@ -5610,7 +5728,11 @@ async function excluirPortariaId(id) {
 async function editarPortCampos(x, campos) {
   if ('link' in campos) { const l = normLink(campos.link); if (l === null) { toast('O link deve começar com http:// ou https://.', 'fa-triangle-exclamation'); return false; } campos.link = l; }
   if ('setor' in campos) campos.setor = String(campos.setor || '').trim().toUpperCase();
-  if ('status' in campos && !PUB_STATUS[campos.status]) { toast('Status: ' + Object.keys(PUB_STATUS).join(', ') + '.', 'fa-triangle-exclamation'); return false; }
+  if ('status' in campos && !PUB_STATUS[campos.status]) { toast('Status: ' + PUB_STATUS_MANUAIS.join(', ') + '.', 'fa-triangle-exclamation'); return false; }
+  if ('status' in campos && campos.status !== statusPub(x)) {
+    if (autPendente(x)) { toast('Esta publicação está aguardando autorização. Espere a decisão ou cancele o pedido.', 'fa-file-signature'); return false; }
+    if (campos.status === 'Aguardando Autorização') { abrirPedirAut(x.id); return false; }
+  }
   const d = { ...x }; delete d.id; Object.assign(d, campos); d.atualizadoEm = new Date().toISOString(); return salvarPortaria(x.id, d);
 }
 function celArquivo(x, qual = 'minuta') {
@@ -5633,6 +5755,262 @@ function celNumeroPub(x) {
   const tipo = x.tipoDoc ? `<span class="pub-tipo" style="--c:${cor}" title="${esc(t)}"><i class="fa-solid ${ico}"></i><span>${esc(t)}</span></span>` : '';
   return tipo + (x.numero ? esc(x.numero) : '<span class="text-ink3 font-normal">—</span>');
 }
+/* ----- Publicações: fluxo de autorização -----
+   Quem cadastra pede a autorização de uma ou mais Autoridades Autorizadoras. Cada uma autoriza ou devolve.
+   Todas autorizaram → "Aguardando Publicação" · alguma devolveu → "Devolvido Para Correção".
+   Planilha: autoridades = usuários cujo perfil tem "Autoriza publicações" (cada um decide por si).
+   Demonstração/compartilhado: autoridades = Personalização › Autoridades (a equipe registra a decisão de cada uma). */
+const AUT_COR = '#7c3aed';
+const autPub = x => { if (!x || !x.autorizacao) return null; let a = x.autorizacao; if (typeof a === 'string') { try { a = JSON.parse(a); } catch (e) { return null; } } return a && Array.isArray(a.itens) ? a : null; };
+const autPendente = x => { const a = autPub(x); return !!a && a.situacao === 'pendente'; };
+const euAut = () => Store.modo === 'planilha' ? ((Store.sessao && Store.sessao.usuario) || '') : ((Store.eu && (Store.eu.name || Store.eu.nome)) || 'Assessoria');
+const podeAutorizar = () => Store.modo !== 'planilha' || !!(Store.sessao && Store.sessao.permissoes && Store.sessao.permissoes.autorizar);
+/** Autoridades que podem ser chamadas a autorizar. */
+function listaAutorizadores() {
+  if (Store.modo === 'planilha') return (Store.autorizadores || []).map(u => ({ usuario: u.usuario, cargo: u.cargo || '', perfil: u.perfil || '' }));
+  return autoridadesAtivas().map(a => ({ usuario: a.nome, cargo: a.cargo || '', perfil: '' }));
+}
+/** Item do pedido que espera a MINHA decisão (planilha: o meu usuário). */
+function minhaVezAut(x) {
+  const a = autPub(x); if (!a || a.situacao !== 'pendente' || !podeAutorizar()) return null;
+  const eu = Utils_norm(euAut());
+  return a.itens.find(i => i.situacao === 'pendente' && Utils_norm(i.usuario) === eu) || null;
+}
+const paraMimAut = () => (Store.portarias || []).filter(x => minhaVezAut(x));
+const SIT_ITEM_AUT = { pendente: ['#d97706', 'fa-hourglass-half', 'Aguardando'], autorizado: ['#16a34a', 'fa-circle-check', 'Autorizou'], devolvido: ['#dc2626', 'fa-rotate-left', 'Devolveu'], cancelado: ['#94a3b8', 'fa-ban', 'Pedido cancelado'] };
+const SIT_AUT = { pendente: ['#7c3aed', 'fa-file-signature', 'Em autorização'], autorizada: ['#16a34a', 'fa-circle-check', 'Autorizada'], devolvida: ['#dc2626', 'fa-rotate-left', 'Devolvida'], cancelada: ['#94a3b8', 'fa-ban', 'Pedido cancelado'] };
+const dataHoraCurta = s => s ? new Date(s).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : '';
+function resumoAut(a) {
+  if (!a) return '';
+  const f = s => s ? fmt(String(s).slice(0, 10)) : '';
+  const sit = { pendente: 'Aguardando', autorizada: 'AUTORIZADA', devolvida: 'DEVOLVIDA', cancelada: 'Pedido cancelado' }[a.situacao] || a.situacao;
+  return sit + ' · ' + a.itens.map(i => i.usuario + ': ' + (i.situacao === 'autorizado' ? 'autorizou em ' + f(i.em) : i.situacao === 'devolvido' ? 'devolveu em ' + f(i.em) + (i.obs ? ' (' + i.obs + ')' : '') : i.situacao === 'cancelado' ? 'pedido cancelado' : 'pendente')).join('; ');
+}
+/** Mesma regra do servidor, aplicada na tela na hora (e gravada direto nos modos sem planilha). */
+function aplicarAutLocal(x, acao, d = {}) {
+  const ant = autPub(x), agora = new Date().toISOString(), eu = euAut();
+  let a = ant ? JSON.parse(JSON.stringify(ant)) : null, status = null;
+  const hist = (ac, obs, por) => { a.hist = (a.hist || []).concat([{ em: agora, por: por || eu, acao: ac, obs: obs || '' }]).slice(-60); };
+  if (acao === 'solicitar') {
+    if (a && a.situacao === 'pendente') throw new Error('Já há um pedido de autorização em andamento. Cancele-o para fazer outro.');
+    if (pubFeita(x)) throw new Error('Esta publicação já foi publicada.');
+    const vistos = new Set(), nomes = (d.autorizadores || []).filter(n => { const k = Utils_norm(n); if (!k || vistos.has(k)) return false; vistos.add(k); return true; });
+    if (!nomes.length) throw new Error('Escolha ao menos uma autoridade autorizadora.');
+    const lista = listaAutorizadores();
+    const itens = nomes.map(n => { const u = lista.find(l => Utils_norm(l.usuario) === Utils_norm(n)); return { usuario: u ? u.usuario : n, cargo: u ? u.cargo : '', situacao: 'pendente', em: '', obs: '' }; });
+    a = { rodada: ((ant && ant.rodada) || 0) + 1, situacao: 'pendente', pedidoEm: agora, pedidoPor: eu, mensagem: d.mensagem || '', concluidaEm: '', itens, hist: (ant && ant.hist) || [] };
+    hist('solicitou', itens.map(i => i.usuario).join(', ') + (d.mensagem ? ' · ' + d.mensagem : ''));
+    status = 'Aguardando Autorização';
+  } else {
+    if (!a) throw new Error('Esta publicação não tem pedido de autorização.');
+    if (a.situacao !== 'pendente') throw new Error('O pedido de autorização já foi encerrado.');
+    if (acao === 'cancelar') {
+      a.situacao = 'cancelada'; a.concluidaEm = agora;
+      a.itens.forEach(i => { if (i.situacao === 'pendente') i.situacao = 'cancelado'; });
+      hist('cancelou', d.obs); status = 'Aguardando Publicação';
+    } else if (acao === 'lembrar') {
+      hist('lembrou', a.itens.filter(i => i.situacao === 'pendente').map(i => i.usuario).join(', '));
+    } else {
+      // planilha: só a própria pessoa · demais modos: a equipe registra a decisão da autoridade escolhida
+      const quem = Store.modo === 'planilha' ? eu : (d.emNome || eu);
+      const item = a.itens.find(i => Utils_norm(i.usuario) === Utils_norm(quem));
+      if (!item) throw new Error('Este pedido de autorização não foi feito a você.');
+      if (item.situacao !== 'pendente') throw new Error('Esta autoridade já decidiu.');
+      if (acao === 'devolver' && !String(d.obs || '').trim()) throw new Error('Diga o que precisa ser corrigido.');
+      item.situacao = acao === 'autorizar' ? 'autorizado' : 'devolvido'; item.em = agora; item.obs = String(d.obs || '').trim();
+      if (Utils_norm(quem) !== Utils_norm(eu)) item.registradoPor = eu;
+      hist(acao === 'autorizar' ? 'autorizou' : 'devolveu', item.obs + (item.registradoPor ? (item.obs ? ' · ' : '') + 'registrado por ' + eu : ''), item.usuario);
+      if (acao === 'devolver') { a.situacao = 'devolvida'; a.concluidaEm = agora; status = 'Devolvido Para Correção'; }
+      else if (a.itens.every(i => i.situacao === 'autorizado')) { a.situacao = 'autorizada'; a.concluidaEm = agora; status = 'Aguardando Publicação'; }
+    }
+  }
+  return { a, status };
+}
+/** Espera a publicação recém-criada chegar à planilha antes de mexer na autorização. */
+async function esperarGravacaoPub(id) {
+  for (let i = 0; i < 400 && Grav.pendente(id); i++) await new Promise(r => setTimeout(r, 300));
+  if (Grav.itens.some(t => t.ref === id && t.estado === 'erro')) throw new Error('A publicação ainda não foi salva na planilha. Resolva o aviso de gravação e tente de novo.');
+}
+/** Executa uma ação de autorização: atualiza a tela na hora e grava (planilha: rota própria, com as regras e o aviso por e-mail). */
+async function execAutPub(id, acao, dados = {}) {
+  const x = portaria(id); if (!x) return false;
+  let r;
+  try { r = aplicarAutLocal(x, acao, dados); } catch (e) { toast(e.message, 'fa-triangle-exclamation'); return false; }
+  const novo = { ...x, status: r.status || x.status, autorizacao: JSON.stringify(r.a), autResumo: resumoAut(r.a), atualizadoEm: new Date().toISOString() };
+  const rot = { solicitar: 'Pedido de autorização', autorizar: 'Publicação autorizada', devolver: 'Devolvida para correção', cancelar: 'Pedido de autorização cancelado', lembrar: 'Lembrete às autoridades' }[acao];
+  if (Store.modo === 'planilha') {
+    trocarNaLista(Store.portarias, id, novo); aoMudarDados();
+    const payload = { id, acao }; ['autorizadores', 'mensagem', 'obs'].forEach(k => { if (dados[k] !== undefined) payload[k] = dados[k]; });
+    tarefaGrav({ rotulo: rot, detalhe: nomePub(x), icone: 'fa-file-signature',
+      executar: async () => { await esperarGravacaoPub(id); return API.post('pub_autorizacao', payload, 60000); },
+      aoOk: res => { if (res && res.publicacao) { trocarNaLista(Store.portarias, id, { ...res.publicacao, id }); aoMudarDados(); } },
+      aoErro: () => { const atual = portaria(id); if (atual && atual.autorizacao === novo.autorizacao) { trocarNaLista(Store.portarias, id, x); aoMudarDados(); } } });
+    return true;
+  }
+  return salvarPortaria(id, semId(novo), rot);
+}
+/* --- célula "Autorização" na planilha --- */
+function celAutPub(x) {
+  const a = autPub(x);
+  if (!a || a.situacao === 'cancelada') {
+    if (pubFeita(x)) return '<span class="text-ink3">—</span>';
+    return pode('sol:2') ? `<button type="button" class="gs-cel-bt aut-pedir" title="Pedir a autorização das autoridades" onclick="abrirPedirAut('${x.id}')"><i class="fa-solid fa-paper-plane"></i><span>Pedir</span></button>` : '<span class="text-ink3">—</span>';
+  }
+  const [cor, ico, rot] = SIT_AUT[a.situacao] || SIT_AUT.pendente;
+  const ok = a.itens.filter(i => i.situacao === 'autorizado').length, n = a.itens.length;
+  const dica = a.itens.map(i => `${i.usuario}: ${SIT_ITEM_AUT[i.situacao][2].toLowerCase()}`).join(' · ');
+  const avs = a.itens.slice(0, 3).map(i => `<span class="aut-av" style="--c:${SIT_ITEM_AUT[i.situacao][0]}">${esc(iniciais(i.usuario))}</span>`).join('');
+  if (a.situacao === 'pendente' && minhaVezAut(x)) return `<button type="button" class="gs-cel-bt aut-cel minha" title="Aguardando a sua autorização · ${esc(dica)}" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-pen-nib"></i><span>Autorizar</span></button>`;
+  return `<button type="button" class="gs-cel-bt aut-cel" style="--c:${cor}" title="${esc(rot)} · ${esc(dica)}" onclick="abrirAutPub('${x.id}')">${a.situacao === 'pendente' ? `<span class="aut-avs">${avs}</span><span class="aut-n">${ok}/${n}</span>` : `<i class="fa-solid ${ico}"></i><span class="aut-rot">${rot}</span>`}</button>`;
+}
+/* --- caixa "Para você autorizar" acima da planilha --- */
+function caixaAutPub(todas) {
+  const minhas = todas.filter(x => minhaVezAut(x));
+  const outras = Store.modo === 'planilha' ? [] : todas.filter(x => autPendente(x) && !minhaVezAut(x));
+  const lista = minhas.concat(outras);
+  if (!lista.length) return '';
+  const tit = minhas.length ? `${minhas.length === 1 ? 'publicação aguarda' : 'publicações aguardam'} a sua autorização` : `${lista.length === 1 ? 'publicação aguarda' : 'publicações aguardam'} autorização`;
+  const item = x => {
+    const a = autPub(x), [t, ico, cor] = tipoPub(x.tipoDoc), minha = !!minhaVezAut(x), d = diasDesde(a.pedidoEm), min = arqDe(x, 'minuta');
+    const faltam = a.itens.filter(i => i.situacao === 'pendente').map(i => i.usuario);
+    return `<div class="aut-item ${minha ? 'minha' : ''}">
+      <span class="aut-item-ico" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span>
+      <div class="min-w-0 flex-1">
+        <button type="button" class="aut-item-tit" onclick="abrirAutPub('${x.id}')">${esc(nomePub(x))}</button>
+        <p class="aut-item-sub">${esc(x.assunto || '—')}</p>
+        <p class="aut-item-meta"><i class="fa-solid fa-paper-plane"></i>Pedido por <b>${esc(a.pedidoPor || '—')}</b> ${d === 0 ? 'hoje' : d === 1 ? 'ontem' : `há ${d} dias`}${a.mensagem ? ` · <i>“${esc(a.mensagem)}”</i>` : ''}${!minha ? ` · falta: ${esc(faltam.join(', '))}` : ''}</p>
+      </div>
+      <div class="aut-item-bts">
+        ${min ? `<button type="button" class="btn btn-sec !h-9" title="Ver a minuta" onclick="verArqPortaria('${x.id}','minuta')"><i class="fa-solid fa-eye text-indigo-600"></i><span class="hidden sm:inline">Minuta</span></button>` : ''}
+        ${minha ? `<button type="button" class="btn btn-sec !h-9 !text-red-600" onclick="abrirAutPub('${x.id}','devolver')"><i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Devolver</span></button><button type="button" class="btn btn-pri !h-9" style="background:#16a34a;border-color:#16a34a" onclick="autorizarRapido('${x.id}',this)"><i class="fa-solid fa-check"></i>Autorizar</button>`
+          : `<button type="button" class="btn btn-sec !h-9" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-file-signature" style="color:${AUT_COR}"></i>Abrir</button>`}
+      </div></div>`;
+  };
+  return `<section class="aut-caixa" role="region" aria-label="Autorizações">
+    <header class="aut-caixa-cab"><span class="aut-caixa-ico"><i class="fa-solid fa-file-signature"></i></span><div class="min-w-0 flex-1"><b>${lista.length} ${tit}</b><small>${minhas.length ? 'Veja a minuta e autorize, ou devolva dizendo o que corrigir.' : 'Abra para registrar a decisão de cada autoridade.'}</small></div>
+      <button type="button" class="aut-caixa-filtro" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')"><i class="fa-solid fa-filter"></i>Filtrar</button></header>
+    <div class="aut-lista">${lista.slice(0, 5).map(item).join('')}${lista.length > 5 ? `<button type="button" class="pa-mais" onclick="chipGrade('portarias','${minhas.length ? 'minha' : 'aut'}')">+${lista.length - 5} · ver todas</button>` : ''}</div>
+  </section>`;
+}
+async function autorizarRapido(id, btn) {
+  if (btn && !btn.dataset.conf) { btn.dataset.conf = '1'; btn.innerHTML = '<i class="fa-solid fa-check-double"></i>Confirmar'; setTimeout(() => { if (btn.isConnected && btn.dataset.conf) { delete btn.dataset.conf; btn.innerHTML = '<i class="fa-solid fa-check"></i>Autorizar'; } }, 4000); return; }
+  if (await execAutPub(id, 'autorizar', {})) toast('Publicação autorizada.', 'fa-circle-check');
+}
+/* --- modal: pedir autorização --- */
+function cartoesAutoridades(selecionados = [], idCont = 'aut-escolha') {
+  const lista = listaAutorizadores();
+  if (!lista.length) return `<div class="aut-vazio"><i class="fa-solid fa-user-shield"></i><div><b>Nenhuma autoridade autorizadora ainda.</b><p>${Store.modo === 'planilha' ? 'Peça ao Administrador: em <b>Administração › Perfis e permissões</b>, ligue “Autoriza publicações” no perfil de quem autoriza (ex.: Secretária, Chefe de Gabinete).' : 'Cadastre as autoridades em <b>Administração › Personalização › Autoridades</b>.'}</p></div></div>`;
+  const sel = new Set(selecionados.map(Utils_norm));
+  return `<div class="aut-escolha" id="${idCont}">${lista.map(u => { const on = sel.has(Utils_norm(u.usuario)); return `<button type="button" class="aut-op ${on ? 'ativo' : ''}" data-v="${esc(u.usuario)}" aria-pressed="${on}" onclick="this.classList.toggle('ativo');this.setAttribute('aria-pressed',this.classList.contains('ativo'));if(window.marcarCamposPort)marcarCamposPort()">
+      <span class="aut-op-av">${esc(iniciais(u.usuario))}</span><span class="min-w-0 flex-1 text-left"><b>${esc(u.usuario)}</b><small>${esc(u.cargo || u.perfil || 'Autoridade autorizadora')}</small></span><span class="aut-op-ck"><i class="fa-solid fa-check"></i></span></button>`; }).join('')}</div>`;
+}
+const autEscolhidos = (idCont = 'aut-escolha') => [...document.querySelectorAll(`#${idCont} .aut-op.ativo`)].map(b => b.dataset.v);
+function heroAut(x, sub) {
+  const [t, ico, cor] = tipoPub(x.tipoDoc);
+  return `<div class="form-hero" style="background-color:#2e1065;background-image:radial-gradient(600px 220px at 0% 0%, rgba(167,139,250,.45), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(22,163,74,.22), transparent 70%)">
+    <div class="flex items-start gap-3">
+      <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${AUT_COR}"><i class="fa-solid fa-file-signature"></i></span><span class="on" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span></div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-300">${sub}</p>
+        <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5">${esc(nomePub(x))}</h3>
+        <p class="text-[12.5px] text-violet-100/75 mt-1 line-clamp-2">${esc(x.assunto || '')}</p>
+      </div>
+      <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
+    </div></div>`;
+}
+function abrirPedirAut(id) {
+  const x = portaria(id); if (!x) return;
+  if (!pode('sol:2')) { toast('Seu perfil não pede autorizações.', 'fa-lock'); return; }
+  if (autPendente(x)) { abrirAutPub(id); return; }
+  if (pubFeita(x)) { toast('Esta publicação já foi publicada.', 'fa-circle-info'); return; }
+  const ant = autPub(x);
+  const antes = ant ? ant.itens.map(i => i.usuario) : [];
+  abrirModal(`${heroAut(x, ant && ant.situacao === 'devolvida' ? 'Pedir autorização de novo' : 'Pedir autorização')}
+    <div class="modal-corpo space-y-3">
+      ${ant && ant.situacao === 'devolvida' ? `<div class="aut-aviso dev"><i class="fa-solid fa-rotate-left"></i><div><b>Foi devolvida para correção</b>${ant.itens.filter(i => i.situacao === 'devolvido').map(i => `<p>${esc(i.usuario)}: “${esc(i.obs || '—')}”</p>`).join('')}<p class="opacity-75">Confira se a minuta já foi corrigida antes de pedir de novo.</p></div></div>` : ''}
+      <section class="passo pt-passo" style="--c:${AUT_COR}"><header class="passo-topo"><span class="passo-num">1</span><span class="pt-ico-campo"><i class="fa-solid fa-user-shield"></i></span><div class="min-w-0"><h4>Quem precisa autorizar</h4><p>Toque para escolher uma ou mais autoridades</p></div></header>
+        <div class="passo-corpo">${cartoesAutoridades(antes, 'aut-escolha')}</div></section>
+      <section class="passo pt-passo" style="--c:#0891b2"><header class="passo-topo"><span class="passo-num">2</span><span class="pt-ico-campo"><i class="fa-solid fa-message"></i></span><div class="min-w-0"><h4>Mensagem <span class="font-normal text-ink3">(opcional)</span></h4><p>Aparece para as autoridades junto com o pedido</p></div></header>
+        <div class="passo-corpo"><textarea class="campo w-full" rows="2" id="aut-msg" maxlength="1000" placeholder="Ex.: Precisa sair no Diário de amanhã"></textarea>
+        <div class="flex flex-wrap gap-1.5">${['Urgente: precisa sair amanhã', 'Minuta revisada', 'Conforme solicitado pela área'].map(m => `<button type="button" class="atalho" onclick="$('aut-msg').value=${esc(JSON.stringify(m))}">${esc(m)}</button>`).join('')}</div></div></section>
+      ${arqDe(x, 'minuta') ? `<p class="text-[12.5px] text-ink3"><i class="fa-solid fa-paperclip mr-1"></i>A minuta <b>${esc(arqDe(x, 'minuta').nome)}</b> vai junto para as autoridades verem.</p>` : `<p class="text-[12.5px] font-semibold" style="color:#ea580c"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Ainda não há minuta anexada. As autoridades não terão o texto para conferir.</p>`}
+      <p id="aut-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
+    </div>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" id="btn-aut-pedir" style="background:${AUT_COR};border-color:${AUT_COR}" onclick="confirmarPedirAut('${id}')" ${listaAutorizadores().length ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Enviar para autorização</button></div>`, 'aut-pedir', { id });
+}
+async function confirmarPedirAut(id) {
+  const nomes = autEscolhidos('aut-escolha');
+  if (!nomes.length) { const av = $('aut-aviso'); av.textContent = 'Escolha ao menos uma autoridade.'; av.classList.remove('hidden'); return; }
+  if (await execAutPub(id, 'solicitar', { autorizadores: nomes, mensagem: ($('aut-msg').value || '').trim() })) {
+    fecharModal(); toast(`Pedido enviado a ${nomes.length === 1 ? nomes[0] : nomes.length + ' autoridades'}.`, 'fa-paper-plane');
+  }
+}
+/* --- modal: a autorização (andamento, decisão, histórico) --- */
+function abrirAutPub(id, foco) {
+  const x = portaria(id); if (!x) return;
+  const a = autPub(x);
+  if (!a) { abrirPedirAut(id); return; }
+  const [cor, ico, rot] = SIT_AUT[a.situacao] || SIT_AUT.pendente;
+  const minha = minhaVezAut(x), pend = a.situacao === 'pendente';
+  const multi = Store.modo !== 'planilha';
+  const ok = a.itens.filter(i => i.situacao === 'autorizado').length;
+  const linhaItem = i => {
+    const [c2, i2, r2] = SIT_ITEM_AUT[i.situacao] || SIT_ITEM_AUT.pendente;
+    const eu = minha && i === minha;
+    const bts = pend && i.situacao === 'pendente' && multi && pode('sol:2') ? `<div class="flex gap-1.5 mt-2"><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','autorizar',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-check text-green-600"></i>Autorizou</button><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','devolver',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-rotate-left text-red-600"></i>Devolveu</button></div>` : '';
+    return `<li class="aut-pessoa ${i.situacao} ${eu ? 'eu' : ''}" style="--c:${c2}">
+      <span class="aut-pessoa-av">${esc(iniciais(i.usuario))}<span class="aut-pessoa-ck"><i class="fa-solid ${i2}"></i></span></span>
+      <div class="min-w-0 flex-1"><b>${esc(i.usuario)}${eu ? ' <span class="aut-voce">você</span>' : ''}</b><small>${esc(i.cargo || '')}${i.cargo ? ' · ' : ''}<span style="color:${c2};font-weight:800">${r2}</span>${i.em ? ' · ' + dataHoraCurta(i.em) : ''}${i.registradoPor ? ' · registrado por ' + esc(i.registradoPor) : ''}</small>
+        ${i.obs ? `<p class="aut-obs">“${esc(i.obs)}”</p>` : ''}${bts}</div></li>`;
+  };
+  const HIST_ICO = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu para correção'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'] };
+  const hist = (a.hist || []).slice().reverse().map(h => { const [hi, hc, ht] = HIST_ICO[h.acao] || ['fa-circle', '#64748b', h.acao]; return `<li><span class="aut-h-ico" style="--c:${hc}"><i class="fa-solid ${hi}"></i></span><div class="min-w-0"><p><b>${esc(h.por || '—')}</b> ${ht}</p>${h.obs ? `<p class="text-ink3 break-words">${esc(h.obs)}</p>` : ''}<small>${dataHoraCurta(h.em)}</small></div></li>`; }).join('');
+  const min = arqDe(x, 'minuta');
+  abrirModal(`${heroAut(x, 'Autorização da publicação' + (a.rodada > 1 ? ` · ${a.rodada}º pedido` : ''))}
+    <div class="modal-corpo space-y-3">
+      <div class="aut-topo" style="--c:${cor}">
+        <span class="aut-topo-ico"><i class="fa-solid ${ico}"></i></span>
+        <div class="min-w-0 flex-1"><b>${rot}${pend ? ` · ${ok} de ${a.itens.length} autorizaram` : ''}</b><small>Pedido por ${esc(a.pedidoPor || '—')} em ${dataHoraCurta(a.pedidoEm)}${a.concluidaEm ? ' · encerrado em ' + dataHoraCurta(a.concluidaEm) : ''}</small></div>
+        <div class="aut-barra" aria-hidden="true">${a.itens.map(i => `<span style="background:${SIT_ITEM_AUT[i.situacao][0]}"></span>`).join('')}</div>
+      </div>
+      ${a.mensagem ? `<div class="aut-msg"><i class="fa-solid fa-quote-left"></i><p>${esc(a.mensagem)}</p></div>` : ''}
+      <div class="aut-doc">
+        ${x.processo ? `<span><i class="fa-solid fa-folder-open"></i>${esc(x.processo)}</span>` : ''}${x.setor ? `<span><i class="fa-solid fa-sitemap"></i>${esc(x.setor)}</span>` : ''}${x.prazo ? `<span><i class="fa-solid fa-hourglass-half"></i>Prazo ${fmt(x.prazo)}</span>` : ''}
+        ${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir o processo</a>` : ''}
+        ${min ? `<button type="button" onclick="verArqPortaria('${id}','minuta')"><i class="fa-solid fa-eye"></i>Ver a minuta</button><button type="button" onclick="baixarArqPortaria('${id}','${ehPdfArq(min.nome) ? 'original' : 'pdf'}',this,'minuta')"><i class="fa-solid fa-file-pdf"></i>Baixar PDF</button>` : '<span class="text-amber-700"><i class="fa-solid fa-triangle-exclamation"></i>Sem minuta anexada</span>'}
+      </div>
+      <section><p class="aut-sec-tit"><i class="fa-solid fa-user-shield"></i>Autoridades</p><ul class="aut-pessoas">${a.itens.map(linhaItem).join('')}</ul></section>
+      ${minha && !multi ? `<section class="aut-decidir" id="aut-decidir">
+        <p class="aut-sec-tit"><i class="fa-solid fa-pen-nib"></i>A sua decisão</p>
+        <textarea class="campo w-full" rows="2" id="aut-obs" maxlength="1000" placeholder="Observação (obrigatória para devolver): o que precisa ser corrigido?"></textarea>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button type="button" class="aut-bt dev" onclick="decidirAut('${id}','devolver')"><i class="fa-solid fa-rotate-left"></i><span><b>Devolver para correção</b><small>Volta para quem pediu, com a sua observação</small></span></button>
+          <button type="button" class="aut-bt ok" onclick="decidirAut('${id}','autorizar')"><i class="fa-solid fa-circle-check"></i><span><b>Autorizar a publicação</b><small>${a.itens.filter(i => i.situacao === 'pendente').length > 1 ? 'Ainda faltam outras autoridades' : 'Fica pronta para publicar'}</small></span></button>
+        </div><p id="aut-aviso" class="text-[12.5px] font-semibold hidden" style="color:var(--urg)"></p></section>` : ''}
+      ${multi && pend ? `<div><textarea class="campo w-full" rows="2" id="aut-obs" maxlength="1000" placeholder="Observação da autoridade (obrigatória ao registrar uma devolução)"></textarea><p id="aut-aviso" class="text-[12.5px] font-semibold hidden mt-1" style="color:var(--urg)"></p></div>` : ''}
+      ${hist ? `<details class="aut-hist" ${a.rodada > 1 ? 'open' : ''}><summary><i class="fa-solid fa-clock-rotate-left"></i>Histórico (${(a.hist || []).length})</summary><ul>${hist}</ul></details>` : ''}
+    </div>
+    <div class="modal-rodape !justify-between items-center flex-wrap gap-2">
+      <div class="flex gap-2 flex-wrap">
+        ${pend && pode('sol:2') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this))cancelarAut('${id}')"><i class="fa-solid fa-ban"></i>Cancelar pedido</button>${Store.modo === 'planilha' ? `<button class="btn btn-sec" onclick="lembrarAut('${id}',this)"><i class="fa-solid fa-bell text-amber-500"></i>Lembrar</button>` : ''}` : ''}
+        ${!pend && !pubFeita(x) && pode('sol:2') ? `<button class="btn btn-sec" onclick="abrirPedirAut('${id}')"><i class="fa-solid fa-paper-plane" style="color:${AUT_COR}"></i>${a.situacao === 'devolvida' ? 'Pedir de novo' : 'Novo pedido'}</button>` : ''}
+      </div>
+      <div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal();abrirFormPortaria('${id}')"><i class="fa-solid fa-pen"></i>Formulário</button><button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
+    </div>`, 'aut', { id });
+  const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
+  if (foco === 'devolver' && $('aut-obs')) setTimeout(() => { $('aut-obs').focus(); $('aut-obs').placeholder = 'O que precisa ser corrigido? (obrigatório para devolver)'; }, 80);
+}
+async function decidirAut(id, acao, emNome) {
+  const obs = ($('aut-obs') && $('aut-obs').value || '').trim();
+  if (acao === 'devolver' && !obs) { const av = $('aut-aviso'); if (av) { av.textContent = 'Escreva na observação o que precisa ser corrigido.'; av.classList.remove('hidden'); } if ($('aut-obs')) $('aut-obs').focus(); return; }
+  if (await execAutPub(id, acao, { obs, emNome })) {
+    const x = portaria(id), a = autPub(x);
+    toast(acao === 'devolver' ? 'Devolvida para correção.' : a && a.situacao === 'autorizada' ? 'Autorizada · pronta para publicar.' : 'Autorização registrada.', acao === 'devolver' ? 'fa-rotate-left' : 'fa-circle-check');
+    if (a && a.situacao === 'pendente' && Store.modo !== 'planilha') abrirAutPub(id); else fecharModal();
+  }
+}
+async function cancelarAut(id) { if (await execAutPub(id, 'cancelar', {})) { fecharModal(); toast('Pedido de autorização cancelado.', 'fa-ban'); } }
+async function lembrarAut(id, btn) { if (btn) btn.disabled = true; if (await execAutPub(id, 'lembrar', {})) toast('Lembrete enviado por e-mail às autoridades que ainda não decidiram.', 'fa-bell'); }
 const pillTipoPub = x => { if (!x.tipoDoc) return ''; const [t, ico, cor] = tipoPub(x.tipoDoc); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(t)}</span>`; };
 
 const FormPort = { id: '', arqs: { minuta: {}, publicado: {} } };
@@ -5652,7 +6030,8 @@ function abrirFormPortaria(id, foco) {
   const atalhosData = [['Hoje', 0], ['Ontem', -1], ['Há 2 dias', -2], ['Há 1 semana', -7]];
   const tipoAtual = x.tipoDoc || '', tipoLista = PUB_TIPOS.some(t => t[0] === tipoAtual);
   const stAtual = statusPub(x);
-  FormPort.id = id || '';
+  const autX = autPub(x), pendX = autPendente(x);
+  FormPort.id = id || ''; FormPort.pend = pendX;
   FormPort.arqs = { minuta: { atual: arqDe(x, 'minuta') }, publicado: { atual: arqDe(x, 'publicado') } };
   abrirModal(`
     <div class="form-hero" style="background-color:#1e1b4b;background-image:radial-gradient(600px 220px at 0% 0%, rgba(99,102,241,.45), transparent 70%),radial-gradient(400px 200px at 100% 100%, rgba(22,163,74,.22), transparent 70%)">
@@ -5665,7 +6044,7 @@ function abrirFormPortaria(id, foco) {
         </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<span data-n="${n}"></span>`).join('')}</div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
     <form class="modal-corpo space-y-3" id="form-port" novalidate oninput="marcarCamposPort()" onsubmit="event.preventDefault();salvarFormPortaria('${id || ''}')">
       ${campo(1, PORT_COR, 'fa-layer-group', 'Tipo de documento', 'O que vai ser publicado: toque em um', `
@@ -5692,11 +6071,13 @@ function abrirFormPortaria(id, foco) {
         <input type="hidden" id="pt-setor" value="${esc(setorAtual)}">
         ${comIco('fa-pen', `<input class="campo w-full !pl-8 uppercase" id="pt-setor-outro" value="${esc(siglas.includes(setorAtual) ? '' : setorAtual)}" placeholder="Outra área? Digite a sigla" autocomplete="off" oninput="sincSetorPort()" aria-label="Outra área solicitante">`)}`)}
       ${campo(7, '#16a34a', 'fa-signal', 'Status', 'Onde está a publicação', `
-        <div class="pt-status" id="pt-status">${Object.entries(PUB_STATUS).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === stAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === stAtual}" onclick="escolherStatusPub('${esc(k)}')"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 font-bold text-[13.5px] text-ink leading-tight">${esc(k)}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
+        ${pendX ? `<div class="aut-aviso"><i class="fa-solid fa-file-signature"></i><div><b>Aguardando autorização</b><p>O status muda sozinho quando as autoridades decidirem.</p><button type="button" class="atalho mt-1.5" onclick="fecharModal();abrirAutPub('${id}')">Ver a autorização</button></div></div>` : ''}
+        <div class="pt-status ${pendX ? 'hidden' : ''}" id="pt-status">${PUB_STATUS_MANUAIS.map(k => [k, PUB_STATUS[k]]).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === stAtual ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === stAtual}" onclick="escolherStatusPub('${esc(k)}')"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 font-bold text-[13.5px] text-ink leading-tight">${esc(k)}</span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
       ${campo(8, '#7c3aed', 'fa-link', 'Link do processo', 'Endereço do processo no SIGADOC ou outro sistema', `
         <div class="flex gap-2">${comIco('fa-globe', `<input class="campo campo-g w-full !pl-8" id="pt-link" type="url" inputmode="url" value="${esc(x.link || '')}" placeholder="https://…">`).replace('<div class="relative">', '<div class="relative flex-1 min-w-0">')}<button type="button" class="btn btn-sec !h-[42px] shrink-0" title="Testar o link" onclick="const l=normLink($('pt-link').value);if(l)window.open(l,'_blank','noopener');else toast('Informe um link válido (http:// ou https://).','fa-triangle-exclamation')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir</button></div>`)}
       ${campo(9, '#2563eb', 'fa-paperclip', 'Arquivos', 'A minuta agora e, quando sair, o arquivo publicado · baixe em Word ou PDF', `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${Object.entries(PUB_ARQS).map(([q, a]) => `<div class="pt-arq-box" style="--c:${a.cor}"><p class="pt-arq-tit"><i class="fa-solid ${a.ico}"></i>${a.rot}<small>${a.dica}</small></p><div id="pt-arq-${q}"></div></div>`).join('')}</div>`)}
+      ${campo(10, AUT_COR, 'fa-file-signature', 'Autorização', 'Peça a autorização das autoridades ao salvar (opcional)', formAutPub(x, id))}
       <p id="pt-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
     <div class="modal-rodape !justify-between items-center">
@@ -5733,7 +6114,17 @@ function escolherStatusPub(st) {
   document.querySelectorAll('#pt-status .op-card').forEach(b => { const on = b.dataset.v === st; b.classList.toggle('ativo', on); b.setAttribute('aria-pressed', on); });
   marcarCamposPort();
 }
-const statusFormPub = () => { const b = document.querySelector('#pt-status .op-card.ativo'); return b ? b.dataset.v : 'Aguardando Publicação'; };
+const statusFormPub = () => { if (FormPort.pend) return 'Aguardando Autorização'; const b = document.querySelector('#pt-status .op-card.ativo'); return b ? b.dataset.v : 'Aguardando Publicação'; };
+/** Cartão 10 do formulário: escolher autoridades (pedido feito ao salvar) ou ver como está a autorização. */
+function formAutPub(x, id) {
+  const a = autPub(x);
+  const resumo = a ? (() => { const [cor, ico, rot] = SIT_AUT[a.situacao] || SIT_AUT.pendente; return `<div class="aut-form-res" style="--c:${cor}"><i class="fa-solid ${ico}"></i><div class="min-w-0 flex-1"><b>${rot}</b><small>${a.itens.map(i => `${esc(i.usuario)}: ${SIT_ITEM_AUT[i.situacao][2].toLowerCase()}`).join(' · ')}</small></div>${id ? `<button type="button" class="atalho" onclick="fecharModal();abrirAutPub('${id}')">Abrir</button>` : ''}</div>`; })() : '';
+  if (!pode('sol:2') || pubFeita(x) || (a && (a.situacao === 'pendente' || a.situacao === 'autorizada'))) return resumo || '<p class="text-[12.5px] text-ink3">Sem pedido de autorização.</p>';
+  const antes = a && a.situacao === 'devolvida' ? a.itens.map(i => i.usuario) : [];
+  return `${resumo}${a ? `<p class="pt-sub mt-1"><i class="fa-solid fa-paper-plane"></i>Pedir de novo ao salvar</p>` : ''}${cartoesAutoridades(antes, 'pt-aut')}
+    ${listaAutorizadores().length ? `<input class="campo w-full" id="pt-aut-msg" maxlength="1000" placeholder="Mensagem para as autoridades (opcional)" autocomplete="off">
+    <p class="text-[12px] text-ink3"><i class="fa-solid fa-circle-info mr-1"></i>Escolheu alguém? Ao salvar, o pedido vai junto e o status passa para <b>Aguardando Autorização</b>.</p>` : ''}`;
+}
 /** Setor: uma secretaria por vez (tocar de novo desmarca). */
 function escolherSetorPort(btn) {
   const on = !btn.classList.contains('ativo');
@@ -5752,10 +6143,10 @@ const temArqForm = q => { const a = FormPort.arqs[q]; return !!(a.novo || (a.atu
 function marcarCamposPort() {
   if (!$('form-port')) return;
   const v = k => ($(k) ? $(k).value.trim() : '');
-  const ok = { 1: !!v('pt-tipo'), 2: !!v('pt-processo'), 3: !!v('pt-numero'), 4: !!v('pt-recebimento'), 5: !!v('pt-assunto'), 6: !!v('pt-setor'), 7: true, 8: !!normLink(v('pt-link')), 9: temArqForm('minuta') || temArqForm('publicado') };
+  const ok = { 1: !!v('pt-tipo'), 2: !!v('pt-processo'), 3: !!v('pt-numero'), 4: !!v('pt-recebimento'), 5: !!v('pt-assunto'), 6: !!v('pt-setor'), 7: true, 8: !!normLink(v('pt-link')), 9: temArqForm('minuta') || temArqForm('publicado'), 10: !!document.querySelector('#form-port .aut-form-res') || autEscolhidos('pt-aut').length > 0 };
   Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`.pt-passo[data-pt="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`.pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
   const n = Object.values(ok).filter(Boolean).length;
-  const r = $('pt-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 9 preenchidos`;
+  const r = $('pt-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 10 preenchidos`;
   const t = $('pt-titulo'); if (t && !FormPort.id) t.textContent = (v('pt-tipo') || v('pt-numero')) ? nomePub({ tipoDoc: v('pt-tipo'), numero: v('pt-numero') }) : 'Publicação';
 }
 function renderArqForm(q) {
@@ -5787,7 +6178,7 @@ function escolherArqForm(f, q = 'minuta') {
   av.classList.add('hidden');
   FormPort.arqs[q].novo = f; FormPort.arqs[q].remover = false;
   // anexou o arquivo publicado: o status passa para Publicado (dá para mudar antes de salvar)
-  if (q === 'publicado' && statusFormPub() !== 'Publicado') { escolherStatusPub('Publicado'); toast('Status alterado para Publicado.', 'fa-circle-check'); }
+  if (q === 'publicado' && !FormPort.pend && statusFormPub() !== 'Publicado') { escolherStatusPub('Publicado'); toast('Status alterado para Publicado.', 'fa-circle-check'); }
   renderArqForm(q);
 }
 async function salvarFormPortaria(id) {
@@ -5810,7 +6201,15 @@ async function salvarFormPortaria(id) {
       } else if (st.remover) Object.assign(dados, camposArq(q, null));
     }
   } catch (e) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; return aviso(e.message || 'Não foi possível enviar o arquivo.'); }
-  if (await salvarPortaria(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? 'Publicação registrada · salvando em segundo plano.' : 'Publicação salva.', 'fa-newspaper'); if (abaAtual !== 'portarias') irPara('portarias'); }
+  const pedir = autEscolhidos('pt-aut'), msgAut = ($('pt-aut-msg') ? $('pt-aut-msg').value : '').trim();
+  if (pedir.length && dados.status === 'Publicado') return (btn.disabled = false, aviso('Uma publicação já publicada não precisa de autorização. Tire as autoridades marcadas ou mude o status.'));
+  const salvoId = await salvarPortaria(id || null, dados);
+  if (salvoId) {
+    fecharModal();
+    if (pedir.length && await execAutPub(salvoId, 'solicitar', { autorizadores: pedir, mensagem: msgAut })) toast(`Publicação salva e enviada para autorização (${pedir.length === 1 ? pedir[0] : pedir.length + ' autoridades'}).`, 'fa-paper-plane');
+    else toast(gravaEmFila() ? 'Publicação registrada · salvando em segundo plano.' : 'Publicação salva.', 'fa-newspaper');
+    if (abaAtual !== 'portarias') irPara('portarias');
+  }
   else { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i>Salvar'; }
 }
 /** Abertas primeiro (mais recentes no topo); publicadas no fim. */
@@ -5896,52 +6295,64 @@ function renderPortarias() {
   const kpi = (cor, ico, rot, val, sub, chip) => `<button type="button" class="dv-kpi pub-kpi" style="--c:${cor}" onclick="chipGrade('portarias','${chip}')" title="Filtrar: ${esc(rot)}"><span class="pub-kpi-ico"><i class="fa-solid ${ico}"></i></span><span class="rot">${rot}</span><span class="val">${val}${chip && todas.length ? `<small>${Math.round(val * 100 / tot)}%</small>` : ''}</span><span class="sub">${sub}</span>${chip ? `<span class="pub-kpi-barra"><span style="width:${Math.round(val * 100 / tot)}%"></span></span>` : ''}</button>`;
   renderGrade(cont, {
     id: 'portarias', area: 'sol', linhas: todas, fonte: () => Store.portarias,
-    topo: `${alertaPrazosPub(todas)}<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    topo: `${caixaAutPub(todas)}${alertaPrazosPub(todas)}<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
       ${kpi(PORT_COR, 'fa-newspaper', 'Publicações', todas.length, `${tipos.length} tipo(s) de documento`, '')}
+      ${kpi(AUT_COR, 'fa-file-signature', 'Em autorização', conta('Aguardando Autorização'), paraMimAut().length ? `<span class="font-bold" style="color:${AUT_COR}">${paraMimAut().length} para você autorizar</span>` : `${todas.filter(x => (autPub(x) || {}).situacao === 'autorizada' && !pubFeita(x)).length} autorizada(s) a publicar`, 'aut')}
       ${kpi('#d97706', 'fa-hourglass-half', 'Aguardando publicação', conta('Aguardando Publicação'), todas.some(pubVencida) ? `<span class="text-red-600 font-bold">${todas.filter(pubVencida).length} com prazo vencido</span>` : `${todas.filter(pubAVencer).length} vencem em até ${PUB_ALERTA} dias`, 'agu')}
       ${kpi('#16a34a', 'fa-circle-check', 'Publicadas', conta('Publicado'), `${todas.filter(x => pubFeita(x) && !x.pubId).length} sem o arquivo publicado`, 'pub')}
       ${kpi('#dc2626', 'fa-rotate-left', 'Devolvidas p/ correção', conta('Devolvido Para Correção'), 'precisam de ajuste', 'dev')}</div>${pubPaineisOn() ? paineisPub(todas) : ''}`,
     colunas: [
       // ordem pedida: Processo · Documento · Assunto · Prazo · Minuta · Arquivo publicado (o status e o link ficam em Ações)
-      { key: 'processo', rot: 'Número do Processo', rotCompacto: 'Processo', w: 200, wCompacta: 130, tipo: 'texto', editavel: true, classe: 'gs-forte' },
-      { key: 'numero', rot: 'Número do Documento', rotCompacto: 'Documento', w: 250, wCompacta: 140, tipo: 'texto', editavel: true, classe: 'gs-forte', render: celNumeroPub },
-      { key: 'assunto', rot: 'Assunto', w: 340, flex: true, tipo: 'texto', editavel: true },
-      { key: 'prazo', rot: 'Prazo', w: 112, wCompacta: 80, tipo: 'data', editavel: true, render: celPrazoPub },
-      { key: 'setor', rot: 'Área Solicitante', rotCompacto: 'Área', w: 130, wCompacta: 80, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
+      { key: 'processo', rot: 'Número do Processo', rotCompacto: 'Processo', w: 200, wCompacta: 114, tipo: 'texto', editavel: true, classe: 'gs-forte' },
+      { key: 'numero', rot: 'Número do Documento', rotCompacto: 'Documento', w: 250, wCompacta: 124, tipo: 'texto', editavel: true, classe: 'gs-forte', render: celNumeroPub },
+      { key: 'assunto', rot: 'Assunto', w: 340, flex: true, wMin: 160, tipo: 'texto', editavel: true },
+      { key: 'prazo', rot: 'Prazo', w: 112, wCompacta: 74, tipo: 'data', editavel: true, render: celPrazoPub },
+      { key: 'setor', rot: 'Área Solicitante', rotCompacto: 'Área', w: 130, wCompacta: 72, tipo: 'select', editavel: true, opcoes: x => [['', '—']].concat(SECRETARIAS.concat(x.setor && !SECRETARIAS.includes(x.setor) ? [x.setor] : []).map(s => [s, s])),
         render: x => x.setor ? `<span class="gs-pill" style="--c:${corSetor(x.setor)}" title="Área solicitante: ${esc(x.setor)}">${esc(x.setor)}</span>` : '<span class="text-ink3">—</span>' },
-      { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
-      { key: 'pubNome', rot: 'Arquivo Publicado', rotCompacto: 'Publicado', w: 230, wCompacta: 84, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') },
+      { key: 'arquivoNome', rot: 'Minuta', w: 230, wCompacta: 78, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'minuta') },
+      { key: 'pubNome', rot: 'Arquivo Publicado', rotCompacto: 'Publicado', w: 230, wCompacta: 80, tipo: 'texto', editavel: false, render: x => celArquivo(x, 'publicado') },
+      { key: 'autResumo', rot: 'Autorização', rotCompacto: 'Autoriz.', w: 150, wCompacta: 92, tipo: 'texto', editavel: false, valor: x => x.autResumo || resumoAut(autPub(x)), render: celAutPub },
       // fora da planilha (estão no formulário), mas vão no CSV
       { key: 'tipoDoc', rot: 'Tipo de documento', oculta: true, tipo: 'texto' },
       { key: 'recebimento', rot: 'Data de recebimento', oculta: true, tipo: 'data' },
       { key: 'status', rot: 'Status', oculta: true, tipo: 'texto', valor: x => statusPub(x) },
       { key: 'link', rot: 'Link do processo', oculta: true, tipo: 'texto' }
     ],
-    compactas: ['processo', 'numero', 'assunto', 'prazo', 'setor', 'arquivoNome', 'pubNome'],
+    compactas: ['processo', 'numero', 'assunto', 'prazo', 'setor', 'arquivoNome', 'pubNome', 'autResumo'],
     redimensionar: true,
     // primeira vez: modo compacto, para caber tudo na tela
     estadoInicial: (() => { try { return localStorage.getItem('gabdoc_compacto_portarias') === null ? { compacto: true } : undefined; } catch (e) { return undefined; } })(),
-    larguraAcoes: 164,
+    larguraAcoes: 166,
     finalizado: pubFeita,
     ordemPadrao: ordemFinalizados(pubFeita, ordemPort, ordemPortRec),
     classeLinha: x => pubFeita(x) ? 'gs-feito' : '',
-    chips: [['', L('filtro.todos'), () => true, PORT_COR], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
-            ['venc', 'Prazo vencido', pubVencida, '#dc2626'], ['breve', `Vencem em até ${PUB_ALERTA} dias`, pubAVencer, '#ea580c'], ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']]
+    chips: [['', L('filtro.todos'), () => true, PORT_COR]].concat(paraMimAut().length ? [['minha', 'Para eu autorizar', x => !!minhaVezAut(x), AUT_COR]] : []).concat([['aut', 'Em autorização', x => statusPub(x) === 'Aguardando Autorização', AUT_COR], ['autok', 'Autorizadas', x => (autPub(x) || {}).situacao === 'autorizada', '#16a34a'], ['agu', 'Aguardando publicação', x => statusPub(x) === 'Aguardando Publicação', '#d97706'], ['pub', 'Publicadas', pubFeita, '#16a34a'], ['dev', 'Devolvidas', x => statusPub(x) === 'Devolvido Para Correção', '#dc2626'],
+            ['venc', 'Prazo vencido', pubVencida, '#dc2626'], ['breve', `Vencem em até ${PUB_ALERTA} dias`, pubAVencer, '#ea580c'], ['semmin', 'Sem minuta', x => !x.arquivoId, '#2563eb'], ['sempub', 'Publicadas sem arquivo', x => pubFeita(x) && !x.pubId, '#0d9488']])
       .concat(tipos.slice(0, 6).map(t => ['tipo:' + t, t, x => x.tipoDoc === t, tipoPub(t)[2]])),
     aoEditarCampos: editarPortCampos,
     // Ações: o STATUS atual (toque para mudar) · link do processo (ícone) · ⋮ demais ações
     acoes: x => {
       const st = statusPub(x), [cor, ico] = PUB_STATUS[st];
-      const curto = { 'Aguardando Publicação': 'Aguardando', 'Publicado': 'Publicado', 'Devolvido Para Correção': 'Devolvido' }[st];
+      const curto = { 'Aguardando Publicação': 'Aguardando', 'Aguardando Autorização': 'Autorização', 'Publicado': 'Publicado', 'Devolvido Para Correção': 'Devolvido' }[st];
       const link = x.link ? `<a class="gs-ico pub-link" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" title="Abrir o processo: ${esc(x.link)}"><i class="fa-solid fa-link"></i></a>`
         : pode('sol:2') ? `<button type="button" class="gs-ico pub-link sem" title="Sem link do processo · adicionar" onclick="abrirFormPortaria('${x.id}','link')"><i class="fa-solid fa-link-slash"></i></button>` : '<span class="gs-ico pub-link sem"><i class="fa-solid fa-link-slash"></i></span>';
       return `<div class="gs-acoes-in"><button type="button" class="pub-st gs-menu-bt ${st === 'Publicado' ? 'feito' : ''}" style="--c:${cor}" title="Status: ${esc(st)}${pode('sol:2') ? ' · toque para mudar' : ''}" onclick="abrirMenuAcoes('portarias','${x.id}',this,'status')"><i class="fa-solid ${ico}"></i><span>${curto}</span><i class="fa-solid fa-chevron-down pub-st-seta"></i></button>${link}<button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('portarias','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
-    menuStatus: x => [{ titulo: 'Status · atual: ' + statusPub(x) }].concat(Object.keys(PUB_STATUS).map(s => ({ rot: s === statusPub(x) ? s + '  ✓' : s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => s === statusPub(x) ? null : editarPortCampos(x, { status: s }) }))),
+    menuStatus: x => autPendente(x)
+      ? [{ titulo: 'Status · Aguardando Autorização' }, { rot: 'Ver a autorização', ico: 'fa-file-signature', cor: AUT_COR, fn: () => abrirAutPub(x.id) }].concat(minhaVezAut(x) ? [{ rot: 'Autorizar', ico: 'fa-circle-check', cor: '#16a34a', fn: () => abrirAutPub(x.id) }] : [])
+      : [{ titulo: 'Status · atual: ' + statusPub(x) }].concat(PUB_STATUS_MANUAIS.map(s => ({ rot: s === statusPub(x) ? s + '  ✓' : s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => s === statusPub(x) ? null : editarPortCampos(x, { status: s }) })))
+        .concat(pubFeita(x) ? [] : [{ sep: true }, { rot: 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'sol:2', fn: () => abrirPedirAut(x.id) }]),
     tituloLinha: x => nomePub(x),
     menuAcoes: x => {
-      const itens = [{ titulo: 'Mudar o status para' }];
-      Object.keys(PUB_STATUS).filter(s => s !== statusPub(x)).forEach(s => itens.push({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => editarPortCampos(x, { status: s }) }));
+      const itens = [{ titulo: 'Autorização' }];
+      const a = autPub(x);
+      if (minhaVezAut(x)) itens.push({ rot: 'Autorizar ou devolver', ico: 'fa-pen-nib', cor: '#16a34a', fn: () => abrirAutPub(x.id) });
+      if (a) itens.push({ rot: 'Ver a autorização', ico: 'fa-file-signature', cor: AUT_COR, fn: () => abrirAutPub(x.id) });
+      if (!autPendente(x) && !pubFeita(x)) itens.push({ rot: a && a.situacao !== 'cancelada' ? 'Pedir autorização de novo' : 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'sol:2', fn: () => abrirPedirAut(x.id) });
+      if (!autPendente(x)) {
+        itens.push({ sep: true }, { titulo: 'Mudar o status para' });
+        PUB_STATUS_MANUAIS.filter(s => s !== statusPub(x)).forEach(s => itens.push({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', fn: () => editarPortCampos(x, { status: s }) }));
+      }
       itens.push({ sep: true });
       if (x.link) itens.push({ rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') });
       Object.entries(PUB_ARQS).forEach(([q, a]) => {
@@ -5955,7 +6366,7 @@ function renderPortarias() {
       if (pode('sol:3')) itens.push({ rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perigo: true, fn: () => excluirPortariaId(x.id) });
       return itens;
     },
-    acoesLote: Object.keys(PUB_STATUS).map(s => ({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', campos: () => ({ status: s }) })),
+    acoesLote: PUB_STATUS_MANUAIS.map(s => ({ rot: s, ico: PUB_STATUS[s][1], cor: PUB_STATUS[s][0], perm: 'sol:2', campos: () => ({ status: s }), filtro: r => !autPendente(r) })),
     novaLinha: () => abrirFormPortaria(), textoNovaLinha: 'Nova publicação (abre o formulário)',
     textoVazio: 'Nenhuma publicação cadastrada.',
     botaoNovo: `<button class="btn btn-pri !h-9" style="background:${PORT_COR};border-color:${PORT_COR}" onclick="abrirFormPortaria()"><i class="fa-solid fa-plus"></i>Nova publicação</button>`
@@ -6400,7 +6811,7 @@ function renderContratacoes() {
     colunas: [
       { key: 'nome', rot: 'Nome', w: 230, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '' },
       { key: 'forma', rot: 'Forma de Recebimento', w: 165, tipo: 'texto', editavel: true, lista: 'lista-forma-contr-g' },
-      { key: 'tipo', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 64, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.tipo ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.tipo] || '#64748b'}">${esc(x.tipo)}</span>` : '' },
+      { key: 'tipo', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 52, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.tipo ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.tipo] || '#64748b'}">${esc(x.tipo)}</span>` : '' },
       { key: 'protocolo', rot: 'Data de protocolo', w: 125, tipo: 'data', editavel: true },
       { key: 'cargo', rot: 'Cargo pretendido', w: 190, wCompacta: 170, tipo: 'texto', editavel: true },
       { key: 'processo', rot: 'Número de processo', w: 200, tipo: 'texto', editavel: true },
@@ -6445,6 +6856,10 @@ const STATUS_NOM = {
   'Publicado':             ['#16a34a', 'fa-circle-check'],
   'Não Autorizado':        ['#dc2626', 'fa-ban']
 };
+const RI_NOM = { 'Lançar RI': ['#2563eb', 'fa-file-circle-plus'], 'Não': ['#64748b', 'fa-minus'], 'Fechar RI': ['#16a34a', 'fa-file-circle-check'] };
+const pillRI = v => { if (!v) return ''; const [cor, ico] = RI_NOM[v] || ['#64748b', 'fa-circle']; return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(v)}</span>`; };
+/** Selos Autorizo / OK - SUMF / RI dos cards. */
+const selosNom = x => [x.autorizo ? '<span class="nm-selo" style="--c:#16a34a"><i class="fa-solid fa-check"></i>Autorizo</span>' : '', x.okSumf ? '<span class="nm-selo" style="--c:#0891b2"><i class="fa-solid fa-check"></i>SUMF</span>' : '', x.ri ? `<span class="nm-selo" style="--c:${(RI_NOM[x.ri] || ['#64748b'])[0]}"><i class="fa-solid ${(RI_NOM[x.ri] || [0, 'fa-circle'])[1]}"></i>${x.ri === 'Não' ? 'RI: não' : esc(x.ri)}</span>` : ''].join('');
 const nomFeita = x => /^(publicad|nao autoriz)/.test(Utils_norm(x && x.status));
 const corNom = st => STATUS_NOM[st] || ['#64748b', 'fa-circle'];
 async function salvarNomeacao(id, dados, rotulo) {
@@ -6477,7 +6892,7 @@ function abrirFormNomeacao(id, pre = {}) {
   if (!pode('chefe:2')) { toast('Seu perfil não cadastra nomeações e exonerações.', 'fa-lock'); return; }
   const x = id ? Store.nomeacoes.find(c => c.id === id) : { status: 'Em andamento', protocolo: hojeISO(), tipo: 'Nomeação', ...pre };
   if (!x) return;
-  // 9 preenchimentos em cartões numerados (mesmo padrão do formulário de Publicações)
+  // 10 preenchimentos em cartões numerados (mesmo padrão do formulário de Publicações)
   const campo = (n, cor, ico, rot, dica, corpo) => `
     <section class="passo pt-passo nm-passo" style="--c:${cor}" data-nm="${n}">
       <header class="passo-topo"><span class="passo-num">${n}</span><span class="pt-ico-campo"><i class="fa-solid ${ico}"></i></span><div class="min-w-0"><h4>${rot}</h4><p>${dica}</p></div><span class="passo-ok"><i class="fa-solid fa-circle-check"></i></span></header>
@@ -6501,7 +6916,7 @@ function abrirFormNomeacao(id, pre = {}) {
         </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<span data-n="${n}"></span>`).join('')}</div>
+      <div class="pt-prog" aria-hidden="true">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => `<span data-n="${n}"></span>`).join('')}</div>
     </div>
     <form class="modal-corpo space-y-3" id="form-nom" novalidate oninput="marcarCamposNom()" onsubmit="event.preventDefault();salvarFormNomeacao('${id || ''}')">
       <div class="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-3">
@@ -6533,9 +6948,15 @@ function abrirFormNomeacao(id, pre = {}) {
             <div class="flex flex-wrap gap-1.5 mt-2">${[['Hoje', 0], ['Amanhã', 1], ['+7 dias', 7]].map(([r, d]) => `<button type="button" class="atalho" onclick="$('nm-inicio').value=somaDias(${d});infoDatasNom();marcarCamposNom()">${r}</button>`).join('')}<button type="button" class="atalho" onclick="$('nm-inicio').value='';infoDatasNom();marcarCamposNom()">Sem data</button></div></div>
         </div>
         <p class="text-[12px] font-semibold" id="nm-datas-info"></p>`)}
-      ${campo(8, '#d97706', 'fa-signal', 'Status', 'Em que ponto está', `
+      ${campo(8, '#16a34a', 'fa-list-check', 'Autorizo, OK - SUMF e RI', 'Etapas de conferência do processo', `
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr_1.6fr] gap-3">
+          <div><p class="pt-sub"><i class="fa-solid fa-signature"></i>Autorizo</p><button type="button" class="nm-chk ${x.autorizo ? 'ativo' : ''}" style="--c:#16a34a" id="nm-autorizo" aria-pressed="${!!x.autorizo}" onclick="alternarChkNom(this)"><span class="nm-chk-cx"><i class="fa-solid fa-check"></i></span><span class="nm-chk-t">${x.autorizo ? 'Sim' : 'Não'}</span></button></div>
+          <div><p class="pt-sub"><i class="fa-solid fa-circle-check"></i>OK - SUMF</p><button type="button" class="nm-chk ${x.okSumf ? 'ativo' : ''}" style="--c:#0891b2" id="nm-oksumf" aria-pressed="${!!x.okSumf}" onclick="alternarChkNom(this)"><span class="nm-chk-cx"><i class="fa-solid fa-check"></i></span><span class="nm-chk-t">${x.okSumf ? 'Sim' : 'Não'}</span></button></div>
+          <div><p class="pt-sub"><i class="fa-solid fa-file-lines"></i>RI</p><div class="nm-ri" id="nm-ri">${Object.entries(RI_NOM).map(([k, [cor, ico]]) => `<button type="button" class="${x.ri === k ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${x.ri === k}" onclick="escolherRINom(this)"><i class="fa-solid ${ico}"></i>${esc(k)}</button>`).join('')}</div></div>
+        </div>`)}
+      ${campo(9, '#d97706', 'fa-signal', 'Status', 'Em que ponto está', `
         <div class="nm-ops nm-ops-4" id="nm-sits">${Object.entries(STATUS_NOM).map(([k, [cor, ico]]) => `<button type="button" class="op-card ${k === (x.status || 'Em andamento') ? 'ativo' : ''}" style="--c:${cor}" data-v="${esc(k)}" aria-pressed="${k === (x.status || 'Em andamento')}" onclick="escolherStatusNom(this)"><span class="op-ico"><i class="fa-solid ${ico}"></i></span><span class="min-w-0 leading-tight"><b class="block text-[13px] text-ink">${esc(k)}</b><small class="text-[11px] text-ink3">${descSt[k] || ''}</small></span><span class="op-check"><i class="fa-solid fa-check"></i></span></button>`).join('')}</div>`)}
-      ${campo(9, '#64748b', 'fa-note-sticky', 'Observação', 'Algo importante sobre o caso (opcional)', `<textarea class="campo w-full" rows="2" id="nm-obs" placeholder="Ex.: A pedido · aguardando autorização da Secretária">${esc(x.observacao || '')}</textarea>`)}
+      ${campo(10, '#64748b', 'fa-note-sticky', 'Observação', 'Algo importante sobre o caso (opcional)', `<textarea class="campo w-full" rows="2" id="nm-obs" placeholder="Ex.: A pedido · aguardando autorização da Secretária">${esc(x.observacao || '')}</textarea>`)}
       <p id="nm-aviso" class="text-[12.5px] font-semibold hidden rounded-lg px-3 py-2" style="color:var(--urg);background:color-mix(in srgb, var(--urg) 8%, var(--card))"></p>
     </form>
     <div class="modal-rodape !justify-between items-center">
@@ -6566,6 +6987,16 @@ function escolherStatusNom(btn) {
   if (btn.dataset.v === 'Publicado' && !$('nm-inicio').value) { const i = $('nm-inicio'); i.focus(); i.closest('.pt-passo').classList.add('nm-pulsa'); setTimeout(() => i.closest('.pt-passo').classList.remove('nm-pulsa'), 1600); }
   infoDatasNom(); marcarCamposNom();
 }
+function alternarChkNom(btn) {
+  const on = !btn.classList.contains('ativo');
+  btn.classList.toggle('ativo', on); btn.setAttribute('aria-pressed', on); btn.querySelector('.nm-chk-t').textContent = on ? 'Sim' : 'Não';
+  marcarCamposNom();
+}
+function escolherRINom(btn) {
+  const on = !btn.classList.contains('ativo');
+  document.querySelectorAll('#nm-ri button').forEach(b => { b.classList.toggle('ativo', on && b === btn); b.setAttribute('aria-pressed', on && b === btn); });
+  marcarCamposNom();
+}
 function sincLotNom() {
   const v = Utils_norm($('nm-lotacao').value.trim());
   document.querySelectorAll('#nm-lots .nm-lot').forEach(b => b.classList.toggle('ativo', Utils_norm(b.dataset.v) === v));
@@ -6585,10 +7016,10 @@ function infoDatasNom() {
 function marcarCamposNom() {
   if (!$('form-nom')) return;
   const v = k => ($(k) ? $(k).value.trim() : '');
-  const ok = { 1: !!document.querySelector('#nm-tipos .op-card.ativo'), 2: !!document.querySelector('#nm-cats .nm-cat.ativo'), 3: !!v('nm-nome'), 4: !!(v('nm-cargo') || v('nm-simbolo')), 5: !!v('nm-lotacao'), 6: !!v('nm-processo'), 7: !!v('nm-protocolo'), 8: !!document.querySelector('#nm-sits .op-card.ativo'), 9: !!v('nm-obs') };
+  const ok = { 1: !!document.querySelector('#nm-tipos .op-card.ativo'), 2: !!document.querySelector('#nm-cats .nm-cat.ativo'), 3: !!v('nm-nome'), 4: !!(v('nm-cargo') || v('nm-simbolo')), 5: !!v('nm-lotacao'), 6: !!v('nm-processo'), 7: !!v('nm-protocolo'), 8: !!($('nm-autorizo') && ($('nm-autorizo').classList.contains('ativo') || $('nm-oksumf').classList.contains('ativo') || document.querySelector('#nm-ri button.ativo'))), 9: !!document.querySelector('#nm-sits .op-card.ativo'), 10: !!v('nm-obs') };
   Object.entries(ok).forEach(([n, f]) => { const c = document.querySelector(`.nm-passo[data-nm="${n}"]`); if (c) c.classList.toggle('feito', f); const b = document.querySelector(`#nm-hero .pt-prog [data-n="${n}"]`); if (b) b.classList.toggle('on', f); });
   const n = Object.values(ok).filter(Boolean).length;
-  const r = $('nm-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 9 preenchidos`;
+  const r = $('nm-resumo'); if (r) r.innerHTML = `<i class="fa-solid fa-list-check mr-1"></i>${n} de 10 preenchidos`;
   const t = $('nm-titulo'); if (t && !FormNom.id) { const tp = (document.querySelector('#nm-tipos .op-card.ativo') || {}).dataset; t.textContent = v('nm-nome') || (tp && tp.v) || 'Nomeação ou Exoneração'; }
 }
 async function salvarFormNomeacao(id) {
@@ -6601,7 +7032,8 @@ async function salvarFormNomeacao(id) {
   const antigo = id ? Store.nomeacoes.find(c => c.id === id) : null;
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
     nome: v('nm-nome'), tipo: tp.v, categoria: (ct && ct.v) || '', cargo: v('nm-cargo'), simbolo: v('nm-simbolo').toUpperCase(), lotacao: v('nm-lotacao'), processo: v('nm-processo'),
-    protocolo: v('nm-protocolo'), inicio: v('nm-inicio'), status: (st && st.v) || 'Em andamento', observacao: v('nm-obs'), atualizadoEm: new Date().toISOString() };
+    protocolo: v('nm-protocolo'), inicio: v('nm-inicio'), autorizo: $('nm-autorizo').classList.contains('ativo'), okSumf: $('nm-oksumf').classList.contains('ativo'), ri: ((document.querySelector('#nm-ri button.ativo') || {}).dataset || {}).v || '',
+    status: (st && st.v) || 'Em andamento', observacao: v('nm-obs'), atualizadoEm: new Date().toISOString() };
   const btn = $('btn-nom-salvar'); btn.disabled = true;
   if (await salvarNomeacao(id || null, dados)) { fecharModal(); toast(gravaEmFila() ? `${dados.tipo} registrada · salvando em segundo plano.` : `${dados.tipo} salva.`, 'fa-id-card'); if (abaAtual !== 'nomeacoes' && abaAtual !== 'chefe') irPara('nomeacoes'); }
   else btn.disabled = false;
@@ -6693,6 +7125,7 @@ function nomQuadro(lst) {
       ${x.cargo || x.simbolo ? `<p class="nom-card-l"><i class="fa-solid fa-briefcase"></i>${esc([x.cargo, x.simbolo].filter(Boolean).join(' · '))}</p>` : ''}
       ${x.lotacao ? `<p class="nom-card-l"><i class="fa-solid fa-building"></i>${esc(x.lotacao)}</p>` : ''}
       ${x.processo ? `<p class="nom-card-l"><i class="fa-solid fa-hashtag"></i>${esc(x.processo)}</p>` : ''}
+      ${selosNom(x) ? `<span class="nm-selos">${selosNom(x)}</span>` : ''}
       <footer>
         <span class="nom-card-data">${x.inicio ? `<i class="fa-solid fa-play"></i>Início ${fmt(x.inicio)}` : x.protocolo ? `<i class="fa-solid fa-inbox"></i>${!nomFeita(x) ? (d === 0 ? 'protocolado hoje' : `há ${d} dia${d === 1 ? '' : 's'}`) : 'Protocolo ' + fmt(x.protocolo)}` : ''}</span>
         <span class="flex gap-1">${podeEd && p ? `<button type="button" class="nom-card-btn" style="--c:${corNom(p)[0]}" title="Mover para: ${p}" onclick="editarNomCampos(Store.nomeacoes.find(c=>c.id==='${x.id}'),{status:'${p}'})${p === 'Publicado' ? `.then(()=>abrirFormNomeacao('${x.id}'))` : ''}"><i class="fa-solid ${corNom(p)[1]}"></i></button>` : ''}<button type="button" class="nom-card-btn" title="Abrir" onclick="abrirFormNomeacao('${x.id}')"><i class="fa-solid fa-pen"></i></button></span>
@@ -6723,7 +7156,7 @@ function nomLados(lst) {
     const quando = x.inicio ? `<span class="nl-q ok"><i class="fa-solid fa-play"></i>${fmt(x.inicio)}</span>` : x.protocolo && !nomFeita(x) ? `<span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !text-[11px]">${d === 0 ? 'hoje' : d + 'd'}</span>` : x.protocolo ? `<span class="nl-q">${fmt(x.protocolo)}</span>` : '';
     return `<div class="nl-linha" role="button" tabindex="0" onclick="abrirFormNomeacao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormNomeacao('${x.id}')">
       <span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.nome))}</span>
-      <span class="min-w-0 flex-1"><b class="nl-nome">${esc(x.nome)}${x.categoria ? ` <span class="gs-pill !text-[10px] !py-0" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : ''}</b><small class="nl-sub">${esc([x.cargo, x.simbolo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small></span>
+      <span class="min-w-0 flex-1"><b class="nl-nome">${esc(x.nome)}${x.categoria ? ` <span class="gs-pill !text-[10px] !py-0" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : ''}</b><small class="nl-sub">${esc([x.cargo, x.simbolo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small>${selosNom(x) ? `<span class="nm-selos">${selosNom(x)}</span>` : ''}</span>
       ${quando}${nomBtnAvancar(x, 'nom-card-btn nl-bt')}
     </div>`;
   };
@@ -6771,7 +7204,7 @@ function nomLinha(lst) {
     return `<article class="tl-item ${alerta ? 'alerta' : ''}" style="--c:${cor}" role="button" tabindex="0" onclick="abrirFormNomeacao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormNomeacao('${x.id}')">
       <div class="tl-quem"><span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.nome))}</span><div class="min-w-0"><b class="nl-nome">${esc(x.nome)}</b>
         <small class="nl-sub"><i class="fa-solid ${ico}" style="color:${cor}"></i> ${esc(x.tipo || '—')}${x.categoria ? ` · <b style="color:${TIPOS_CONTR[x.categoria]}">${esc(x.categoria)}</b>` : ''}${x.simbolo ? ' · ' + esc(x.simbolo) : ''}</small>
-        <small class="nl-sub">${esc([x.cargo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small></div></div>
+        <small class="nl-sub">${esc([x.cargo, x.lotacao].filter(Boolean).join(' · ') || '—')}</small>${selosNom(x) ? `<span class="nm-selos">${selosNom(x)}</span>` : ''}</div></div>
       <div class="tl-trilha">${e1}${lig(l1, pub || agu || neg)}${e2}${neg ? '' : lig(l2, pub)}${e3}</div>
       <div class="tl-acoes">${alerta ? `<span class="gs-dias vencido !text-[11px]" title="Em aberto há mais de 30 dias"><i class="fa-solid fa-triangle-exclamation"></i>${d}d</span>` : ''}${nomBtnAvancar(x)}<button type="button" class="nom-card-btn" title="Abrir" onclick="event.stopPropagation();abrirFormNomeacao('${x.id}')"><i class="fa-solid fa-pen"></i></button></div>
     </article>`;
@@ -6793,21 +7226,24 @@ function renderNomeacoes() {
     id: 'nomeacoes', area: 'chefe', linhas: filtrados, fonte: () => Store.nomeacoes,
     topo,
     colunas: [
-      { key: 'nome', rot: 'Nome', w: 240, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '',
+      { key: 'nome', rot: 'Nome', w: 240, wCompacta: 188, flex: true, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '',
         render: x => { const [cor, ico] = TIPOS_NOM[x.tipo] || ['#94a3b8', 'fa-user']; return `<span class="inline-flex items-center gap-2 min-w-0"><span class="nom-mini" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="truncate">${esc(x.nome || '')}</span></span>`; } },
       { key: 'tipo', rot: 'Tipo', w: 135, wCompacta: 130, tipo: 'select', editavel: true, opcoes: () => Object.keys(TIPOS_NOM).map(k => [k, k]), render: x => x.tipo ? `<span class="gs-pill" style="--c:${(TIPOS_NOM[x.tipo] || ['#64748b'])[0]}"><i class="fa-solid ${(TIPOS_NOM[x.tipo] || [0, 'fa-circle'])[1]} text-[9px]"></i>${esc(x.tipo)}</span>` : '' },
-      { key: 'categoria', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 64, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
+      { key: 'categoria', rot: 'Tipo (I ou N)', rotCompacto: 'I/N', w: 100, wCompacta: 52, tipo: 'select', editavel: true, opcoes: () => [['', '—'], ['I', 'I'], ['N', 'N']], render: x => x.categoria ? `<span class="gs-pill" style="--c:${TIPOS_CONTR[x.categoria] || '#64748b'}">${esc(x.categoria)}</span>` : '' },
       { key: 'cargo', rot: 'Cargo', w: 200, wCompacta: 180, tipo: 'texto', editavel: true },
       { key: 'simbolo', rot: 'Símbolo / DGA', w: 120, tipo: 'texto', editavel: true },
       { key: 'lotacao', rot: 'Lotação', w: 190, tipo: 'texto', editavel: true },
       { key: 'processo', rot: 'Nº do processo', w: 200, tipo: 'texto', editavel: true },
-      { key: 'protocolo', rot: 'Data de protocolo', w: 170, tipo: 'data', editavel: true, render: x => { if (!x.protocolo) return ''; const d = diasDesde(x.protocolo); return `<span class="inline-flex items-center gap-1.5"><span class="tabular-nums">${fmt(x.protocolo)}</span>${nomFeita(x) ? '' : `<span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !py-0 !px-1.5 !text-[10.5px]">${d}d</span>`}</span>`; } },
+      { key: 'protocolo', rot: 'Data de protocolo', rotCompacto: 'Protocolo', w: 170, wCompacta: 126, tipo: 'data', editavel: true, render: x => { if (!x.protocolo) return ''; const d = diasDesde(x.protocolo); return `<span class="inline-flex items-center gap-1.5"><span class="tabular-nums">${fmt(x.protocolo)}</span>${nomFeita(x) ? '' : `<span class="gs-dias ${d > 30 ? 'vencido' : d > 15 ? 'proximo' : 'ok'} !py-0 !px-1.5 !text-[10.5px]">${d}d</span>`}</span>`; } },
+      { key: 'autorizo', rot: 'Autorizo', w: 92, wCompacta: 76, tipo: 'check', editavel: true },
+      { key: 'okSumf', rot: 'OK - SUMF', rotCompacto: 'SUMF', w: 98, wCompacta: 60, tipo: 'check', editavel: true },
+      { key: 'ri', rot: 'RI', w: 125, wCompacta: 106, tipo: 'select', editavel: true, opcoes: () => [['', '—']].concat(Object.keys(RI_NOM).map(k => [k, k])), render: x => pillRI(x.ri) },
       { key: 'inicio', rot: 'Data de Início', w: 125, tipo: 'data', editavel: true, render: x => x.inicio ? `<span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-play text-[9px]" style="color:#16a34a"></i><span class="tabular-nums">${fmt(x.inicio)}</span></span>` : '' },
-      { key: 'status', rot: 'Status', w: 195, wCompacta: 190, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_NOM).concat(x.status && !STATUS_NOM[x.status] ? [x.status] : []).map(k => [k, k]),
+      { key: 'status', rot: 'Status', w: 195, wCompacta: 178, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_NOM).concat(x.status && !STATUS_NOM[x.status] ? [x.status] : []).map(k => [k, k]),
         render: x => { if (!x.status) return ''; const [cor, ico] = corNom(x.status); return `<span class="gs-pill" style="--c:${cor}"><i class="fa-solid ${ico} text-[9px]"></i>${esc(x.status)}</span>`; } },
       { key: 'observacao', rot: 'Observação', w: 280, tipo: 'texto', editavel: true }
     ],
-    compactas: ['nome', 'tipo', 'categoria', 'cargo', 'protocolo', 'status'],
+    compactas: ['nome', 'categoria', 'protocolo', 'autorizo', 'okSumf', 'ri', 'status'],
     larguraAcoes: 160,
     finalizado: nomFeita,
     ordemPadrao: ordemFinalizados(nomFeita, ordemNom, porFimRecente('atualizadoEm')),
@@ -8402,8 +8838,8 @@ function montarRelatorio() {
       add(tab('Por tipo (I ou N)', [{ rot: 'Tipo', w: '*' }, { rot: 'Nomeações', w: 'auto', n: 1 }, { rot: 'Exonerações', w: 'auto', n: 1 }, { rot: 'Total', w: 'auto', n: 1 }],
         [['I', 'I'], ['N', 'N'], ['', 'Sem tipo informado']].map(([k, r]) => [r, l.filter(x => (x.categoria || '') === k && x.tipo === 'Nomeação').length, l.filter(x => (x.categoria || '') === k && x.tipo === 'Exoneração').length, l.filter(x => (x.categoria || '') === k).length]).filter((row, i) => i < 2 || row[3])));
       add(e.tabela && tabResumoRel('Por lotação', 'Lotação', l, x => x.lotacao, x => x.categoria));
-      const col = [{ rot: 'Nome', w: '*' }, { rot: 'I/N', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
-      const lin = x => [x.nome, x.categoria || '—', x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.inicio ? fmt(x.inicio) : '—', x.status || '—'];
+      const col = [{ rot: 'Nome', w: '*' }, { rot: 'I/N', w: 'auto' }, { rot: 'Cargo', w: '*' }, { rot: 'Símbolo', w: 'auto' }, { rot: 'Lotação', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Protocolo', w: 'auto' }, { rot: 'Autorizo', w: 'auto' }, { rot: 'OK - SUMF', w: 'auto' }, { rot: 'RI', w: 'auto' }, { rot: 'Data de Início', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const lin = x => [x.nome, x.categoria || '—', x.cargo || '—', x.simbolo || '—', x.lotacao || '—', x.processo || '—', x.protocolo ? fmt(x.protocolo) : '—', x.autorizo ? 'Sim' : 'Não', x.okSumf ? 'Sim' : 'Não', x.ri || '—', x.inicio ? fmt(x.inicio) : '—', x.status || '—'];
       const ord = lista => lista.slice().sort((a, b) => (nomFeita(a) - nomFeita(b)) || ordemNom(a, b));
       add(tab('Nomeações', col, ord(l.filter(x => x.tipo === 'Nomeação')).map(lin), 'Nenhuma nomeação no período.'));
       add(tab('Exonerações', col, ord(l.filter(x => x.tipo === 'Exoneração')).map(lin), 'Nenhuma exoneração no período.'));
@@ -9490,11 +9926,12 @@ function perfMarcar() { perfEd.sujo = true; const b = $('perf-barra'); if (b) b.
 function perfNivel(pi, area, n) { perfEd.dados.perfis[pi].areas[area] = n; perfMarcar(); renderAdmin(); }
 function perfTodos(pi, n) { const p = perfEd.dados.perfis[pi]; Object.keys(p.areas).forEach(a => { p.areas[a] = Math.min(n, perfEd.dados.areas[a]); }); perfMarcar(); renderAdmin(); }
 function perfAssinar(pi, v) { perfEd.dados.perfis[pi].assinar = v; perfMarcar(); }
+function perfAutorizar(pi, v) { perfEd.dados.perfis[pi].autorizar = v; perfMarcar(); }
 function perfCampo(pi, campo, v) { perfEd.dados.perfis[pi][campo] = v; perfMarcar(); }
 function perfNovo() {
   const base = perfEd.dados.perfis.find(p => p.nome === 'Consulta') || perfEd.dados.perfis[0];
   let n = 1, nome = 'Novo perfil'; while (perfEd.dados.perfis.some(p => p.nome === nome)) nome = 'Novo perfil ' + (++n);
-  perfEd.dados.perfis.push({ nome, areas: { ...base.areas }, assinar: false, descricao: '', personalizado: true, usuarios: 0, novo: true });
+  perfEd.dados.perfis.push({ nome, areas: { ...base.areas }, assinar: false, autorizar: false, descricao: '', personalizado: true, usuarios: 0, novo: true });
   admEstado.perfSel = perfEd.dados.perfis.length - 1; perfMarcar(); renderAdmin();
   setTimeout(() => { const i = document.querySelectorAll('.perf-nome'); i[i.length - 1]?.select(); }, 30);
 }
@@ -9505,7 +9942,7 @@ async function perfSalvar() {
   if (nomes.some(n => !n)) return toast('Dê um nome a todos os perfis.', 'fa-triangle-exclamation');
   if (new Set(nomes.map(n => Utils_norm(n))).size !== nomes.length) return toast('Há perfis com o mesmo nome.', 'fa-triangle-exclamation');
   if (nomes.some(n => Utils_norm(n) === 'administrador')) return toast('"Administrador" é reservado.', 'fa-triangle-exclamation');
-  const envio = perfEd.dados.perfis.map(p => ({ nome: p.nome.trim(), areas: { ...p.areas }, assinar: !!p.assinar, descricao: p.descricao || '' }));
+  const envio = perfEd.dados.perfis.map(p => ({ nome: p.nome.trim(), areas: { ...p.areas }, assinar: !!p.assinar, autorizar: !!p.autorizar, descricao: p.descricao || '' }));
   perfEd.sujo = false; perfEd.salvando = true; renderAdmin();
   tarefaGrav({ rotulo: 'Perfis e permissões', detalhe: envio.map(p => p.nome).join(', '), icone: 'fa-user-lock',
     executar: () => API.post('admin_salvar_perfis', { perfis: envio }, 90000),
@@ -9557,7 +9994,7 @@ function htmlPerfis() {
       </div>
     </div>
     <div class="perf-resumo">
-      <div class="perf-resumo-g" style="--c:#16a34a"><p><i class="fa-solid fa-eye"></i>Vê <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) > 0).length}</b> de ${AREAS_PERFIL.length} áreas</p><p><i class="fa-solid fa-pen"></i>Altera em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}</b> · exclui em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 3).length}</b></p><p><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'}"></i>${p.assinar ? 'Assina documentos' : 'Não assina documentos'}</p></div>
+      <div class="perf-resumo-g" style="--c:#16a34a"><p><i class="fa-solid fa-eye"></i>Vê <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) > 0).length}</b> de ${AREAS_PERFIL.length} áreas</p><p><i class="fa-solid fa-pen"></i>Altera em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}</b> · exclui em <b>${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 3).length}</b></p><p><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'}"></i>${p.assinar ? 'Assina documentos' : 'Não assina documentos'}</p><p><i class="fa-solid ${p.autorizar ? 'fa-file-signature' : 'fa-ban'}"></i>${p.autorizar ? 'Autoriza publicações' : 'Não autoriza publicações'}</p></div>
       <div class="perf-resumo-u"><p class="text-[11.5px] font-bold text-ink3 mb-1"><i class="fa-solid fa-users mr-1"></i>Quem usa este perfil (${(admEstado.usuarios || []).filter(u => u.perfil === p.nome).length})</p><div class="flex flex-wrap gap-1.5">${(admEstado.usuarios || []).filter(u => u.perfil === p.nome).map(u => `<span class="perf-u" title="${esc(u.email || '')}"><span class="adm-u-av mini" style="--c:${corAvatar(u.usuario)}">${esc(iniciais(u.usuario))}</span>${esc(u.usuario)}${u.ativo ? '' : ' <small>(inativo)</small>'}</span>`).join('') || '<span class="text-[12px] text-ink3">Ninguém ainda. Escolha este perfil ao criar ou editar um usuário.</span>'}</div></div>
     </div>
     <div class="perf-lista">
@@ -9571,12 +10008,18 @@ function htmlPerfis() {
         <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px]">Assinar documentos</p><p class="text-[11.5px] text-ink3">Pode marcar documentos da mesa como assinados ou devolvê-los para ajuste, mesmo só visualizando as solicitações</p></div>
         <label class="pers-switch"><input type="checkbox" ${p.assinar ? 'checked' : ''} onchange="perfAssinar(${sel},this.checked)" aria-label="Assinar documentos"><span></span></label>
       </div>
+      <div class="perf-linha">
+        <span class="sec-icone" style="--c:#7c3aed"><i class="fa-solid fa-file-signature"></i></span>
+        <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px]">Autoriza publicações <span class="perf-chip" style="--c:#7c3aed">Autoridade Autorizadora</span></p><p class="text-[11.5px] text-ink3">Aparece na lista de quem pode ser chamado para autorizar portarias, editais e demais publicações, e recebe os pedidos (no aplicativo e por e-mail). Mesmo sem ver Solicitações, vê as publicações pedidas a ele</p></div>
+        <label class="pers-switch"><input type="checkbox" ${p.autorizar ? 'checked' : ''} onchange="perfAutorizar(${sel},this.checked)" aria-label="Autoriza publicações"><span></span></label>
+      </div>
     </div>
     <div class="perf-legenda">${NIVEIS.map(([r, cor, ic]) => `<span><i class="fa-solid ${ic}" style="color:${cor}"></i>${r}</span>`).join('')}<span class="text-ink3">· Sem acesso: a seção some do menu e os dados não são enviados a este perfil.</span></div>
     <div class="mt-4"><p class="rotulo">Visão geral dos perfis <span class="font-normal text-ink3">· toque num nível para trocar</span></p>
       <div class="overflow-x-auto scrollbar-thin"><table class="tabela perf-matriz"><thead><tr><th>Área</th><th>Administrador</th>${d.perfis.map(x => `<th>${esc(x.nome)}</th>`).join('')}</tr></thead><tbody>
         ${AREAS_PERFIL.map(([a, rot]) => `<tr><td class="font-semibold">${rot}</td><td><span class="perf-chip" style="--c:${NIVEIS[(d.areas[a] || 1)][1]}">${NIVEIS[(d.areas[a] || 1)][0]}</span></td>${d.perfis.map((x, pi) => { const n = x.areas[a] ?? 1, max = d.areas[a] || 1; return `<td class="${pi === sel ? 'perf-col-sel' : ''}"><button type="button" class="perf-chip perf-chip-bt" style="--c:${NIVEIS[n][1]}" title="Toque para trocar: ${esc(x.nome)} · ${esc(rot)}" onclick="perfNivel(${pi},'${a}',${(n + 1) % (max + 1)})"><i class="fa-solid ${NIVEIS[n][2]} mr-1 text-[9px]"></i>${NIVEIS[n][0]}</button></td>`; }).join('')}</tr>`).join('')}
         <tr><td class="font-semibold">Assinar documentos</td><td><span class="perf-chip" style="--c:#16a34a">Sim</span></td>${d.perfis.map(x => `<td><span class="perf-chip" style="--c:${x.assinar ? '#16a34a' : '#94a3b8'}">${x.assinar ? 'Sim' : 'Não'}</span></td>`).join('')}</tr>
+        <tr><td class="font-semibold">Autoriza publicações</td><td><span class="perf-chip" style="--c:#7c3aed">Sim</span></td>${d.perfis.map(x => `<td><span class="perf-chip" style="--c:${x.autorizar ? '#7c3aed' : '#94a3b8'}">${x.autorizar ? 'Sim' : 'Não'}</span></td>`).join('')}</tr>
       </tbody></table></div></div>
   </div>`;
 }
@@ -9597,7 +10040,7 @@ function miniAreasPerfil(nome) {
   if (Utils_norm(nome) === 'administrador') return '<span class="adm-u-areas"><span class="adm-u-tudo"><i class="fa-solid fa-crown"></i>Acesso total, inclusive Administração</span></span>';
   const p = perfilDe(nome); if (!p) return '';
   const vis = AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) > 0);
-  return `<span class="adm-u-areas" title="Áreas que este perfil vê">${vis.map(([a, rot, ic]) => { const n = p.areas[a] ?? 1; return `<span class="adm-u-area" style="--c:${NIVEIS[n][1]}" title="${esc(rot)}: ${NIVEIS[n][0]}"><i class="fa-solid ${ic}"></i></span>`; }).join('')}<small>vê ${vis.length} · edita ${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}</small></span>`;
+  return `<span class="adm-u-areas" title="Áreas que este perfil vê">${vis.map(([a, rot, ic]) => { const n = p.areas[a] ?? 1; return `<span class="adm-u-area" style="--c:${NIVEIS[n][1]}" title="${esc(rot)}: ${NIVEIS[n][0]}"><i class="fa-solid ${ic}"></i></span>`; }).join('')}${p.autorizar ? '<span class="adm-u-area" style="--c:#7c3aed" title="Autoridade autorizadora: autoriza publicações"><i class="fa-solid fa-file-signature"></i></span>' : ''}<small>vê ${vis.length} · edita ${AREAS_PERFIL.filter(([a]) => (p.areas[a] ?? 1) >= 2).length}${p.autorizar ? ' · autoriza' : ''}</small></span>`;
 }
 function htmlUsuarios() {
   const us = admEstado.usuarios;
@@ -9660,7 +10103,7 @@ function resumoPerfilHtml(nome) {
   const bloco = (n, tit) => { const g = grupo(n); return g.length ? `<div class="adm-pv-g" style="--c:${NIVEIS[n][1]}"><p><i class="fa-solid ${NIVEIS[n][2]}"></i>${tit}</p><div>${g.map(([, rot, ic]) => `<span><i class="fa-solid ${ic}"></i>${esc(rot)}</span>`).join('')}</div></div>` : ''; };
   return `<div class="adm-pv"><p class="adm-pv-tit"><i class="fa-solid fa-user-lock" style="color:${corPerfil(nome)}"></i>O que o perfil <b>${esc(nome)}</b> permite${p.descricao ? ` <small>· ${esc(p.descricao)}</small>` : ''}</p>
     ${bloco(3, 'Pode tudo, inclusive excluir')}${bloco(2, 'Vê, cadastra e altera')}${bloco(1, 'Só visualiza')}${bloco(0, 'Não vê (some do menu)')}
-    <p class="text-[12px] mt-2 ${p.assinar ? 'text-green-700' : 'text-ink3'}"><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'} mr-1"></i>${p.assinar ? 'Pode assinar documentos e devolver para ajuste' : 'Não assina documentos'}</p></div>`;
+    <p class="text-[12px] mt-2 ${p.assinar ? 'text-green-700' : 'text-ink3'}"><i class="fa-solid ${p.assinar ? 'fa-signature' : 'fa-ban'} mr-1"></i>${p.assinar ? 'Pode assinar documentos e devolver para ajuste' : 'Não assina documentos'}</p>${p.autorizar ? '<p class="text-[12px] mt-1" style="color:#7c3aed"><i class="fa-solid fa-file-signature mr-1"></i>Autoridade autorizadora: autoriza ou devolve publicações</p>' : ''}</div>`;
 }
 function admExportarLogs() {
   const l = admEstado.logs || []; if (!l.length) return;
