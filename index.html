@@ -47,11 +47,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.57.0">
+<meta name="gabdoc-versao" content="1.57.1">
 <script type="application/json" id="gabdoc-novidades">[
-  "Publicações: fluxo de autorização · peça a autorização das autoridades e elas autorizam ou devolvem",
-  "Caixa \"Para você autorizar\" no topo de Publicações, com a minuta a um toque",
-  "Perfis: nova opção \"Autoriza publicações\" (Autoridade Autorizadora)"
+  "Perfis: aviso claro quando o Apps Script ainda não foi atualizado para liberar \"Autoriza publicações\""
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -9921,7 +9919,9 @@ const AREAS_PERFIL = [
 ];
 const NIVEIS = [['Sem acesso', '#94a3b8', 'fa-eye-slash'], ['Visualizar', '#2563eb', 'fa-eye'], ['Editar', '#16a34a', 'fa-pen'], ['Editar e excluir', '#d97706', 'fa-trash-can']];
 const perfEd = { dados: null, sujo: false, salvando: false };
-function perfIniciar(r) { perfEd.dados = { perfis: JSON.parse(JSON.stringify(r.perfis)), areas: r.areas, admins: r.admins }; perfEd.sujo = false; }
+function perfIniciar(r) { perfEd.dados = { perfis: JSON.parse(JSON.stringify(r.perfis)), areas: r.areas, admins: r.admins }; perfEd.sujo = false;
+  // Codigo.gs anterior à 1.27 não conhece "Autoriza publicações" (a opção voltaria a desligar ao salvar)
+  perfEd.semAut = !!(r.perfis && r.perfis.length && !('autorizar' in r.perfis[0])); perfEd.versaoServidor = r.versao || ''; }
 function perfMarcar() { perfEd.sujo = true; const b = $('perf-barra'); if (b) b.dataset.sujo = '1'; }
 function perfNivel(pi, area, n) { perfEd.dados.perfis[pi].areas[area] = n; perfMarcar(); renderAdmin(); }
 function perfTodos(pi, n) { const p = perfEd.dados.perfis[pi]; Object.keys(p.areas).forEach(a => { p.areas[a] = Math.min(n, perfEd.dados.areas[a]); }); perfMarcar(); renderAdmin(); }
@@ -10011,8 +10011,9 @@ function htmlPerfis() {
       <div class="perf-linha">
         <span class="sec-icone" style="--c:#7c3aed"><i class="fa-solid fa-file-signature"></i></span>
         <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px]">Autoriza publicações <span class="perf-chip" style="--c:#7c3aed">Autoridade Autorizadora</span></p><p class="text-[11.5px] text-ink3">Aparece na lista de quem pode ser chamado para autorizar portarias, editais e demais publicações, e recebe os pedidos (no aplicativo e por e-mail). Mesmo sem ver Solicitações, vê as publicações pedidas a ele</p></div>
-        <label class="pers-switch"><input type="checkbox" ${p.autorizar ? 'checked' : ''} onchange="perfAutorizar(${sel},this.checked)" aria-label="Autoriza publicações"><span></span></label>
+        <label class="pers-switch" ${perfEd.semAut ? 'style="opacity:.45;pointer-events:none"' : ''}><input type="checkbox" ${p.autorizar && !perfEd.semAut ? 'checked' : ''} ${perfEd.semAut ? 'disabled' : ''} onchange="perfAutorizar(${sel},this.checked)" aria-label="Autoriza publicações"><span></span></label>
       </div>
+      ${perfEd.semAut ? `<div class="aut-aviso dev"><i class="fa-solid fa-triangle-exclamation"></i><div><b>O Apps Script ainda está na versão anterior${perfEd.versaoServidor ? ' (' + esc(perfEd.versaoServidor) + ')' : ''}.</b><p>Para liberar “Autoriza publicações”, cole o Codigo.gs novo (1.27.0) no Apps Script, salve e vá em <b>Implantar › Gerenciar implantações › lápis › Versão: Nova versão › Implantar</b>. Depois recarregue esta página.</p></div></div>` : ''}
     </div>
     <div class="perf-legenda">${NIVEIS.map(([r, cor, ic]) => `<span><i class="fa-solid ${ic}" style="color:${cor}"></i>${r}</span>`).join('')}<span class="text-ink3">· Sem acesso: a seção some do menu e os dados não são enviados a este perfil.</span></div>
     <div class="mt-4"><p class="rotulo">Visão geral dos perfis <span class="font-normal text-ink3">· toque num nível para trocar</span></p>
