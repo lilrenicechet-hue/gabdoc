@@ -23,11 +23,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.68.0">
+<meta name="gabdoc-versao" content="1.70.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Documentos na outra tela: o botão \"Outra tela\" abre a minuta numa janela separada, que você deixa no monitor em pé; os próximos documentos abrem lá",
-  "Em tela vertical, a revisão se ajusta: documento grande em cima e os detalhes embaixo (dá para recolher)",
-  "Ao autorizar ou devolver na outra tela, a planilha da tela principal se atualiza sozinha"
+  "Publicações: quem autorizou ou o Chefe de Gabinete pode cancelar a autorização antes da publicação, informando o motivo",
+  "A publicação volta para a equipe (Devolvido Para Correção) e quem pediu e as demais autoridades recebem o aviso por e-mail"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1046,13 +1045,29 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   /* tela em pé (mais alta que larga) e larga o bastante: documento em cima, detalhes embaixo */
   @media (orientation: portrait) and (min-width: 901px) {
     .modal.modal-vis { max-width: min(100vw - 24px, 1400px) !important; height: calc(100vh - 24px) !important; max-height: none !important; }
-    .modal.modal-rev .rev-corpo { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
-    .modal.modal-rev .rev-corpo .vis-palco { border-right: 0; }
-    .modal.modal-rev .rev-lado { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; max-height: 28vh; border-top: 1px solid var(--line); box-shadow: 0 -10px 24px -20px rgba(15,23,42,.5); }
-    .modal.modal-rev.lado-min .rev-lado { max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: 0; }
-    .rev-lado-tg { display: inline-flex !important; }
   }
+  /* modelo "empilhado": documento em cima, detalhes embaixo (automático na tela em pé ou escolhido) */
+  @media (min-width: 901px) {
+    .modal.modal-rev.lay-pilha { height: calc(100vh - 24px) !important; max-height: none !important; }
+    .modal.modal-rev.lay-pilha .rev-corpo { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+    .modal.modal-rev.lay-pilha .rev-corpo .vis-palco { border-right: 0; }
+    .modal.modal-rev.lay-pilha .rev-lado { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; max-height: 28vh; border-top: 1px solid var(--line); box-shadow: 0 -10px 24px -20px rgba(15,23,42,.5); }
+    .modal.modal-rev.lay-pilha.lado-min .rev-lado { max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: 0; }
+    .modal.modal-rev.lay-pilha .rev-lado-tg { display: inline-flex !important; }
+    .modal.modal-rev.lay-lado.lado-min .rev-corpo { grid-template-columns: minmax(0, 1fr) 0; }
+    .modal.modal-rev.lay-lado.lado-min .rev-lado { display: none; }
+    .modal.modal-rev .rev-lado-tg { display: inline-flex; }
+    .rev-lay { display: inline-flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--card2); border: 1px solid var(--line); flex: none; }
+    .rev-lay button { height: 30px; padding: 0 9px; border-radius: 9px; font-size: 12px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; gap: 6px; }
+    .rev-lay button.ativo { background: var(--card); color: #7c3aed; box-shadow: 0 1px 2px rgba(15,23,42,.12); }
+  }
+  @media (max-width: 1250px) { .rev-lay span, .rev-lado-tg span { display: none; } }
+  @media (max-width: 900px) { .rev-lay { display: none; } }
   .rev-lado-tg { display: none; align-items: center; gap: 6px; height: 36px; padding: 0 11px; border-radius: 11px; font-size: 12.5px; font-weight: 700; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); flex: none; }
+  .aut-rev-aviso { display: flex; gap: 11px; padding: 11px 13px; border-radius: 12px; background: color-mix(in srgb, #be123c 7%, var(--card)); border: 1px solid color-mix(in srgb, #be123c 35%, var(--line)); }
+  .aut-rev-aviso > :is(i, svg) { color: #be123c; font-size: 17px; margin-top: 2px; flex: none; }
+  .aut-rev-aviso b { display: block; font-size: 13.5px; color: #9f1239; }
+  .aut-rev-aviso p { font-size: 12.5px; color: var(--ink2); margin-top: 2px; }
   /* ----- Revisão da minuta (autoridade) ----- */
   .modal.modal-rev { height: min(94vh, 980px); max-width: 1320px !important; }
   .rev-fila { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: color-mix(in srgb, #7c3aed 8%, var(--card)); border: 1px solid color-mix(in srgb, #7c3aed 25%, var(--line)); }
@@ -1104,6 +1119,12 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .rev-art1 summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; gap: 6px; list-style: none; }
   .rev-art1 summary::-webkit-details-marker { display: none; }
   .rev-art1 p { margin-top: 6px; font-size: 12.5px; color: var(--ink2); line-height: 1.5; padding-left: 10px; border-left: 3px solid color-mix(in srgb, #7c3aed 40%, var(--line)); }
+  .rev-lei { display: inline-flex; align-items: stretch; margin: 2px 4px 2px 0; border-radius: 8px; border: 1px solid color-mix(in srgb, #2563eb 35%, var(--line)); overflow: hidden; font-size: 12px; font-weight: 700; }
+  .rev-lei a { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; color: #1d4ed8; background: color-mix(in srgb, #2563eb 7%, var(--card)); }
+  .rev-lei a:hover { background: color-mix(in srgb, #2563eb 15%, var(--card)); }
+  .rev-lei a + a { border-left: 1px solid color-mix(in srgb, #2563eb 25%, var(--line)); padding: 3px 7px; font-size: 10.5px; font-weight: 800; color: var(--ink2); background: var(--card); }
+  .rev-lei a + a:hover { color: #1d4ed8; }
+  .rev-lei :is(i, svg) { font-size: 10px; opacity: .8; }
   .rev-tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: var(--card2); border: 1px solid var(--line); margin: 1px 0; }
   .rev-res-vazio { font-size: 12.5px; color: var(--ink3); display: flex; gap: 8px; align-items: center; }
   .rev-res-nota { font-size: 11px; color: var(--ink3); border-top: 1px dashed var(--line); padding-top: 7px; display: flex; gap: 6px; align-items: flex-start; }
@@ -4073,7 +4094,7 @@ function itensResumoDia() {
     .map(a => ({ id: a.id, titulo: String(a.titulo || '').replace('[Exemplo] ', ''), sub: [a.hora ? a.hora + (a.horaFim ? '–' + a.horaFim : '') : 'Dia todo', a.local || a.municipio].filter(Boolean).join(' · '), ico: 'fa-calendar-day', cor: '#0891b2', abrir: `abrirFormAgenda('${a.id}')` }));
   if (pode('assinar')) out.assinar = (Store._sol || []).filter(x => !FEITO(x) && ehAssinatura(x) && x.status !== 'ajuste').length;
   if (pode('gravar')) out.devolvidas = (Store._sol || []).filter(x => x.status === 'ajuste').map(x => ({ id: x.id, titulo: x.assunto, sub: 'Devolvido para correção' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-rotate-left', cor: '#db2777', abrir: `abrirDetalhe('${x.id}')` }))
-    .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }) : []);
+    .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: a && a.situacao === 'revogada' ? 'Autorização cancelada por ' + (a.revogadaPor || '') + (a.motivo ? ': “' + a.motivo + '”' : '') : 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }) : []);
   (Store.portarias || []).filter(x => !pubFeita(x) && !x.prazo && prioPub(x)).forEach(x => out.hoje.push({ id: x.id, urg: true, titulo: x.assunto || nomePub(x), sub: 'Publicação prioritária (sem prazo) · ' + nomePub(x), ico: 'fa-newspaper', cor: '#dc2626', dias: null, abrir: `abrirFormPortaria('${x.id}')` }));
   out.venc.sort((a, b) => a.dias - b.dias); out.prox.sort((a, b) => a.dias - b.dias);
   return out;
@@ -6564,14 +6585,14 @@ function minhaVezAut(x) {
   return a.itens.find(i => i.situacao === 'pendente' && Utils_norm(i.usuario) === eu) || null;
 }
 const paraMimAut = () => (Store.portarias || []).filter(x => minhaVezAut(x));
-const SIT_ITEM_AUT = { pendente: ['#d97706', 'fa-hourglass-half', 'Aguardando'], autorizado: ['#16a34a', 'fa-circle-check', 'Autorizou'], devolvido: ['#dc2626', 'fa-rotate-left', 'Devolveu'], cancelado: ['#94a3b8', 'fa-ban', 'Pedido cancelado'] };
-const SIT_AUT = { pendente: ['#7c3aed', 'fa-file-signature', 'Em autorização'], autorizada: ['#16a34a', 'fa-circle-check', 'Autorizada'], devolvida: ['#dc2626', 'fa-rotate-left', 'Devolvida'], cancelada: ['#94a3b8', 'fa-ban', 'Pedido cancelado'] };
+const SIT_ITEM_AUT = { pendente: ['#d97706', 'fa-hourglass-half', 'Aguardando'], autorizado: ['#16a34a', 'fa-circle-check', 'Autorizou'], devolvido: ['#dc2626', 'fa-rotate-left', 'Devolveu'], cancelado: ['#94a3b8', 'fa-ban', 'Pedido cancelado'], revogado: ['#be123c', 'fa-ban', 'Cancelou a autorização'] };
+const SIT_AUT = { pendente: ['#7c3aed', 'fa-file-signature', 'Em autorização'], autorizada: ['#16a34a', 'fa-circle-check', 'Autorizada'], devolvida: ['#dc2626', 'fa-rotate-left', 'Devolvida'], cancelada: ['#94a3b8', 'fa-ban', 'Pedido cancelado'], revogada: ['#be123c', 'fa-ban', 'Autorização cancelada'] };
 const dataHoraCurta = s => s ? new Date(s).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : '';
 function resumoAut(a) {
   if (!a) return '';
   const f = s => s ? fmt(String(s).slice(0, 10)) : '';
-  const sit = { pendente: 'Aguardando', autorizada: 'AUTORIZADA', devolvida: 'DEVOLVIDA', cancelada: 'Pedido cancelado' }[a.situacao] || a.situacao;
-  return sit + ' · ' + a.itens.map(i => i.usuario + ': ' + (i.situacao === 'autorizado' ? 'autorizou em ' + f(i.em) : i.situacao === 'devolvido' ? 'devolveu em ' + f(i.em) + (i.obs ? ' (' + i.obs + ')' : '') : i.situacao === 'cancelado' ? 'pedido cancelado' : 'pendente')).join('; ');
+  const sit = { pendente: 'Aguardando', autorizada: 'AUTORIZADA', devolvida: 'DEVOLVIDA', cancelada: 'Pedido cancelado', revogada: 'AUTORIZAÇÃO CANCELADA por ' + (a.revogadaPor || '') + (a.motivo ? ' (' + a.motivo + ')' : '') }[a.situacao] || a.situacao;
+  return sit + ' · ' + a.itens.map(i => i.usuario + ': ' + (i.situacao === 'autorizado' ? 'autorizou em ' + f(i.em) : i.situacao === 'devolvido' ? 'devolveu em ' + f(i.em) + (i.obs ? ' (' + i.obs + ')' : '') : i.situacao === 'cancelado' ? 'pedido cancelado' : i.situacao === 'revogado' ? 'autorizou e depois cancelou em ' + f(i.em) : 'pendente')).join('; ');
 }
 /** Mesma regra do servidor, aplicada na tela na hora (e gravada direto nos modos sem planilha). */
 function aplicarAutLocal(x, acao, d = {}) {
@@ -6588,6 +6609,15 @@ function aplicarAutLocal(x, acao, d = {}) {
     a = { rodada: ((ant && ant.rodada) || 0) + 1, situacao: 'pendente', pedidoEm: agora, pedidoPor: eu, mensagem: d.mensagem || '', concluidaEm: '', itens, hist: (ant && ant.hist) || [] };
     hist('solicitou', itens.map(i => i.usuario).join(', ') + (d.mensagem ? ' · ' + d.mensagem : ''));
     status = 'Aguardando Autorização';
+  } else if (acao === 'revogar') {
+    if (!podeRevogarAut(x)) throw new Error(pubFeita(x) ? 'Esta publicação já foi publicada: a autorização não pode mais ser cancelada.' : 'Só quem autorizou ou o Chefe de Gabinete pode cancelar a autorização.');
+    const motivo = String(d.obs || '').trim();
+    if (!motivo) throw new Error('Diga o motivo do cancelamento da autorização.');
+    Object.assign(a, { situacao: 'revogada', concluidaEm: agora, revogadaPor: eu, motivo });
+    a.itens.forEach(i => { if (i.situacao === 'pendente') i.situacao = 'cancelado'; });
+    const meu = a.itens.find(i => Utils_norm(i.usuario) === Utils_norm(eu));
+    if (meu && meu.situacao === 'autorizado') Object.assign(meu, { situacao: 'revogado', em: agora, obs: motivo });
+    hist('revogou', motivo); status = 'Devolvido Para Correção';
   } else {
     if (!a) throw new Error('Esta publicação não tem pedido de autorização.');
     if (a.situacao !== 'pendente') throw new Error('O pedido de autorização já foi encerrado.');
@@ -6613,6 +6643,35 @@ function aplicarAutLocal(x, acao, d = {}) {
   }
   return { a, status };
 }
+/** Pode cancelar a autorização já dada? Quem autorizou ou o Chefe de Gabinete (e o Administrador), antes de publicar. */
+function podeRevogarAut(x) {
+  const a = autPub(x); if (!a || pubFeita(x)) return false;
+  if (!(a.situacao === 'autorizada' || (a.situacao === 'pendente' && a.itens.some(i => i.situacao === 'autorizado')))) return false;
+  if (Store.modo !== 'planilha') return pode('sol:2');
+  const p = (Store.sessao && Store.sessao.permissoes) || {};
+  if (p.admin || p.contratacoes) return true;
+  const meu = a.itens.find(i => Utils_norm(i.usuario) === Utils_norm(euAut()));
+  return !!(meu && meu.situacao === 'autorizado' && podeAutorizar());
+}
+function abrirRevogarAut(id) {
+  const x = portaria(id); if (!x || !podeRevogarAut(x)) return;
+  abrirModal(`${heroAut(x, 'Cancelar a autorização')}
+    <div class="modal-corpo space-y-3">
+      <div class="aut-rev-aviso"><i class="fa-solid fa-triangle-exclamation"></i><div><b>A publicação não deve ser publicada.</b><p>Ela volta para a equipe como "Devolvido Para Correção", e quem pediu e as demais autoridades recebem o aviso${Store.modo === 'planilha' ? ' por e-mail' : ''}. Para seguir depois, a equipe faz um novo pedido de autorização.</p></div></div>
+      <label class="block"><span class="rotulo">Motivo do cancelamento *</span><textarea class="campo w-full" rows="3" id="rev-aut-obs" maxlength="1000" placeholder="Ex.: aguardar a decisão da Secretária sobre a lotação"></textarea></label>
+    </div>
+    <div class="modal-rodape"><button class="btn btn-sec" onclick="abrirAutPub('${id}')">Voltar</button><button class="btn btn-pri" style="background:#be123c;border-color:#be123c" onclick="confirmarRevogarAut('${id}',this)"><i class="fa-solid fa-ban"></i>Cancelar a autorização</button></div>`, 'aut-revogar', { id });
+  setTimeout(() => $('rev-aut-obs') && $('rev-aut-obs').focus(), 60);
+}
+async function confirmarRevogarAut(id, btn) {
+  const obs = ($('rev-aut-obs') || {}).value || '';
+  if (!obs.trim()) { toast('Diga o motivo do cancelamento.', 'fa-triangle-exclamation'); $('rev-aut-obs').focus(); return; }
+  btn.disabled = true;
+  const ok = await execAutPub(id, 'revogar', { obs: obs.trim() });
+  if (!ok) { btn.disabled = false; return; }
+  toast('Autorização cancelada · a publicação voltou para a equipe.', 'fa-ban');
+  abrirAutPub(id);
+}
 /** Espera a publicação recém-criada chegar à planilha antes de mexer na autorização. */
 async function esperarGravacaoPub(id) {
   for (let i = 0; i < 400 && Grav.pendente(id); i++) await new Promise(r => setTimeout(r, 300));
@@ -6624,7 +6683,7 @@ async function execAutPub(id, acao, dados = {}) {
   let r;
   try { r = aplicarAutLocal(x, acao, dados); } catch (e) { toast(e.message, 'fa-triangle-exclamation'); return false; }
   const novo = { ...x, status: r.status || x.status, autorizacao: JSON.stringify(r.a), autResumo: resumoAut(r.a), atualizadoEm: new Date().toISOString() };
-  const rot = { solicitar: 'Pedido de autorização', autorizar: 'Publicação autorizada', devolver: 'Devolvida para correção', cancelar: 'Pedido de autorização cancelado', lembrar: 'Lembrete às autoridades' }[acao];
+  const rot = { solicitar: 'Pedido de autorização', autorizar: 'Publicação autorizada', devolver: 'Devolvida para correção', cancelar: 'Pedido de autorização cancelado', lembrar: 'Lembrete às autoridades', revogar: 'Autorização cancelada' }[acao];
   if (Store.modo === 'planilha') {
     trocarNaLista(Store.portarias, id, novo); aoMudarDados();
     const payload = { id, acao }; ['autorizadores', 'mensagem', 'obs'].forEach(k => { if (dados[k] !== undefined) payload[k] = dados[k]; });
@@ -6639,7 +6698,7 @@ async function execAutPub(id, acao, dados = {}) {
 }
 /** Depois do pedido: diz por e-mail a quem foi (e quem ficou sem, por não ter e-mail cadastrado). */
 function avisoEmailAut(acao, em) {
-  if (!em || (acao !== 'solicitar' && acao !== 'lembrar')) return;
+  if (!em || (acao !== 'solicitar' && acao !== 'lembrar' && acao !== 'revogar')) return;
   const lista = l => l.length === 1 ? l[0] : l.slice(0, -1).join(', ') + ' e ' + l[l.length - 1];
   if (em.erro) { toast('O pedido foi registrado, mas o e-mail não saiu: ' + em.erro, 'fa-triangle-exclamation'); return; }
   if (em.enviados && em.enviados.length && !(em.semEmail || []).length) { toast('E-mail enviado para ' + lista(em.enviados) + '.', 'fa-envelope-circle-check'); return; }
@@ -6752,7 +6811,7 @@ function abrirAutPub(id, foco) {
       <div class="min-w-0 flex-1"><b>${esc(i.usuario)}${eu ? ' <span class="aut-voce">você</span>' : ''}</b><small>${esc(i.cargo || '')}${i.cargo ? ' · ' : ''}<span style="color:${c2};font-weight:800">${r2}</span>${i.em ? ' · ' + dataHoraCurta(i.em) : ''}${i.registradoPor ? ' · registrado por ' + esc(i.registradoPor) : ''}</small>
         ${i.obs ? `<p class="aut-obs">“${esc(i.obs)}”</p>` : ''}${bts}</div></li>`;
   };
-  const HIST_ICO = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu para correção'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'] };
+  const HIST_ICO = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu para correção'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'], revogou: ['fa-ban', '#be123c', 'cancelou a autorização'] };
   const hist = (a.hist || []).slice().reverse().map(h => { const [hi, hc, ht] = HIST_ICO[h.acao] || ['fa-circle', '#64748b', h.acao]; return `<li><span class="aut-h-ico" style="--c:${hc}"><i class="fa-solid ${hi}"></i></span><div class="min-w-0"><p><b>${esc(h.por || '—')}</b> ${ht}</p>${h.obs ? `<p class="text-ink3 break-words">${esc(h.obs)}</p>` : ''}<small>${dataHoraCurta(h.em)}</small></div></li>`; }).join('');
   const min = arqDe(x, 'minuta');
   abrirModal(`${heroAut(x, 'Autorização da publicação' + (a.rodada > 1 ? ` · ${a.rodada}º pedido` : ''))}
@@ -6763,6 +6822,7 @@ function abrirAutPub(id, foco) {
         <div class="aut-barra" aria-hidden="true">${a.itens.map(i => `<span style="background:${SIT_ITEM_AUT[i.situacao][0]}"></span>`).join('')}</div>
       </div>
       ${a.mensagem ? `<div class="aut-msg"><i class="fa-solid fa-quote-left"></i><p>${esc(a.mensagem)}</p></div>` : ''}
+      ${a.situacao === 'revogada' ? `<div class="aut-rev-aviso"><i class="fa-solid fa-ban"></i><div><b>Autorização cancelada por ${esc(a.revogadaPor || '—')}${a.concluidaEm ? ' em ' + dataHoraCurta(a.concluidaEm) : ''}</b><p>${a.motivo ? '“' + esc(a.motivo) + '” ' : ''}Não publicar até um novo pedido ser autorizado.</p></div></div>` : ''}
       <div class="aut-doc">
         ${x.processo ? `<span><i class="fa-solid fa-folder-open"></i>${esc(x.processo)}</span>` : ''}${x.setor ? `<span><i class="fa-solid fa-sitemap"></i>${esc(x.setor)}</span>` : ''}${x.prazo ? `<span><i class="fa-solid fa-hourglass-half"></i>Prazo ${fmt(x.prazo)}</span>` : ''}
         ${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>Abrir o processo</a>` : ''}
@@ -6783,7 +6843,8 @@ function abrirAutPub(id, foco) {
     <div class="modal-rodape !justify-between items-center flex-wrap gap-2">
       <div class="flex gap-2 flex-wrap">
         ${pend && pode('sol:2') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this))cancelarAut('${id}')"><i class="fa-solid fa-ban"></i>Cancelar pedido</button>${Store.modo === 'planilha' ? `<button class="btn btn-sec" onclick="lembrarAut('${id}',this)"><i class="fa-solid fa-bell text-amber-500"></i>Lembrar</button>` : ''}` : ''}
-        ${!pend && !pubFeita(x) && pode('sol:2') ? `<button class="btn btn-sec" onclick="abrirPedirAut('${id}')"><i class="fa-solid fa-paper-plane" style="color:${AUT_COR}"></i>${a.situacao === 'devolvida' ? 'Pedir de novo' : 'Novo pedido'}</button>` : ''}
+        ${!pend && !pubFeita(x) && pode('sol:2') ? `<button class="btn btn-sec" onclick="abrirPedirAut('${id}')"><i class="fa-solid fa-paper-plane" style="color:${AUT_COR}"></i>${a.situacao === 'devolvida' || a.situacao === 'revogada' ? 'Pedir de novo' : 'Novo pedido'}</button>` : ''}
+        ${podeRevogarAut(x) ? `<button class="btn btn-sec aut-bt-revogar" style="color:#be123c" onclick="abrirRevogarAut('${id}')" title="Quem autorizou ou o Chefe de Gabinete pode cancelar antes da publicação"><i class="fa-solid fa-ban"></i>Cancelar a autorização</button>` : ''}
       </div>
       <div class="flex gap-2"><button class="btn btn-sec" onclick="fecharModal();abrirFormPortaria('${id}')"><i class="fa-solid fa-pen"></i>Formulário</button><button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
     </div>`, 'aut', { id });
@@ -6865,9 +6926,31 @@ function resumoMinuta(txt) {
   m = t.match(/\b(?:o cargo|a fun[çc][ãa]o|cargo em comiss[ãa]o|fun[çc][ãa]o gratificada)\s+de\s+([^,;.]{3,80})/i); if (m) out.cargo = corta(m[1], 80);
   out.valores = [...new Set(t.match(/R\$\s?[\d.]+(?:,\d{2})?/g) || [])].slice(0, 4);
   // fundamento legal: leis, decretos e resoluções citados (não conta o número do próprio ato)
-  out.leis = [...new Set((t.slice(60).match(/\b(?:Lei Complementar|Lei|Decreto|Resolu[çc][ãa]o)\s+(?:Estadual\s+|Federal\s+)?n[º°o.]*\s*[\d.]+(?:\/\d{2,4})?/gi) || []).map(x => x.replace(/\s+/g, ' ')))].slice(0, 4);
+  const leis = new Map();
+  const reLei = /\b(Lei Complementar|Lei|Decreto-Lei|Decreto|Resolu[çc][ãa]o)\s+(Estadual\s+|Federal\s+)?n[º°o.]*\s*([\d.]+)(?:\s*\/\s*|,\s*de\s+[^,;.]{3,25}?\s+de\s+)?(\d{4}|\d{2})?/gi;
+  let ml;
+  while ((ml = reLei.exec(t.slice(60)))) {
+    const tipo = ml[1].replace(/^./, c => c.toUpperCase()), num = ml[3].replace(/\.$/, ''), ano = ml[4] || '';
+    // esfera: "Lei Federal/Estadual nº…" ou logo depois do número ("…, do Estado de Mato Grosso"), sem pegar a próxima lei citada
+    const depois = t.slice(60).slice(ml.index + ml[0].length, ml.index + ml[0].length + 40).split(/[;.]|\s+e\s+(?:a|o|na|no)\s+|\b(?:Lei|Decreto|Resolu)/i)[0];
+    const esfera = /federal/i.test(ml[2] || '') || /\bfederal\b|da Rep[úu]blica/i.test(depois) ? 'BR' : /estadual/i.test(ml[2] || '') || /estadual|mato grosso/i.test(depois) ? 'MT' : '';
+    const txt = `${tipo} nº ${num}${ano ? '/' + ano : ''}`;
+    if (!leis.has(txt)) leis.set(txt, { txt, tipo, num: num.replace(/\./g, ''), ano, esfera });
+  }
+  (t.match(/Constitui[çc][ãa]o (?:Estadual|Federal|do Estado de Mato Grosso|da Rep[úu]blica)/gi) || []).forEach(c => { const est = !/federal|rep[úu]blica/i.test(c); const txt = est ? 'Constituição Estadual (MT)' : 'Constituição Federal'; if (!leis.has(txt)) leis.set(txt, { txt, tipo: 'Constituição', num: '', ano: est ? '1989' : '1988', esfera: est ? 'MT' : 'BR' }); });
+  out.leis = [...leis.values()].slice(0, 6);
   out.pessoasN = pessoas.length;
   return out;
+}
+/** Botões para abrir a lei na internet: LexML (federal e estaduais) e buscas nos sites oficiais de MT e do Planalto. */
+function linkLei(l) {
+  const termo = l.tipo === 'Constituição' ? (l.esfera === 'MT' ? 'Constituição do Estado de Mato Grosso' : 'Constituição Federal 1988') : `${l.tipo} ${l.num}${l.ano ? ' ' + (l.ano.length === 2 ? '19' + l.ano : l.ano) : ''}`;
+  const lexml = 'https://www.lexml.gov.br/busca/search?keyword=' + encodeURIComponent(termo + (l.esfera === 'MT' ? ' Mato Grosso' : ''));
+  const g = (q, sites) => 'https://www.google.com/search?q=' + encodeURIComponent(`"${q}" ` + sites);
+  const qMT = l.tipo === 'Constituição' ? 'Constituição do Estado de Mato Grosso' : `${l.tipo} nº ${l.num.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  const mt = g(qMT, 'Mato Grosso (site:al.mt.gov.br OR site:iomat.mt.gov.br OR site:mt.gov.br)');
+  const br = g(qMT.replace(' (MT)', ''), 'site:planalto.gov.br');
+  return `<span class="rev-lei"><a href="${lexml}" target="_blank" rel="noopener noreferrer" title="Abrir no LexML (portal oficial de legislação)"><i class="fa-solid fa-scale-balanced"></i>${esc(l.txt)}<i class="fa-solid fa-arrow-up-right-from-square"></i></a>${l.esfera !== 'BR' ? `<a href="${mt}" target="_blank" rel="noopener noreferrer" title="Procurar nos sites oficiais de Mato Grosso (ALMT, IOMAT)">MT</a>` : ''}${l.esfera !== 'MT' ? `<a href="${br}" target="_blank" rel="noopener noreferrer" title="Procurar no site do Planalto (legislação federal)">Federal</a>` : ''}</span>`;
 }
 function htmlResumoMinuta(r, estado) {
   if (estado === 'carregando') return '<p class="rev-res-vazio"><i class="fa-solid fa-circle-notch fa-spin"></i>Lendo a minuta…</p>';
@@ -6883,7 +6966,7 @@ function htmlResumoMinuta(r, estado) {
     ponto('fa-power-off', 'Vigência', esc(r.vigencia || '')) +
     ponto('fa-eraser', 'Revoga', esc(r.revoga || '')) +
     ponto('fa-sack-dollar', 'Valores', tags(r.valores)) +
-    ponto('fa-scale-balanced', 'Fundamento legal', tags(r.leis));
+    ponto('fa-scale-balanced', 'Fundamento legal', r.leis.map(linkLei).join(''));
   return `${r.objetivo ? `<div class="rev-obj"><span class="rev-nat">${esc(r.natureza || 'Ato')}</span><small>Objetivo</small><p>${esc(r.objetivo)}</p></div>` : ''}
     ${pontos ? `<ul class="rev-pontos">${pontos}</ul>` : ''}
     ${r.art1 ? `<details class="rev-art1"><summary><i class="fa-solid fa-gavel"></i>Texto do Art. 1º</summary><p>${esc(r.art1)}</p></details>` : ''}
@@ -6899,7 +6982,7 @@ function ladoRevisao(x) {
   const a = autPub(x) || { itens: [], hist: [] };
   const d = diasPub(x);
   const prazo = x.prazo ? `<b>${fmt(x.prazo)}</b> <span class="rev-prazo ${d !== null && d < 0 ? 'venc' : d !== null && d <= 2 ? 'perto' : ''}">${d === null ? '' : d < 0 ? `venceu há ${-d} dia${d === -1 ? '' : 's'}` : d === 0 ? 'vence hoje' : d === 1 ? 'vence amanhã' : `faltam ${d} dias`}</span>` : '<span class="text-ink3">Sem prazo</span>';
-  const HIST = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'] };
+  const HIST = { solicitou: ['fa-paper-plane', AUT_COR, 'pediu autorização'], autorizou: ['fa-circle-check', '#16a34a', 'autorizou'], devolveu: ['fa-rotate-left', '#dc2626', 'devolveu'], cancelou: ['fa-ban', '#64748b', 'cancelou o pedido'], lembrou: ['fa-bell', '#d97706', 'lembrou as autoridades'] , revogou: ['fa-ban', '#be123c', 'cancelou a autorização'] };
   const hist = (a.hist || []).slice().reverse().map(h => { const [hi, hc, ht] = HIST[h.acao] || ['fa-circle', '#64748b', h.acao]; return `<li style="--c:${hc}"><span class="rev-h-ico"><i class="fa-solid ${hi}"></i></span><div class="min-w-0"><p><b>${esc(h.por || '—')}</b> ${ht}</p>${h.obs ? `<p class="text-ink3 break-words">${esc(h.obs)}</p>` : ''}<time>${dataHoraCurta(h.em)}</time></div></li>`; }).join('');
   return `
     <section class="rev-sec">
@@ -6941,7 +7024,8 @@ function abrirRevisao(id) {
         <span id="rev-pos"><b>${pos + 1}</b> de ${n}</span>
         <button type="button" onclick="navRevisao(1)" ${pos >= n - 1 ? 'disabled' : ''} title="Próxima" aria-label="Próxima"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      <button type="button" class="rev-lado-tg" onclick="const m=this.closest('.modal');m.classList.toggle('lado-min');try{localStorage.setItem('gabdoc_rev_ladomin',m.classList.contains('lado-min')?'1':'')}catch(e){};desenharVis(Vis.seq)" title="Mostrar ou ocultar os detalhes embaixo"><i class="fa-solid fa-table-columns fa-rotate-90"></i><span>Detalhes</span></button>
+      ${layRevHTML()}
+      <button type="button" class="rev-lado-tg" onclick="const m=this.closest('.modal');m.classList.toggle('lado-min');try{localStorage.setItem('gabdoc_rev_ladomin',m.classList.contains('lado-min')?'1':'')}catch(e){};desenharVis(Vis.seq)" title="Mostrar ou ocultar os detalhes"><i class="fa-solid fa-eye-slash"></i><span>Detalhes</span></button>
       ${btnOutraTelaHTML(id, 'minuta')}<div class="vis-zoom rev-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
       <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
     </div>
@@ -6961,6 +7045,7 @@ function abrirRevisao(id) {
     </div>`;
   if (ehMod) { const m = document.querySelector('#modal-raiz .modal'); m.innerHTML = html; modalAberto.id = id; }
   else { abrirModal(html, 'revisao', { id }); const md = document.querySelector('#modal-raiz .modal'); if (md) { md.classList.add('modal-xl', 'modal-vis', 'modal-rev'); if (lsTalvez.get('gabdoc_rev_ladomin') === '1') md.classList.add('lado-min'); } }
+  aplicarLayRev();
   abaRevisao(Rev.aba || 'doc');
   carregarDocRevisao(id, Vis.seq);
 }
@@ -6981,6 +7066,27 @@ async function carregarDocRevisao(id, seq) {
     if ($('rev-resumo')) $('rev-resumo').innerHTML = htmlResumoMinuta(null);
   }
 }
+/* Modelo da tela de revisão: automático (pelo formato da tela), lado a lado ou empilhado. Guardado à parte para a janela da outra tela. */
+const chaveLayRev = () => 'gabdoc_rev_modelo' + (Janela.ehJanela ? '_janela' : '');
+const modeloRev = () => { const v = lsTalvez.get(chaveLayRev()); return v === 'lado' || v === 'pilha' ? v : 'auto'; };
+function layRevHTML() {
+  const m = modeloRev(), op = [['auto', 'fa-wand-magic-sparkles', 'Automático', 'Segue o formato da tela: em pé = empilhado; deitada = lado a lado'], ['lado', 'fa-table-columns', 'Lado a lado', 'Documento à esquerda e detalhes à direita'], ['pilha', 'fa-table-columns fa-rotate-90', 'Empilhado', 'Documento em cima e detalhes embaixo']];
+  return `<div class="rev-lay" role="group" aria-label="Modelo da tela">${op.map(([k, ic, r, t]) => `<button type="button" data-m="${k}" class="${m === k ? 'ativo' : ''}" onclick="escolherLayRev('${k}')" title="${t}"><i class="fa-solid ${ic}"></i><span>${r}</span></button>`).join('')}</div>`;
+}
+function aplicarLayRev() {
+  const md = document.querySelector('#modal-raiz .modal-rev'); if (!md) return;
+  const m = modeloRev(), pilha = m === 'pilha' || (m === 'auto' && innerHeight > innerWidth);
+  const antes = md.classList.contains('lay-pilha');
+  md.classList.toggle('lay-pilha', pilha); md.classList.toggle('lay-lado', !pilha);
+  md.querySelectorAll('.rev-lay button').forEach(b => b.classList.toggle('ativo', b.dataset.m === m));
+  return antes !== pilha;
+}
+function escolherLayRev(m) {
+  lsTalvez.set(chaveLayRev(), m === 'auto' ? '' : m);
+  aplicarLayRev();
+  if (Vis.doc) setTimeout(() => desenharVis(Vis.seq), 30);
+}
+window.addEventListener('resize', () => { if (modalAberto && modalAberto.tipo === 'revisao' && modeloRev() === 'auto' && aplicarLayRev() && Vis.doc) desenharVis(Vis.seq); });
 function abaRevisao(a) {
   Rev.aba = a;
   const m = document.querySelector('#modal-raiz .modal-rev'); if (!m) return;
@@ -7380,6 +7486,7 @@ function renderPortarias() {
       const a = autPub(x);
       if (minhaVezAut(x)) itens.push({ rot: 'Autorizar ou devolver', ico: 'fa-pen-nib', cor: '#16a34a', fn: () => abrirAutPub(x.id) });
       if (a) itens.push({ rot: 'Ver a autorização', ico: 'fa-file-signature', cor: AUT_COR, fn: () => abrirAutPub(x.id) });
+      if (podeRevogarAut(x)) itens.push({ rot: 'Cancelar a autorização', ico: 'fa-ban', cor: '#be123c', fn: () => abrirRevogarAut(x.id) });
       if (!autPendente(x) && !pubFeita(x)) itens.push({ rot: a && a.situacao !== 'cancelada' ? 'Pedir autorização de novo' : 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'sol:2', fn: () => abrirPedirAut(x.id) });
       if (!pubFeita(x)) {
         itens.push({ sep: true }, prioPub(x) ? { rot: 'Retirar a prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'sol:2', fn: () => editarPortCampos(x, { prioridade: '' }) } : { rot: 'Marcar como prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'sol:2', fn: () => editarPortCampos(x, { prioridade: 'Sim' }) });
