@@ -23,11 +23,11 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.65.0">
+<meta name="gabdoc-versao" content="1.68.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Publicações: a autoridade revisa a minuta com os botões Autorizar e Devolver fixos embaixo do documento",
-  "Painel ao lado (aba no celular) com assunto, prazo, prioridade, quem pediu, a mensagem, o histórico e um resumo automático da minuta",
-  "Fila de autorização: depois de decidir, já abre a próxima pendente e mostra quantas faltam (ex.: 2 de 5)"
+  "Documentos na outra tela: o botão \"Outra tela\" abre a minuta numa janela separada, que você deixa no monitor em pé; os próximos documentos abrem lá",
+  "Em tela vertical, a revisão se ajusta: documento grande em cima e os detalhes embaixo (dá para recolher)",
+  "Ao autorizar ou devolver na outra tela, a planilha da tela principal se atualiza sozinha"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1035,6 +1035,24 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .pt-prio-tg.ativo .pt-prio-ico { color: #fff; background: var(--urg); }
   .pt-prio-tg.ativo .pt-prio-sw { background: var(--urg); }
   .pt-prio-tg.ativo .pt-prio-sw::after { transform: translateX(18px); }
+  /* ----- Documento em tela vertical (monitor em pé) e janela de documentos ----- */
+  .modo-janela.janela-ok #app { visibility: hidden; }
+  .modo-janela .modal-fundo { padding: 0 !important; background: var(--card2) !important; backdrop-filter: none !important; }
+  .modo-janela .modal.modal-vis { width: 100vw !important; max-width: none !important; height: 100vh !important; max-height: none !important; border-radius: 0 !important; margin: 0 !important; animation: none !important; }
+  .janela-espera { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 24px; text-align: center; background: var(--card2); }
+  .janela-espera h2 { font-size: 22px; font-weight: 900; color: var(--ink); margin: 14px 0 6px; }
+  .janela-espera p { font-size: 14px; color: var(--ink2); max-width: 420px; margin: 0 auto 18px; }
+  .janela-espera-ico { width: 72px; height: 72px; border-radius: 22px; display: inline-grid; place-items: center; font-size: 30px; color: #fff; background: var(--brand); }
+  /* tela em pé (mais alta que larga) e larga o bastante: documento em cima, detalhes embaixo */
+  @media (orientation: portrait) and (min-width: 901px) {
+    .modal.modal-vis { max-width: min(100vw - 24px, 1400px) !important; height: calc(100vh - 24px) !important; max-height: none !important; }
+    .modal.modal-rev .rev-corpo { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+    .modal.modal-rev .rev-corpo .vis-palco { border-right: 0; }
+    .modal.modal-rev .rev-lado { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; max-height: 28vh; border-top: 1px solid var(--line); box-shadow: 0 -10px 24px -20px rgba(15,23,42,.5); }
+    .modal.modal-rev.lado-min .rev-lado { max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: 0; }
+    .rev-lado-tg { display: inline-flex !important; }
+  }
+  .rev-lado-tg { display: none; align-items: center; gap: 6px; height: 36px; padding: 0 11px; border-radius: 11px; font-size: 12.5px; font-weight: 700; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); flex: none; }
   /* ----- Revisão da minuta (autoridade) ----- */
   .modal.modal-rev { height: min(94vh, 980px); max-width: 1320px !important; }
   .rev-fila { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: color-mix(in srgb, #7c3aed 8%, var(--card)); border: 1px solid color-mix(in srgb, #7c3aed 25%, var(--line)); }
@@ -1071,6 +1089,21 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .rev-res-it > :is(i, svg) { width: 14px !important; color: #7c3aed; margin-top: 3px; flex: none; font-size: 12px; }
   .rev-res-it small { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
   .rev-res-it p { font-size: 13px; color: var(--ink); line-height: 1.45; }
+  .rev-obj { position: relative; padding: 11px 12px; border-radius: 12px; background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 10%, var(--card)), var(--card)); border: 1px solid color-mix(in srgb, #7c3aed 28%, var(--line)); }
+  .rev-obj small { display: block; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #7c3aed; }
+  .rev-obj p { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-top: 3px; }
+  .rev-nat { position: absolute; top: 9px; right: 10px; font-size: 10.5px; font-weight: 800; padding: 1px 8px; border-radius: 99px; color: #fff; background: #7c3aed; }
+  .rev-pontos { display: flex; flex-direction: column; gap: 9px; }
+  .rev-pontos > li { display: flex; gap: 9px; }
+  .rev-pontos > li > :is(i, svg) { width: 14px !important; color: #7c3aed; margin-top: 3px; flex: none; font-size: 12px; }
+  .rev-pontos small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); }
+  .rev-pontos li > div > div { font-size: 13px; color: var(--ink); line-height: 1.45; }
+  .rev-pessoas { display: flex; flex-direction: column; gap: 3px; }
+  .rev-pessoas li { font-size: 13px; } .rev-pessoas span { color: var(--ink3); font-size: 12px; }
+  .rev-mat { display: inline-block; font-size: 11px !important; font-weight: 700; padding: 0 6px; border-radius: 6px; background: var(--card2); border: 1px solid var(--line); }
+  .rev-art1 summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--ink3); display: inline-flex; align-items: center; gap: 6px; list-style: none; }
+  .rev-art1 summary::-webkit-details-marker { display: none; }
+  .rev-art1 p { margin-top: 6px; font-size: 12.5px; color: var(--ink2); line-height: 1.5; padding-left: 10px; border-left: 3px solid color-mix(in srgb, #7c3aed 40%, var(--line)); }
   .rev-tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: var(--card2); border: 1px solid var(--line); margin: 1px 0; }
   .rev-res-vazio { font-size: 12.5px; color: var(--ink3); display: flex; gap: 8px; align-items: center; }
   .rev-res-nota { font-size: 11px; color: var(--ink3); border-top: 1px dashed var(--line); padding-top: 7px; display: flex; gap: 6px; align-items: flex-start; }
@@ -1110,7 +1143,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
     .modal-rev.ver-det .rev-corpo .vis-palco { display: none; }
   }
   @media (max-width: 640px) {
-    .rev-topo { padding: 10px 12px; gap: 8px; } .rev-topo .vis-ico { display: none; } .rev-zoom { display: none; }
+    .rev-topo { padding: 10px 12px; gap: 6px; } .rev-topo .vis-ico, .rev-topo .vis-sel { display: none; } .rev-topo .rev-zoom { display: none !important; } .rev-topo .vis-ori button { padding: 0 7px; }
     .rev-barra { padding-left: 10px; padding-right: 10px; gap: 8px; }
     .rev-bt { flex: 1; padding: 0 10px; height: 50px; }
     .rev-barra-info .btn span { display: none; }
@@ -1585,6 +1618,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .vis-ico { --c: #2563eb; width: 40px; height: 40px; border-radius: 12px; flex: none; display: grid; place-items: center; color: #fff; background: var(--c); font-size: 17px; }
   .vis-sel { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vis-tit { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .vis-tela { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 11px; border-radius: 11px; font-size: 12.5px; font-weight: 700; color: var(--ink2); background: var(--card2); border: 1px solid var(--line); flex: none; }
+  .vis-tela:hover { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 40%, var(--line)); }
+  @media (max-width: 1100px) { .vis-tela span { display: none; } }
+  @media (pointer: coarse), (max-width: 760px) { .vis-tela { display: none; } }
   .vis-zoom { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: var(--card2); border: 1px solid var(--line); }
   .vis-zoom button { width: 32px; height: 30px; border-radius: 9px; color: var(--ink2); }
   .vis-zoom button:hover { background: var(--card); color: var(--ink); }
@@ -1879,6 +1916,13 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
   .rel-previa-caixa { background: var(--card2); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
   .rp-folha { background: #fff; color: #0f172a; border-radius: 6px; box-shadow: 0 10px 30px -12px rgba(15,23,42,.35); padding: 26px 28px; max-width: 640px; margin: 0 auto; font-size: 11px; line-height: 1.4; }
   .rp-folha.paisagem { max-width: 860px; }
+  .rp-folha { position: relative; overflow: hidden; }
+  .rp-folha::before { content: 'GABDoc'; position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%) rotate(-40deg); font-size: 120px; font-weight: 900; letter-spacing: -.02em; color: #1e3a8a; opacity: .06; pointer-events: none; white-space: nowrap; z-index: 0; }
+  .rp-folha > * { position: relative; z-index: 1; }
+  .rp-lc { position: absolute !important; right: 12px; bottom: 6px; line-height: 0; opacity: .07; pointer-events: none; }
+  .rp-bandeira { flex: none; line-height: 0; }
+  .rp-bandeira svg { display: block; border-radius: 1.5px; box-shadow: 0 1px 2px rgba(15,23,42,.2); }
+  .rp-capa-selo { display: flex; align-items: center; gap: 10px; }
   .rp-cab { display: flex; align-items: center; gap: 10px; border-bottom: 2.5px solid; padding-bottom: 8px; margin-bottom: 14px; }
   .rp-gov { font-size: 7.5px; font-weight: 800; letter-spacing: .12em; color: #64748b; }
   .rp-org { font-size: 12px; font-weight: 800; }
@@ -4086,6 +4130,7 @@ function abrirResumoDia() {
 function resumoNaoHoje(v) { try { const k = 'gabdoc_resumo_off_' + nomeUsuarioResumo() + '_' + hojeISO(); if (v) localStorage.setItem(k, '1'); else localStorage.removeItem(k); } catch (e) {} }
 /** Abre o resumo uma vez por sessão, assim que os dados chegam e a tela de entrada some. */
 function talvezResumoDia() {
+  if (Janela.ehJanela) return;
   if (resumoMostrado || !Store.pronto) return;
   if (Store.modo === 'planilha' && !Store.sessao) return;
   const ls = $('login-screen'); if (ls && !ls.classList.contains('hidden') && !ls.classList.contains('opacity-0')) return;
@@ -4684,12 +4729,13 @@ async function exportarCSV() {
 let modalAberto = null;
 function abrirModal(html, tipo, extra = {}) {
   fecharMenuAcoes();
+  { const je = document.getElementById('janela-espera'); if (je) je.remove(); }
   modalAberto = { tipo, ...extra };
   histModalAberto();
   $('modal-raiz').innerHTML = `<div class="modal-fundo" onclick="if(event.target===this&&modalAberto&&modalAberto.tipo!=='senha-obrigatoria')fecharModal()"><div class="modal anim-fade-up" role="dialog" aria-modal="true">${html}</div></div>`;
   const f = $('modal-raiz').querySelector('input,select,textarea'); if (f && tipo !== 'detalhe') setTimeout(() => f.focus(), 50);
 }
-function fecharModal() { const eraDet = modalAberto && modalAberto.tipo === 'detalhe', tinha = !!modalAberto; modalAberto = null; if (tinha && !Hist.fechandoPorVoltar) histModalFechado(); $('modal-raiz').innerHTML = ''; if (eraDet) { _ultimoSinal = 0; enviarSinal(); } }
+function fecharModal() { const eraDet = modalAberto && modalAberto.tipo === 'detalhe', tinha = !!modalAberto; modalAberto = null; if (tinha && !Hist.fechandoPorVoltar) histModalFechado(); if (tinha && Janela.ehJanela) setTimeout(esperaJanela, 0); $('modal-raiz').innerHTML = ''; if (eraDet) { _ultimoSinal = 0; enviarSinal(); } }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalAberto && modalAberto.tipo !== 'senha-obrigatoria') fecharModal(); });
 const copia = s => { const o = JSON.parse(JSON.stringify(s)); delete o.id; return o; };
 
@@ -6245,6 +6291,93 @@ function carregarPdfJs() {
 }
 const CacheVis = new Map();
 const Vis = { id: '', qual: '', blob: null, url: '', escala: 1, doc: null, seq: 0 };
+/* ----- Documento na outra tela: abre a minuta numa janela separada (ex.: o monitor na vertical) ----- */
+const Janela = { ehJanela: /^#doc=/.test(location.hash || ''), ref: null, canal: null, pend: null };
+const usaOutraTela = () => !Janela.ehJanela && lsTalvez.get('gabdoc_rev_janela') === '1';
+function canalJanela() {
+  if (Janela.canal || typeof BroadcastChannel === 'undefined') return Janela.canal;
+  Janela.canal = new BroadcastChannel('gabdoc-documento');
+  Janela.canal.onmessage = ev => {
+    const m = ev.data || {};
+    if (Janela.ehJanela) {
+      if (m.tipo === 'ping') Janela.canal.postMessage({ tipo: 'pong' });
+      if (m.tipo === 'abrir') { try { window.focus(); } catch (e) {} abrirDocJanela(m.id, m.qual); }
+    } else {
+      if (m.tipo === 'pong') Janela.vivo = true;
+      if (m.tipo === 'mudou') { if (Store.modo === 'planilha') sincronizar(true); }
+    }
+  };
+  return Janela.canal;
+}
+const btnOutraTelaHTML = (id, qual) => Janela.ehJanela ? `<button type="button" class="vis-tela" onclick="pararOutraTela()" title="Voltar a abrir os documentos na tela principal"><i class="fa-solid fa-display"></i><span>Abrir na principal</span></button>`
+  : `<button type="button" class="vis-tela" onclick="abrirNaOutraTela('${id}','${qual}')" title="Abrir numa janela separada (ex.: no monitor na vertical). Os próximos documentos abrem lá."><i class="fa-solid fa-up-right-from-square"></i><span>Outra tela</span></button>`;
+/** Abre (ou reaproveita) a janela de documentos; na 1ª vez tenta colocá-la no monitor em pé. */
+async function abrirNaOutraTela(id, qual = 'minuta') {
+  lsTalvez.set('gabdoc_rev_janela', '1');
+  const c = canalJanela();
+  if (Janela.ref && !Janela.ref.closed) { c && c.postMessage({ tipo: 'abrir', id, qual }); try { Janela.ref.focus(); } catch (e) {} fecharDocPrincipal(); return; }
+  if (c) { Janela.vivo = false; c.postMessage({ tipo: 'ping' }); await new Promise(r => setTimeout(r, 250)); if (Janela.vivo) { c.postMessage({ tipo: 'abrir', id, qual }); fecharDocPrincipal(); toast('Aberto na outra tela.', 'fa-up-right-from-square'); return; } }
+  let pos = '';
+  try {
+    if ('getScreenDetails' in window) {
+      const sd = await Promise.race([window.getScreenDetails(), new Promise((_, rej) => setTimeout(() => rej(new Error('tempo')), 1500))]);
+      const outras = sd.screens.filter(t => t !== sd.currentScreen);
+      const alvo = outras.find(t => t.height > t.width) || outras[0] || null;
+      if (alvo) pos = `left=${alvo.availLeft},top=${alvo.availTop},width=${alvo.availWidth},height=${alvo.availHeight}`;
+    }
+  } catch (e) {}
+  if (!pos) pos = `width=${Math.min(1080, screen.availWidth)},height=${screen.availHeight},left=${Math.max(0, screen.availWidth - 1080)},top=0`;
+  const url = location.pathname + location.search + '#doc=' + encodeURIComponent(id) + ':' + qual;
+  const w = window.open(url, 'gabdoc-documento', 'popup=yes,' + pos);
+  if (!w) { toast('O navegador bloqueou a janela. Permita pop-ups para este endereço e tente de novo.', 'fa-triangle-exclamation'); lsTalvez.set('gabdoc_rev_janela', ''); return; }
+  Janela.ref = w;
+  fecharDocPrincipal();
+  toast('Documento aberto na outra tela. Arraste a janela para o monitor em pé: ela fica lá para os próximos.', 'fa-up-right-from-square');
+}
+function fecharDocPrincipal() { if (modalAberto && /^(revisao|vis)/.test(modalAberto.tipo)) fecharModal(); }
+function pararOutraTela() {
+  lsTalvez.set('gabdoc_rev_janela', '');
+  toast('Os próximos documentos abrem na tela principal.', 'fa-display');
+  if (Janela.ehJanela) setTimeout(() => window.close(), 600);
+}
+/** Na janela de documentos: abre o documento pedido (espera os dados carregarem). */
+function abrirDocJanela(id, qual = 'minuta') {
+  Janela.pend = { id, qual };
+  const tenta = () => {
+    const ok = Store.pronto && (Store.modo !== 'planilha' || Store.sessao) && portaria(Janela.pend.id);
+    if (!ok) return false;
+    const { id: i, qual: q } = Janela.pend; Janela.pend = null;
+    document.documentElement.classList.add('janela-ok');
+    const x = portaria(i);
+    document.title = 'GABDoc · ' + nomePub(x);
+    if (q === 'minuta' && Store.modo === 'planilha' && minhaVezAut(x)) revisarMinuta(i); else verArqPortaria(i, q, true);
+    return true;
+  };
+  if (tenta()) return;
+  const t0 = Date.now(), iv = setInterval(() => { if (!Janela.pend || tenta() || Date.now() - t0 > 90000) clearInterval(iv); }, 400);
+}
+function esperaJanela() {
+  if (!Janela.ehJanela || modalAberto || $('janela-espera')) return;
+  if (Store.modo === 'planilha' && !Store.sessao) return;
+  document.documentElement.classList.add('janela-ok');
+  const el = document.createElement('div');
+  el.id = 'janela-espera'; el.className = 'janela-espera';
+  el.innerHTML = `<div><span class="janela-espera-ico"><i class="fa-solid fa-file-lines"></i></span>
+    <h2>Janela de documentos</h2><p>Abra uma minuta na tela principal: ela aparece aqui, já ajustada a esta tela.</p>
+    <div class="flex gap-2 justify-center flex-wrap"><button type="button" class="btn btn-sec" onclick="pararOutraTela()"><i class="fa-solid fa-display"></i>Voltar a abrir na principal</button><button type="button" class="btn btn-pri" onclick="window.close()"><i class="fa-solid fa-xmark"></i>Fechar esta janela</button></div></div>`;
+  document.body.appendChild(el);
+}
+function iniciarJanela() {
+  canalJanela();
+  // documento sempre ajustado à largura da janela (ex.: ao mudar de monitor)
+  let tm = 0; window.addEventListener('resize', () => { clearTimeout(tm); tm = setTimeout(() => { if (Vis.doc && $('vis-palco') && Vis.escala === 1) desenharVis(Vis.seq); }, 250); });
+  if (!Janela.ehJanela) return;
+  document.documentElement.classList.add('modo-janela');
+  document.title = 'GABDoc · Documentos';
+  const [id, qual] = decodeURIComponent(location.hash.slice(5)).split(':');
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  if (id) abrirDocJanela(id, qual || 'minuta'); else esperaJanela();
+}
 async function pdfParaVer(id, qual) {
   const x = portaria(id), a = arqDe(x, qual);
   if (!a) throw new Error(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.');
@@ -6262,7 +6395,8 @@ async function pdfParaVer(id, qual) {
   CacheVis.set(a.id, blob);
   return blob;
 }
-async function verArqPortaria(id, qual = 'minuta') {
+async function verArqPortaria(id, qual = 'minuta', naJanela) {
+  if (!naJanela && usaOutraTela() && arqDe(portaria(id), qual)) { abrirNaOutraTela(id, qual); return; }
   if (qual === 'minuta' && Store.modo === 'planilha' && minhaVezAut(portaria(id))) { revisarMinuta(id); return; }
   const x = portaria(id), a = arqDe(x, qual), q = PUB_ARQS[qual];
   if (!a) { toast(qual === 'publicado' ? 'Ainda não há arquivo publicado.' : 'Esta publicação ainda não tem minuta.', 'fa-circle-info'); return; }
@@ -6273,7 +6407,7 @@ async function verArqPortaria(id, qual = 'minuta') {
     <div class="vis-topo">
       <span class="vis-ico" style="--c:${q.cor}"><i class="fa-solid ${q.ico}"></i></span>
       <div class="min-w-0 flex-1"><p class="vis-sel">${q.rot} · ${esc(nomePub(x))}</p><h3 class="vis-tit"><i class="fa-solid ${ico}" style="color:${cor}"></i><span class="truncate">${esc(a.nome)}</span></h3></div>
-      <div class="vis-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
+      ${btnOutraTelaHTML(id, qual)}<div class="vis-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
       <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="vis-palco" id="vis-palco"><div class="vis-carregando"><i class="fa-solid fa-circle-notch fa-spin"></i><b>${pdf ? 'Abrindo o PDF…' : 'Preparando a visualização…'}</b><small>${pdf ? '' : 'O Word é convertido em PDF pelo Google Drive. Leva alguns segundos.'}</small></div></div>
@@ -6313,9 +6447,10 @@ async function desenharVis(seq) {
     for (let i = 1; i <= n; i++) {
       const pg = await doc.getPage(i);
       if (seq !== Vis.seq || !$('vis-palco')) return;
-      const base = pg.getViewport({ scale: 1 });
+      const rot = pg.rotate || 0;
+      const base = pg.getViewport({ scale: 1, rotation: rot });
       const esc1 = (largura / base.width) * Vis.escala, dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const vp = pg.getViewport({ scale: esc1 * dpr });
+      const vp = pg.getViewport({ scale: esc1 * dpr, rotation: rot });
       const cv = document.createElement('canvas');
       cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
       cv.style.width = Math.floor(vp.width / dpr) + 'px'; cv.style.height = Math.floor(vp.height / dpr) + 'px';
@@ -6666,54 +6801,99 @@ function revisarMinuta(id) {
   if (!id) id = fila[0];
   if (!id) { toast('Nenhuma publicação aguardando a sua autorização.', 'fa-circle-check'); return; }
   if (!fila.includes(id)) { abrirAutPub(id); return; }
+  if (usaOutraTela()) { abrirNaOutraTela(id, 'minuta'); return; }
   Rev.fila = fila; Rev.feitas = 0;
   abrirRevisao(id);
 }
-/** Extrai do texto da minuta um resumo por regras (ementa, Art. 1º, pessoas, datas, vigência, revogações). */
+/** Extrai do texto da minuta um resumo por regras: objetivo, natureza do ato e os pontos principais. */
+const VERBOS_ATO = { 'dispõe': ['Dispor', 'Normativo'], 'dispoe': ['Dispor', 'Normativo'], 'designa': ['Designar', 'Designação'], 'institui': ['Instituir', 'Instituição'], 'altera': ['Alterar', 'Alteração'], 'nomeia': ['Nomear', 'Nomeação'], 'exonera': ['Exonerar', 'Exoneração'],
+  'regulamenta': ['Regulamentar', 'Regulamentação'], 'estabelece': ['Estabelecer', 'Normativo'], 'aprova': ['Aprovar', 'Aprovação'], 'torna público': ['Tornar público', 'Comunicação pública'], 'torna publico': ['Tornar público', 'Comunicação pública'], 'torna sem efeito': ['Tornar sem efeito', 'Anulação'],
+  'autoriza': ['Autorizar', 'Autorização'], 'concede': ['Conceder', 'Concessão'], 'revoga': ['Revogar', 'Revogação'], 'homologa': ['Homologar', 'Homologação'], 'convoca': ['Convocar', 'Convocação'], 'prorroga': ['Prorrogar', 'Prorrogação'], 'delega': ['Delegar', 'Delegação'],
+  'cria': ['Criar', 'Criação'], 'define': ['Definir', 'Normativo'], 'fixa': ['Fixar', 'Normativo'], 'credencia': ['Credenciar', 'Credenciamento'], 'constitui': ['Constituir', 'Constituição de comissão'], 'retifica': ['Retificar', 'Retificação'], 'cede': ['Ceder', 'Cessão'],
+  'remove': ['Remover', 'Remoção'], 'lota': ['Lotar', 'Lotação'], 'atribui': ['Atribuir', 'Atribuição'], 'dispensa': ['Dispensar', 'Dispensa'], 'reconhece': ['Reconhecer', 'Reconhecimento'], 'abre': ['Abrir', 'Abertura de processo'], 'divulga': ['Divulgar', 'Divulgação'] };
 function resumoMinuta(txt) {
-  const t = String(txt || '').replace(/\s+/g, ' ').trim();
+  const t = String(txt || '').replace(/\s+/g, ' ').replace(/\s+([,.;:])/g, '$1').trim();
   if (t.length < 40) return null;
-  const corta = (s, n) => { s = s.trim(); return s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s; };
-  const out = {};
-  const verbos = 'Disp[õo]e|Designa|Institui|Altera|Nomeia|Exonera|Regulamenta|Estabelece|Aprova|Torna p[úu]blic|Autoriza|Concede|Revoga|Homologa|Convoca|Prorroga|Delega|Cria|Define|Fixa|Credencia|Constitui|Retifica|Torna sem efeito|Cede|Remove|Lota|Atribui';
+  const corta = (s, n) => { s = String(s || '').trim(); return s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s; };
+  const titulo = s => s.toLowerCase().replace(/(^|\s)(\S)/g, (a, b, c) => b + c.toUpperCase()).replace(/\s(D[aeo]s?|E)\s/g, (a, b) => ' ' + b.toLowerCase() + ' ');
+  const out = { pontos: [] };
+  const chaves = Object.keys(VERBOS_ATO).sort((a, b) => b.length - a.length).map(k => k.replace(/ /g, '\\s+')).join('|');
   const antes = t.split(/\bRESOLVE\b|\bArt\.?\s*1\s*[º°o]/i)[0] || t;
-  let m = antes.match(new RegExp(`((?:${verbos})[^.]{10,400}\\.)`, 'i'));
-  if (m) out.ementa = corta(m[1], 320);
+  // ementa: a frase que começa com o verbo do ato, antes do "RESOLVE"
+  let m = antes.match(new RegExp(`\\b(${chaves})\\b([^.]{8,500}\\.)`, 'i'));
+  let verbo = '', resto = '';
+  if (m) { verbo = m[1].toLowerCase().replace(/\s+/g, ' '); resto = m[2]; out.ementa = corta(m[1] + m[2], 360); }
   m = t.match(/Art\.?\s*1\s*[º°o]?\s*[-–—.:]?\s*(.+?)(?=\bArt\.?\s*2\s*[º°o]?|\bRegistrada|\bPublique-se|\bCumpra-se|$)/i);
-  if (m) out.art1 = corta(m[1], 380);
+  if (m) out.art1 = corta(m[1], 700);
+  // objetivo (o que o ato faz, no infinitivo) e a natureza do ato
+  if (verbo && VERBOS_ATO[verbo]) { out.natureza = VERBOS_ATO[verbo][1]; out.objetivo = corta(VERBOS_ATO[verbo][0] + resto.replace(/\.$/, ''), 260); }
+  else if (out.art1) {
+    const v = (out.art1.match(/^(\S+)/) || [])[1] || '';
+    const k = Object.keys(VERBOS_ATO).find(kk => VERBOS_ATO[kk][0].toLowerCase() === v.toLowerCase());
+    out.natureza = k ? VERBOS_ATO[k][1] : 'Ato administrativo';
+    out.objetivo = corta(out.art1.split(/[.;](\s|$)/)[0], 260);
+  }
+  if (/processo seletivo|sele[çc][ãa]o simplificada|inscri[çc][õo]es/i.test(t) && /edital/i.test(t)) out.natureza = 'Processo seletivo';
   const arts = new Set((t.match(/\bArt\.?\s*\d+/gi) || []).map(a => a.replace(/\D/g, '')));
   out.artigos = arts.size;
-  const comuns = /^(SECRET[ÁA]RI[AO]|ESTADO|EDUCA[ÇC][ÃA]O|PORTARIA|EDITAL|RESOLVE|GOVERNO|MATO|GROSSO|SEDUC|GABINETE|INSTRU[ÇC][ÃA]O|NORMATIVA|ADJUNT[AO]|DE|DA|DO|DOS|DAS|E|EM|N[º°O]|MT|ART|LEI|DECRETO|ANEXO|CONSIDERANDO|REGISTRADA|PUBLICADA|CUMPRA-SE|PUBLIQUE-SE|CUIAB[ÁA]|ESCOLA|ESTADUAL|DIRETORIA|REGIONAL|COORDENADORIA|SUPERINTEND[ÊE]NCIA|GEST[ÃA]O|PESSOAS|PROFISSIONAIS|SERVIDOR(ES)?|COMISS[ÃA]O|ANO|ATO)$/;
-  const pessoas = new Set();
-  (t.match(/\b[A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}(?:\s+(?:D[AEO]S?\s+)?[A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}){1,5}\b/g) || []).forEach(s => {
-    const ps = s.split(/\s+/).filter(p => !/^D[AEO]S?$/.test(p));
-    if (ps.length >= 2 && ps.every(p => !comuns.test(p)) && s.length <= 60) pessoas.add(s.toLowerCase().replace(/(^|\s)(\S)/g, (a, b, c) => b + c.toUpperCase()).replace(/\s(D[aeo]s?)\s/g, (a, b) => ' ' + b.toLowerCase() + ' '));
-  });
-  out.pessoas = [...pessoas].slice(0, 8);
-  out.matriculas = (t.match(/matr[íi]cula\s*(?:n[º°o.]*\s*)?[\d.\-/]{4,}/gi) || []).length;
-  const datas = new Set();
-  (t.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/g) || []).forEach(d => datas.add(d));
-  (t.match(/\b\d{1,2}[º°]?\s+de\s+(?:janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+\d{4}\b/gi) || []).forEach(d => datas.add(d.replace(/\s+/g, ' ')));
-  out.datas = [...datas].slice(0, 6);
-  m = t.match(/[^.]*entra(?:rá)? em vigor[^.]*\./i); if (m) out.vigencia = corta(m[0], 200);
-  m = t.match(/[^.]*\brevoga(?:m-se|-se|da|do)?\b[^.]*\./i); if (m) out.revoga = corta(m[0], 220);
+  // pessoas (nome em maiúsculas), com matrícula e cargo quando vierem juntos
+  const comuns = /^(SECRET[ÁA]RI[AO]|ESTADO|EDUCA[ÇC][ÃA]O|PORTARIA|EDITAL|RESOLVE|GOVERNO|MATO|GROSSO|SEDUC|GABINETE|INSTRU[ÇC][ÃA]O|NORMATIVA|ADJUNT[AO]|N[º°O]|MT|ART|LEI|DECRETO|ANEXO|CONSIDERANDO|REGISTRADA|PUBLICADA|CUMPRA-SE|PUBLIQUE-SE|CUIAB[ÁA]|ESCOLA|ESTADUAL|DIRETORIA|REGIONAL|COORDENADORIA|SUPERINTEND[ÊE]NCIA|GEST[ÃA]O|PESSOAS|PROFISSIONAIS|SERVIDOR(ES)?|COMISS[ÃA]O|ANO|ATO|GS|DRE|CEFAPRO|SAGE|SAGP|SAEB|UNIDADE)$/;
+  const pessoas = [];
+  const vistos = new Set();
+  const reNome = /\b([A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}(?:\s+(?:D[AEO]S?\s+|E\s+)?[A-ZÁÂÃÉÊÍÓÔÕÚÇ]{2,}){1,5})\b(?:\s*,?\s*(?:matr[íi]cula|mat\.)\s*(?:n[º°o.]*\s*)?([\d.\-\/]{4,}))?(?:\s*,\s*((?:Professor|Professora|Diretor|Diretora|Coordenador|Coordenadora|Técnic[oa]|Analista|Assessor|Assessora|Secretári[oa]|Superintendente|Gerente|Apoio|Assistente)[^,;.]{0,60}))?/g;
+  let r;
+  while ((r = reNome.exec(t))) {
+    const nome = r[1].replace(/\s+E$/, '');
+    const ps = nome.split(/\s+/).filter(p => !/^(D[AEO]S?|E)$/.test(p));
+    if (ps.length < 2 || ps.some(p => comuns.test(p)) || nome.length > 60) continue;
+    const k = nome.toUpperCase(); if (vistos.has(k)) continue; vistos.add(k);
+    pessoas.push({ nome: titulo(nome), mat: r[2] || '', cargo: r[3] ? corta(r[3], 60) : '' });
+  }
+  out.pessoas = pessoas.slice(0, 10);
+  // locais e unidades
+  const locais = new Set();
+  (t.match(/\b(?:Escola Estadual|E\.\s?E\.|Diretoria Regional de Educa[çc][ãa]o(?: de| do| da)?|DRE(?: de| do| da)?|CEFAPRO(?: de| do| da)?|Munic[íi]pio de)\s+[A-ZÁÂÃÉÊÍÓÔÕÚÇ][\wÀ-ú'’\-]+(?:\s+(?:d[aeo]s?\s+)?[A-ZÁÂÃÉÊÍÓÔÕÚÇ][\wÀ-ú'’\-]+){0,4}/g) || []).forEach(l => locais.add(l.replace(/\s+/g, ' ')));
+  out.locais = [...locais].slice(0, 4);
+  // prazos, períodos e datas
+  const prazos = [];
+  (t.match(/prazo de\s+\d+\s*(?:\([^)]{2,30}\))?\s*(?:dias?|meses|m[eê]s|anos?)(?:\s+(?:úteis|corridos))?(?:[^.;]{0,60}?(?:a partir de|a contar de|contados? (?:a partir )?de)\s+[^.;,]{4,30})?/gi) || []).forEach(p => prazos.push(corta(p, 120)));
+  (t.match(/\b(?:no per[íi]odo de|de)\s+\d{1,2}\/\d{1,2}\/\d{4}\s+(?:a|at[ée])\s+\d{1,2}\/\d{1,2}\/\d{4}/gi) || []).forEach(p => prazos.push(p));
+  out.prazos = [...new Set(prazos)].slice(0, 3);
+  const limpa = x => x.replace(/^\s*(?:Art\.?\s*)?\d+\s*[º°o]?\s*[-–—.:]?\s*/i, '').replace(/^\s*(?:Par[áa]grafo [úu]nico|§\s*\d+[º°o]?)\s*[-–—.:]?\s*/i, '');
+  m = t.match(/[^.]*entra(?:rá)? em vigor[^.]*\./i); if (m) out.vigencia = corta(limpa(m[0]), 160);
+  m = t.match(/[^.]*\brevogad[ao]s?\b[^.]*\.|[^.]*\brevoga(?:m-se|-se)\b[^.]*\./i); if (m) out.revoga = corta(limpa(m[0]), 180);
+  m = t.match(/\b(?:o cargo|a fun[çc][ãa]o|cargo em comiss[ãa]o|fun[çc][ãa]o gratificada)\s+de\s+([^,;.]{3,80})/i); if (m) out.cargo = corta(m[1], 80);
+  out.valores = [...new Set(t.match(/R\$\s?[\d.]+(?:,\d{2})?/g) || [])].slice(0, 4);
+  // fundamento legal: leis, decretos e resoluções citados (não conta o número do próprio ato)
+  out.leis = [...new Set((t.slice(60).match(/\b(?:Lei Complementar|Lei|Decreto|Resolu[çc][ãa]o)\s+(?:Estadual\s+|Federal\s+)?n[º°o.]*\s*[\d.]+(?:\/\d{2,4})?/gi) || []).map(x => x.replace(/\s+/g, ' ')))].slice(0, 4);
+  out.pessoasN = pessoas.length;
   return out;
-}
-async function textoDoPdf(doc, max = 12) {
-  let txt = '';
-  for (let i = 1; i <= Math.min(doc.numPages, max); i++) { const pg = await doc.getPage(i); const c = await pg.getTextContent(); txt += ' ' + c.items.map(it => it.str).join(' '); }
-  return txt;
 }
 function htmlResumoMinuta(r, estado) {
   if (estado === 'carregando') return '<p class="rev-res-vazio"><i class="fa-solid fa-circle-notch fa-spin"></i>Lendo a minuta…</p>';
   if (estado === 'sem') return '<p class="rev-res-vazio"><i class="fa-solid fa-file-circle-xmark"></i>Sem minuta anexada: não há texto para resumir.</p>';
   if (!r) return '<p class="rev-res-vazio"><i class="fa-solid fa-eye-slash"></i>Não deu para ler o texto da minuta (pode ser um documento digitalizado).</p>';
-  const it = (ico, rot, v) => v ? `<div class="rev-res-it"><i class="fa-solid ${ico}"></i><div class="min-w-0"><small>${rot}</small><p>${v}</p></div></div>` : '';
-  const html = it('fa-quote-left', 'Ementa', esc(r.ementa || '')) + it('fa-gavel', 'Art. 1º', esc(r.art1 || '')) +
-    it('fa-users', 'Pessoas citadas', r.pessoas.length ? r.pessoas.map(p => `<span class="rev-tag">${esc(p)}</span>`).join(' ') + (r.matriculas ? ` <span class="text-ink3 text-[11.5px]">· ${r.matriculas} matrícula(s)</span>` : '') : '') +
-    it('fa-calendar-day', 'Datas no texto', r.datas.map(d => `<span class="rev-tag">${esc(d)}</span>`).join(' ')) +
-    it('fa-power-off', 'Vigência', esc(r.vigencia || '')) + it('fa-eraser', 'Revogação', esc(r.revoga || ''));
-  return (html || '<p class="rev-res-vazio">O texto não segue o padrão de portaria; leia o documento.</p>') + `<p class="rev-res-nota"><i class="fa-solid fa-wand-magic-sparkles"></i>Resumo automático, montado a partir do texto da minuta${r.artigos ? ` (${r.artigos} artigo${r.artigos > 1 ? 's' : ''})` : ''}. Confira no documento.</p>`;
+  const tags = l => l.map(x => `<span class="rev-tag">${esc(x)}</span>`).join(' ');
+  const ponto = (ico, rot, v) => v ? `<li><i class="fa-solid ${ico}"></i><div class="min-w-0"><small>${rot}</small><div>${v}</div></div></li>` : '';
+  const pessoas = r.pessoas.length ? `<ul class="rev-pessoas">${r.pessoas.map(p => `<li><b>${esc(p.nome)}</b>${p.cargo ? ` <span>· ${esc(p.cargo)}</span>` : ''}${p.mat ? ` <span class="rev-mat">mat. ${esc(p.mat)}</span>` : ''}</li>`).join('')}</ul>` : '';
+  const pontos = ponto('fa-users', r.pessoas.length === 1 ? 'Pessoa' : `Pessoas (${r.pessoas.length})`, pessoas) +
+    ponto('fa-id-badge', 'Cargo / função', esc(r.cargo || '')) +
+    ponto('fa-location-dot', 'Onde', tags(r.locais)) +
+    ponto('fa-hourglass-half', 'Prazo / período', r.prazos.map(esc).join('<br>')) +
+    ponto('fa-power-off', 'Vigência', esc(r.vigencia || '')) +
+    ponto('fa-eraser', 'Revoga', esc(r.revoga || '')) +
+    ponto('fa-sack-dollar', 'Valores', tags(r.valores)) +
+    ponto('fa-scale-balanced', 'Fundamento legal', tags(r.leis));
+  return `${r.objetivo ? `<div class="rev-obj"><span class="rev-nat">${esc(r.natureza || 'Ato')}</span><small>Objetivo</small><p>${esc(r.objetivo)}</p></div>` : ''}
+    ${pontos ? `<ul class="rev-pontos">${pontos}</ul>` : ''}
+    ${r.art1 ? `<details class="rev-art1"><summary><i class="fa-solid fa-gavel"></i>Texto do Art. 1º</summary><p>${esc(r.art1)}</p></details>` : ''}
+    ${!r.objetivo && !pontos ? '<p class="rev-res-vazio">O texto não segue o padrão de portaria; leia o documento.</p>' : ''}
+    <p class="rev-res-nota"><i class="fa-solid fa-wand-magic-sparkles"></i>Resumo automático, montado a partir do texto da minuta${r.artigos ? ` (${r.artigos} artigo${r.artigos > 1 ? 's' : ''})` : ''}. Confira no documento.</p>`;
+}
+async function textoDoPdf(doc, max = 12) {
+  let txt = '';
+  for (let i = 1; i <= Math.min(doc.numPages, max); i++) { const pg = await doc.getPage(i); const c = await pg.getTextContent(); txt += ' ' + c.items.map(it => it.str).join(' '); }
+  return txt;
 }
 function ladoRevisao(x) {
   const a = autPub(x) || { itens: [], hist: [] };
@@ -6761,7 +6941,8 @@ function abrirRevisao(id) {
         <span id="rev-pos"><b>${pos + 1}</b> de ${n}</span>
         <button type="button" onclick="navRevisao(1)" ${pos >= n - 1 ? 'disabled' : ''} title="Próxima" aria-label="Próxima"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      <div class="vis-zoom rev-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
+      <button type="button" class="rev-lado-tg" onclick="const m=this.closest('.modal');m.classList.toggle('lado-min');try{localStorage.setItem('gabdoc_rev_ladomin',m.classList.contains('lado-min')?'1':'')}catch(e){};desenharVis(Vis.seq)" title="Mostrar ou ocultar os detalhes embaixo"><i class="fa-solid fa-table-columns fa-rotate-90"></i><span>Detalhes</span></button>
+      ${btnOutraTelaHTML(id, 'minuta')}<div class="vis-zoom rev-zoom" aria-label="Zoom"><button type="button" onclick="zoomVis(-1)" title="Diminuir"><i class="fa-solid fa-magnifying-glass-minus"></i></button><span id="vis-pct">100%</span><button type="button" onclick="zoomVis(1)" title="Aumentar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></div>
       <button type="button" class="vis-x" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="rev-abas" role="tablist"><button type="button" data-a="doc" onclick="abaRevisao('doc')"><i class="fa-solid fa-file-lines"></i>Documento</button><button type="button" data-a="det" onclick="abaRevisao('det')"><i class="fa-solid fa-circle-info"></i>Detalhes e resumo</button></div>
@@ -6779,7 +6960,7 @@ function abrirRevisao(id) {
       <button type="button" class="rev-bt ok" onclick="decidirRevisao('autorizar',this)"><i class="fa-solid fa-circle-check"></i><span>Autorizar</span></button>
     </div>`;
   if (ehMod) { const m = document.querySelector('#modal-raiz .modal'); m.innerHTML = html; modalAberto.id = id; }
-  else { abrirModal(html, 'revisao', { id }); const md = document.querySelector('#modal-raiz .modal'); if (md) md.classList.add('modal-xl', 'modal-vis', 'modal-rev'); }
+  else { abrirModal(html, 'revisao', { id }); const md = document.querySelector('#modal-raiz .modal'); if (md) { md.classList.add('modal-xl', 'modal-vis', 'modal-rev'); if (lsTalvez.get('gabdoc_rev_ladomin') === '1') md.classList.add('lado-min'); } }
   abaRevisao(Rev.aba || 'doc');
   carregarDocRevisao(id, Vis.seq);
 }
@@ -6825,6 +7006,7 @@ async function decidirRevisao(acao, btn) {
   const ok = await execAutPub(id, acao, { obs });
   if (!ok) { if (btn) btn.disabled = false; return; }
   Rev.feitas++;
+  avisarPrincipal();
   const x = portaria(id), a = autPub(x);
   toast(acao === 'devolver' ? 'Devolvida para correção.' : a && a.situacao === 'autorizada' ? 'Autorizada · pronta para publicar.' : 'Autorização registrada.', acao === 'devolver' ? 'fa-rotate-left' : 'fa-circle-check');
   // próxima da fila (a decidida sai; novas que chegaram entram no fim)
@@ -6834,6 +7016,11 @@ async function decidirRevisao(acao, btn) {
   Rev.fila = restantes;
   if (!restantes.length) { fimRevisao(); return; }
   abrirRevisao(restantes[Math.min(Math.max(pos, 0), restantes.length - 1)]);
+}
+/** Janela de documentos: avisa a tela principal para atualizar quando a gravação terminar. */
+function avisarPrincipal() {
+  if (!Janela.ehJanela || !Janela.canal) return;
+  const t0 = Date.now(), iv = setInterval(() => { if (!Grav.ocupada() || Date.now() - t0 > 60000) { clearInterval(iv); Janela.canal.postMessage({ tipo: 'mudou' }); } }, 500);
 }
 function fimRevisao() {
   const m = document.querySelector('#modal-raiz .modal'); if (!m || !modalAberto || modalAberto.tipo !== 'revisao') return;
@@ -10450,6 +10637,26 @@ function codigoVerificacao(m) {
   return `GAB-${b.slice(0, 4)}-${b.slice(4, 8)}-${b.slice(8, 12)}`;
 }
 
+/* ----- bandeira do Estado de Mato Grosso (SVG, proporção 10:7): campo azul, losango branco, esfera verde e estrela amarela ----- */
+function bandeiraMtSVG(larg = 40) {
+  const W = 100, H = 70, cx = 50, cy = 35, r = 15.5;
+  const pts = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.382 : r * 0.96; pts.push((cx + rr * Math.cos(a)).toFixed(2) + ',' + (cy + rr * Math.sin(a)).toFixed(2)); }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${larg}" height="${Math.round(larg * H / W)}" viewBox="0 0 ${W} ${H}">
+    <rect width="${W}" height="${H}" fill="#1f3f99"/>
+    <polygon points="${cx},0 ${W},${cy} ${cx},${H} 0,${cy}" fill="#ffffff"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#009c3b"/>
+    <polygon points="${pts.join(' ')}" fill="#ffdf00"/>
+    <rect width="${W}" height="${H}" fill="none" stroke="#0f172a" stroke-opacity=".25" stroke-width="1"/>
+  </svg>`;
+}
+/* ----- marca discreta: rubrica "LC" (como uma assinatura), quase invisível ----- */
+function assinaturaLcSVG(cor = '#0f172a', larg = 22) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${larg}" height="${Math.round(larg * 48 / 80)}" viewBox="0 0 80 48">
+    <g fill="none" stroke="${cor}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(8,0) skewX(-14)">
+      <path d="M32,9 C24,2 13,9 19,15 C25,21 35,10 29,7 C22,4 20,17 18,25 C16,33 13,40 8,43 C4,45 3,41 8,40 C15,38 21,43 28,44 C35,45 41,41 45,36"/>
+      <path d="M62,30 C60,25 52,25 49,32 C46,39 50,45 56,44 C60,43 63,40 65,37"/>
+    </g></svg>`;
+}
 /* ----- selo do sistema (SVG, usado na tela e no PDF) ----- */
 function seloSVG(cor, tam = 96) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${tam}" height="${tam}" viewBox="0 0 100 100">
@@ -10502,7 +10709,7 @@ function previaHTML(m) {
   }).join('');
  const kpC = (m.blocos.find(b => b.t === 'kpis') || { itens: [] }).itens.slice(0, m.paisagem ? 6 : 5);
   const capa = m.capa ? `<div class="rp-folha rp-capa ${m.paisagem ? 'paisagem' : ''}">
-    <aside class="rp-capa-painel"><div class="rp-capa-selo">${seloSVG(CAPA.navy, 46)}</div><p class="rp-capa-gov">GOVERNO DO ESTADO<br>DE MATO GROSSO</p><i></i><p class="rp-capa-org">${esc(m.orgao)}</p><p class="rp-capa-uni">${esc(m.unidade)}</p>
+    <aside class="rp-capa-painel"><div class="rp-capa-selo">${seloSVG(CAPA.navy, 46)}<span class="rp-bandeira">${bandeiraMtSVG(30)}</span></div><p class="rp-capa-gov">GOVERNO DO ESTADO<br>DE MATO GROSSO</p><i></i><p class="rp-capa-org">${esc(m.orgao)}</p><p class="rp-capa-uni">${esc(m.unidade)}</p>
       ${kpC.length ? `<p class="rp-capa-rot">INDICADORES-CHAVE</p><div class="rp-capa-kpis">${kpC.map(i => `<div><b>${esc(String(i.val))}</b><span>${esc(i.rot)}</span></div>`).join('')}</div>` : ''}</aside>
     <div class="rp-capa-area"><span class="rp-capa-tag">USO INTERNO · GABINETE</span>
       <div class="rp-capa-tit"><p>RELATÓRIO EXECUTIVO</p><h3>${esc(m.titulo)}</h3><i></i><span>${esc(m.subtitulo)}</span><small>REF. <b>${m.codigo}</b></small></div>
@@ -10510,9 +10717,10 @@ function previaHTML(m) {
       <div class="rp-capa-barra">GABDoc · Gabinete da Secretária · SEDUC-MT</div></div>
   </div>` : '';
   return capa + `<div class="rp-folha ${m.paisagem ? 'paisagem' : ''}">
-    <div class="rp-cab" style="border-color:${st.sec}"><div class="rp-selo-mini">${seloSVG(st.pri, 46)}</div><div class="min-w-0 flex-1"><p class="rp-gov">GOVERNO DO ESTADO DE MATO GROSSO</p><p class="rp-org" style="color:${st.pri}">${esc(m.orgao)}</p><p class="rp-uni">${esc(m.unidade)}</p></div><div class="rp-marca" style="color:${st.pri}">GAB<span style="color:${st.sec}">Doc</span></div></div>
+    <div class="rp-cab" style="border-color:${st.sec}"><div class="rp-selo-mini">${seloSVG(st.pri, 46)}</div><div class="rp-bandeira" title="Bandeira de Mato Grosso">${bandeiraMtSVG(30)}</div><div class="min-w-0 flex-1"><p class="rp-gov">GOVERNO DO ESTADO DE MATO GROSSO</p><p class="rp-org" style="color:${st.pri}">${esc(m.orgao)}</p><p class="rp-uni">${esc(m.unidade)}</p></div><div class="rp-marca" style="color:${st.pri}">GAB<span style="color:${st.sec}">Doc</span></div></div>
     <div class="rp-titulo" style="background:${st.claro};border-color:${st.borda}"><p style="color:${st.sec}">RELATÓRIO</p><h3 style="color:${st.pri}">${esc(m.titulo)}</h3><span>${esc(m.subtitulo)}</span></div>
     ${bl || '<p class="rp-p rp-vazio">Escolha ao menos um conteúdo (resumo, gráficos ou tabelas).</p>'}
+    <span class="rp-lc" aria-hidden="true">${assinaturaLcSVG('#0f172a', 20)}</span>
     <div class="rp-fim" style="border-color:${st.borda}">
       <div class="rp-selo">${seloSVG(st.pri, 78)}</div>
       <div class="min-w-0 flex-1"><p class="rp-selo-tit" style="color:${st.pri}">Documento gerado pelo sistema GABDoc</p><p>Emitido por ${esc(m.autor)} em ${fmtHora(m.emitidoEm.toISOString())}</p><p>Código de verificação: <b style="color:${st.pri}">${m.codigo}</b></p></div>
@@ -10541,6 +10749,7 @@ function capaPDF(m) {
   return [
     // ----- painel azul-marinho -----
     { svg: seloSVG(C.navy, m.paisagem ? 58 : 62), absolutePosition: { x: 32, y: 40 } },
+    { svg: bandeiraMtSVG(40), absolutePosition: { x: m.paisagem ? 100 : 104, y: m.paisagem ? 55 : 57 } },
     caixa(32, m.paisagem ? 110 : 118, pw, { stack: [
       { text: 'GOVERNO DO ESTADO\nDE MATO GROSSO', fontSize: 7, bold: true, color: C.mudo, characterSpacing: 1.8, lineHeight: 1.25 },
       { canvas: [{ type: 'rect', x: 0, y: 0, w: 22, h: 2, color: C.branco }], margin: [0, 8, 0, 8] },
@@ -10904,14 +11113,21 @@ function definicaoPDF(m) {
     pageSize: 'A4', pageOrientation: m.paisagem ? 'landscape' : 'portrait', pageMargins: [40, 88, 40, 52],
     info: { title: `${m.titulo} · GABDoc`, author: m.autor, subject: m.subtitulo, creator: 'GABDoc', producer: 'GABDoc · SEDUC-MT', keywords: m.codigo },
     defaultStyle: { font: 'Roboto', fontSize: 9 },
-    background: (pag) => (m.capa && pag === 1 ? fundoCapaPDF(m) : null),
+    // marca d'água com o nome do sistema em todas as páginas
+    watermark: { text: 'GABDoc', color: st.pri, opacity: 0.06, bold: true, fontSize: m.paisagem ? 150 : 130, angle: -40 },
+    // fundo da capa + rubrica "LC" quase invisível, como uma assinatura, no canto inferior direito de cada página
+    background: (pag, tam) => {
+      const lc = { svg: assinaturaLcSVG('#e3e8ee', 20), width: 20, absolutePosition: { x: tam.width - 44, y: tam.height - (m.capa && pag === 1 ? 50 : 22) } };
+      return m.capa && pag === 1 ? [].concat(fundoCapaPDF(m), [lc]) : [lc];
+    },
     header: (pag) => (m.capa && pag === 1 ? null : { margin: [40, 22, 40, 0], stack: [{ columns: [
       { svg: seloSVG(st.pri, 46), width: 46 },
-      { width: '*', margin: [10, 4, 0, 0], stack: [
+      { svg: bandeiraMtSVG(34), width: 34, margin: [0, 11, 0, 0] },
+      { width: '*', margin: [0, 4, 0, 0], stack: [
         { text: 'GOVERNO DO ESTADO DE MATO GROSSO', fontSize: 7, bold: true, color: '#64748b', characterSpacing: 1 },
         { text: m.orgao, fontSize: 10.5, bold: true, color: st.pri, margin: [0, 1, 0, 0] },
         { text: m.unidade, fontSize: 8, color: '#475569' }] },
-      { width: 'auto', margin: [0, 10, 0, 0], text: [{ text: 'GAB', color: st.pri }, { text: 'Doc', color: st.sec }], fontSize: 16, bold: true }] },
+      { width: 'auto', margin: [0, 10, 0, 0], text: [{ text: 'GAB', color: st.pri }, { text: 'Doc', color: st.sec }], fontSize: 16, bold: true }], columnGap: 10 },
       { canvas: [{ type: 'line', x1: 0, y1: 8, x2: larg, y2: 8, lineWidth: 2, lineColor: st.sec }] }] }),
     footer: (pag, total) => (m.capa && pag === 1 ? { columns: [{ width: 'auto', text: 'GABDoc · Gabinete da Secretária · SEDUC-MT', fontSize: 6.5, bold: true, color: '#ffffff', characterSpacing: 0.6 }, { width: '*', text: 'USO INTERNO', fontSize: 6.5, bold: true, color: CAPA.mudo, characterSpacing: 1.4, alignment: 'right' }], margin: [capaGeom(m).x0, 27, 40, 0] } : { margin: [40, 14, 40, 0], columns: [
       { text: `${m.titulo} · ${m.subtitulo}`, fontSize: 7, color: '#64748b' },
@@ -12206,6 +12422,7 @@ if (ss.get('gabdoc_entrou') && !(API.url() && !NO_CLAUDE)) $('login-screen').cla
 irPara(ls.get('gabdoc_aba') || 'painel');
 configurarPWA();
 iniciarMovel();
+iniciarJanela();
 iniciarAvisoAtualizacao();
 aplicarPersonalizacao({});
 aplicarGrupos();

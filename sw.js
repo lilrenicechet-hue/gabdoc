@@ -4,7 +4,7 @@
 // Faz o aplicativo instalado abrir mesmo com internet instável.
 // Os dados NUNCA ficam em cache: as chamadas ao Apps Script vão sempre direto à rede.
 // =====================================================================
-const VERSAO = 'gabdoc-v1.65.0';
+const VERSAO = 'gabdoc-v1.68.0';
 const ESSENCIAIS = ['./', './index.html', './manifest.webmanifest', './icones/icone-192.png', './icones/icone-512.png', './icones/icone-maskable-512.png', './icones/apple-touch-icon.png'];
 const CDNS = ['cdn.tailwindcss.com', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
