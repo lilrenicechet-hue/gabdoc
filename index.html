@@ -33,11 +33,10 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.71.0">
+<meta name="gabdoc-versao" content="1.73.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Nova seção Cessões, em Gestão de Processos: servidores cedidos a outros órgãos (saída) e recebidos de outros órgãos (entrada)",
-  "Cada cessão pode ir para autorização das autoridades, como nas Publicações: e-mail, autorizar, devolver e cancelar a autorização",
-  "Aviso das cessões que terminam em até 30 dias, prorrogação com um toque, vistas em Quadro e Linha do tempo e relatório em PDF ou Excel"
+  "Cessões: saiu o campo do ato (portaria ou decreto); para marcar como publicada basta escolher o status, e a data de publicação é preenchida sozinha",
+  "Na planilha de Cessões, a coluna Ato deu lugar à data de publicação, e uma cessão autorizada tem o botão Publicada direto na linha"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -2420,6 +2419,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <button class="nav-btn nav-sub" data-tab="chefe-ass"><i class="ico fa-solid fa-file-signature" style="color:#fcd34d"></i><span>Documentos para assinatura</span><span id="bdg-chefe-ass" class="nav-badge bg-amber-600 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="contratacoes" title="Exclusivo do Chefe de Gabinete"><i class="ico fa-solid fa-user-plus" style="color:#fdba74"></i><span>Contratações <i class="fa-solid fa-lock text-[9px] opacity-60"></i></span><span id="bdg-contr" class="nav-badge bg-orange-700 hidden"></span></button>
             <button class="nav-btn nav-sub" data-tab="nomeacoes"><i class="ico fa-solid fa-id-card" style="color:#93c5fd"></i><span>Nomeações e Exonerações</span><span id="bdg-nom" class="nav-badge bg-blue-700 hidden"></span></button>
+            <button class="nav-btn nav-sub" data-tab="cessoes"><i class="ico fa-solid fa-people-arrows" style="color:#2dd4bf"></i><span>Cessões</span><span id="bdg-ces" class="nav-badge bg-teal-700 hidden" title="Cessões em andamento (ou para você autorizar)"></span></button>
             <button class="nav-btn nav-sub" data-tab="emails"><i class="ico fa-solid fa-envelope-open-text" style="color:#fca5a5"></i><span>E-mails</span><span id="bdg-email" class="nav-badge bg-red-600 hidden" title="Aguardando retorno"></span></button>
             <button class="nav-btn nav-sub" data-tab="simec"><i class="ico fa-solid fa-building-flag" style="color:#5eead4"></i><span>SIMEC</span><span id="bdg-simec" class="nav-badge bg-teal-600 hidden"></span></button>
           </div>
@@ -2569,7 +2569,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             <span class="pub-faixa-ico" aria-hidden="true" style="background:linear-gradient(135deg,#14b8a6,#0f766e)"><i class="fa-solid fa-people-arrows"></i></span>
             <div class="min-w-0">
               <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">Cessões <span class="pub-faixa-tag"><i class="fa-solid fa-id-card-clip"></i>Servidores</span></h2>
-              <p class="text-teal-100/70 text-xs mt-0.5 hidden sm:block">Servidores cedidos a outros órgãos (saída) e recebidos de outros órgãos (entrada): autorização, ato e fim da cessão.</p>
+              <p class="text-teal-100/70 text-xs mt-0.5 hidden sm:block">Servidores cedidos a outros órgãos (saída) e recebidos de outros órgãos (entrada): autorização, publicação e fim da cessão.</p>
               <div class="pub-pulso text-teal-100/80 text-[12px] font-semibold" id="ces-resumo"></div>
             </div>
           </div>
@@ -2581,7 +2581,7 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
             </nav>
             <div class="flex flex-wrap items-center gap-2 md:justify-end">
               <div class="rel-sec-bts" role="group" aria-label="Relatório"><button type="button" onclick="abrirConfigRelatorio('cessoes')" title="Escolher as opções, ver a prévia e gerar PDF ou Excel"><i class="fa-solid fa-file-lines"></i>Relatório<span class="rel-sec-sub">PDF · Excel</span></button></div>
-              <button onclick="abrirFormCessao()" class="btn text-white pub-novo" style="background:#0f766e" data-requer="sol:2"><i class="fa-solid fa-plus"></i>Nova cessão</button>
+              <button onclick="abrirFormCessao()" class="btn text-white pub-novo" style="background:#0f766e" data-requer="chefe:2"><i class="fa-solid fa-plus"></i>Nova cessão</button>
             </div>
           </div>
         </div>
@@ -3116,11 +3116,11 @@ function pode(perm) {
 const podeGrade = id => { const a = Grades[id] && Grades[id].cfg && Grades[id].cfg.area; return a ? pode(a + ':2') : pode('gravar'); };
 /** Seção do menu → área de permissão. */
 function areaDaAba(tab) {
-  if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos', 'portarias', 'cessoes'].includes(tab)) return 'sol';
-  if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes', 'emails'].includes(tab)) return 'chefe';
+  if (String(tab).startsWith('doc:') || ['mesa', 'processos', 'assinaturas', 'fila', 'prazos', 'portarias'].includes(tab)) return 'sol';
+  if (['chefe', 'chefe-proc', 'chefe-ass', 'simec', 'nomeacoes', 'cessoes', 'emails'].includes(tab)) return 'chefe';
   return { semana: 'semana', painel: 'painel', mapa: 'mapa', casacivil: 'casacivil', correicao: 'correicao', comunicados: 'comunicados', eventos: 'eventos', agenda: 'agenda', movimentacoes: 'movimentacoes', relatorios: 'relatorios' }[tab] || null;
 }
-function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if ((tab === 'portarias' || tab === 'cessoes') && Store.modo === 'planilha' && podeAutorizar() && nivelArea('sol') < 1) return true; if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
+function abaPermitida(tab) { if (tab === 'contratacoes') return podeContratacoes(); if (tab === 'portarias' && Store.modo === 'planilha' && podeAutorizar() && nivelArea('sol') < 1) return true; if (tab === 'cessoes' && Store.modo === 'planilha' && podeAutorizar() && nivelArea('chefe') < 1) return true; if (tab === 'admin') return Store.modo === 'planilha' ? !!(Store.sessao && Store.sessao.admin) : true; const a = areaDaAba(tab); return !a || nivelArea(a) >= 1; }
 /** Esconde do menu as seções sem acesso (e os títulos de grupo que ficarem vazios). */
 function aplicarAcessoMenu() {
   document.querySelectorAll('#nav .nav-btn[data-tab]').forEach(b => { if (b.dataset.tab !== 'admin') b.classList.toggle('sem-acesso', !abaPermitida(b.dataset.tab)); });
@@ -3999,7 +3999,7 @@ const SECOES_DOC = [
   { tipo: 'interno',   rot: 'Documentos internos',   desc: 'Notas técnicas, relatórios e demais documentos produzidos internamente.' }
 ];
 let docTipo = 'capturado';
-$('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portarias"><i class="ico fa-solid fa-newspaper" style="color:#818cf8"></i><span>Publicações</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Aguardando publicação ou devolvidas para correção"></span></button><button class="nav-btn nav-sub" data-tab="cessoes"><i class="ico fa-solid fa-people-arrows" style="color:#2dd4bf"></i><span>Cessões</span><span id="bdg-ces" class="nav-badge bg-teal-700 hidden" title="Cessões em andamento (ou para você autorizar)"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn nav-sub" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('');
+$('nav-docs-gp').innerHTML = `<button class="nav-btn nav-sub" data-tab="portarias"><i class="ico fa-solid fa-newspaper" style="color:#818cf8"></i><span>Publicações</span><span id="bdg-port" class="nav-badge bg-indigo-600 hidden" title="Aguardando publicação ou devolvidas para correção"></span></button>` + SECOES_DOC.map(d => { const t = TIPOS[d.tipo]; return `<button class="nav-btn nav-sub" data-tab="doc:${d.tipo}"><i class="ico fa-solid ${t.ico}" style="color:${t.cor === '#4f46e5' ? '#818cf8' : t.cor}"></i><span>${d.rot}</span><span id="bdg-doc-${d.tipo}" class="nav-badge bg-slate-600 hidden"></span></button>`; }).join('');
 $('nav-docs').innerHTML =
   `<button class="nav-btn" data-tab="comunicados"><i class="ico fa-solid fa-bullhorn" style="color:#38bdf8"></i><span class="text-sky-200 font-semibold">Comunicados importantes</span><span id="bdg-com" class="nav-badge bg-sky-600 hidden"></span></button>` +
   `<button class="nav-btn" data-tab="eventos"><i class="ico fa-solid fa-calendar-check" style="color:#e879f9"></i><span class="text-fuchsia-200 font-semibold">Eventos</span><span id="bdg-ev" class="nav-badge bg-fuchsia-600 hidden"></span></button>`;
@@ -4139,7 +4139,7 @@ function itensResumoDia() {
     .map(a => ({ id: a.id, titulo: String(a.titulo || '').replace('[Exemplo] ', ''), sub: [a.hora ? a.hora + (a.horaFim ? '–' + a.horaFim : '') : 'Dia todo', a.local || a.municipio].filter(Boolean).join(' · '), ico: 'fa-calendar-day', cor: '#0891b2', abrir: `abrirFormAgenda('${a.id}')` }));
   if (pode('assinar')) out.assinar = (Store._sol || []).filter(x => !FEITO(x) && ehAssinatura(x) && x.status !== 'ajuste').length;
   if (pode('gravar')) out.devolvidas = (Store._sol || []).filter(x => x.status === 'ajuste').map(x => ({ id: x.id, titulo: x.assunto, sub: 'Devolvido para correção' + (x.numero ? ' · ' + x.numero : ''), ico: 'fa-rotate-left', cor: '#db2777', abrir: `abrirDetalhe('${x.id}')` }))
-    .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: a && a.situacao === 'revogada' ? 'Autorização cancelada por ' + (a.revogadaPor || '') + (a.motivo ? ': “' + a.motivo + '”' : '') : 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }).concat((Store.cessoes || []).filter(x => x.status === 'Devolvida para correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: 'Cessão · ' + nomeCes(x), sub: a && a.situacao === 'revogada' ? 'Autorização cancelada' + (a.motivo ? ': “' + a.motivo + '”' : '') : 'Cessão devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirFormCessao('${x.id}')` }; })) : []);
+    .concat(pode('sol:2') ? (Store.portarias || []).filter(x => statusPub(x) === 'Devolvido Para Correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: nomePub(x), sub: a && a.situacao === 'revogada' ? 'Autorização cancelada por ' + (a.revogadaPor || '') + (a.motivo ? ': “' + a.motivo + '”' : '') : 'Publicação devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirAutPub('${x.id}')` }; }) : []).concat(!pode('chefe:2') ? [] : (Store.cessoes || []).filter(x => x.status === 'Devolvida para correção').map(x => { const a = autPub(x); const dv = a && a.itens.find(i => i.situacao === 'devolvido'); return { id: x.id, titulo: 'Cessão · ' + nomeCes(x), sub: a && a.situacao === 'revogada' ? 'Autorização cancelada' + (a.motivo ? ': “' + a.motivo + '”' : '') : 'Cessão devolvida' + (dv && dv.obs ? ': “' + dv.obs + '”' : ''), ico: 'fa-rotate-left', cor: '#dc2626', abrir: `abrirFormCessao('${x.id}')` }; }));
   (Store.portarias || []).filter(x => !pubFeita(x) && !x.prazo && prioPub(x)).forEach(x => out.hoje.push({ id: x.id, urg: true, titulo: x.assunto || nomePub(x), sub: 'Publicação prioritária (sem prazo) · ' + nomePub(x), ico: 'fa-newspaper', cor: '#dc2626', dias: null, abrir: `abrirFormPortaria('${x.id}')` }));
   out.venc.sort((a, b) => a.dias - b.dias); out.prox.sort((a, b) => a.dias - b.dias);
   return out;
@@ -6282,7 +6282,7 @@ function normLink(v) {
   if (!/^https?:\/\//i.test(s)) { if (/^[a-z][a-z0-9+.\-]*:/i.test(s)) return null; s = 'https://' + s; }
   return /\s/.test(s) ? null : s;
 }
-/* ========================= CESSÕES DE SERVIDORES (área "Solicitações" dos perfis) =========================
+/* ========================= CESSÕES DE SERVIDORES (área "Chefe de Gabinete" dos perfis) =========================
    Saída: a SEDUC cede o servidor a outro órgão · Entrada: outro órgão cede o servidor à SEDUC.
    Com pedido de autorização às autoridades (o mesmo fluxo das Publicações). */
 const CES_COR = '#0f766e';
@@ -6292,9 +6292,9 @@ const ONUS_CES = { 'Com ônus para a origem': ['#d97706', 'quem cede continua pa
 const STATUS_CES = {
   'Em análise':              ['#2563eb', 'fa-magnifying-glass', 'Processo sendo instruído'],
   'Aguardando autorização':  ['#7c3aed', 'fa-file-signature', 'Com as autoridades'],
-  'Autorizada':              ['#16a34a', 'fa-circle-check', 'Pode seguir para o ato'],
+  'Autorizada':              ['#16a34a', 'fa-circle-check', 'Pode seguir para publicação'],
   'Devolvida para correção': ['#dc2626', 'fa-rotate-left', 'Precisa de ajuste'],
-  'Publicada':               ['#0f766e', 'fa-newspaper', 'Ato publicado: em vigor'],
+  'Publicada':               ['#0f766e', 'fa-newspaper', 'Em vigor'],
   'Encerrada':               ['#64748b', 'fa-flag-checkered', 'Cessão terminou'],
   'Não autorizada':          ['#be123c', 'fa-ban', 'Não vai seguir']
 };
@@ -6355,7 +6355,7 @@ function cesSet(k, v, render = true) {
 function cesFiltrados(sem) {
   const b = Utils_norm(cesUI.busca || '').trim();
   return (Store.cessoes || []).filter(x => (sem === 'sentido' || !cesUI.sentido || (x.sentido || 'Saída') === cesUI.sentido) && (sem === 'st' || !cesUI.st || x.status === cesUI.st)
-    && (!b || Utils_norm([x.servidor, x.matricula, x.cargo, x.orgao, x.funcao, x.processo, x.ato, x.observacao].join(' ')).includes(b)));
+    && (!b || Utils_norm([x.servidor, x.matricula, x.cargo, x.orgao, x.funcao, x.processo, x.observacao].join(' ')).includes(b)));
 }
 const ordemCes = (a, b) => (prioCes(b) - prioCes(a)) || (!!minhaVezAut(b) - !!minhaVezAut(a)) || String(a.protocolo || a.criadoEm || '9999').localeCompare(String(b.protocolo || b.criadoEm || '9999')) || String(a.servidor || '').localeCompare(String(b.servidor || ''), 'pt-BR');
 function cesTopo(base, lst) {
@@ -6400,7 +6400,7 @@ function cesTopo(base, lst) {
   const onus = Object.keys(ONUS_CES).map(k => [k, baseKpi.filter(x => x.onus === k).length]);
   const pComp = `<section class="nom-painel"><h3><i class="fa-solid fa-chart-pie" style="color:#7c3aed"></i>Composição</h3>
     ${split('Saída × Entrada', ['Saída', baseKpi.filter(x => (x.sentido || 'Saída') === 'Saída').length], ['Entrada', baseKpi.filter(x => x.sentido === 'Entrada').length], SENTIDOS_CES['Saída'][0], SENTIDOS_CES['Entrada'][0], 'fa-right-from-bracket', 'fa-right-to-bracket')}
-    <div class="nom-barras mt-2">${onus.map(([k, n]) => `<div class="nom-barra"><span class="truncate" title="${esc(k)}">${esc(k.replace(/^Com ônus para (a|o) /, 'Ônus: ').replace(/^Com /, ''))}</span><span class="nom-barra-t"><span style="width:${Math.round(n / Math.max(1, baseKpi.length) * 100)}%;background:${ONUS_CES[k][0]}"></span></span><b>${n}</b></div>`).join('')}</div></section>`;
+    <div class="nom-barras mt-2">${onus.map(([k, n]) => `<div class="nom-barra"><span class="truncate" title="${esc(k)}">${esc(k.replace(/^Com ônus para (a|o) /, 'Ônus: ').replace(/^Com r/, 'R'))}</span><span class="nom-barra-t"><span style="width:${Math.round(n / Math.max(1, baseKpi.length) * 100)}%;background:${ONUS_CES[k][0]}"></span></span><b>${n}</b></div>`).join('')}</div></section>`;
   return controles + kpis + `<div class="nom-paineis">${pFluxo}${pVenc}${pOrg}${pComp}</div>`;
 }
 function cesQuadro(lst) {
@@ -6436,7 +6436,7 @@ function cesLinha(lst) {
     const lig = on => `<span class="tl-lig ${on ? 'on' : ''}"></span>`;
     const e1 = et(x.protocolo ? 'feita' : '', 'fa-inbox', 'Protocolo', x.protocolo ? fmt(x.protocolo) : '—');
     const e2 = neg ? et('neg', 'fa-ban', 'Autorização', 'não autorizada') : et(autOk ? 'feita' : st === 'Aguardando autorização' ? 'atual' : st === 'Devolvida para correção' ? 'neg' : '', 'fa-file-signature', 'Autorização', autOk ? 'autorizada' : st === 'Aguardando autorização' ? 'com as autoridades' : st === 'Devolvida para correção' ? 'devolvida' : 'a pedir');
-    const e3 = neg ? '' : et(pub ? 'feita' : autOk ? 'atual' : '', 'fa-newspaper', 'Ato publicado', x.publicadoEm ? fmt(x.publicadoEm) : pub ? 'publicado' : '—');
+    const e3 = neg ? '' : et(pub ? 'feita' : autOk ? 'atual' : '', 'fa-newspaper', 'Publicação', x.publicadoEm ? fmt(x.publicadoEm) : pub ? 'publicado' : '—');
     const e4 = neg ? '' : et(x.fim && x.fim < hoje ? 'feita' : x.inicio && x.inicio <= hoje && pub ? 'atual' : '', 'fa-calendar-days', 'Vigência', x.inicio ? fmtCurto(x.inicio) + ' → ' + (x.fim ? fmtCurto(x.fim) : 'sem fim') : '—');
     return `<article class="tl-item ${cesVencendo(x) ? 'alerta' : ''}" style="--c:${cor}" role="button" tabindex="0" onclick="abrirFormCessao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormCessao('${x.id}')">
       <div class="tl-quem"><span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.servidor))}</span><div class="min-w-0"><b class="nl-nome">${esc(x.servidor)}</b>
@@ -6465,9 +6465,9 @@ function renderCessoes() {
     cont.innerHTML = `<div class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto scrollbar-thin pb-1">${topo}${cesUI.vista === 'linha' ? cesLinha(filtrados) : cesQuadro(filtrados)}</div>`;
     return;
   }
-  const podeEd = pode('sol:2');
+  const podeEd = pode('chefe:2');
   renderGrade(cont, {
-    id: 'cessoes', area: 'sol', linhas: filtrados, fonte: () => Store.cessoes, topo,
+    id: 'cessoes', area: 'chefe', linhas: filtrados, fonte: () => Store.cessoes, topo,
     colunas: [
       { key: 'servidor', rot: 'Servidor', w: 230, wCompacta: 180, flex: true, wMin: 150, tipo: 'texto', editavel: true, obrigatorio: true, classe: 'gs-forte', validar: v => !String(v).trim() ? 'O nome não pode ficar vazio.' : '',
         render: x => { const [cor, ico] = SENTIDOS_CES[x.sentido] || SENTIDOS_CES['Saída']; return `<span class="inline-flex items-center gap-2 min-w-0"><span class="nom-mini" style="--c:${cor}"><i class="fa-solid ${ico}"></i></span><span class="truncate">${esc(x.servidor || '')}</span></span>`; } },
@@ -6482,7 +6482,7 @@ function renderCessoes() {
       { key: 'inicio', rot: 'Período da cessão', rotCompacto: 'Período', w: 190, wCompacta: 150, tipo: 'data', editavel: true, render: celPeriodoCes },
       { key: 'autResumo', rot: 'Autorização', w: 170, wCompacta: 124, tipo: 'texto', editavel: false, render: celAutPub },
       { key: 'status', rot: 'Status', w: 190, wCompacta: 170, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_CES).filter(k => k !== 'Aguardando autorização' || x.status === k).map(k => [k, k]), render: x => pillStCes(x.status) },
-      { key: 'ato', rot: 'Ato', w: 170, tipo: 'texto', editavel: true },
+      { key: 'publicadoEm', rot: 'Publicada em', w: 120, tipo: 'data', editavel: true, render: x => x.publicadoEm ? fmt(x.publicadoEm) : '' },
       { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true }
     ],
     compactas: ['servidor', 'sentido', 'orgao', 'inicio', 'autResumo', 'status'],
@@ -6497,7 +6497,7 @@ function renderCessoes() {
       const minha = minhaVezAut(x), a = autPub(x);
       const btn = minha ? `<button type="button" class="gs-acao" style="--c:#16a34a" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-pen-nib"></i>Autorizar</button>`
         : podeEd && !cesFeita(x) && !autPendente(x) && (!a || ['cancelada', 'devolvida', 'revogada'].includes(a.situacao)) ? `<button type="button" class="gs-acao" style="--c:${AUT_COR}" onclick="abrirPedirAut('${x.id}')"><i class="fa-solid fa-paper-plane"></i>${a ? 'Pedir de novo' : 'Pedir'}</button>`
-        : podeEd && x.status === 'Autorizada' ? `<button type="button" class="gs-acao" style="--c:${CES_COR}" onclick="abrirFormCessao('${x.id}','ato')"><i class="fa-solid fa-newspaper"></i>Publicada</button>`
+        : podeEd && x.status === 'Autorizada' ? `<button type="button" class="gs-acao" style="--c:${CES_COR}" onclick="editarCesCampos(cessao('${x.id}'), { status: 'Publicada', publicadoEm: hojeISO() })"><i class="fa-solid fa-newspaper"></i>Publicada</button>`
         : `<span class="gs-acao-fim">${cesFeita(x) ? '<i class="fa-solid fa-circle-check"></i>' + esc(x.status) : ''}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormCessao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('cessoes','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
@@ -6507,16 +6507,16 @@ function renderCessoes() {
       if (minhaVezAut(x)) itens.push({ rot: 'Autorizar ou devolver', ico: 'fa-pen-nib', cor: '#16a34a', fn: () => abrirAutPub(x.id) });
       if (a) itens.push({ rot: 'Ver a autorização', ico: 'fa-file-signature', cor: AUT_COR, fn: () => abrirAutPub(x.id) });
       if (podeRevogarAut(x)) itens.push({ rot: 'Cancelar a autorização', ico: 'fa-ban', cor: '#be123c', fn: () => abrirRevogarAut(x.id) });
-      if (!autPendente(x) && !cesFeita(x)) itens.push({ rot: a && a.situacao !== 'cancelada' ? 'Pedir autorização de novo' : 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'sol:2', fn: () => abrirPedirAut(x.id) });
-      if (!cesFeita(x)) itens.push({ sep: true }, prioCes(x) ? { rot: 'Retirar a prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'sol:2', fn: () => editarCesCampos(x, { prioridade: '' }) } : { rot: 'Marcar como prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'sol:2', fn: () => editarCesCampos(x, { prioridade: 'Sim' }) });
-      if (!autPendente(x)) { itens.push({ sep: true }, { titulo: 'Mudar o status para' }); Object.keys(STATUS_CES).filter(s => s !== x.status && s !== 'Aguardando autorização').forEach(s => itens.push({ rot: s, ico: corCes(s)[1], cor: corCes(s)[0], perm: 'sol:2', fn: () => editarCesCampos(x, { status: s }) })); }
+      if (!autPendente(x) && !cesFeita(x)) itens.push({ rot: a && a.situacao !== 'cancelada' ? 'Pedir autorização de novo' : 'Pedir autorização', ico: 'fa-paper-plane', cor: AUT_COR, perm: 'chefe:2', fn: () => abrirPedirAut(x.id) });
+      if (!cesFeita(x)) itens.push({ sep: true }, prioCes(x) ? { rot: 'Retirar a prioridade', ico: 'fa-flag', cor: '#64748b', perm: 'chefe:2', fn: () => editarCesCampos(x, { prioridade: '' }) } : { rot: 'Marcar como prioridade', ico: 'fa-flag', cor: '#dc2626', perm: 'chefe:2', fn: () => editarCesCampos(x, { prioridade: 'Sim' }) });
+      if (!autPendente(x)) { itens.push({ sep: true }, { titulo: 'Mudar o status para' }); Object.keys(STATUS_CES).filter(s => s !== x.status && s !== 'Aguardando autorização').forEach(s => itens.push({ rot: s, ico: corCes(s)[1], cor: corCes(s)[0], perm: 'chefe:2', fn: () => editarCesCampos(x, { status: s }) })); }
       itens.push({ sep: true });
       if (x.link) itens.push({ rot: 'Abrir o processo', ico: 'fa-arrow-up-right-from-square', cor: '#7c3aed', fn: () => window.open(x.link, '_blank', 'noopener') });
       if (podeEd && Utils_norm(x.status) === 'publicada') itens.push({ rot: 'Prorrogar (nova cessão a partir desta)', ico: 'fa-rotate-right', cor: '#7c3aed', fn: () => prorrogarCessao(x.id) });
-      itens.push({ rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'sol:2', fn: () => abrirFormCessao(x.id) }, { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'sol:3', perigo: true, fn: () => excluirCessaoId(x.id) });
+      itens.push({ rot: 'Editar no formulário', ico: 'fa-pen', cor: '#64748b', perm: 'chefe:2', fn: () => abrirFormCessao(x.id) }, { rot: 'Excluir', ico: 'fa-trash', cor: '#dc2626', perm: 'chefe:3', perigo: true, fn: () => excluirCessaoId(x.id) });
       return itens;
     },
-    acoesLote: Object.keys(STATUS_CES).filter(s => s !== 'Aguardando autorização').map(s => ({ rot: s, ico: corCes(s)[1], cor: corCes(s)[0], perm: 'sol:2', campos: () => ({ status: s }), filtro: r => !autPendente(r) })),
+    acoesLote: Object.keys(STATUS_CES).filter(s => s !== 'Aguardando autorização').map(s => ({ rot: s, ico: corCes(s)[1], cor: corCes(s)[0], perm: 'chefe:2', campos: () => ({ status: s }), filtro: r => !autPendente(r) })),
     novaLinha: () => abrirFormCessao(), textoNovaLinha: 'Nova cessão',
     textoVazio: 'Nenhuma cessão registrada.',
     botaoNovo: `<div class="flex gap-1.5"><button class="btn !h-9 text-white" style="background:${SENTIDOS_CES['Saída'][0]}" onclick="abrirFormCessao(null,{sentido:'Saída'})"><i class="fa-solid fa-right-from-bracket"></i>Saída</button><button class="btn !h-9 text-white" style="background:${SENTIDOS_CES['Entrada'][0]}" onclick="abrirFormCessao(null,{sentido:'Entrada'})"><i class="fa-solid fa-right-to-bracket"></i>Entrada</button></div>`
@@ -6526,14 +6526,14 @@ function renderCessoes() {
 function prorrogarCessao(id) {
   const x = cessao(id); if (!x) return;
   const ini = x.fim ? somaDias(1, x.fim) : '';
-  abrirFormCessao(null, { servidor: x.servidor, matricula: x.matricula, cargo: x.cargo, sentido: x.sentido, tipo: 'Prorrogação', orgao: x.orgao, funcao: x.funcao, onus: x.onus, inicio: ini, observacao: 'Prorrogação da cessão ' + (x.ato ? '(' + x.ato + ')' : 'anterior') });
+  abrirFormCessao(null, { servidor: x.servidor, matricula: x.matricula, cargo: x.cargo, sentido: x.sentido, tipo: 'Prorrogação', orgao: x.orgao, funcao: x.funcao, onus: x.onus, inicio: ini, observacao: 'Prorrogação da cessão anterior' + (x.fim ? ' (fim em ' + fmt(x.fim) + ')' : '') });
 }
 /* ----- formulário ----- */
 const FormCes = { id: '' };
 function abrirFormCessao(id, pre = {}) {
   const foco = typeof pre === 'string' ? pre : '';
   if (typeof pre === 'string') pre = {};
-  if (!pode('sol:2')) { if (id) { abrirAutPub(id); return; } toast('Seu perfil não cadastra cessões.', 'fa-lock'); return; }
+  if (!pode('chefe:2')) { if (id) { abrirAutPub(id); return; } toast('Seu perfil não cadastra cessões.', 'fa-lock'); return; }
   const x = id ? cessao(id) : { status: 'Em análise', protocolo: hojeISO(), sentido: 'Saída', tipo: 'Nova cessão', ...pre };
   if (!x) return;
   const pend = autPendente(x);
@@ -6554,9 +6554,9 @@ function abrirFormCessao(id, pre = {}) {
       <div class="flex items-start gap-3">
         <div class="hero-icos" aria-hidden="true"><span class="on" style="--c:${corS}" id="cs-hero-ico"><i class="fa-solid ${icoS}"></i></span></div>
         <div class="min-w-0 flex-1">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-teal-200/90">${id ? 'Editar cessão' : 'Nova cessão'} · Gestão de Processos</p>
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-teal-200/90">${id ? 'Editar cessão' : 'Nova cessão'} · Chefe de Gabinete</p>
           <h3 class="text-[19px] font-extrabold text-white leading-tight mt-0.5" id="cs-titulo">${esc(id ? x.servidor : 'Cessão de servidor')}</h3>
-          <p class="text-[12.5px] text-white/65 mt-1">Do protocolo à autorização, ao ato publicado e ao fim da cessão.</p>
+          <p class="text-[12.5px] text-white/65 mt-1">Do protocolo à autorização, à publicação e ao fim da cessão.</p>
         </div>
         <button class="text-white/60 hover:text-white p-1" onclick="fecharModal()" aria-label="Fechar"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
@@ -6593,10 +6593,9 @@ function abrirFormCessao(id, pre = {}) {
             <div class="flex flex-wrap gap-1.5 mt-2">${[['6 meses', 6], ['1 ano', 12], ['2 anos', 24], ['4 anos', 48]].map(([r, m]) => `<button type="button" class="atalho" onclick="fimCesMeses(${m})">${r}</button>`).join('')}<button type="button" class="atalho" onclick="$('cs-fim').value='';infoPeriodoCes();marcarCamposCes()">Sem fim</button></div></div>
         </div>
         <p class="text-[12px] font-semibold" id="cs-periodo-info"></p>`)}
-      ${campo(8, CES_COR, 'fa-signal', 'Situação', 'Status, ato publicado e prioridade', `
+      ${campo(8, CES_COR, 'fa-signal', 'Situação', 'Status, data de publicação e prioridade', `
         <div class="nm-ops" id="cs-sits" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${Object.entries(STATUS_CES).filter(([k]) => k !== 'Aguardando autorização' || x.status === k).map(([k, [cor, ico, sub]]) => op('st', k, cor, ico, sub, (x.status || 'Em análise') === k, pend ? '' : `${escolha('#cs-sits .op-card')}`)).join('')}</div>
-        <div class="grid grid-cols-1 md:grid-cols-[1fr_170px] gap-3 mt-1" id="cs-ato-box">
-          <div><p class="pt-sub"><i class="fa-solid fa-newspaper"></i>Ato (portaria ou decreto)</p>${comIco('fa-newspaper', `<input class="campo campo-g w-full !pl-8" id="cs-ato" value="${esc(x.ato || '')}" placeholder="Ex.: Portaria nº 512/2026/GS/SEDUC-MT" autocomplete="off">`)}</div>
+        <div class="mt-1" id="cs-pub-box" style="max-width:240px">
           <div><p class="pt-sub"><i class="fa-solid fa-calendar-check"></i>Publicado em</p>${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="cs-publicado" value="${esc(x.publicadoEm || '')}">`)}</div>
         </div>
         <button type="button" class="pt-prio-tg mt-1 ${prioCes(x) ? 'ativo' : ''}" id="cs-prio" aria-pressed="${prioCes(x)}" onclick="this.classList.toggle('ativo');this.setAttribute('aria-pressed',this.classList.contains('ativo'))"><span class="pt-prio-ico"><i class="fa-solid fa-flag"></i></span><span class="min-w-0"><b>Marcar como prioridade</b><small>A linha fica com contorno vermelho e vai para o topo</small></span><span class="pt-prio-sw" aria-hidden="true"></span></button>`)}
@@ -6606,12 +6605,12 @@ function abrirFormCessao(id, pre = {}) {
     </form>
     <div class="modal-rodape !justify-between items-center">
       <span class="text-[12px] text-ink3" id="cs-resumo"></span>
-      <div class="flex gap-2">${id && pode('sol:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirCessaoId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}${id && autPub(x) ? `<button class="btn btn-sec" onclick="abrirAutPub('${id}')"><i class="fa-solid fa-file-signature" style="color:${AUT_COR}"></i>Autorização</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ces" id="btn-ces-salvar" style="background:${corS};border-color:${corS}"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar'}</button></div>
+      <div class="flex gap-2">${id && pode('chefe:3') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this)){fecharModal();excluirCessaoId('${id}')}"><i class="fa-solid fa-trash"></i>Excluir</button>` : ''}${id && autPub(x) ? `<button class="btn btn-sec" onclick="abrirAutPub('${id}')"><i class="fa-solid fa-file-signature" style="color:${AUT_COR}"></i>Autorização</button>` : ''}<button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri !h-10 !px-5" type="submit" form="form-ces" id="btn-ces-salvar" style="background:${corS};border-color:${corS}"><i class="fa-solid fa-check"></i>${id ? 'Salvar alterações' : 'Registrar'}</button></div>
     </div>`, 'cessao', { id });
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   FormCes.id = id || '';
   infoPeriodoCes(); marcarCamposCes();
-  setTimeout(() => { const f = foco === 'ato' ? $('cs-ato') : $('cs-servidor'); if (f) { f.focus(); if (foco) f.scrollIntoView({ block: 'center' }); } }, 120);
+  setTimeout(() => { const f = foco === 'pub' ? $('cs-publicado') : $('cs-servidor'); if (f) { f.focus(); if (foco) f.scrollIntoView({ block: 'center' }); } }, 120);
 }
 function escolherSentidoCes(btn) {
   const [cor, ico] = SENTIDOS_CES[btn.dataset.v] || SENTIDOS_CES['Saída'];
@@ -6652,11 +6651,10 @@ async function salvarFormCessao(id) {
   if (v('cs-link') && !/^https?:\/\/\S+$/i.test(v('cs-link'))) return aviso('O link do processo deve começar com https://');
   const antigo = id ? cessao(id) : null;
   const st = antigo && autPendente(antigo) ? antigo.status : ativo('#cs-sits .op-card.ativo') || 'Em análise';
-  if (st === 'Publicada' && !v('cs-ato')) { $('cs-ato').focus(); return aviso('Informe o ato (portaria ou decreto) que publicou a cessão.'); }
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
     servidor: v('cs-servidor'), matricula: v('cs-matricula'), cargo: v('cs-cargo'), sentido: ativo('#cs-sentidos .op-card.ativo') || 'Saída', tipo: ativo('#cs-tipos .nm-cat.ativo') || 'Nova cessão',
     orgao: v('cs-orgao'), funcao: v('cs-funcao'), onus: ativo('#cs-onus .op-card.ativo'), processo: v('cs-processo'), link: v('cs-link'), protocolo: v('cs-protocolo'),
-    inicio: v('cs-inicio'), fim: v('cs-fim'), ato: v('cs-ato'), publicadoEm: v('cs-publicado') || (st === 'Publicada' && !(antigo && antigo.publicadoEm) ? hojeISO() : (antigo && antigo.publicadoEm) || ''),
+    inicio: v('cs-inicio'), fim: v('cs-fim'), publicadoEm: v('cs-publicado') || (st === 'Publicada' && !(antigo && antigo.publicadoEm) ? hojeISO() : (antigo && antigo.publicadoEm) || ''),
     status: st, prioridade: $('cs-prio').classList.contains('ativo') ? 'Sim' : '', observacao: v('cs-obs'), atualizadoEm: new Date().toISOString() };
   const pedir = $('cs-pedir') && $('cs-pedir').checked;
   const btn = $('btn-ces-salvar'); btn.disabled = true;
@@ -6677,10 +6675,10 @@ function exemplosCessoes() {
     hist: [{ em: ped, por: 'Assessoria', acao: 'solicitou', obs: 'Chefe de Gabinete, Secretária de Estado de Educação · O órgão de destino pede início no próximo mês' }] };
   return [
     { id: 'cs1', servidor: 'Ana Paula Moreira', matricula: '182344', cargo: 'Professor da Educação Básica', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Secretaria de Estado de Saúde (SES)', funcao: 'Assessora técnica', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/52011', link: 'https://www.sigadoc.mt.gov.br/', protocolo: h(-4), inicio: h(20), fim: h(385), status: 'Aguardando autorização', prioridade: 'Sim', autorizacao: JSON.stringify(a), autResumo: resumoAut(a), observacao: 'Anuência da SES anexada.', exemplo: true },
-    { id: 'cs2', servidor: 'Ricardo Alves Teixeira', matricula: '170955', cargo: 'Técnico Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Assembleia Legislativa (ALMT)', funcao: 'Assessor parlamentar', onus: 'Com ressarcimento', processo: 'SEDUC-PRO-2025/40122', protocolo: h(-340), inicio: h(-330), fim: h(18), ato: 'Portaria nº 1.204/2025/GS/SEDUC-MT', publicadoEm: h(-332), status: 'Publicada', observacao: '', exemplo: true },
+    { id: 'cs2', servidor: 'Ricardo Alves Teixeira', matricula: '170955', cargo: 'Técnico Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Assembleia Legislativa (ALMT)', funcao: 'Assessor parlamentar', onus: 'Com ressarcimento', processo: 'SEDUC-PRO-2025/40122', protocolo: h(-340), inicio: h(-330), fim: h(18), publicadoEm: h(-332), status: 'Publicada', observacao: '', exemplo: true },
     { id: 'cs3', servidor: 'Fernanda Lopes Cunha', matricula: '', cargo: 'Analista Administrativo', sentido: 'Entrada', tipo: 'Nova cessão', orgao: 'Secretaria de Estado de Fazenda (SEFAZ)', funcao: 'Assessora do Gabinete', onus: 'Com ônus para a origem', processo: 'SEDUC-PRO-2026/51870', protocolo: h(-9), inicio: '', fim: '', status: 'Em análise', observacao: 'Aguardando a anuência da SEFAZ.', exemplo: true },
     { id: 'cs4', servidor: 'José Carlos Batista', matricula: '160412', cargo: 'Professor da Educação Básica', sentido: 'Saída', tipo: 'Prorrogação', orgao: 'Prefeitura Municipal de Cuiabá', funcao: 'Coordenador pedagógico', onus: 'Com ônus para a origem', processo: 'SEDUC-PRO-2026/50733', protocolo: h(-15), inicio: h(30), fim: h(395), status: 'Devolvida para correção', observacao: 'Falta a declaração de anuência do município.', exemplo: true },
-    { id: 'cs5', servidor: 'Marina Sousa Prado', matricula: '175520', cargo: 'Apoio Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Tribunal de Contas do Estado (TCE-MT)', funcao: 'Assistente', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/49001', protocolo: h(-60), inicio: h(-30), fim: h(700), ato: 'Portaria nº 401/2026/GS/SEDUC-MT', publicadoEm: h(-32), status: 'Publicada', observacao: '', exemplo: true }
+    { id: 'cs5', servidor: 'Marina Sousa Prado', matricula: '175520', cargo: 'Apoio Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Tribunal de Contas do Estado (TCE-MT)', funcao: 'Assistente', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/49001', protocolo: h(-60), inicio: h(-30), fim: h(700), publicadoEm: h(-32), status: 'Publicada', observacao: '', exemplo: true }
   ];
 }
 
@@ -7037,11 +7035,11 @@ const paraMimAut = () => (Store.portarias || []).filter(x => minhaVezAut(x));
 const paraMimCes = () => (Store.cessoes || []).filter(x => minhaVezAut(x));
 /* O fluxo de autorização serve às Publicações e às Cessões: o que muda de uma para a outra. */
 const ENT_AUT = {
-  pub: { k: 'pub', arr: () => Store.portarias, get: id => portaria(id), salvar: (id, d, rot) => salvarPortaria(id, d, rot), rota: 'pub_autorizacao', nome: x => nomePub(x), feita: x => pubFeita(x),
+  pub: { k: 'pub', area: 'sol', arr: () => Store.portarias, get: id => portaria(id), salvar: (id, d, rot) => salvarPortaria(id, d, rot), rota: 'pub_autorizacao', nome: x => nomePub(x), feita: x => pubFeita(x),
     palavra: 'publicação', Palavra: 'Publicação', grade: 'portarias', icone: 'fa-newspaper', cor: '#4f46e5', pronta: 'Fica pronta para publicar', msgFeita: 'Esta publicação já foi publicada.',
     st: { pendente: 'Aguardando Autorização', devolvida: 'Devolvido Para Correção', autorizada: 'Aguardando Publicação', cancelada: 'Aguardando Publicação', revogada: 'Devolvido Para Correção' } },
-  ces: { k: 'ces', arr: () => Store.cessoes, get: id => cessao(id), salvar: (id, d, rot) => salvarCessao(id, d, rot), rota: 'ces_autorizacao', nome: x => nomeCes(x), feita: x => cesFeita(x),
-    palavra: 'cessão', Palavra: 'Cessão', grade: 'cessoes', icone: 'fa-people-arrows', cor: '#0f766e', pronta: 'Pode seguir para o ato e a publicação', msgFeita: 'Esta cessão já foi concluída.',
+  ces: { k: 'ces', area: 'chefe', arr: () => Store.cessoes, get: id => cessao(id), salvar: (id, d, rot) => salvarCessao(id, d, rot), rota: 'ces_autorizacao', nome: x => nomeCes(x), feita: x => cesFeita(x),
+    palavra: 'cessão', Palavra: 'Cessão', grade: 'cessoes', icone: 'fa-people-arrows', cor: '#0f766e', pronta: 'Pode seguir para a publicação', msgFeita: 'Esta cessão já foi concluída.',
     st: { pendente: 'Aguardando autorização', devolvida: 'Devolvida para correção', autorizada: 'Autorizada', cancelada: 'Em análise', revogada: 'Devolvida para correção' } }
 };
 const entDeId = id => (Store.cessoes || []).some(c => c.id === id) ? ENT_AUT.ces : ENT_AUT.pub;
@@ -7109,7 +7107,7 @@ function aplicarAutLocal(x, acao, d = {}) {
 function podeRevogarAut(x) {
   const a = autPub(x); if (!a || entAut(x).feita(x)) return false;
   if (!(a.situacao === 'autorizada' || (a.situacao === 'pendente' && a.itens.some(i => i.situacao === 'autorizado')))) return false;
-  if (Store.modo !== 'planilha') return pode('sol:2');
+  if (Store.modo !== 'planilha') return pode(entAut(x).area + ':2');
   const p = (Store.sessao && Store.sessao.permissoes) || {};
   if (p.admin || p.contratacoes) return true;
   const meu = a.itens.find(i => Utils_norm(i.usuario) === Utils_norm(euAut()));
@@ -7172,7 +7170,7 @@ function celAutPub(x) {
   const a = autPub(x);
   if (!a || a.situacao === 'cancelada') {
     if (entAut(x).feita(x)) return '<span class="text-ink3">—</span>';
-    return pode('sol:2') ? `<button type="button" class="gs-cel-bt aut-pedir" title="Pedir a autorização das autoridades" onclick="abrirPedirAut('${x.id}')"><i class="fa-solid fa-paper-plane"></i><span>Pedir</span></button>` : '<span class="text-ink3">—</span>';
+    return pode(entAut(x).area + ':2') ? `<button type="button" class="gs-cel-bt aut-pedir" title="Pedir a autorização das autoridades" onclick="abrirPedirAut('${x.id}')"><i class="fa-solid fa-paper-plane"></i><span>Pedir</span></button>` : '<span class="text-ink3">—</span>';
   }
   const [cor, ico, rot] = SIT_AUT[a.situacao] || SIT_AUT.pendente;
   const ok = a.itens.filter(i => i.situacao === 'autorizado').length, n = a.itens.length;
@@ -7234,7 +7232,7 @@ function heroAut(x, sub) {
 function abrirPedirAut(id) {
   const x = regAut(id); if (!x) return;
   const E = entAut(x);
-  if (!pode('sol:2')) { toast('Seu perfil não pede autorizações.', 'fa-lock'); return; }
+  if (!pode(E.area + ':2')) { toast('Seu perfil não pede autorizações.', 'fa-lock'); return; }
   if (autPendente(x)) { abrirAutPub(id); return; }
   if (E.feita(x)) { toast(E.msgFeita, 'fa-circle-info'); return; }
   const ant = autPub(x);
@@ -7272,7 +7270,7 @@ function abrirAutPub(id, foco) {
   const linhaItem = i => {
     const [c2, i2, r2] = SIT_ITEM_AUT[i.situacao] || SIT_ITEM_AUT.pendente;
     const eu = minha && i === minha;
-    const bts = pend && i.situacao === 'pendente' && multi && pode('sol:2') ? `<div class="flex gap-1.5 mt-2"><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','autorizar',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-check text-green-600"></i>Autorizou</button><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','devolver',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-rotate-left text-red-600"></i>Devolveu</button></div>` : '';
+    const bts = pend && i.situacao === 'pendente' && multi && pode(E.area + ':2') ? `<div class="flex gap-1.5 mt-2"><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','autorizar',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-check text-green-600"></i>Autorizou</button><button type="button" class="btn btn-sec !h-8 !text-[12px]" onclick="decidirAut('${id}','devolver',${esc(JSON.stringify(i.usuario))})"><i class="fa-solid fa-rotate-left text-red-600"></i>Devolveu</button></div>` : '';
     return `<li class="aut-pessoa ${i.situacao} ${eu ? 'eu' : ''}" style="--c:${c2}">
       <span class="aut-pessoa-av">${esc(iniciais(i.usuario))}<span class="aut-pessoa-ck"><i class="fa-solid ${i2}"></i></span></span>
       <div class="min-w-0 flex-1"><b>${esc(i.usuario)}${eu ? ' <span class="aut-voce">você</span>' : ''}</b><small>${esc(i.cargo || '')}${i.cargo ? ' · ' : ''}<span style="color:${c2};font-weight:800">${r2}</span>${i.em ? ' · ' + dataHoraCurta(i.em) : ''}${i.registradoPor ? ' · registrado por ' + esc(i.registradoPor) : ''}</small>
@@ -7311,11 +7309,11 @@ function abrirAutPub(id, foco) {
     </div>
     <div class="modal-rodape !justify-between items-center flex-wrap gap-2">
       <div class="flex gap-2 flex-wrap">
-        ${pend && pode('sol:2') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this))cancelarAut('${id}')"><i class="fa-solid fa-ban"></i>Cancelar pedido</button>${Store.modo === 'planilha' ? `<button class="btn btn-sec" onclick="lembrarAut('${id}',this)"><i class="fa-solid fa-bell text-amber-500"></i>Lembrar</button>` : ''}` : ''}
-        ${!pend && !E.feita(x) && pode('sol:2') ? `<button class="btn btn-sec" onclick="abrirPedirAut('${id}')"><i class="fa-solid fa-paper-plane" style="color:${AUT_COR}"></i>${a.situacao === 'devolvida' || a.situacao === 'revogada' ? 'Pedir de novo' : 'Novo pedido'}</button>` : ''}
+        ${pend && pode(E.area + ':2') ? `<button class="btn btn-sec !text-red-600" onclick="if(confirmarDuplo(this))cancelarAut('${id}')"><i class="fa-solid fa-ban"></i>Cancelar pedido</button>${Store.modo === 'planilha' ? `<button class="btn btn-sec" onclick="lembrarAut('${id}',this)"><i class="fa-solid fa-bell text-amber-500"></i>Lembrar</button>` : ''}` : ''}
+        ${!pend && !E.feita(x) && pode(E.area + ':2') ? `<button class="btn btn-sec" onclick="abrirPedirAut('${id}')"><i class="fa-solid fa-paper-plane" style="color:${AUT_COR}"></i>${a.situacao === 'devolvida' || a.situacao === 'revogada' ? 'Pedir de novo' : 'Novo pedido'}</button>` : ''}
         ${podeRevogarAut(x) ? `<button class="btn btn-sec aut-bt-revogar" style="color:#be123c" onclick="abrirRevogarAut('${id}')" title="Quem autorizou ou o Chefe de Gabinete pode cancelar antes da publicação"><i class="fa-solid fa-ban"></i>Cancelar a autorização</button>` : ''}
       </div>
-      <div class="flex gap-2">${E.k !== 'ces' || pode('sol:2') ? `<button class="btn btn-sec" onclick="fecharModal();${E.k === 'ces' ? 'abrirFormCessao' : 'abrirFormPortaria'}('${id}')"><i class="fa-solid fa-pen"></i>Formulário</button>` : ''}<button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
+      <div class="flex gap-2">${E.k !== 'ces' || pode(E.area + ':2') ? `<button class="btn btn-sec" onclick="fecharModal();${E.k === 'ces' ? 'abrirFormCessao' : 'abrirFormPortaria'}('${id}')"><i class="fa-solid fa-pen"></i>Formulário</button>` : ''}<button class="btn btn-pri" onclick="fecharModal()">Fechar</button></div>
     </div>`, 'aut', { id });
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   if (foco === 'devolver' && $('aut-obs')) setTimeout(() => { $('aut-obs').focus(); $('aut-obs').placeholder = 'O que precisa ser corrigido? (obrigatório para devolver)'; }, 80);
@@ -11010,8 +11008,8 @@ function montarRelatorio() {
       add(graf(graficoMesesRel(l, 'Protocoladas por mês', [['Saída', SENTIDOS_CES['Saída'][0], x => (x.sentido || 'Saída') === 'Saída'], ['Entrada', SENTIDOS_CES['Entrada'][0], x => x.sentido === 'Entrada']])));
       add(graf({ tipo: 'hbar', titulo: 'Cessões por status', labels: Object.keys(STATUS_CES), series: [{ rot: 'Cessões', dados: Object.keys(STATUS_CES).map(k => n(k)), cores: Object.values(STATUS_CES).map(v => v[0]) }] }));
       add(e.tabela && tabResumoRel('Por órgão', 'Órgão', l, x => x.orgao, x => x.sentido));
-      const col = [{ rot: 'Servidor', w: '*' }, { rot: 'Matrícula', w: 'auto' }, { rot: 'Sentido', w: 'auto' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Órgão', w: '*' }, { rot: 'Ônus', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Fim', w: 'auto' }, { rot: 'Ato', w: 'auto' }, { rot: 'Status', w: 'auto' }];
-      const lin = x => [x.servidor, x.matricula || '—', x.sentido || 'Saída', x.tipo || '—', x.orgao || '—', x.onus || '—', x.processo || '—', x.inicio ? fmt(x.inicio) : '—', x.fim ? fmt(x.fim) : '—', x.ato || '—', x.status || '—'];
+      const col = [{ rot: 'Servidor', w: '*' }, { rot: 'Matrícula', w: 'auto' }, { rot: 'Sentido', w: 'auto' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Órgão', w: '*' }, { rot: 'Ônus', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Fim', w: 'auto' }, { rot: 'Publicada em', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const lin = x => [x.servidor, x.matricula || '—', x.sentido || 'Saída', x.tipo || '—', x.orgao || '—', x.onus || '—', x.processo || '—', x.inicio ? fmt(x.inicio) : '—', x.fim ? fmt(x.fim) : '—', x.publicadoEm ? fmt(x.publicadoEm) : '—', x.status || '—'];
       Object.keys(STATUS_CES).forEach(k => { const g = l.filter(x => x.status === k).sort(ordemCes); if (g.length) add(tab(k, col, g.map(lin))); });
       if (!l.length) add(tab('Cessões', col, [], 'Nenhuma cessão no período.'));
       const obs = l.filter(x => x.observacao);
@@ -11768,7 +11766,7 @@ function renderRelatorios() {
   destruirGraficos();
   if (!Store.pronto) { c.innerHTML = estadoInicial(); return; }
   const e = relEstado;
-  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); if (t.k === 'innor') return podeContratacoes() || nivelArea('chefe') >= 1; const a = { publicacoes: 'sol', cessoes: 'sol', nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
+  const temas = TEMAS_REL.filter(t => { if (t.k === 'contratacoes') return podeContratacoes(); if (t.k === 'innor') return podeContratacoes() || nivelArea('chefe') >= 1; const a = { publicacoes: 'sol', cessoes: 'chefe', nomeacoes: 'chefe', chefe: 'chefe', personalizado: 'sol', geral: 'sol', mesa: 'sol', urgentes: 'sol', secretaria: 'sol', municipio: 'sol', casacivil: 'casacivil', correicao: 'correicao', eventos: 'eventos', comunicados: 'comunicados', semana: 'semana', movimentacoes: 'movimentacoes', equipe: 'movimentacoes' }[t.k]; return !a || nivelArea(a) >= 1; });
   if (!temas.some(t => t.k === e.tema)) e.tema = (temas[0] || TEMAS_REL[0]).k;
   const usaPeriodo = ['geral', 'secretaria', 'municipio', 'eventos', 'movimentacoes', 'equipe', 'contratacoes', 'nomeacoes', 'innor', 'publicacoes', 'cessoes'].includes(e.tema) || (e.tema === 'personalizado' && e.f.ref !== 'nenhuma');
   const ehSol = SOL_TEMAS_REL.includes(e.tema), pers = e.tema === 'personalizado', f = e.f;
