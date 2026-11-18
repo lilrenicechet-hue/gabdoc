@@ -33,10 +33,9 @@ window.GABDOC_CONFIG = { apiUrl: "https://script.google.com/macros/s/AKfycbwsIph
 <title>GABDoc - Assessoria de Secretária</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0f172a">
-<meta name="gabdoc-versao" content="1.73.0">
+<meta name="gabdoc-versao" content="1.74.0">
 <script type="application/json" id="gabdoc-novidades">[
-  "Cessões: saiu o campo do ato (portaria ou decreto); para marcar como publicada basta escolher o status, e a data de publicação é preenchida sozinha",
-  "Na planilha de Cessões, a coluna Ato deu lugar à data de publicação, e uma cessão autorizada tem o botão Publicada direto na linha"
+  "Cessões: saiu também a data de publicação; para marcar como publicada basta escolher o status (ou o botão Publicada na linha)"
 ]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -6436,7 +6435,7 @@ function cesLinha(lst) {
     const lig = on => `<span class="tl-lig ${on ? 'on' : ''}"></span>`;
     const e1 = et(x.protocolo ? 'feita' : '', 'fa-inbox', 'Protocolo', x.protocolo ? fmt(x.protocolo) : '—');
     const e2 = neg ? et('neg', 'fa-ban', 'Autorização', 'não autorizada') : et(autOk ? 'feita' : st === 'Aguardando autorização' ? 'atual' : st === 'Devolvida para correção' ? 'neg' : '', 'fa-file-signature', 'Autorização', autOk ? 'autorizada' : st === 'Aguardando autorização' ? 'com as autoridades' : st === 'Devolvida para correção' ? 'devolvida' : 'a pedir');
-    const e3 = neg ? '' : et(pub ? 'feita' : autOk ? 'atual' : '', 'fa-newspaper', 'Publicação', x.publicadoEm ? fmt(x.publicadoEm) : pub ? 'publicado' : '—');
+    const e3 = neg ? '' : et(pub ? 'feita' : autOk ? 'atual' : '', 'fa-newspaper', 'Publicação', pub ? 'publicada' : '—');
     const e4 = neg ? '' : et(x.fim && x.fim < hoje ? 'feita' : x.inicio && x.inicio <= hoje && pub ? 'atual' : '', 'fa-calendar-days', 'Vigência', x.inicio ? fmtCurto(x.inicio) + ' → ' + (x.fim ? fmtCurto(x.fim) : 'sem fim') : '—');
     return `<article class="tl-item ${cesVencendo(x) ? 'alerta' : ''}" style="--c:${cor}" role="button" tabindex="0" onclick="abrirFormCessao('${x.id}')" onkeydown="if(event.key==='Enter')abrirFormCessao('${x.id}')">
       <div class="tl-quem"><span class="nl-av" style="--c:${cor}">${esc(iniciaisNom(x.servidor))}</span><div class="min-w-0"><b class="nl-nome">${esc(x.servidor)}</b>
@@ -6482,7 +6481,6 @@ function renderCessoes() {
       { key: 'inicio', rot: 'Período da cessão', rotCompacto: 'Período', w: 190, wCompacta: 150, tipo: 'data', editavel: true, render: celPeriodoCes },
       { key: 'autResumo', rot: 'Autorização', w: 170, wCompacta: 124, tipo: 'texto', editavel: false, render: celAutPub },
       { key: 'status', rot: 'Status', w: 190, wCompacta: 170, tipo: 'select', editavel: true, opcoes: x => Object.keys(STATUS_CES).filter(k => k !== 'Aguardando autorização' || x.status === k).map(k => [k, k]), render: x => pillStCes(x.status) },
-      { key: 'publicadoEm', rot: 'Publicada em', w: 120, tipo: 'data', editavel: true, render: x => x.publicadoEm ? fmt(x.publicadoEm) : '' },
       { key: 'observacao', rot: 'Observação', w: 260, tipo: 'texto', editavel: true }
     ],
     compactas: ['servidor', 'sentido', 'orgao', 'inicio', 'autResumo', 'status'],
@@ -6497,7 +6495,7 @@ function renderCessoes() {
       const minha = minhaVezAut(x), a = autPub(x);
       const btn = minha ? `<button type="button" class="gs-acao" style="--c:#16a34a" onclick="abrirAutPub('${x.id}')"><i class="fa-solid fa-pen-nib"></i>Autorizar</button>`
         : podeEd && !cesFeita(x) && !autPendente(x) && (!a || ['cancelada', 'devolvida', 'revogada'].includes(a.situacao)) ? `<button type="button" class="gs-acao" style="--c:${AUT_COR}" onclick="abrirPedirAut('${x.id}')"><i class="fa-solid fa-paper-plane"></i>${a ? 'Pedir de novo' : 'Pedir'}</button>`
-        : podeEd && x.status === 'Autorizada' ? `<button type="button" class="gs-acao" style="--c:${CES_COR}" onclick="editarCesCampos(cessao('${x.id}'), { status: 'Publicada', publicadoEm: hojeISO() })"><i class="fa-solid fa-newspaper"></i>Publicada</button>`
+        : podeEd && x.status === 'Autorizada' ? `<button type="button" class="gs-acao" style="--c:${CES_COR}" onclick="editarCesCampos(cessao('${x.id}'), { status: 'Publicada' })"><i class="fa-solid fa-newspaper"></i>Publicada</button>`
         : `<span class="gs-acao-fim">${cesFeita(x) ? '<i class="fa-solid fa-circle-check"></i>' + esc(x.status) : ''}</span>`;
       return `<div class="gs-acoes-in">${btn}<button type="button" class="gs-ico" title="Editar no formulário" onclick="abrirFormCessao('${x.id}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="gs-ico gs-mais" title="Mais ações" onclick="abrirMenuAcoes('cessoes','${x.id}',this)"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>`;
     },
@@ -6593,11 +6591,8 @@ function abrirFormCessao(id, pre = {}) {
             <div class="flex flex-wrap gap-1.5 mt-2">${[['6 meses', 6], ['1 ano', 12], ['2 anos', 24], ['4 anos', 48]].map(([r, m]) => `<button type="button" class="atalho" onclick="fimCesMeses(${m})">${r}</button>`).join('')}<button type="button" class="atalho" onclick="$('cs-fim').value='';infoPeriodoCes();marcarCamposCes()">Sem fim</button></div></div>
         </div>
         <p class="text-[12px] font-semibold" id="cs-periodo-info"></p>`)}
-      ${campo(8, CES_COR, 'fa-signal', 'Situação', 'Status, data de publicação e prioridade', `
+      ${campo(8, CES_COR, 'fa-signal', 'Situação', 'Status e prioridade', `
         <div class="nm-ops" id="cs-sits" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${Object.entries(STATUS_CES).filter(([k]) => k !== 'Aguardando autorização' || x.status === k).map(([k, [cor, ico, sub]]) => op('st', k, cor, ico, sub, (x.status || 'Em análise') === k, pend ? '' : `${escolha('#cs-sits .op-card')}`)).join('')}</div>
-        <div class="mt-1" id="cs-pub-box" style="max-width:240px">
-          <div><p class="pt-sub"><i class="fa-solid fa-calendar-check"></i>Publicado em</p>${comIco('fa-calendar', `<input type="date" class="campo campo-g w-full !pl-8" id="cs-publicado" value="${esc(x.publicadoEm || '')}">`)}</div>
-        </div>
         <button type="button" class="pt-prio-tg mt-1 ${prioCes(x) ? 'ativo' : ''}" id="cs-prio" aria-pressed="${prioCes(x)}" onclick="this.classList.toggle('ativo');this.setAttribute('aria-pressed',this.classList.contains('ativo'))"><span class="pt-prio-ico"><i class="fa-solid fa-flag"></i></span><span class="min-w-0"><b>Marcar como prioridade</b><small>A linha fica com contorno vermelho e vai para o topo</small></span><span class="pt-prio-sw" aria-hidden="true"></span></button>`)}
       ${campo(9, '#64748b', 'fa-note-sticky', 'Observação', 'Algo importante sobre a cessão (opcional)', `<textarea class="campo w-full" rows="2" id="cs-obs" placeholder="Ex.: anuência do órgão de destino anexada ao processo">${esc(x.observacao || '')}</textarea>`)}
       ${!id && listaAutorizadores().length ? `<label class="evp-pedir" style="border-color:color-mix(in srgb, ${AUT_COR} 45%, var(--line));background:color-mix(in srgb, ${AUT_COR} 5%, var(--card))"><input type="checkbox" id="cs-pedir" class="w-4 h-4" style="accent-color:${AUT_COR}"><span><b>Pedir autorização logo depois de salvar</b><small>Abre a escolha das autoridades (e-mail para cada uma).</small></span></label>` : ''}
@@ -6610,7 +6605,7 @@ function abrirFormCessao(id, pre = {}) {
   const m = document.querySelector('#modal-raiz .modal'); if (m) m.classList.add('modal-largo');
   FormCes.id = id || '';
   infoPeriodoCes(); marcarCamposCes();
-  setTimeout(() => { const f = foco === 'pub' ? $('cs-publicado') : $('cs-servidor'); if (f) { f.focus(); if (foco) f.scrollIntoView({ block: 'center' }); } }, 120);
+  setTimeout(() => { const f = $('cs-servidor'); if (f) { f.focus(); if (foco) f.scrollIntoView({ block: 'center' }); } }, 120);
 }
 function escolherSentidoCes(btn) {
   const [cor, ico] = SENTIDOS_CES[btn.dataset.v] || SENTIDOS_CES['Saída'];
@@ -6654,7 +6649,7 @@ async function salvarFormCessao(id) {
   const dados = { ...(antigo ? (() => { const o = { ...antigo }; delete o.id; return o; })() : { criadoEm: new Date().toISOString(), criadoPor: meuId() }),
     servidor: v('cs-servidor'), matricula: v('cs-matricula'), cargo: v('cs-cargo'), sentido: ativo('#cs-sentidos .op-card.ativo') || 'Saída', tipo: ativo('#cs-tipos .nm-cat.ativo') || 'Nova cessão',
     orgao: v('cs-orgao'), funcao: v('cs-funcao'), onus: ativo('#cs-onus .op-card.ativo'), processo: v('cs-processo'), link: v('cs-link'), protocolo: v('cs-protocolo'),
-    inicio: v('cs-inicio'), fim: v('cs-fim'), publicadoEm: v('cs-publicado') || (st === 'Publicada' && !(antigo && antigo.publicadoEm) ? hojeISO() : (antigo && antigo.publicadoEm) || ''),
+    inicio: v('cs-inicio'), fim: v('cs-fim'),
     status: st, prioridade: $('cs-prio').classList.contains('ativo') ? 'Sim' : '', observacao: v('cs-obs'), atualizadoEm: new Date().toISOString() };
   const pedir = $('cs-pedir') && $('cs-pedir').checked;
   const btn = $('btn-ces-salvar'); btn.disabled = true;
@@ -6675,10 +6670,10 @@ function exemplosCessoes() {
     hist: [{ em: ped, por: 'Assessoria', acao: 'solicitou', obs: 'Chefe de Gabinete, Secretária de Estado de Educação · O órgão de destino pede início no próximo mês' }] };
   return [
     { id: 'cs1', servidor: 'Ana Paula Moreira', matricula: '182344', cargo: 'Professor da Educação Básica', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Secretaria de Estado de Saúde (SES)', funcao: 'Assessora técnica', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/52011', link: 'https://www.sigadoc.mt.gov.br/', protocolo: h(-4), inicio: h(20), fim: h(385), status: 'Aguardando autorização', prioridade: 'Sim', autorizacao: JSON.stringify(a), autResumo: resumoAut(a), observacao: 'Anuência da SES anexada.', exemplo: true },
-    { id: 'cs2', servidor: 'Ricardo Alves Teixeira', matricula: '170955', cargo: 'Técnico Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Assembleia Legislativa (ALMT)', funcao: 'Assessor parlamentar', onus: 'Com ressarcimento', processo: 'SEDUC-PRO-2025/40122', protocolo: h(-340), inicio: h(-330), fim: h(18), publicadoEm: h(-332), status: 'Publicada', observacao: '', exemplo: true },
+    { id: 'cs2', servidor: 'Ricardo Alves Teixeira', matricula: '170955', cargo: 'Técnico Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Assembleia Legislativa (ALMT)', funcao: 'Assessor parlamentar', onus: 'Com ressarcimento', processo: 'SEDUC-PRO-2025/40122', protocolo: h(-340), inicio: h(-330), fim: h(18), status: 'Publicada', observacao: '', exemplo: true },
     { id: 'cs3', servidor: 'Fernanda Lopes Cunha', matricula: '', cargo: 'Analista Administrativo', sentido: 'Entrada', tipo: 'Nova cessão', orgao: 'Secretaria de Estado de Fazenda (SEFAZ)', funcao: 'Assessora do Gabinete', onus: 'Com ônus para a origem', processo: 'SEDUC-PRO-2026/51870', protocolo: h(-9), inicio: '', fim: '', status: 'Em análise', observacao: 'Aguardando a anuência da SEFAZ.', exemplo: true },
     { id: 'cs4', servidor: 'José Carlos Batista', matricula: '160412', cargo: 'Professor da Educação Básica', sentido: 'Saída', tipo: 'Prorrogação', orgao: 'Prefeitura Municipal de Cuiabá', funcao: 'Coordenador pedagógico', onus: 'Com ônus para a origem', processo: 'SEDUC-PRO-2026/50733', protocolo: h(-15), inicio: h(30), fim: h(395), status: 'Devolvida para correção', observacao: 'Falta a declaração de anuência do município.', exemplo: true },
-    { id: 'cs5', servidor: 'Marina Sousa Prado', matricula: '175520', cargo: 'Apoio Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Tribunal de Contas do Estado (TCE-MT)', funcao: 'Assistente', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/49001', protocolo: h(-60), inicio: h(-30), fim: h(700), publicadoEm: h(-32), status: 'Publicada', observacao: '', exemplo: true }
+    { id: 'cs5', servidor: 'Marina Sousa Prado', matricula: '175520', cargo: 'Apoio Administrativo Educacional', sentido: 'Saída', tipo: 'Nova cessão', orgao: 'Tribunal de Contas do Estado (TCE-MT)', funcao: 'Assistente', onus: 'Com ônus para o destino', processo: 'SEDUC-PRO-2026/49001', protocolo: h(-60), inicio: h(-30), fim: h(700), status: 'Publicada', observacao: '', exemplo: true }
   ];
 }
 
@@ -11008,8 +11003,8 @@ function montarRelatorio() {
       add(graf(graficoMesesRel(l, 'Protocoladas por mês', [['Saída', SENTIDOS_CES['Saída'][0], x => (x.sentido || 'Saída') === 'Saída'], ['Entrada', SENTIDOS_CES['Entrada'][0], x => x.sentido === 'Entrada']])));
       add(graf({ tipo: 'hbar', titulo: 'Cessões por status', labels: Object.keys(STATUS_CES), series: [{ rot: 'Cessões', dados: Object.keys(STATUS_CES).map(k => n(k)), cores: Object.values(STATUS_CES).map(v => v[0]) }] }));
       add(e.tabela && tabResumoRel('Por órgão', 'Órgão', l, x => x.orgao, x => x.sentido));
-      const col = [{ rot: 'Servidor', w: '*' }, { rot: 'Matrícula', w: 'auto' }, { rot: 'Sentido', w: 'auto' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Órgão', w: '*' }, { rot: 'Ônus', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Fim', w: 'auto' }, { rot: 'Publicada em', w: 'auto' }, { rot: 'Status', w: 'auto' }];
-      const lin = x => [x.servidor, x.matricula || '—', x.sentido || 'Saída', x.tipo || '—', x.orgao || '—', x.onus || '—', x.processo || '—', x.inicio ? fmt(x.inicio) : '—', x.fim ? fmt(x.fim) : '—', x.publicadoEm ? fmt(x.publicadoEm) : '—', x.status || '—'];
+      const col = [{ rot: 'Servidor', w: '*' }, { rot: 'Matrícula', w: 'auto' }, { rot: 'Sentido', w: 'auto' }, { rot: 'Tipo', w: 'auto' }, { rot: 'Órgão', w: '*' }, { rot: 'Ônus', w: 'auto' }, { rot: 'Nº do processo', w: 'auto' }, { rot: 'Início', w: 'auto' }, { rot: 'Fim', w: 'auto' }, { rot: 'Status', w: 'auto' }];
+      const lin = x => [x.servidor, x.matricula || '—', x.sentido || 'Saída', x.tipo || '—', x.orgao || '—', x.onus || '—', x.processo || '—', x.inicio ? fmt(x.inicio) : '—', x.fim ? fmt(x.fim) : '—', x.status || '—'];
       Object.keys(STATUS_CES).forEach(k => { const g = l.filter(x => x.status === k).sort(ordemCes); if (g.length) add(tab(k, col, g.map(lin))); });
       if (!l.length) add(tab('Cessões', col, [], 'Nenhuma cessão no período.'));
       const obs = l.filter(x => x.observacao);
